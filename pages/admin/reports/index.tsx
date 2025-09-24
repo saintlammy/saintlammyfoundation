@@ -22,7 +22,6 @@ import {
   AlertCircle,
   FileSpreadsheet,
   FileImage,
-  FilePdf
 } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
@@ -193,7 +192,7 @@ const AdminReports: React.FC = () => {
   };
 
   const formatIcons = {
-    pdf: FilePdf,
+    pdf: FileText,
     excel: FileSpreadsheet,
     csv: FileSpreadsheet,
     json: FileText

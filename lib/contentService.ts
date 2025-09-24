@@ -164,7 +164,7 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
     email: item.teamData!.email,
     phone: item.teamData!.phone,
     status: 'active' as const,
-    avatar: item.featuredImage
+    avatar: item.featuredImage || null
   }));
 };
 
