@@ -69,10 +69,92 @@ const DonationsManagement: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [monitoringStatus, setMonitoringStatus] = useState<any>(null);
+  const [realTimeStats, setRealTimeStats] = useState<any>(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
     loadDonations();
   }, [statusFilter, methodFilter]);
+
+  // Real-time monitoring setup
+  useEffect(() => {
+    loadMonitoringStatus();
+
+    if (autoRefresh) {
+      const interval = setInterval(() => {
+        loadMonitoringStatus();
+        loadDonations();
+      }, 30000); // Refresh every 30 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh]);
+
+  const loadMonitoringStatus = async () => {
+    try {
+      const response = await fetch('/api/donations/monitor');
+      if (response.ok) {
+        const data = await response.json();
+        setMonitoringStatus(data.data.monitoring);
+        setRealTimeStats(data.data.statistics);
+      }
+    } catch (error) {
+      console.error('Error loading monitoring status:', error);
+    }
+  };
+
+  const startMonitoring = async () => {
+    try {
+      const response = await fetch('/api/donations/monitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'start',
+          data: { intervalMinutes: 5 }
+        })
+      });
+
+      if (response.ok) {
+        await loadMonitoringStatus();
+        alert('Real-time donation monitoring started!');
+      }
+    } catch (error) {
+      console.error('Error starting monitoring:', error);
+    }
+  };
+
+  const stopMonitoring = async () => {
+    try {
+      const response = await fetch('/api/donations/monitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'stop' })
+      });
+
+      if (response.ok) {
+        await loadMonitoringStatus();
+        alert('Real-time donation monitoring stopped');
+      }
+    } catch (error) {
+      console.error('Error stopping monitoring:', error);
+    }
+  };
+
+  const forceCheck = async () => {
+    try {
+      setRefreshing(true);
+      const response = await fetch('/api/donations/monitor?action=check');
+      if (response.ok) {
+        await loadDonations();
+        await loadMonitoringStatus();
+      }
+    } catch (error) {
+      console.error('Error forcing donation check:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const loadDonations = async () => {
     try {
@@ -97,7 +179,10 @@ const DonationsManagement: React.FC = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadDonations();
+    await Promise.all([
+      loadDonations(),
+      loadMonitoringStatus()
+    ]);
     setRefreshing(false);
   };
 
@@ -434,6 +519,97 @@ const DonationsManagement: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Real-Time Monitoring Controls */}
+          {monitoringStatus && (
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-white flex items-center">
+                    <Globe className="w-5 h-5 mr-2 text-accent-400" />
+                    Real-Time Blockchain Monitoring
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    Monitor cryptocurrency wallets for incoming donations automatically
+                  </p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    monitoringStatus.isMonitoring
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-gray-500/20 text-gray-400'
+                  }`}>
+                    {monitoringStatus.isMonitoring ? 'Active' : 'Inactive'}
+                  </div>
+                  <button
+                    onClick={() => setAutoRefresh(!autoRefresh)}
+                    className={`p-2 rounded-lg transition-colors ${
+                      autoRefresh
+                        ? 'bg-accent-500/20 text-accent-400'
+                        : 'bg-gray-700 text-gray-400 hover:text-gray-300'
+                    }`}
+                    title={autoRefresh ? 'Auto-refresh enabled' : 'Auto-refresh disabled'}
+                  >
+                    <RefreshCw className={`w-4 h-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <div className="text-gray-400 text-sm">Wallets Configured</div>
+                  <div className="text-xl font-bold text-white">
+                    {monitoringStatus.walletsConfigured}
+                  </div>
+                </div>
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <div className="text-gray-400 text-sm">Transactions Processed</div>
+                  <div className="text-xl font-bold text-white">
+                    {monitoringStatus.processedTransactions}
+                  </div>
+                </div>
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <div className="text-gray-400 text-sm">Today's Donations</div>
+                  <div className="text-xl font-bold text-green-400">
+                    {realTimeStats?.totalDonationsToday || 0}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                {!monitoringStatus.isMonitoring ? (
+                  <button
+                    onClick={startMonitoring}
+                    className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    <Globe className="w-4 h-4" />
+                    <span>Start Monitoring</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={stopMonitoring}
+                    className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    <span>Stop Monitoring</span>
+                  </button>
+                )}
+                <button
+                  onClick={forceCheck}
+                  disabled={refreshing}
+                  className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span>Check Now</span>
+                </button>
+                <div className="text-gray-400 text-sm">
+                  Last checked: {monitoringStatus.lastChecked?.bitcoin
+                    ? new Date(monitoringStatus.lastChecked.bitcoin).toLocaleTimeString()
+                    : 'Never'}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Filters and Search */}
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
