@@ -1,5 +1,7 @@
 import React, { useState, ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import { useAuth } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import {
   BarChart3,
   Users,
@@ -41,6 +43,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['dashboard']);
   const router = useRouter();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/admin/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   const menuItems: MenuItem[] = [
     {
@@ -205,6 +217,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   };
 
   return (
+    <ProtectedRoute requireAdmin={true}>
     <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
       <div className={clsx(
@@ -238,13 +251,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         <div className="p-4 border-t border-gray-700">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-accent-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">SL</span>
+              <span className="text-white font-semibold text-sm">
+                {user?.user_metadata?.name?.charAt(0)?.toUpperCase() ||
+                 user?.email?.charAt(0)?.toUpperCase() || 'A'}
+              </span>
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-white">Saint Lammy</p>
-              <p className="text-xs text-gray-400">Super Admin</p>
+              <p className="text-sm font-medium text-white">
+                {user?.user_metadata?.name || user?.email?.split('@')[0] || 'Admin'}
+              </p>
+              <p className="text-xs text-gray-400">Administrator</p>
             </div>
-            <button className="text-gray-400 hover:text-white">
+            <button
+              onClick={handleSignOut}
+              className="text-gray-400 hover:text-white"
+              title="Sign Out"
+            >
               <LogOut className="w-5 h-5" />
             </button>
           </div>
@@ -290,7 +312,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               {/* User Menu */}
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">SL</span>
+                  <span className="text-white font-semibold text-sm">
+                    {user?.user_metadata?.name?.charAt(0)?.toUpperCase() ||
+                     user?.email?.charAt(0)?.toUpperCase() || 'A'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -311,6 +336,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         />
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

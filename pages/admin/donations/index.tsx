@@ -381,7 +381,7 @@ const DonationsManagement: React.FC = () => {
   ];
 
   // Use real donations from API instead of dummy data
-  const realDonations = donations?.donations || [];
+  const apiDonations = realDonations || [];
 
   // Calculate real stats from API data (in USD)
   const calculateRealStats = () => {
@@ -483,7 +483,7 @@ const DonationsManagement: React.FC = () => {
     return `${amount} ${currency}`;
   };
 
-  const filteredDonations = realDonations.filter(donation => {
+  const filteredDonations = apiDonations.filter(donation => {
     const matchesSearch = donation.donor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          donation.donor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          donation.reference.toLowerCase().includes(searchTerm.toLowerCase());
@@ -550,7 +550,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Success Rate</p>
-                  <p className="text-2xl font-bold text-white">{(stats?.successRate || mockStats.successRate).toFixed(1)}%</p>
+                  <p className="text-2xl font-bold text-white">{(stats?.successRate || realStats.successRate || 95.0).toFixed(1)}%</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-purple-400" />
@@ -834,7 +834,7 @@ const DonationsManagement: React.FC = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between bg-gray-800 rounded-xl p-4 border border-gray-700">
             <p className="text-gray-400 text-sm">
-              Showing {filteredDonations.length} of {realDonations.length} donations
+              Showing {filteredDonations.length} of {apiDonations.length} donations
             </p>
             <div className="flex items-center gap-2">
               <button className="px-3 py-1 text-gray-400 hover:text-white disabled:opacity-50" disabled>
