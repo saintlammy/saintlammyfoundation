@@ -1,8 +1,6 @@
 # Netlify configuration for Saintlammy Foundation website
 [build]
   command = "npm ci && npm run build"
-  publish = ".next"
-  base = "."
 
 [build.environment]
   NODE_VERSION = "18"
@@ -20,3 +18,9 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-XSS-Protection = "1; mode=block"
+
+# Redirect all routes to index for SPA behavior
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
