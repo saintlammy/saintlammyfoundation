@@ -1,0 +1,428 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
+import QRCode from 'qrcode';
+import { donationService } from '@/lib/donationService';
+
+interface CryptoDonationRequest {
+  amount: number;
+  currency: 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB' | 'SOL' | 'TRX';
+  network?: string;
+  donorName?: string;
+  donorEmail?: string;
+  message?: string;
+  source?: string;
+  category?: string;
+}
+
+interface CryptoRates {
+  BTC: { USD: number };
+  ETH: { USD: number };
+  USDT: { USD: number };
+  USDC: { USD: number };
+  XRP: { USD: number };
+  BNB: { USD: number };
+  SOL: { USD: number };
+  TRX: { USD: number };
+}
+
+interface CryptoDonationResponse {
+  success: boolean;
+  donationId: string;
+  walletAddress: string;
+  cryptoAmount: number;
+  currency: string;
+  usdAmount: number;
+  qrCode: string;
+  expiresAt: Date;
+  paymentInstructions: string;
+}
+
+// Get wallet addresses from environment variables
+const WALLET_ADDRESSES = {
+  BTC: {
+    bitcoin: process.env.NEXT_PUBLIC_BTC_WALLET_ADDRESS || 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'
+  },
+  ETH: {
+    erc20: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34'
+  },
+  USDT: {
+    sol: process.env.NEXT_PUBLIC_USDT_SOL_ADDRESS || 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+    erc20: process.env.NEXT_PUBLIC_USDT_ETH_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+    bep20: process.env.NEXT_PUBLIC_USDT_BSC_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+    trc20: process.env.NEXT_PUBLIC_USDT_TRC_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
+  },
+  USDC: {
+    sol: process.env.NEXT_PUBLIC_USDC_SOL_ADDRESS || 'GKvqsuNcnwWqPzzuhLmGi4rzzh55FhJtGizkhHadjqMX',
+    erc20: process.env.NEXT_PUBLIC_USDC_ETH_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+    bep20: process.env.NEXT_PUBLIC_USDC_BSC_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+    trc20: process.env.NEXT_PUBLIC_USDC_TRC_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
+  },
+  XRP: {
+    xrpl: process.env.NEXT_PUBLIC_XRP_WALLET_ADDRESS || 'rPVMhWBsfF9iMXYj3aAzJVkPDTFNSyWdKy'
+  },
+  BNB: {
+    bep20: process.env.NEXT_PUBLIC_BNB_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34'
+  },
+  SOL: {
+    sol: process.env.NEXT_PUBLIC_SOL_WALLET_ADDRESS || '11111111111111111111111111111111'
+  },
+  TRX: {
+    trc20: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
+  }
+};
+
+// XRP destination tags
+const XRP_DESTINATION_TAG = process.env.NEXT_PUBLIC_XRP_DESTINATION_TAG || '12345678';
+
+// Function to get real-time crypto prices
+async function getCryptoPrices(): Promise<CryptoRates> {
+  try {
+    // Using CoinGecko API (free tier)
+    const response = await axios.get(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin,ripple,binancecoin,solana,tron&vs_currencies=usd',
+      { timeout: 10000 }
+    );
+
+    return {
+      BTC: { USD: response.data.bitcoin.usd },
+      ETH: { USD: response.data.ethereum.usd },
+      USDT: { USD: response.data.tether.usd },
+      USDC: { USD: response.data['usd-coin'].usd },
+      XRP: { USD: response.data.ripple.usd },
+      BNB: { USD: response.data.binancecoin.usd },
+      SOL: { USD: response.data.solana.usd },
+      TRX: { USD: response.data.tron.usd }
+    };
+  } catch (error) {
+    console.error('Failed to fetch crypto prices:', error);
+    // Fallback prices (should be updated regularly)
+    return {
+      BTC: { USD: 45000 },
+      ETH: { USD: 2500 },
+      USDT: { USD: 1 },
+      USDC: { USD: 1 },
+      XRP: { USD: 0.5 },
+      BNB: { USD: 300 },
+      SOL: { USD: 100 },
+      TRX: { USD: 0.1 }
+    };
+  }
+}
+
+// Function to calculate crypto amount needed
+function calculateCryptoAmount(usdAmount: number, cryptoPrice: number, currency: string): number {
+  const amount = usdAmount / cryptoPrice;
+
+  // Round to appropriate decimal places based on currency
+  switch (currency) {
+    case 'BTC':
+      return Math.ceil(amount * 100000000) / 100000000; // 8 decimal places
+    case 'ETH':
+      return Math.ceil(amount * 1000000000000000000) / 1000000000000000000; // 18 decimal places
+    case 'USDT':
+    case 'USDC':
+      return Math.ceil(amount * 1000000) / 1000000; // 6 decimal places
+    case 'XRP':
+      return Math.ceil(amount * 1000000) / 1000000; // 6 decimal places
+    case 'BNB':
+      return Math.ceil(amount * 100000000) / 100000000; // 8 decimal places
+    case 'SOL':
+      return Math.ceil(amount * 1000000000) / 1000000000; // 9 decimal places
+    case 'TRX':
+      return Math.ceil(amount * 1000000) / 1000000; // 6 decimal places
+    default:
+      return amount;
+  }
+}
+
+// Function to generate payment URI for QR code
+function generatePaymentURI(currency: string, network: string, address: string, amount: number, label?: string, memo?: string): string {
+  const encodedLabel = label ? encodeURIComponent(label) : 'Saintlammy%20Foundation%20Donation';
+
+  switch (currency) {
+    case 'BTC':
+      return `bitcoin:${address}?amount=${amount}&label=${encodedLabel}`;
+    case 'ETH':
+      return `ethereum:${address}?value=${amount * 1e18}&gas=21000`;
+    case 'USDT':
+    case 'USDC':
+      if (network === 'erc20') {
+        // ERC-20 token transfer
+        return `ethereum:${address}?value=0&gas=60000&data=0xa9059cbb${address.slice(2).padStart(64, '0')}${Math.floor(amount * 1e6).toString(16).padStart(64, '0')}`;
+      } else if (network === 'sol') {
+        // Solana
+        return `solana:${address}?amount=${amount}&label=${encodedLabel}`;
+      } else if (network === 'bep20') {
+        // BSC BEP-20 (uses same format as Ethereum)
+        return `ethereum:${address}?value=${amount * 1e18}&gas=21000`;
+      } else if (network === 'trc20') {
+        // Tron TRC-20
+        return `tron:${address}?amount=${amount}&label=${encodedLabel}`;
+      }
+      return address;
+    case 'XRP':
+      const memoParam = memo ? `&dt=${memo}` : '';
+      return `xrp:${address}?amount=${amount}&label=${encodedLabel}${memoParam}`;
+    case 'BNB':
+      // BNB on BSC (BEP-20) uses Ethereum-like addresses and format
+      return `ethereum:${address}?value=${amount * 1e18}&gas=21000`;
+    case 'SOL':
+      // Solana native token
+      return `solana:${address}?amount=${amount}&label=${encodedLabel}`;
+    case 'TRX':
+      // Tron native token (TRC-20 format)
+      return `tron:${address}?amount=${amount}&label=${encodedLabel}`;
+    default:
+      return address;
+  }
+}
+
+// Function to store donation attempt in database
+async function storeCryptoDonation(donationData: any) {
+  try {
+    const donationId = await donationService.storeCryptoDonation({
+      amount: donationData.amount,
+      currency: donationData.currency,
+      network: donationData.network,
+      cryptoAmount: donationData.cryptoAmount,
+      cryptoPrice: donationData.cryptoPrice,
+      walletAddress: donationData.walletAddress,
+      memo: donationData.memo,
+      donorName: donationData.donorName,
+      donorEmail: donationData.donorEmail,
+      message: donationData.message,
+      source: donationData.source,
+      category: donationData.category as 'orphan' | 'widow' | 'home' | 'general',
+    });
+
+    console.log('Stored crypto donation with ID:', donationId);
+    return donationId;
+  } catch (error) {
+    console.error('Error storing crypto donation:', error);
+    // Fallback to temporary ID if database fails
+    return `crypto_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+}
+
+// Function to verify transaction (placeholder for blockchain verification)
+async function verifyTransaction(txHash: string, currency: string, expectedAmount: number, walletAddress: string): Promise<boolean> {
+  // TODO: Implement blockchain verification
+  // This would involve:
+  // 1. Calling blockchain APIs (Bitcoin, Ethereum)
+  // 2. Verifying transaction exists
+  // 3. Confirming amount and recipient address
+  // 4. Checking confirmation count
+
+  console.log('Verifying transaction:', { txHash, currency, expectedAmount, walletAddress });
+  return true; // Placeholder
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST') {
+    // Create crypto donation request
+    try {
+      const donationData: CryptoDonationRequest = req.body;
+
+      // Validate required fields
+      if (!donationData.amount || !donationData.currency) {
+        return res.status(400).json({
+          error: 'Missing required fields: amount, currency'
+        });
+      }
+
+      // Validate currency
+      if (!['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB', 'SOL', 'TRX'].includes(donationData.currency)) {
+        return res.status(400).json({
+          error: 'Unsupported currency. Supported: BTC, ETH, USDT, USDC, XRP, BNB, SOL, TRX'
+        });
+      }
+
+      // Validate network
+      const supportedNetworks = {
+        BTC: ['bitcoin'],
+        ETH: ['erc20'],
+        USDT: ['sol', 'erc20', 'bep20', 'trc20'],
+        USDC: ['sol', 'erc20', 'bep20', 'trc20'],
+        XRP: ['xrpl'],
+        BNB: ['bep20'],
+        SOL: ['sol'],
+        TRX: ['trc20']
+      };
+
+      const network = donationData.network || (supportedNetworks[donationData.currency] || [])[0];
+      if (!network || !supportedNetworks[donationData.currency].includes(network)) {
+        return res.status(400).json({
+          error: `Unsupported network for ${donationData.currency}. Supported: ${supportedNetworks[donationData.currency].join(', ')}`
+        });
+      }
+
+      // Validate amount
+      if (donationData.amount < 1) {
+        return res.status(400).json({
+          error: 'Minimum donation amount is $1.00 USD'
+        });
+      }
+
+      // Get current crypto prices
+      const cryptoPrices = await getCryptoPrices();
+      const cryptoPrice = cryptoPrices[donationData.currency].USD;
+
+      // Calculate crypto amount needed
+      const cryptoAmount = calculateCryptoAmount(donationData.amount, cryptoPrice, donationData.currency);
+
+      // Get wallet address for specific network
+      const walletAddress = WALLET_ADDRESSES[donationData.currency]?.[network];
+      const memo = donationData.currency === 'XRP' ? XRP_DESTINATION_TAG : undefined;
+
+      if (!walletAddress) {
+        return res.status(500).json({
+          error: `Wallet address not configured for ${donationData.currency} on ${network} network`
+        });
+      }
+
+      // Generate payment URI and QR code
+      const paymentURI = generatePaymentURI(donationData.currency, network, walletAddress, cryptoAmount, 'Saintlammy Foundation Donation', memo);
+      const qrCode = await QRCode.toDataURL(paymentURI);
+
+      // Store donation attempt
+      const donationId = await storeCryptoDonation({
+        ...donationData,
+        network,
+        cryptoAmount,
+        cryptoPrice,
+        walletAddress,
+        memo,
+      });
+
+      // Create network-specific payment instructions
+      const confirmations = {
+        bitcoin: '1-6',
+        erc20: '12-20',
+        sol: '32',
+        bep20: '12',
+        trc20: '19',
+        xrpl: '1-3'
+      }[network] || '1-6';
+
+      const networkName = {
+        bitcoin: 'Bitcoin Network',
+        erc20: 'Ethereum (ERC-20)',
+        sol: 'Solana',
+        bep20: 'BSC (BEP-20)',
+        trc20: 'Tron (TRC-20)',
+        xrpl: 'XRP Ledger'
+      }[network] || network;
+
+      let paymentInstructions = `
+Send exactly ${cryptoAmount} ${donationData.currency} to the address above.
+Network: ${networkName}
+Important:
+- Send only ${donationData.currency} on ${networkName}
+- Send the exact amount to ensure proper tracking
+- Payment expires in 24 hours
+- Allow ${confirmations} confirmations for processing`;
+
+      if (donationData.currency === 'XRP' && memo) {
+        paymentInstructions += `\n- IMPORTANT: Include destination tag: ${memo}`;
+      }
+
+      paymentInstructions = paymentInstructions.trim();
+
+      const response: CryptoDonationResponse & { network?: string; memo?: string } = {
+        success: true,
+        donationId,
+        walletAddress,
+        cryptoAmount,
+        currency: donationData.currency,
+        network,
+        memo,
+        usdAmount: donationData.amount,
+        qrCode,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        paymentInstructions
+      };
+
+      return res.status(200).json(response);
+    } catch (error) {
+      console.error('Crypto payment error:', error);
+      return res.status(500).json({
+        error: 'Failed to create crypto donation',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  } else if (req.method === 'GET') {
+    // Check donation status
+    const { donationId } = req.query;
+
+    if (!donationId) {
+      return res.status(400).json({ error: 'Missing donationId' });
+    }
+
+    try {
+      // Get donation from database
+      const donation = await donationService.getDonationById(donationId as string);
+
+      if (!donation) {
+        return res.status(404).json({ error: 'Donation not found' });
+      }
+
+      return res.status(200).json({
+        donationId: donation.id,
+        status: donation.status,
+        confirmations: donation.confirmations,
+        requiredConfirmations: donation.requiredConfirmations,
+        txHash: donation.txHash,
+        confirmedAt: donation.confirmedAt,
+        expiresAt: donation.expiresAt,
+      });
+    } catch (error) {
+      console.error('Error checking donation status:', error);
+      return res.status(500).json({
+        error: 'Failed to check donation status'
+      });
+    }
+  } else if (req.method === 'PUT') {
+    // Update donation with transaction hash
+    const { donationId, txHash } = req.body;
+
+    if (!donationId || !txHash) {
+      return res.status(400).json({
+        error: 'Missing required fields: donationId, txHash'
+      });
+    }
+
+    try {
+      // Get donation from database first
+      const donation = await donationService.getDonationById(donationId);
+      if (!donation) {
+        return res.status(404).json({ error: 'Donation not found' });
+      }
+
+      // Update donation with transaction hash and set to pending verification
+      const updated = await donationService.updateDonationStatus(donationId, 'pending', txHash);
+
+      if (!updated) {
+        return res.status(500).json({ error: 'Failed to update donation' });
+      }
+
+      // TODO: Implement actual blockchain verification in background
+      // const isValid = await verifyTransaction(txHash, donation.currency, donation.cryptoAmount, donation.walletAddress);
+      // if (isValid) {
+      //   await donationService.updateDonationStatus(donationId, 'completed', txHash);
+      // }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Transaction submitted for verification',
+        status: 'verifying'
+      });
+    } catch (error) {
+      console.error('Error updating donation:', error);
+      return res.status(500).json({
+        error: 'Failed to update donation'
+      });
+    }
+  } else {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+}
