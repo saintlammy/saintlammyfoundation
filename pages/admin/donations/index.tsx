@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { donationService } from '@/lib/donationService';
+import { BlockchainService } from '@/lib/blockchainService';
 import {
   Search,
   Filter,
@@ -63,6 +65,41 @@ const DonationsManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
+  const [realDonations, setRealDonations] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    loadDonations();
+  }, [statusFilter, methodFilter]);
+
+  const loadDonations = async () => {
+    try {
+      setLoading(true);
+      const [donationsResponse, statsData] = await Promise.all([
+        donationService.getDonations({
+          limit: 50,
+          status: statusFilter !== 'all' ? statusFilter : undefined,
+          paymentMethod: methodFilter !== 'all' ? methodFilter : undefined
+        }),
+        donationService.getDonationStats()
+      ]);
+
+      setRealDonations(donationsResponse.donations);
+      setStats(statsData);
+    } catch (error) {
+      console.error('Error loading donations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadDonations();
+    setRefreshing(false);
+  };
 
   // Mock donations data - Updated to match payment system structure
   const donations: Donation[] = [

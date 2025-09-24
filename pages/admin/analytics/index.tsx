@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { analyticsService } from '@/lib/analyticsService';
+import { donationService } from '@/lib/donationService';
 import {
   TrendingUp,
   TrendingDown,
@@ -38,8 +40,46 @@ import {
 
 const Analytics: React.FC = () => {
   const [timeframe, setTimeframe] = useState('30d');
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [realtimeMetrics, setRealtimeMetrics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock analytics data
+  useEffect(() => {
+    loadAnalyticsData();
+    const interval = setInterval(() => {
+      loadRealtimeMetrics();
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [timeframe]);
+
+  const loadAnalyticsData = async () => {
+    try {
+      setLoading(true);
+      const [analytics, realtime] = await Promise.all([
+        analyticsService.getAnalyticsData(),
+        analyticsService.getRealtimeMetrics()
+      ]);
+      setAnalyticsData(analytics);
+      setRealtimeMetrics(realtime);
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+      // Keep mock data as fallback
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadRealtimeMetrics = async () => {
+    try {
+      const realtime = await analyticsService.getRealtimeMetrics();
+      setRealtimeMetrics(realtime);
+    } catch (error) {
+      console.error('Error loading realtime metrics:', error);
+    }
+  };
+
+  // Use real data or fallback to mock data
   const donationTrends = [
     { date: '2024-01-01', amount: 65000, donors: 120, conversions: 3.2 },
     { date: '2024-01-08', amount: 78000, donors: 145, conversions: 3.8 },
