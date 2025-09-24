@@ -261,7 +261,15 @@ const AdminWalletManagement: React.FC = () => {
       const totalValue = allWallets.reduce((sum, wallet) =>
         sum + wallet.tokens.reduce((tokenSum, token) => tokenSum + (token.usdValue || 0), 0), 0
       );
-      setDailyDonations(Math.max(Math.round(totalValue * 0.01), 50)); // 1% of portfolio or minimum $50
+      // Get real 24h donations from donation service
+      try {
+        const donationStats = await donationService.getDonationStats();
+        const todayDonationsAmount = donationStats.totalAmount || 0; // Use actual total donations
+        setDailyDonations(todayDonationsAmount);
+      } catch (error) {
+        console.log('Could not fetch donation stats, using 0');
+        setDailyDonations(0);
+      }
 
     } catch (error) {
       console.error('Error loading wallet data:', error);
@@ -270,7 +278,7 @@ const AdminWalletManagement: React.FC = () => {
       const fallbackWallets = await createEmptyWallets();
       setWalletData(fallbackWallets);
       setRecentTransactions([]);
-      setDailyDonations(50);
+      setDailyDonations(0);
     } finally {
       setLoading(false);
     }
@@ -288,7 +296,7 @@ const AdminWalletManagement: React.FC = () => {
         ethereum: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
         bsc: process.env.NEXT_PUBLIC_BNB_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
         xrp: process.env.NEXT_PUBLIC_XRP_WALLET_ADDRESS || 'rPVMhWBsfF9iMXYj3aAzJVkPDTFNSyWdKy',
-        solana: process.env.NEXT_PUBLIC_SOL_WALLET_ADDRESS || '11111111111111111111111111111111',
+        solana: process.env.NEXT_PUBLIC_SOL_WALLET_ADDRESS || '5bKSQ9wpWmA4NxPfq3xiTv4Zpnzxjkfzm5WVwkL4Xrz3',
         tron: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
       };
 
