@@ -563,6 +563,30 @@ class DonationService {
   }
 
   /**
+   * Delete a donation (for testing purposes)
+   */
+  async deleteDonation(donationId: string): Promise<void> {
+    if (!supabase) {
+      throw new Error('Database not available');
+    }
+
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .delete()
+        .eq('id', donationId);
+
+      if (error) {
+        console.error('Error deleting donation:', error);
+        throw new Error(`Failed to delete donation: ${handleSupabaseError(error)}`);
+      }
+    } catch (error) {
+      console.error('Error in deleteDonation:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Verify if database connection is working
    */
   async testConnection(): Promise<boolean> {

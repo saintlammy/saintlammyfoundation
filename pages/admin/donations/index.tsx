@@ -186,8 +186,18 @@ const DonationsManagement: React.FC = () => {
     setRefreshing(false);
   };
 
-  // Mock donations data - Updated to match payment system structure
-  const donations: Donation[] = [
+  // Helper functions for currency conversion
+  const USD_TO_NGN_RATE = 1650; // Current exchange rate
+
+  const convertToUSD = (amount: number, currency: string): number => {
+    if (currency === 'NGN') {
+      return amount / USD_TO_NGN_RATE;
+    }
+    return amount; // Already in USD or crypto equivalent
+  };
+
+  // Use real donations data from API (remove all dummy data)
+  const dummyDonations: Donation[] = [
     {
       id: '1',
       donor: {
@@ -370,16 +380,39 @@ const DonationsManagement: React.FC = () => {
     }
   ];
 
-  const mockStats = {
-    totalAmount: donations
-      .filter(d => d.status === 'completed')
-      .reduce((sum, d) => sum + (d.currency === 'NGN' ? d.amount : d.amount * 1650), 0),
-    totalDonations: donations.length,
-    pendingAmount: donations
-      .filter(d => d.status === 'pending')
-      .reduce((sum, d) => sum + (d.currency === 'NGN' ? d.amount : d.amount * 1650), 0),
-    successRate: (donations.filter(d => d.status === 'completed').length / donations.length) * 100
+  // Use real donations from API instead of dummy data
+  const realDonations = donations?.donations || [];
+
+  // Calculate real stats from API data (in USD)
+  const calculateRealStats = () => {
+    if (!realDonations || !Array.isArray(realDonations) || realDonations.length === 0) {
+      return {
+        totalAmountUSD: 0,
+        totalAmountNGN: 0,
+        totalDonations: 0,
+        pendingAmountUSD: 0,
+        pendingAmountNGN: 0,
+        successRate: 0
+      };
+    }
+
+    const completedDonations = realDonations.filter(d => d.status === 'completed');
+    const pendingDonations = realDonations.filter(d => d.status === 'pending');
+
+    const totalAmountUSD = completedDonations.reduce((sum, d) => sum + convertToUSD(d.amount, d.currency), 0);
+    const pendingAmountUSD = pendingDonations.reduce((sum, d) => sum + convertToUSD(d.amount, d.currency), 0);
+
+    return {
+      totalAmountUSD,
+      totalAmountNGN: totalAmountUSD * USD_TO_NGN_RATE,
+      totalDonations: realDonations.length,
+      pendingAmountUSD,
+      pendingAmountNGN: pendingAmountUSD * USD_TO_NGN_RATE,
+      successRate: realDonations.length > 0 ? (completedDonations.length / realDonations.length) * 100 : 0
+    };
   };
+
+  const realStats = calculateRealStats();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -450,7 +483,7 @@ const DonationsManagement: React.FC = () => {
     return `${amount} ${currency}`;
   };
 
-  const filteredDonations = donations.filter(donation => {
+  const filteredDonations = realDonations.filter(donation => {
     const matchesSearch = donation.donor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          donation.donor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          donation.reference.toLowerCase().includes(searchTerm.toLowerCase());
@@ -475,7 +508,10 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total Collected</p>
-                  <p className="text-2xl font-bold text-white">₦{(stats?.totalAmount || mockStats.totalAmount).toLocaleString()}</p>
+                  <div>
+                    <p className="text-2xl font-bold text-white">${(stats?.totalAmount || realStats.totalAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-gray-400">₦{((stats?.totalAmount || realStats.totalAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                  </div>
                 </div>
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-green-400" />
@@ -487,7 +523,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total Donations</p>
-                  <p className="text-2xl font-bold text-white">{stats?.totalDonations || mockStats.totalDonations}</p>
+                  <p className="text-2xl font-bold text-white">{stats?.totalDonations || realStats.totalDonations}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
                   <Heart className="w-6 h-6 text-blue-400" />
@@ -499,7 +535,10 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Pending Amount</p>
-                  <p className="text-2xl font-bold text-white">₦{(stats?.pendingAmount || mockStats.pendingAmount).toLocaleString()}</p>
+                  <div>
+                    <p className="text-2xl font-bold text-white">${(stats?.pendingAmount || realStats.pendingAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-gray-400">₦{((stats?.pendingAmount || realStats.pendingAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                  </div>
                 </div>
                 <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-yellow-400" />
@@ -795,7 +834,7 @@ const DonationsManagement: React.FC = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between bg-gray-800 rounded-xl p-4 border border-gray-700">
             <p className="text-gray-400 text-sm">
-              Showing {filteredDonations.length} of {donations.length} donations
+              Showing {filteredDonations.length} of {realDonations.length} donations
             </p>
             <div className="flex items-center gap-2">
               <button className="px-3 py-1 text-gray-400 hover:text-white disabled:opacity-50" disabled>

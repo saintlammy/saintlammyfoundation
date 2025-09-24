@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { ContentService, ContentItem } from '@/lib/contentService';
 import {
   Plus,
   Search,
@@ -15,176 +16,78 @@ import {
   Image,
   Video,
   MoreHorizontal,
-  ChevronDown
+  ChevronDown,
+  Loader
 } from 'lucide-react';
 
-interface ContentItem {
-  id: string;
-  title: string;
-  type: 'page' | 'blog' | 'program' | 'story' | 'media' | 'team' | 'partnership';
-  status: 'published' | 'draft' | 'scheduled' | 'archived';
-  author: {
-    name: string;
-    avatar?: string;
-  };
-  lastModified: Date;
-  publishDate?: Date;
-  views: number;
-  excerpt?: string;
-  featuredImage?: string;
-  slug: string;
-  teamData?: {
-    role: string;
-    expertise: string;
-    experience: string;
-    focus: string[];
-    email: string;
-    phone: string;
-  };
-}
-
 const AdminContent: React.FC = () => {
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [total, setTotal] = useState(0);
 
-  const contentItems: ContentItem[] = [
-    {
-      id: '1',
-      title: 'Transforming Lives Through Education',
-      type: 'story',
-      status: 'published',
-      author: { name: 'Sarah Johnson', avatar: '/avatars/sarah.jpg' },
-      lastModified: new Date('2024-01-15'),
-      publishDate: new Date('2024-01-10'),
-      views: 1250,
-      excerpt: 'Meet Maria, whose life was transformed through our education support program...',
-      featuredImage: '/images/story-1.jpg',
-      slug: 'transforming-lives-through-education'
-    },
-    {
-      id: '2',
-      title: 'Our Impact in 2023',
-      type: 'blog',
-      status: 'published',
-      author: { name: 'Michael Chen' },
-      lastModified: new Date('2024-01-12'),
-      publishDate: new Date('2024-01-01'),
-      views: 2100,
-      excerpt: 'Looking back at the incredible impact we made together in 2023...',
-      slug: 'our-impact-in-2023'
-    },
-    {
-      id: '3',
-      title: 'Orphan Care Program',
-      type: 'program',
-      status: 'published',
-      author: { name: 'Emma Williams' },
-      lastModified: new Date('2024-01-08'),
-      publishDate: new Date('2023-12-15'),
-      views: 890,
-      excerpt: 'Providing comprehensive care and support for orphaned children...',
-      featuredImage: '/images/orphan-care.jpg',
-      slug: 'orphan-care-program'
-    },
-    {
-      id: '4',
-      title: 'How to Get Involved',
-      type: 'page',
-      status: 'draft',
-      author: { name: 'David Brown' },
-      lastModified: new Date('2024-01-14'),
-      views: 0,
-      excerpt: 'Learn about the various ways you can contribute to our mission...',
-      slug: 'how-to-get-involved'
-    },
-    {
-      id: '5',
-      title: 'Community Outreach Video',
-      type: 'media',
-      status: 'scheduled',
-      author: { name: 'Lisa Anderson' },
-      lastModified: new Date('2024-01-13'),
-      publishDate: new Date('2024-01-20'),
-      views: 0,
-      excerpt: 'Documentary showcasing our community outreach efforts...',
-      slug: 'community-outreach-video'
-    },
-    {
-      id: '6',
-      title: 'Sarah Adebayo',
-      type: 'team',
-      status: 'published',
-      author: { name: 'Admin' },
-      lastModified: new Date('2024-01-10'),
-      publishDate: new Date('2024-01-01'),
-      views: 0,
-      excerpt: 'Partnership Director with 8+ years in nonprofit partnerships',
-      slug: 'sarah-adebayo',
-      teamData: {
-        role: 'Partnership Director',
-        expertise: 'Corporate Partnerships & Strategic Alliances',
-        experience: '8+ years in nonprofit partnerships',
-        focus: ['Corporate CSR', 'Strategic Planning', 'Impact Measurement'],
-        email: 'sarah.adebayo@saintlammyfoundation.org',
-        phone: '+234 801 111 2222'
-      }
-    },
-    {
-      id: '7',
-      title: 'Michael Okafor',
-      type: 'team',
-      status: 'published',
-      author: { name: 'Admin' },
-      lastModified: new Date('2024-01-10'),
-      publishDate: new Date('2024-01-01'),
-      views: 0,
-      excerpt: 'NGO Relations Manager with 6+ years in NGO partnerships',
-      slug: 'michael-okafor',
-      teamData: {
-        role: 'NGO Relations Manager',
-        expertise: 'Inter-organizational Collaboration',
-        experience: '6+ years in NGO partnerships',
-        focus: ['NGO Alliances', 'Resource Sharing', 'Joint Programs'],
-        email: 'michael.okafor@saintlammyfoundation.org',
-        phone: '+234 802 333 4444'
-      }
-    },
-    {
-      id: '8',
-      title: 'Fatima Ibrahim',
-      type: 'team',
-      status: 'published',
-      author: { name: 'Admin' },
-      lastModified: new Date('2024-01-10'),
-      publishDate: new Date('2024-01-01'),
-      views: 0,
-      excerpt: 'Community Engagement Lead with 5+ years in community development',
-      slug: 'fatima-ibrahim',
-      teamData: {
-        role: 'Community Engagement Lead',
-        expertise: 'Individual & Community Partnerships',
-        experience: '5+ years in community development',
-        focus: ['Volunteer Programs', 'Individual Donors', 'Local Communities'],
-        email: 'fatima.ibrahim@saintlammyfoundation.org',
-        phone: '+234 803 555 6666'
-      }
+  // Load content on mount and when filters change
+  useEffect(() => {
+    loadContent();
+  }, [selectedType, selectedStatus, searchTerm]);
+
+  const loadContent = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const result = await ContentService.getContent({
+        type: selectedType,
+        status: selectedStatus,
+        search: searchTerm,
+        limit: 50
+      });
+
+      setContentItems(result.data);
+      setTotal(result.total);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load content');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const filteredContent = contentItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'all' || item.type === selectedType;
-    const matchesStatus = selectedStatus === 'all' || item.status === selectedStatus;
+  const handleBulkAction = async (action: string) => {
+    if (selectedItems.length === 0) return;
 
-    return matchesSearch && matchesType && matchesStatus;
-  });
+    try {
+      setLoading(true);
+
+      switch (action) {
+        case 'publish':
+          await ContentService.bulkUpdateStatus(selectedItems, 'published');
+          break;
+        case 'archive':
+          await ContentService.bulkUpdateStatus(selectedItems, 'archived');
+          break;
+        case 'delete':
+          if (confirm('Are you sure you want to delete the selected items?')) {
+            await ContentService.bulkDelete(selectedItems);
+          }
+          break;
+      }
+
+      setSelectedItems([]);
+      await loadContent();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Bulk action failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const contentTypes = [
-    { value: 'all', label: 'All Content', count: contentItems.length },
+    { value: 'all', label: 'All Content', count: total },
     { value: 'page', label: 'Pages', count: contentItems.filter(item => item.type === 'page').length },
     { value: 'blog', label: 'Blog Posts', count: contentItems.filter(item => item.type === 'blog').length },
     { value: 'program', label: 'Programs', count: contentItems.filter(item => item.type === 'program').length },
@@ -235,9 +138,9 @@ const AdminContent: React.FC = () => {
 
   const toggleSelectAll = () => {
     setSelectedItems(
-      selectedItems.length === filteredContent.length
+      selectedItems.length === contentItems.length
         ? []
-        : filteredContent.map(item => item.id)
+        : contentItems.map(item => item.id)
     );
   };
 
@@ -347,6 +250,19 @@ const AdminContent: React.FC = () => {
             </div>
           )}
 
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-4">
+              <p className="text-red-400">{error}</p>
+              <button
+                onClick={loadContent}
+                className="mt-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {/* Bulk Actions */}
           {selectedItems.length > 0 && (
             <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
@@ -355,13 +271,25 @@ const AdminContent: React.FC = () => {
                   {selectedItems.length} item{selectedItems.length !== 1 ? 's' : ''} selected
                 </span>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors">
+                  <button
+                    onClick={() => handleBulkAction('publish')}
+                    disabled={loading}
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-sm transition-colors"
+                  >
                     Publish
                   </button>
-                  <button className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm transition-colors">
+                  <button
+                    onClick={() => handleBulkAction('archive')}
+                    disabled={loading}
+                    className="px-3 py-1 bg-gray-600 hover:bg-gray-700 disabled:opacity-50 text-white rounded text-sm transition-colors"
+                  >
                     Archive
                   </button>
-                  <button className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm transition-colors">
+                  <button
+                    onClick={() => handleBulkAction('delete')}
+                    disabled={loading}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded text-sm transition-colors"
+                  >
                     Delete
                   </button>
                 </div>
@@ -378,7 +306,7 @@ const AdminContent: React.FC = () => {
                     <th className="px-6 py-3 text-left">
                       <input
                         type="checkbox"
-                        checked={selectedItems.length === filteredContent.length}
+                        checked={selectedItems.length === contentItems.length && contentItems.length > 0}
                         onChange={toggleSelectAll}
                         className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
                       />
@@ -407,7 +335,23 @@ const AdminContent: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {filteredContent.map((item) => (
+                  {loading ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-8 text-center">
+                        <div className="flex items-center justify-center space-x-2">
+                          <Loader className="w-5 h-5 animate-spin text-accent-500" />
+                          <span className="text-gray-400">Loading content...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : contentItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-8 text-center text-gray-400">
+                        No content found. Create your first content item to get started.
+                      </td>
+                    </tr>
+                  ) : (
+                    contentItems.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-700 transition-colors">
                       <td className="px-6 py-4">
                         <input
@@ -458,10 +402,10 @@ const AdminContent: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-gray-300 text-sm">
-                          {item.lastModified.toLocaleDateString()}
+                          {new Date(item.updated_at).toLocaleDateString()}
                         </div>
                         <div className="text-gray-500 text-xs">
-                          {item.lastModified.toLocaleTimeString()}
+                          {new Date(item.updated_at).toLocaleTimeString()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -487,7 +431,8 @@ const AdminContent: React.FC = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -496,7 +441,7 @@ const AdminContent: React.FC = () => {
           {/* Pagination */}
           <div className="flex items-center justify-between">
             <div className="text-gray-400 text-sm">
-              Showing {filteredContent.length} of {contentItems.length} items
+              Showing {contentItems.length} of {total} items
             </div>
             <div className="flex items-center space-x-2">
               <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-700 transition-colors">

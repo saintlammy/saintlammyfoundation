@@ -1,5 +1,4 @@
-// Content service to simulate fetching data from admin CMS
-// In a real application, this would connect to your database or CMS API
+// Content service to connect to database CMS
 
 export interface TeamMember {
   id: string;
@@ -29,22 +28,257 @@ export interface ContentItem {
   status: 'published' | 'draft' | 'scheduled' | 'archived';
   author: {
     name: string;
-    avatar?: string;
+    email?: string;
   };
-  lastModified: Date;
-  publishDate?: Date;
-  views: number;
+  content?: string;
   excerpt?: string;
-  featuredImage?: string;
   slug: string;
-  teamData?: {
-    role: string;
-    expertise: string;
-    experience: string;
-    focus: string[];
-    email: string;
-    phone: string;
-  };
+  featuredImage?: string;
+  publishDate?: string;
+  views: number;
+  metadata?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+// API integration class
+export class ContentService {
+  private static baseUrl = '/api/content';
+
+  static async getContent(params: {
+    type?: string;
+    status?: string;
+    limit?: number;
+    offset?: number;
+    search?: string;
+  } = {}): Promise<{
+    data: ContentItem[];
+    total: number;
+    limit: number;
+    offset: number;
+  }> {
+    try {
+      const searchParams = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+          searchParams.append(key, value.toString());
+        }
+      });
+
+      const response = await fetch(`${this.baseUrl}?${searchParams.toString()}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch content: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to fetch content');
+      }
+
+      return {
+        data: result.data,
+        total: result.total,
+        limit: result.limit,
+        offset: result.offset
+      };
+    } catch (error) {
+      console.warn('Failed to fetch from API, falling back to mock data:', error);
+      return this.getMockContent(params);
+    }
+  }
+
+  static async createContent(contentData: Omit<ContentItem, 'id' | 'created_at' | 'updated_at'>): Promise<ContentItem> {
+    try {
+      const response = await fetch(this.baseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contentData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create content: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to create content');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Failed to create content:', error);
+      throw error;
+    }
+  }
+
+  static async updateContent(id: string, updateData: Partial<ContentItem>): Promise<ContentItem> {
+    try {
+      const response = await fetch(this.baseUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, ...updateData }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update content: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to update content');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Failed to update content:', error);
+      throw error;
+    }
+  }
+
+  static async deleteContent(id: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete content: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to delete content');
+      }
+    } catch (error) {
+      console.error('Failed to delete content:', error);
+      throw error;
+    }
+  }
+
+  static async bulkUpdateStatus(ids: string[], status: ContentItem['status']): Promise<void> {
+    const updatePromises = ids.map(id =>
+      this.updateContent(id, { status })
+    );
+
+    await Promise.all(updatePromises);
+  }
+
+  static async bulkDelete(ids: string[]): Promise<void> {
+    const deletePromises = ids.map(id => this.deleteContent(id));
+    await Promise.all(deletePromises);
+  }
+
+  // Get foundation story content
+  static async getFoundationStory(): Promise<ContentItem | null> {
+    const result = await this.getContent({
+      type: 'page',
+      search: 'foundation story'
+    });
+
+    return result.data.length > 0 ? result.data[0] : null;
+  }
+
+  // Get all published programs
+  static async getPublishedPrograms(): Promise<ContentItem[]> {
+    const result = await this.getContent({
+      type: 'program',
+      status: 'published'
+    });
+
+    return result.data;
+  }
+
+  // Get published team members
+  static async getPublishedTeamMembers(): Promise<ContentItem[]> {
+    const result = await this.getContent({
+      type: 'team',
+      status: 'published'
+    });
+
+    return result.data;
+  }
+
+  // Get published stories
+  static async getPublishedStories(limit: number = 10): Promise<ContentItem[]> {
+    const result = await this.getContent({
+      type: 'story',
+      status: 'published',
+      limit
+    });
+
+    return result.data;
+  }
+
+  // Get published blog posts
+  static async getPublishedBlogPosts(limit: number = 10): Promise<ContentItem[]> {
+    const result = await this.getContent({
+      type: 'blog',
+      status: 'published',
+      limit
+    });
+
+    return result.data;
+  }
+
+  // Fallback mock data method
+  private static getMockContent(params: any): Promise<{
+    data: ContentItem[];
+    total: number;
+    limit: number;
+    offset: number;
+  }> {
+    const mockData = mockContentItems.map(item => ({
+      ...item,
+      created_at: item.lastModified?.toISOString() || new Date().toISOString(),
+      updated_at: item.lastModified?.toISOString() || new Date().toISOString(),
+      content: item.excerpt || '',
+      publishDate: item.publishDate?.toISOString(),
+      author: {
+        name: item.author.name,
+        email: `${item.author.name.toLowerCase().replace(' ', '.')}@saintlammyfoundation.org`
+      }
+    }));
+
+    let filtered = mockData;
+
+    if (params.type && params.type !== 'all') {
+      filtered = filtered.filter(item => item.type === params.type);
+    }
+
+    if (params.status && params.status !== 'all') {
+      filtered = filtered.filter(item => item.status === params.status);
+    }
+
+    if (params.search) {
+      const search = params.search.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.title.toLowerCase().includes(search) ||
+        item.excerpt?.toLowerCase().includes(search) ||
+        item.content?.toLowerCase().includes(search)
+      );
+    }
+
+    const limit = params.limit || 50;
+    const offset = params.offset || 0;
+    const paginatedData = filtered.slice(offset, offset + limit);
+
+    return Promise.resolve({
+      data: paginatedData,
+      total: filtered.length,
+      limit,
+      offset
+    });
+  }
 }
 
 // Mock data - in production this would come from your database

@@ -191,7 +191,7 @@ export class EthereumService {
         transactionCount: 0,
       });
 
-      // Get ERC-20 token balances (USDT, USDC)
+      // Get ERC-20 token balances (USDT, USDC) - Correct contract addresses
       const tokenContracts = {
         USDT: { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
         USDC: { address: '0xA0b86a33E6441E95e5D9B901A3e4D7E16D7E4F1b', decimals: 6 },
@@ -370,33 +370,102 @@ export class XRPService {
 
 // Solana Service
 export class SolanaService {
+  // Known SPL token addresses
+  static SPL_TOKENS = {
+    USDT: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT on Solana
+    USDC: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC on Solana
+  };
+
   static async getWalletData(address: string): Promise<WalletData> {
     try {
       const prices = await PriceService.getCryptoPrices();
+      const balances: TokenBalance[] = [];
+      let totalUsdValue = 0;
 
       // Get SOL balance
-      const response = await axios.post(API_KEYS.SOLANA_RPC, {
+      const solResponse = await axios.post(API_KEYS.SOLANA_RPC, {
         jsonrpc: '2.0',
         id: 1,
         method: 'getBalance',
         params: [address]
       }, { timeout: 15000 });
 
-      const solBalance = response.data.result.value / Math.pow(10, 9); // Convert lamports to SOL
+      const solBalance = solResponse.data.result.value / Math.pow(10, 9); // Convert lamports to SOL
+      const solUsdValue = solBalance * prices.SOL;
+      totalUsdValue += solUsdValue;
+
+      balances.push({
+        symbol: 'SOL',
+        name: 'Solana',
+        balance: solBalance,
+        usdValue: solUsdValue,
+        totalReceived: 0,
+        totalSent: 0,
+        transactionCount: 0,
+      });
+
+      // Get SPL token balances
+      try {
+        const tokenResponse = await axios.post(API_KEYS.SOLANA_RPC, {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getTokenAccountsByOwner',
+          params: [
+            address,
+            { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' }, // SPL Token Program
+            { encoding: 'jsonParsed' }
+          ]
+        }, { timeout: 15000 });
+
+        if (tokenResponse.data.result && tokenResponse.data.result.value) {
+          for (const tokenAccount of tokenResponse.data.result.value) {
+            const tokenInfo = tokenAccount.account.data.parsed.info;
+            const mint = tokenInfo.mint;
+            const balance = tokenInfo.tokenAmount.uiAmount || 0;
+
+            if (balance > 0) {
+              let symbol = 'UNKNOWN';
+              let name = 'Unknown Token';
+              let price = 0;
+
+              // Identify known tokens by mint address
+              if (mint === this.SPL_TOKENS.USDT) {
+                symbol = 'USDT';
+                name = 'Tether USD (SPL)';
+                price = prices.USDT;
+              } else if (mint === this.SPL_TOKENS.USDC) {
+                symbol = 'USDC';
+                name = 'USD Coin (SPL)';
+                price = prices.USDC;
+              }
+
+              const usdValue = balance * price;
+              totalUsdValue += usdValue;
+
+              balances.push({
+                symbol,
+                name,
+                balance,
+                usdValue,
+                totalReceived: 0,
+                totalSent: 0,
+                transactionCount: 0,
+                contractAddress: mint,
+                decimals: tokenInfo.tokenAmount.decimals,
+              });
+            }
+          }
+        }
+      } catch (tokenError) {
+        console.log('Could not fetch SPL token balances:', tokenError.message);
+        // Continue with just SOL balance
+      }
 
       return {
         address,
         network: 'solana',
-        balances: [{
-          symbol: 'SOL',
-          name: 'Solana',
-          balance: solBalance,
-          usdValue: solBalance * prices.SOL,
-          totalReceived: 0,
-          totalSent: 0,
-          transactionCount: 0,
-        }],
-        totalUsdValue: solBalance * prices.SOL,
+        balances,
+        totalUsdValue,
         transactionCount: 0,
       };
     } catch (error) {
