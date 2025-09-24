@@ -285,7 +285,7 @@ const DonationsManagement: React.FC = () => {
     }
   ];
 
-  const stats = {
+  const mockStats = {
     totalAmount: donations
       .filter(d => d.status === 'completed')
       .reduce((sum, d) => sum + (d.currency === 'NGN' ? d.amount : d.amount * 1650), 0),
@@ -390,7 +390,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total Collected</p>
-                  <p className="text-2xl font-bold text-white">₦{stats.totalAmount.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-white">₦{(stats?.totalAmount || mockStats.totalAmount).toLocaleString()}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-green-400" />
@@ -402,7 +402,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total Donations</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalDonations}</p>
+                  <p className="text-2xl font-bold text-white">{stats?.totalDonations || mockStats.totalDonations}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
                   <Heart className="w-6 h-6 text-blue-400" />
@@ -414,7 +414,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Pending Amount</p>
-                  <p className="text-2xl font-bold text-white">₦{stats.pendingAmount.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-white">₦{(stats?.pendingAmount || mockStats.pendingAmount).toLocaleString()}</p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-yellow-400" />
@@ -426,7 +426,7 @@ const DonationsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Success Rate</p>
-                  <p className="text-2xl font-bold text-white">{stats.successRate.toFixed(1)}%</p>
+                  <p className="text-2xl font-bold text-white">{(stats?.successRate || mockStats.successRate).toFixed(1)}%</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-purple-400" />
