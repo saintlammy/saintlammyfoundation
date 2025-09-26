@@ -80,7 +80,7 @@ export class WalletManager {
 
   // Generate Tron address
   generateTronAddress(): WalletAddress {
-    const tronWeb = new TronWeb({
+    const tronWeb = new (TronWeb as any)({
       fullHost: 'https://api.trongrid.io'
     });
 
@@ -104,7 +104,7 @@ export class WalletManager {
     const client = new Client('wss://xrplcluster.com');
     await client.connect();
 
-    const wallet = client.wallet.generate();
+    const wallet = (client as any).wallet.generate();
     const memo = Math.floor(Math.random() * 999999999).toString();
 
     const walletAddress: WalletAddress = {

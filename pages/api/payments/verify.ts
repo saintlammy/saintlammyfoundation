@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import { donationService } from '@/lib/donationService';
+import { validateInput, sanitizeHtml } from '@/lib/validation';
+import { z } from 'zod';
 
 const PAYPAL_API_BASE = process.env.NEXT_PUBLIC_PAYPAL_ENVIRONMENT === 'sandbox'
   ? 'https://api-m.sandbox.paypal.com'
@@ -8,6 +10,16 @@ const PAYPAL_API_BASE = process.env.NEXT_PUBLIC_PAYPAL_ENVIRONMENT === 'sandbox'
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
+
+// PayPal verification request schema
+const PayPalVerificationSchema = z.object({
+  paymentId: z.string().min(1, 'Payment ID is required').optional(),
+  subscriptionId: z.string().min(1, 'Subscription ID is required').optional(),
+  payerId: z.string().min(1, 'Payer ID is required').optional(),
+  token: z.string().min(1, 'Token is required').optional(),
+}).refine((data) => data.paymentId || data.subscriptionId, {
+  message: "Either paymentId or subscriptionId must be provided"
+});
 
 interface PayPalVerificationRequest {
   paymentId?: string;
@@ -133,13 +145,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { paymentId, subscriptionId, payerId, token }: PayPalVerificationRequest = req.body;
-
-    if (!paymentId && !subscriptionId) {
+    // Validate input using schema
+    const validation = validateInput(PayPalVerificationSchema)(req.body);
+    if (!validation.success) {
       return res.status(400).json({
-        error: 'Missing required fields: paymentId or subscriptionId'
+        error: 'Invalid input data',
+        details: validation.errors
       });
     }
+
+    const { paymentId, subscriptionId, payerId, token } = validation.data;
 
     const accessToken = await getPayPalAccessToken();
 
@@ -166,10 +181,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             payerId: captureResult.payer?.payer_id,
             payerEmail: captureResult.payer?.email_address,
             payerName: `${captureResult.payer?.name?.given_name || ''} ${captureResult.payer?.name?.surname || ''}`.trim(),
-            donorName: customData.donorName,
-            donorEmail: customData.donorEmail,
-            message: customData.message,
-            source: customData.source,
+            donorName: customData.donorName ? sanitizeHtml(customData.donorName) : undefined,
+            donorEmail: customData.donorEmail ? sanitizeHtml(customData.donorEmail) : undefined,
+            message: customData.message ? sanitizeHtml(customData.message) : undefined,
+            source: customData.source ? sanitizeHtml(customData.source) : undefined,
             category: customData.category as 'orphan' | 'widow' | 'home' | 'general' | undefined,
             timestamp: captureResult.create_time,
             fees: capture.seller_receivable_breakdown?.paypal_fee?.value || '0'
@@ -192,7 +207,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               amount: donationData.amount,
               currency: donationData.currency,
               type: donationData.type,
-              status: donationData.status,
+              status: (donationData as any).status || 'completed',
               receiptNumber: record.receiptNumber,
               paymentDate: donationData.timestamp
             }
@@ -240,7 +255,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             amount: donationData.amount,
             currency: donationData.currency,
             frequency: donationData.frequency,
-            status: donationData.status,
+            status: (donationData as any).status || 'active',
             nextBillingDate: donationData.nextBillingDate,
             receiptNumber: record.receiptNumber
           }

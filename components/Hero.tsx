@@ -30,7 +30,14 @@ const Hero: React.FC<HeroProps> = ({
             objectFit: 'cover',
             objectPosition: 'center'
           }}
+          onError={(e) => {
+            // Fallback to a solid color background if image fails to load
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
         />
+        {/* Fallback gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-gray-900"></div>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/70"></div>
       </div>

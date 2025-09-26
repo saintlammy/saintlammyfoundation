@@ -48,3 +48,11 @@ export const handleSupabaseError = (error: any): string => {
 
 // Helper function for type-safe queries
 export const createTypedSupabaseClient = () => supabase;
+
+// Type guard to ensure supabase client is properly typed
+export function getTypedSupabaseClient(): ReturnType<typeof createClient<Database>> {
+  if (!supabase) {
+    throw new Error('Supabase client is not available');
+  }
+  return supabase as ReturnType<typeof createClient<Database>>;
+}

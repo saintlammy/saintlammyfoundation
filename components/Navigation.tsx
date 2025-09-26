@@ -48,7 +48,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                   return (
                     <button
                       key={link.href}
-                      onClick={onDonateClick}
+                      onClick={() => onDonateClick?.({ source: 'general' })}
                       className="relative px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white text-sm font-medium font-sans transition-colors duration-200 rounded-full"
                     >
                       {link.label}
@@ -101,7 +101,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
               return (
                 <button
                   key={link.href}
-                  onClick={onDonateClick}
+                  onClick={() => onDonateClick?.({ source: 'general' })}
                   className="block w-full text-left px-3 py-3 bg-accent-500 hover:bg-accent-600 text-white text-base font-medium font-sans transition-colors duration-200 rounded-lg mx-3 mb-2"
                 >
                   {link.label}

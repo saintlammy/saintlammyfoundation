@@ -43,12 +43,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['dashboard']);
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin, isModerator } = useAuth();
 
   const handleSignOut = async () => {
     try {
-      await signOut();
-      router.push('/admin/login');
+      const { error } = await signOut();
+      if (!error) {
+        router.push('/admin/login');
+      } else {
+        console.error('Sign out error:', error);
+      }
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -179,7 +183,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             )} />
           </button>
 
-          {isExpanded && (
+          {isExpanded && item.children && (
             <div className="mt-1 space-y-1">
               {item.children.map(child => renderMenuItem(child, level + 1))}
             </div>

@@ -4,8 +4,23 @@ import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Heart, Users, Clock, MapPin, Send, Star, CheckCircle, Calendar } from 'lucide-react';
 
+interface VolunteerFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  location: string;
+  interests: string[];
+  availability: string;
+  experience: string;
+  motivation: string;
+  skills: string;
+  backgroundCheck: boolean;
+  commitment: string;
+}
+
 const Volunteer: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<VolunteerFormData>({
     firstName: '',
     lastName: '',
     email: '',

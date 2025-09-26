@@ -277,10 +277,16 @@ const AdminLogin: React.FC = () => {
           )}
 
           {/* Footer */}
-          <div className="text-center">
+          <div className="text-center space-y-2">
+            <p className="text-gray-400 text-sm">
+              Need an admin account?{' '}
+              <Link href="/admin/signup" className="text-accent-400 hover:text-accent-300">
+                Sign up here
+              </Link>
+            </p>
             <Link
               href="/"
-              className="text-sm text-gray-400 hover:text-accent-400 transition-colors"
+              className="text-sm text-gray-400 hover:text-accent-400 transition-colors block"
             >
               ← Back to Saintlammy Foundation
             </Link>

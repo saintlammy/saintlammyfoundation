@@ -564,3 +564,4 @@ export interface TransactionFilters {
   amount_min?: number;
   amount_max?: number;
 }
+

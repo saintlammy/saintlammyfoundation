@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { BlockchainService, GeneratedWallet } from '@/lib/blockchainService';
+import { donationService } from '@/lib/donationService';
 import {
   Plus,
   Wallet,
@@ -128,18 +129,28 @@ const AdminWalletManagement: React.FC = () => {
     console.log('🧹 Clearing all caches...');
 
     // Clear localStorage
-    const keysToKeep = ['theme', 'user_preferences']; // Keep important user data
+    const keysToKeep = [
+      'theme',
+      'user_preferences',
+      'saintlammy_wallets',
+      'saintlammy_archived_wallets',
+      // Keep Supabase auth tokens
+      'sb-localhost-auth-token',
+      'sb-auth-token',
+      'supabase.auth.token'
+    ]; // Keep important user data
     const localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
-      if (!keysToKeep.includes(key)) {
+      // Don't clear any keys that start with 'sb-' (Supabase auth)
+      if (!keysToKeep.includes(key) && !key.startsWith('sb-')) {
         localStorage.removeItem(key);
         console.log(`Cleared localStorage: ${key}`);
       }
     });
 
-    // Clear sessionStorage
-    sessionStorage.clear();
-    console.log('Cleared sessionStorage');
+    // Don't clear sessionStorage as it might contain auth data
+    // sessionStorage.clear();
+    console.log('Preserved sessionStorage and auth tokens');
 
     // Clear any API caches if they exist
     if ('caches' in window) {
@@ -155,17 +166,28 @@ const AdminWalletManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    // Clear only browser caches, not localStorage with wallet data
-    console.log('🧹 Clearing browser caches (preserving wallet data)...');
-    const keysToKeep = ['theme', 'user_preferences', 'saintlammy_wallets', 'saintlammy_archived_wallets'];
+    // Clear only browser caches, not localStorage with wallet data or auth tokens
+    console.log('🧹 Clearing browser caches (preserving wallet data and auth)...');
+    const keysToKeep = [
+      'theme',
+      'user_preferences',
+      'saintlammy_wallets',
+      'saintlammy_archived_wallets',
+      // Keep Supabase auth tokens
+      'sb-localhost-auth-token',
+      'sb-auth-token',
+      'supabase.auth.token'
+    ];
     const localStorageKeys = Object.keys(localStorage);
     localStorageKeys.forEach(key => {
-      if (!keysToKeep.includes(key)) {
+      // Don't clear any keys that start with 'sb-' (Supabase auth)
+      if (!keysToKeep.includes(key) && !key.startsWith('sb-')) {
         localStorage.removeItem(key);
         console.log(`Cleared localStorage: ${key}`);
       }
     });
-    sessionStorage.clear();
+    // Don't clear sessionStorage as it might contain auth data
+    // sessionStorage.clear();
     if ('caches' in window) {
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
@@ -550,7 +572,7 @@ const AdminWalletManagement: React.FC = () => {
           allTransactions.push(...formattedTxs);
           console.log(`✅ Loaded ${formattedTxs.length} transactions from ${wallet.network}`);
         } catch (error) {
-          console.log(`Could not load transactions for ${wallet.network}:`, error.message);
+          console.log(`Could not load transactions for ${wallet.network}:`, (error as Error).message);
         }
       }
 
@@ -774,7 +796,7 @@ const AdminWalletManagement: React.FC = () => {
             lastActivity: liveData.lastActivity ? new Date(liveData.lastActivity) : wallet.lastActivity
           };
         } catch (error) {
-          console.log(`Could not update live data for ${wallet.network}:`, error.message);
+          console.log(`Could not update live data for ${wallet.network}:`, (error as Error).message);
           return wallet; // Keep original wallet data
         }
       })
@@ -1138,7 +1160,7 @@ const AdminWalletManagement: React.FC = () => {
           label: wallet.label,
           network: wallet.network,
           address: wallet.address,
-          derivationPath: wallet.derivationPath,
+          derivationPath: (wallet as any).derivationPath,
           destinationTag: wallet.destinationTag,
           tokens: wallet.tokens,
           exportedAt: new Date().toISOString()
@@ -1195,7 +1217,7 @@ const AdminWalletManagement: React.FC = () => {
       label: wallet.label,
       network: wallet.network,
       address: wallet.address,
-      derivationPath: wallet.derivationPath,
+      derivationPath: (wallet as any).derivationPath,
       seedPhrase: wallet.seedPhrase,
       destinationTag: wallet.destinationTag,
       createdAt: wallet.createdAt,
@@ -1203,8 +1225,8 @@ const AdminWalletManagement: React.FC = () => {
       version: '1.0'
     };
 
-    if (includePrivateKey && wallet.privateKey) {
-      backupData.privateKey = wallet.privateKey;
+    if (includePrivateKey && (wallet as any).privateKey) {
+      (backupData as any).privateKey = (wallet as any).privateKey;
     }
 
     const content = JSON.stringify(backupData, null, 2);

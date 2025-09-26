@@ -3,16 +3,39 @@ import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/router';
 
+// Enhanced interfaces for better type safety
+interface UserMetadata {
+  name?: string;
+  role?: 'admin' | 'moderator' | 'user';
+  phone?: string;
+  organization?: string;
+  permissions?: string[];
+}
+
+interface AuthUser extends User {
+  user_metadata: UserMetadata;
+}
+
+interface SignUpData {
+  name?: string;
+  role?: string;
+  phone?: string;
+  organization?: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUp: (email: string, password: string, userData?: any) => Promise<{ error: AuthError | null }>;
-  signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
-  updateProfile: (updates: any) => Promise<{ error: AuthError | null }>;
   isAdmin: boolean;
+  isModerator: boolean;
+  hasPermission: (permission: string) => boolean;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null; data?: any }>;
+  signUp: (email: string, password: string, userData?: SignUpData) => Promise<{ error: AuthError | null; data?: any }>;
+  signOut: () => Promise<{ error: AuthError | null }>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updateProfile: (updates: Partial<UserMetadata>) => Promise<{ error: AuthError | null }>;
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,15 +45,32 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Admin check - you can customize this logic based on your needs
-  const isAdmin = user?.email?.includes('@saintlammyfoundation.org') ||
-                  user?.user_metadata?.role === 'admin' ||
-                  user?.email === 'admin@saintlammyfoundation.org';
+  // Enhanced role-based authentication logic
+  const isAdmin = Boolean(
+    user?.email?.includes('@saintlammyfoundation.org') ||
+    user?.user_metadata?.role === 'admin' ||
+    user?.email === 'admin@saintlammyfoundation.org' ||
+    user?.email === 'saintlammyfoundation@gmail.com' ||
+    user?.email === 'saintlammy@gmail.com'
+  );
+
+  const isModerator = Boolean(
+    isAdmin ||
+    user?.user_metadata?.role === 'moderator'
+  );
+
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    if (isAdmin) return true; // Admin has all permissions
+
+    const userPermissions = user.user_metadata?.permissions || [];
+    return userPermissions.includes(permission);
+  };
 
   useEffect(() => {
     // Get initial session
@@ -46,7 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.error('Error getting session:', error);
         } else {
           setSession(session);
-          setUser(session?.user ?? null);
+          setUser(session?.user as AuthUser ?? null);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
@@ -64,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
-        setUser(session?.user ?? null);
+        setUser(session?.user as AuthUser ?? null);
         setLoading(false);
 
         // Handle auth events
@@ -88,8 +128,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     try {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { error: new Error('Please enter a valid email address') as AuthError };
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.toLowerCase().trim(),
         password,
       });
 
@@ -98,24 +144,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { error };
       }
 
-      return { error: null };
+      return { error: null, data };
     } catch (error) {
       console.error('Sign in error:', error);
       return { error: error as AuthError };
     }
   };
 
-  const signUp = async (email: string, password: string, userData?: any) => {
+  const signUp = async (email: string, password: string, userData?: SignUpData) => {
     if (!supabase) {
       return { error: new Error('Supabase not available') as AuthError };
     }
 
     try {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { error: new Error('Please enter a valid email address') as AuthError };
+      }
+
+      // Validate password strength
+      if (password.length < 8) {
+        return { error: new Error('Password must be at least 8 characters long') as AuthError };
+      }
+
+      // Only allow admin emails for registration
+      const isValidAdminEmail = email.includes('@saintlammyfoundation.org') ||
+                               email === 'saintlammyfoundation@gmail.com' ||
+                               email === 'saintlammy@gmail.com';
+
+      if (!isValidAdminEmail) {
+        return { error: new Error('Registration is restricted to authorized email domains') as AuthError };
+      }
+
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.toLowerCase().trim(),
         password,
         options: {
-          data: userData || {}
+          data: {
+            name: userData?.name || '',
+            role: userData?.role || 'admin',
+            phone: userData?.phone || '',
+            organization: userData?.organization || 'Saintlammy Foundation',
+            permissions: ['read', 'write', 'admin']
+          }
         }
       });
 
@@ -124,7 +196,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { error };
       }
 
-      return { error: null };
+      return { error: null, data };
     } catch (error) {
       console.error('Sign up error:', error);
       return { error: error as AuthError };
@@ -133,16 +205,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     if (!supabase) {
-      return;
+      return { error: new Error('Supabase not available') as AuthError };
     }
 
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Sign out error:', error);
+        return { error };
       }
+
+      // Clear local state
+      setUser(null);
+      setSession(null);
+
+      return { error: null };
     } catch (error) {
       console.error('Sign out error:', error);
+      return { error: error as AuthError };
     }
   };
 
@@ -168,7 +248,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = async (updates: any) => {
+  const updateProfile = async (updates: Partial<UserMetadata>) => {
     if (!supabase) {
       return { error: new Error('Supabase not available') as AuthError };
     }
@@ -183,6 +263,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { error };
       }
 
+      // Update local user state
+      if (user && data.user) {
+        setUser(data.user as AuthUser);
+      }
+
       return { error: null };
     } catch (error) {
       console.error('Update profile error:', error);
@@ -190,16 +275,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshSession = async () => {
+    if (!supabase) return;
+
+    try {
+      const { data: { session }, error } = await supabase.auth.refreshSession();
+      if (error) {
+        console.error('Refresh session error:', error);
+      } else {
+        setSession(session);
+        setUser(session?.user as AuthUser ?? null);
+      }
+    } catch (error) {
+      console.error('Refresh session error:', error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     session,
     loading,
+    isAdmin,
+    isModerator,
+    hasPermission,
     signIn,
     signUp,
     signOut,
     resetPassword,
     updateProfile,
-    isAdmin
+    refreshSession
   };
 
   return (

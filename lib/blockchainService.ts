@@ -58,7 +58,7 @@ const API_KEYS = {
 
 // Price fetching service
 export class PriceService {
-  private static cache: { [key: string]: { price: number; timestamp: number } } = {};
+  private static cache: { [key: string]: { data: { [key: string]: number }; timestamp: number } } = {};
   private static CACHE_DURATION = 60000; // 1 minute
 
   static async getCryptoPrices(): Promise<{ [key: string]: number }> {
@@ -66,7 +66,7 @@ export class PriceService {
     const cacheKey = 'crypto_prices';
 
     if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.CACHE_DURATION) {
-      return this.cache[cacheKey].price;
+      return this.cache[cacheKey].data;
     }
 
     try {
@@ -85,7 +85,7 @@ export class PriceService {
         USDC: response.data['usd-coin']?.usd || 1,
       };
 
-      this.cache[cacheKey] = { price: prices, timestamp: now };
+      this.cache[cacheKey] = { data: prices, timestamp: now };
       return prices;
     } catch (error) {
       console.error('Error fetching crypto prices:', error);
@@ -457,7 +457,7 @@ export class SolanaService {
           }
         }
       } catch (tokenError) {
-        console.log('Could not fetch SPL token balances:', tokenError.message);
+        console.log('Could not fetch SPL token balances:', tokenError instanceof Error ? tokenError.message : String(tokenError));
         // Continue with just SOL balance
       }
 

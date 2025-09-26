@@ -265,7 +265,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({
         success: true,
         subscriptionID: subscription.id,
-        approvalUrl: subscription.links.find(link => link.rel === 'approve')?.href,
+        approvalUrl: subscription.links.find((link: any) => link.rel === 'approve')?.href,
         subscription
       });
     }

@@ -98,7 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .replace(/^-|-$/g, '');
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('content')
           .insert([contentData])
           .select()
@@ -135,7 +135,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('content')
           .update(updateData)
           .eq('id', id)

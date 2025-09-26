@@ -530,11 +530,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                         }`}
                       >
                         <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${crypto.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                          {typeof IconComponent === 'function' ? (
-                            <IconComponent />
-                          ) : (
-                            <IconComponent className="w-6 h-6 text-white" />
-                          )}
+                          <IconComponent className="w-6 h-6 text-white" />
                         </div>
                         <div className="text-xs font-medium">{crypto.symbol}</div>
                       </button>

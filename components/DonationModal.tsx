@@ -4,6 +4,8 @@ import { SiBitcoin, SiEthereum, SiTether, SiRipple } from 'react-icons/si';
 import { walletManager } from '@/lib/wallet';
 import { DonationContext } from './DonationModalProvider';
 
+type CryptoCurrencyKey = 'btc' | 'eth' | 'usdc' | 'usdt' | 'xrp';
+
 interface DonationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -245,12 +247,14 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
     }
 
     // Fallback to static addresses
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.address || '';
+    const crypto = cryptoCurrencies[selectedCrypto as CryptoCurrencyKey];
+    return (crypto?.networks as any)?.[selectedNetwork]?.address || '';
   };
 
   const getCurrentNetworkExplorer = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.explorer || '';
+    const crypto = cryptoCurrencies[selectedCrypto as CryptoCurrencyKey];
+    return (crypto?.networks as any)?.[selectedNetwork]?.explorer || '';
   };
 
   const getCurrentMemo = () => {
@@ -263,7 +267,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
     }
 
     // Fallback to static memo
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.memo || '';
+    const crypto = cryptoCurrencies[selectedCrypto as CryptoCurrencyKey];
+    return (crypto?.networks as any)?.[selectedNetwork]?.memo || '';
   };
 
   const handleAmountSelect = (amount: number) => {
@@ -538,11 +543,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                           }`}
                         >
                           <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${crypto.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                            {typeof IconComponent === 'function' ? (
-                              <IconComponent />
-                            ) : (
-                              <IconComponent className="w-6 h-6 text-white" />
-                            )}
+                            <IconComponent className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-xs font-medium">{crypto.symbol}</div>
                         </button>
@@ -564,7 +565,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                       >
                         <span>
                           {selectedNetwork
-                            ? cryptoCurrencies[selectedCrypto].networks[selectedNetwork].name
+                            ? (cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks as any)?.[selectedNetwork]?.name
                             : 'Choose a network...'}
                         </span>
                         <ChevronDown className={`w-5 h-5 transition-transform ${
@@ -574,13 +575,13 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
                       {networkDropdownOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-xl overflow-hidden z-10">
-                          {Object.entries(cryptoCurrencies[selectedCrypto].networks).map(([networkId, network]) => (
+                          {Object.entries(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks || {}).map(([networkId, network]) => (
                             <button
                               key={networkId}
                               onClick={() => handleNetworkSelect(networkId)}
                               className="w-full p-4 text-left text-white hover:bg-gray-600 transition-colors border-b border-gray-600 last:border-b-0"
                             >
-                              {network.name}
+                              {(network as any).name}
                             </button>
                           ))}
                         </div>
@@ -594,7 +595,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                   <div className="bg-gray-700/50 rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300 font-medium">
-                        {cryptoCurrencies[selectedCrypto].name} Address ({cryptoCurrencies[selectedCrypto].networks[selectedNetwork].name}):
+                        {cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.name} Address ({(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks as any)?.[selectedNetwork]?.name}):
                       </span>
                       <button
                         onClick={() => copyToClipboard(getCurrentCryptoAddress(), 'address')}

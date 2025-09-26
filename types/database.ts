@@ -248,11 +248,11 @@ export interface Database {
     };
     Functions: {
       encrypt_email: {
-        Args: { email: string };
+        Args: { email_input: string };
         Returns: string;
       };
       hash_email: {
-        Args: { email: string };
+        Args: { email_input: string };
         Returns: string;
       };
     };

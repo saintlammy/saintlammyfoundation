@@ -4,6 +4,7 @@ import { AlertTriangle, RefreshCw, Home, Mail } from 'lucide-react';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -30,6 +31,11 @@ class ErrorBoundary extends Component<Props, State> {
 
     // Log error to monitoring service (e.g., Sentry, LogRocket)
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Call optional error handler
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
+    }
 
     // In production, you would send this to your error tracking service
     if (process.env.NODE_ENV === 'production') {
@@ -134,6 +140,123 @@ class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
+}
+
+// Hook-based error handler for functional components
+export function useErrorHandler() {
+  return (error: Error, errorInfo?: ErrorInfo) => {
+    console.error('Error caught by useErrorHandler:', error, errorInfo);
+
+    // TODO: Report to error service
+    // Example: Sentry.captureException(error, { extra: errorInfo });
+  };
+}
+
+// Higher-order component for wrapping components with error boundary
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  fallback?: ReactNode,
+  onError?: (error: Error, errorInfo: ErrorInfo) => void
+) {
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary fallback={fallback} onError={onError}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+
+  return WrappedComponent;
+}
+
+// Specialized error boundaries for different parts of the app
+export function PageErrorBoundary({ children }: { children: ReactNode }) {
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+              Page Error
+            </h1>
+            <p className="text-gray-600 mb-6">
+              This page encountered an error and couldn't load properly.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      }
+      onError={(error, errorInfo) => {
+        console.error('Page Error:', error, errorInfo);
+        // TODO: Report page errors with additional context
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+export function FormErrorBoundary({ children }: { children: ReactNode }) {
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Form Error
+              </h3>
+              <p className="mt-1 text-sm text-red-700">
+                This form encountered an error. Please refresh the page and try again.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+      onError={(error, errorInfo) => {
+        console.error('Form Error:', error, errorInfo);
+        // TODO: Report form errors with form context
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+export function ComponentErrorBoundary({
+  children,
+  componentName
+}: {
+  children: ReactNode;
+  componentName?: string;
+}) {
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+          <p className="text-sm text-yellow-800">
+            {componentName ? `${componentName} component` : 'Component'} failed to load.
+          </p>
+        </div>
+      }
+      onError={(error, errorInfo) => {
+        console.error(`Component Error (${componentName}):`, error, errorInfo);
+        // TODO: Report component errors with component context
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
 }
 
 export default ErrorBoundary;

@@ -151,13 +151,13 @@ const BeneficiaryShowcase: React.FC = () => {
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-accent-500 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min((beneficiary.daysSupported / 365) * 100, 100)}%` }}
+                      style={{ width: `${Math.min(((beneficiary.daysSupported || 0) / 365) * 100, 100)}%` }}
                     ></div>
                   </div>
 
                   <div className="flex items-center justify-between text-xs text-gray-400">
                     <span>Goal: 365 days</span>
-                    <span>{Math.round((beneficiary.daysSupported / 365) * 100)}% funded</span>
+                    <span>{Math.round(((beneficiary.daysSupported || 0) / 365) * 100)}% funded</span>
                   </div>
                 </div>
 

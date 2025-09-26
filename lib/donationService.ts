@@ -1,5 +1,6 @@
-import { supabase, handleSupabaseError, isSupabaseAvailable } from './supabase';
+import { supabase, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from './supabase';
 import { Database } from '@/types/database';
+import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 
 type DonationRow = Database['public']['Tables']['donations']['Row'];
@@ -63,13 +64,22 @@ class DonationService {
    */
   private async encryptEmail(email: string): Promise<{ encrypted: string; hash: string }> {
     try {
-      const { data, error } = await supabase.rpc('encrypt_email', { email });
-      if (error) throw error;
+      // Get typed Supabase client
+      const client = getTypedSupabaseClient();
 
-      const { data: hashData, error: hashError } = await supabase.rpc('hash_email', { email });
-      if (hashError) throw hashError;
+      // Try to use RPC functions if they exist
+      try {
+        const { data, error } = await (client as any).rpc('encrypt_email', { email_input: email });
+        if (error) throw error;
 
-      return { encrypted: data, hash: hashData };
+        const { data: hashData, error: hashError } = await (client as any).rpc('hash_email', { email_input: email });
+        if (hashError) throw hashError;
+
+        return { encrypted: data, hash: hashData };
+      } catch (rpcError) {
+        // Fallback to client-side encryption if RPC functions don't exist
+        throw rpcError;
+      }
     } catch (error) {
       // Fallback to simple encryption if database functions aren't available
       const key = process.env.ENCRYPTION_KEY || 'saintlammy-foundation-2024';
@@ -110,18 +120,21 @@ class DonationService {
       if (donorData.email) {
         const { encrypted, hash } = await this.encryptEmail(donorData.email);
 
+        // Get typed Supabase client
+        const client = getTypedSupabaseClient();
+
         // Check if donor exists
-        const { data: existingDonor, error: findError } = await supabase
+        const { data: existingDonor, error: findError } = await (client as any)
           .from('donors')
           .select('id, total_donated')
           .eq('email_hash', hash)
-          .single();
+          .maybeSingle();
 
-        if (findError && findError.code !== 'PGRST116') {
+        if (findError) {
           console.error('Error finding donor:', findError);
         }
 
-        if (existingDonor) {
+        if (existingDonor?.id) {
           donorId = existingDonor.id;
         } else {
           // Create new donor
@@ -134,9 +147,9 @@ class DonationService {
             total_donated: 0,
           };
 
-          const { data: createdDonor, error: createError } = await supabase
+          const { data: createdDonor, error: createError } = await (client as any)
             .from('donors')
-            .insert([newDonor])
+            .insert(newDonor)
             .select('id')
             .single();
 
@@ -145,7 +158,7 @@ class DonationService {
             return null;
           }
 
-          donorId = createdDonor.id;
+          donorId = createdDonor?.id || null;
         }
       }
 
@@ -201,9 +214,10 @@ class DonationService {
         }),
       };
 
-      const { data: donation, error } = await supabase
+      const client = getTypedSupabaseClient();
+      const { data: donation, error } = await (client as any)
         .from('donations')
-        .insert([newDonation])
+        .insert(newDonation)
         .select('id')
         .single();
 
@@ -212,7 +226,7 @@ class DonationService {
         throw new Error(`Failed to store donation: ${handleSupabaseError(error)}`);
       }
 
-      return donation.id;
+      return donation?.id || '';
     } catch (error) {
       console.error('Error in storeCryptoDonation:', error);
       throw error;
@@ -265,9 +279,12 @@ class DonationService {
         }),
       };
 
-      const { data: donation, error } = await supabase
+      if (!supabase) throw new Error('Supabase not available');
+
+      const client = getTypedSupabaseClient();
+      const { data: donation, error } = await (client as any)
         .from('donations')
-        .insert([newDonation])
+        .insert(newDonation)
         .select('id')
         .single();
 
@@ -277,13 +294,15 @@ class DonationService {
       }
 
       // Update donor's total donated immediately since PayPal donations are completed
-      await this.updateDonorTotalDonated(donation.id);
+      if (donation?.id) {
+        await this.updateDonorTotalDonated(donation.id);
+      }
 
       // Generate receipt number
-      const receiptNumber = `RCP-${Date.now()}-${donation.id.substring(0, 8)}`;
+      const receiptNumber = `RCP-${Date.now()}-${donation?.id?.substring(0, 8) || 'unknown'}`;
 
       return {
-        donationId: donation.id,
+        donationId: donation?.id || '',
         receiptNumber,
         status: 'completed'
       };
@@ -298,7 +317,8 @@ class DonationService {
    */
   async getDonationById(donationId: string): Promise<DonationStatus | null> {
     try {
-      const { data: donation, error } = await supabase
+      const client = getTypedSupabaseClient();
+      const { data: donation, error } = await (client as any)
         .from('donations')
         .select('*')
         .eq('id', donationId)
@@ -362,7 +382,8 @@ class DonationService {
         processed_at: status === 'completed' ? new Date().toISOString() : null,
       };
 
-      const { error } = await supabase
+      const client = getTypedSupabaseClient();
+      const { error } = await (client as any)
         .from('donations')
         .update(updateData)
         .eq('id', donationId);
@@ -390,7 +411,8 @@ class DonationService {
   private async updateDonorTotalDonated(donationId: string): Promise<void> {
     try {
       // Get the donation
-      const { data: donation, error: donationError } = await supabase
+      const donationClient = getTypedSupabaseClient();
+      const { data: donation, error: donationError } = await (donationClient as any)
         .from('donations')
         .select('donor_id, amount')
         .eq('id', donationId)
@@ -401,7 +423,8 @@ class DonationService {
       }
 
       // Calculate total donated by this donor
-      const { data: donorDonations, error: totalError } = await supabase
+      const totalClient = getTypedSupabaseClient();
+      const { data: donorDonations, error: totalError } = await (totalClient as any)
         .from('donations')
         .select('amount')
         .eq('donor_id', donation.donor_id)
@@ -412,10 +435,11 @@ class DonationService {
         return;
       }
 
-      const totalDonated = donorDonations?.reduce((sum, d) => sum + d.amount, 0) || 0;
+      const totalDonated = donorDonations?.reduce((sum: number, d: any) => sum + d.amount, 0) || 0;
 
       // Update donor record
-      await supabase
+      const updateClient = getTypedSupabaseClient();
+      await (updateClient as any)
         .from('donors')
         .update({
           total_donated: totalDonated,
@@ -453,7 +477,8 @@ class DonationService {
         endDate,
       } = params;
 
-      let query = supabase
+      const queryClient = getTypedSupabaseClient();
+      let query = (queryClient as any)
         .from('donations')
         .select('*', { count: 'exact' });
 
@@ -512,7 +537,8 @@ class DonationService {
   }> {
     try {
       // Get total donations and amount
-      const { data: totalData, error: totalError } = await supabase
+      const statsClient = getTypedSupabaseClient();
+      const { data: totalData, error: totalError } = await (statsClient as any)
         .from('donations')
         .select('amount, status, payment_method');
 
@@ -522,7 +548,8 @@ class DonationService {
       }
 
       // Get total donors
-      const { count: donorCount, error: donorError } = await supabase
+      const donorClient = getTypedSupabaseClient();
+      const { count: donorCount, error: donorError } = await (donorClient as any)
         .from('donors')
         .select('id', { count: 'exact', head: true });
 
@@ -532,18 +559,18 @@ class DonationService {
 
       const donations = totalData || [];
       const totalDonations = donations.length;
-      const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
+      const totalAmount = donations.reduce((sum: number, d: any) => sum + d.amount, 0);
       const totalDonors = donorCount || 0;
       const avgDonationAmount = totalDonations > 0 ? totalAmount / totalDonations : 0;
 
       // Group by status
-      const donationsByStatus = donations.reduce((acc, d) => {
+      const donationsByStatus = donations.reduce((acc: any, d: any) => {
         acc[d.status] = (acc[d.status] || 0) + 1;
         return acc;
       }, {} as { [key: string]: number });
 
       // Group by payment method
-      const donationsByMethod = donations.reduce((acc, d) => {
+      const donationsByMethod = donations.reduce((acc: any, d: any) => {
         acc[d.payment_method] = (acc[d.payment_method] || 0) + 1;
         return acc;
       }, {} as { [key: string]: number });
@@ -591,7 +618,8 @@ class DonationService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const testClient = getTypedSupabaseClient();
+      const { error } = await (testClient as any)
         .from('donations')
         .select('id')
         .limit(1)

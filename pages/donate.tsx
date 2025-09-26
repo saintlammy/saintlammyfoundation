@@ -17,7 +17,9 @@ const Donate: React.FC = () => {
 
   const presetAmounts = [25, 50, 100, 250, 500, 1000];
 
-  const cryptoCurrencies = {
+  type CryptoCurrencyKey = 'btc' | 'eth' | 'usdc' | 'usdt' | 'xrp';
+
+  const cryptoCurrencies: Record<CryptoCurrencyKey, any> = {
     btc: {
       name: 'Bitcoin (BTC)',
       symbol: 'BTC',
@@ -231,12 +233,12 @@ const Donate: React.FC = () => {
     }
 
     // Fallback to static addresses
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.address || '';
+    return cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks[selectedNetwork]?.address || '';
   };
 
   const getCurrentNetworkExplorer = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.explorer || '';
+    return cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks[selectedNetwork]?.explorer || '';
   };
 
   const getCurrentMemo = () => {
@@ -249,7 +251,7 @@ const Donate: React.FC = () => {
     }
 
     // Fallback to static memo
-    return cryptoCurrencies[selectedCrypto]?.networks[selectedNetwork]?.memo || '';
+    return cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks[selectedNetwork]?.memo || '';
   };
 
   const handleAmountSelect = (amount: number) => {
@@ -487,7 +489,7 @@ const Donate: React.FC = () => {
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                         {Object.entries(cryptoCurrencies).map(([cryptoId, crypto]) => {
-                          const IconComponent = crypto.icon;
+                          const IconComponent = crypto.icon as any;
                           return (
                             <button
                               key={cryptoId}
@@ -525,7 +527,7 @@ const Donate: React.FC = () => {
                           >
                             <span>
                               {selectedNetwork
-                                ? cryptoCurrencies[selectedCrypto].networks[selectedNetwork].name
+                                ? cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks[selectedNetwork].name
                                 : 'Choose a network...'}
                             </span>
                             <ChevronDown className={`w-5 h-5 transition-transform ${
@@ -535,13 +537,13 @@ const Donate: React.FC = () => {
 
                           {networkDropdownOpen && (
                             <div className="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-xl overflow-hidden z-10">
-                              {Object.entries(cryptoCurrencies[selectedCrypto].networks).map(([networkId, network]) => (
+                              {Object.entries(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks).map(([networkId, network]) => (
                                 <button
                                   key={networkId}
                                   onClick={() => handleNetworkSelect(networkId)}
                                   className="w-full p-4 text-left text-white hover:bg-gray-600 transition-colors border-b border-gray-600 last:border-b-0"
                                 >
-                                  {network.name}
+                                  {(network as any).name}
                                 </button>
                               ))}
                             </div>
@@ -555,7 +557,7 @@ const Donate: React.FC = () => {
                       <div className="bg-gray-700/50 rounded-xl p-6 space-y-4">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-300 font-medium">
-                            {cryptoCurrencies[selectedCrypto].name} Address ({cryptoCurrencies[selectedCrypto].networks[selectedNetwork].name}):
+                            {cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].name} Address ({cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks[selectedNetwork].name}):
                           </span>
                           <button
                             onClick={() => copyToClipboard(getCurrentCryptoAddress(), 'address')}

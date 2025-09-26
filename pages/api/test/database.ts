@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           message: `Retrieved ${donations.donations.length} donations`,
           data: {
             count: donations.donations.length,
-            totalAmount: donations.totalAmount
+            totalAmount: (donations as any).totalAmount || 0
           }
         });
       } catch (error) {

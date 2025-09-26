@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import { donationService } from '@/lib/donationService';
+import { CryptoDonationSchema } from '@/lib/schemas';
+import { validateInput, sanitizeHtml } from '@/lib/validation';
 
 interface CryptoDonationRequest {
   amount: number;
@@ -38,7 +40,9 @@ interface CryptoDonationResponse {
 }
 
 // Get wallet addresses from environment variables
-const WALLET_ADDRESSES = {
+type CurrencyKey = 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB' | 'SOL' | 'TRON' | 'TRX';
+
+const WALLET_ADDRESSES: Record<CurrencyKey, Record<string, string>> = {
   BTC: {
     bitcoin: process.env.NEXT_PUBLIC_BTC_WALLET_ADDRESS || 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'
   },
@@ -68,6 +72,9 @@ const WALLET_ADDRESSES = {
   },
   TRX: {
     trc20: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
+  },
+  TRON: {
+    trc20: process.env.NEXT_PUBLIC_TRON_WALLET_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
   }
 };
 
@@ -221,24 +228,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     // Create crypto donation request
     try {
-      const donationData: CryptoDonationRequest = req.body;
-
-      // Validate required fields
-      if (!donationData.amount || !donationData.currency) {
+      // Validate input using schema
+      const validation = validateInput(CryptoDonationSchema)(req.body);
+      if (!validation.success) {
         return res.status(400).json({
-          error: 'Missing required fields: amount, currency'
+          error: 'Invalid input data',
+          details: validation.errors
         });
       }
 
-      // Validate currency
-      if (!['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB', 'SOL', 'TRX'].includes(donationData.currency)) {
-        return res.status(400).json({
-          error: 'Unsupported currency. Supported: BTC, ETH, USDT, USDC, XRP, BNB, SOL, TRX'
-        });
-      }
+      const donationData = validation.data;
+
+      // Sanitize string inputs
+      const sanitizedData = {
+        ...donationData,
+        donorName: donationData.donorName ? sanitizeHtml(donationData.donorName) : undefined,
+        donorEmail: donationData.donorEmail ? sanitizeHtml(donationData.donorEmail) : undefined,
+        message: donationData.message ? sanitizeHtml(donationData.message) : undefined
+      };
 
       // Validate network
-      const supportedNetworks = {
+      const supportedNetworks: Record<string, string[]> = {
         BTC: ['bitcoin'],
         ETH: ['erc20'],
         USDT: ['sol', 'erc20', 'bep20', 'trc20'],
@@ -249,44 +259,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         TRX: ['trc20']
       };
 
-      const network = donationData.network || (supportedNetworks[donationData.currency] || [])[0];
-      if (!network || !supportedNetworks[donationData.currency].includes(network)) {
+      const network = sanitizedData.network || (supportedNetworks[sanitizedData.currency] || [])[0];
+      if (!network || !supportedNetworks[sanitizedData.currency]?.includes(network)) {
         return res.status(400).json({
-          error: `Unsupported network for ${donationData.currency}. Supported: ${supportedNetworks[donationData.currency].join(', ')}`
-        });
-      }
-
-      // Validate amount
-      if (donationData.amount < 1) {
-        return res.status(400).json({
-          error: 'Minimum donation amount is $1.00 USD'
+          error: `Unsupported network for ${sanitizedData.currency}. Supported: ${supportedNetworks[sanitizedData.currency]?.join(', ')}`
         });
       }
 
       // Get current crypto prices
       const cryptoPrices = await getCryptoPrices();
-      const cryptoPrice = cryptoPrices[donationData.currency].USD;
+      const cryptoPrice = (cryptoPrices as any)[sanitizedData.currency]?.USD;
 
       // Calculate crypto amount needed
-      const cryptoAmount = calculateCryptoAmount(donationData.amount, cryptoPrice, donationData.currency);
+      const cryptoAmount = calculateCryptoAmount(sanitizedData.amount, cryptoPrice, sanitizedData.currency);
 
       // Get wallet address for specific network
-      const walletAddress = WALLET_ADDRESSES[donationData.currency]?.[network];
-      const memo = donationData.currency === 'XRP' ? XRP_DESTINATION_TAG : undefined;
+      const walletAddress = WALLET_ADDRESSES[sanitizedData.currency as CurrencyKey]?.[network];
+      const memo = sanitizedData.currency === 'XRP' ? XRP_DESTINATION_TAG : undefined;
 
       if (!walletAddress) {
         return res.status(500).json({
-          error: `Wallet address not configured for ${donationData.currency} on ${network} network`
+          error: `Wallet address not configured for ${sanitizedData.currency} on ${network} network`
         });
       }
 
       // Generate payment URI and QR code
-      const paymentURI = generatePaymentURI(donationData.currency, network, walletAddress, cryptoAmount, 'Saintlammy Foundation Donation', memo);
+      const paymentURI = generatePaymentURI(sanitizedData.currency, network, walletAddress, cryptoAmount, 'Saintlammy Foundation Donation', memo);
       const qrCode = await QRCode.toDataURL(paymentURI);
 
       // Store donation attempt
       const donationId = await storeCryptoDonation({
-        ...donationData,
+        ...sanitizedData,
         network,
         cryptoAmount,
         cryptoPrice,
@@ -295,34 +298,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Create network-specific payment instructions
-      const confirmations = {
+      const confirmationsMap: Record<string, string> = {
         bitcoin: '1-6',
         erc20: '12-20',
         sol: '32',
         bep20: '12',
         trc20: '19',
         xrpl: '1-3'
-      }[network] || '1-6';
+      };
+      const confirmations = confirmationsMap[network] || '1-6';
 
-      const networkName = {
+      const networkNameMap: Record<string, string> = {
         bitcoin: 'Bitcoin Network',
         erc20: 'Ethereum (ERC-20)',
         sol: 'Solana',
         bep20: 'BSC (BEP-20)',
         trc20: 'Tron (TRC-20)',
         xrpl: 'XRP Ledger'
-      }[network] || network;
+      };
+      const networkName = networkNameMap[network] || network;
 
       let paymentInstructions = `
-Send exactly ${cryptoAmount} ${donationData.currency} to the address above.
+Send exactly ${cryptoAmount} ${sanitizedData.currency} to the address above.
 Network: ${networkName}
 Important:
-- Send only ${donationData.currency} on ${networkName}
+- Send only ${sanitizedData.currency} on ${networkName}
 - Send the exact amount to ensure proper tracking
 - Payment expires in 24 hours
 - Allow ${confirmations} confirmations for processing`;
 
-      if (donationData.currency === 'XRP' && memo) {
+      if (sanitizedData.currency === 'XRP' && memo) {
         paymentInstructions += `\n- IMPORTANT: Include destination tag: ${memo}`;
       }
 
@@ -333,10 +338,10 @@ Important:
         donationId,
         walletAddress,
         cryptoAmount,
-        currency: donationData.currency,
+        currency: sanitizedData.currency,
         network,
         memo,
-        usdAmount: donationData.amount,
+        usdAmount: sanitizedData.amount,
         qrCode,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         paymentInstructions

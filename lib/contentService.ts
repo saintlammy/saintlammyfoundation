@@ -37,6 +37,14 @@ export interface ContentItem {
   publishDate?: string;
   views: number;
   metadata?: Record<string, any>;
+  teamData?: {
+    role: string;
+    expertise: string;
+    experience: string;
+    focus: string[];
+    email: string;
+    phone: string;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -239,10 +247,10 @@ export class ContentService {
   }> {
     const mockData = mockContentItems.map(item => ({
       ...item,
-      created_at: item.lastModified?.toISOString() || new Date().toISOString(),
-      updated_at: item.lastModified?.toISOString() || new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       content: item.excerpt || '',
-      publishDate: item.publishDate?.toISOString(),
+      publishDate: typeof item.publishDate === 'string' ? item.publishDate : (item.publishDate as any)?.toISOString(),
       author: {
         name: item.author.name,
         email: `${item.author.name.toLowerCase().replace(' ', '.')}@saintlammyfoundation.org`
@@ -289,11 +297,12 @@ const mockContentItems: ContentItem[] = [
     type: 'team',
     status: 'published',
     author: { name: 'Admin' },
-    lastModified: new Date('2024-01-10'),
-    publishDate: new Date('2024-01-01'),
+    publishDate: '2024-01-01',
     views: 0,
     excerpt: 'Partnership Director with 8+ years in nonprofit partnerships',
     slug: 'sarah-adebayo',
+    created_at: '2024-01-01T00:00:00.000Z',
+    updated_at: '2024-01-01T00:00:00.000Z',
     teamData: {
       role: 'Partnership Director',
       expertise: 'Corporate Partnerships & Strategic Alliances',
@@ -309,11 +318,12 @@ const mockContentItems: ContentItem[] = [
     type: 'team',
     status: 'published',
     author: { name: 'Admin' },
-    lastModified: new Date('2024-01-10'),
-    publishDate: new Date('2024-01-01'),
+    publishDate: '2024-01-01',
     views: 0,
     excerpt: 'NGO Relations Manager with 6+ years in NGO partnerships',
     slug: 'michael-okafor',
+    created_at: '2024-01-01T00:00:00.000Z',
+    updated_at: '2024-01-01T00:00:00.000Z',
     teamData: {
       role: 'NGO Relations Manager',
       expertise: 'Inter-organizational Collaboration',
@@ -329,11 +339,12 @@ const mockContentItems: ContentItem[] = [
     type: 'team',
     status: 'published',
     author: { name: 'Admin' },
-    lastModified: new Date('2024-01-10'),
-    publishDate: new Date('2024-01-01'),
+    publishDate: '2024-01-01',
     views: 0,
     excerpt: 'Community Engagement Lead with 5+ years in community development',
     slug: 'fatima-ibrahim',
+    created_at: '2024-01-01T00:00:00.000Z',
+    updated_at: '2024-01-01T00:00:00.000Z',
     teamData: {
       role: 'Community Engagement Lead',
       expertise: 'Individual & Community Partnerships',
@@ -388,18 +399,26 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
     item.teamData
   );
 
-  return teamItems.map(item => ({
-    id: item.id,
-    name: item.title,
-    role: item.teamData!.role,
-    expertise: item.teamData!.expertise,
-    experience: item.teamData!.experience,
-    focus: item.teamData!.focus,
-    email: item.teamData!.email,
-    phone: item.teamData!.phone,
-    status: 'active' as const,
-    avatar: item.featuredImage || null
-  }));
+  return teamItems.map(item => {
+    const teamMember: TeamMember = {
+      id: item.id,
+      name: item.title,
+      role: item.teamData!.role,
+      expertise: item.teamData!.expertise,
+      experience: item.teamData!.experience,
+      focus: item.teamData!.focus,
+      email: item.teamData!.email,
+      phone: item.teamData!.phone,
+      status: 'active' as 'active' | 'inactive'
+    };
+
+    // Only add avatar property if featuredImage exists
+    if (item.featuredImage) {
+      teamMember.avatar = item.featuredImage;
+    }
+
+    return teamMember;
+  });
 };
 
 export const getPartnershipProcess = async (): Promise<PartnershipProcess[]> => {
