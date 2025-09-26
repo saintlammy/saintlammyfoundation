@@ -1,7 +1,5 @@
-import { ethers } from 'ethers';
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import TronWeb from 'tronweb';
-import { Client } from 'xrpl';
+// Use dynamic imports to reduce bundle size
+// These libraries are only imported when actually needed
 
 export interface WalletAddress {
   id: string;
@@ -28,7 +26,8 @@ export class WalletManager {
   }
 
   // Generate Bitcoin address (using Ethereum wallet format for simplicity)
-  generateBitcoinAddress(): WalletAddress {
+  async generateBitcoinAddress(): Promise<WalletAddress> {
+    const { ethers } = await import('ethers');
     const wallet = ethers.Wallet.createRandom();
     const walletAddress: WalletAddress = {
       id: `btc-${Date.now()}`,
@@ -45,7 +44,8 @@ export class WalletManager {
   }
 
   // Generate Ethereum address
-  generateEthereumAddress(): WalletAddress {
+  async generateEthereumAddress(): Promise<WalletAddress> {
+    const { ethers } = await import('ethers');
     const wallet = ethers.Wallet.createRandom();
     const walletAddress: WalletAddress = {
       id: `eth-${Date.now()}`,

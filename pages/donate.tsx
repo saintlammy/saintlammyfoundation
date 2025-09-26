@@ -2,8 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Navigation from '@/components/Navigation';
 import { Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin, Banknote, Globe, ChevronDown, ExternalLink } from 'lucide-react';
-import { SiBitcoin, SiEthereum, SiTether, SiRipple } from 'react-icons/si';
-import { walletManager } from '@/lib/wallet';
+// Use simple SVG icons instead of heavy react-icons
+const BitcoinIcon = () => (
+  <div className="w-5 h-5 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold">₿</div>
+);
+const EthereumIcon = () => (
+  <div className="w-5 h-5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">Ξ</div>
+);
+const TetherIcon = () => (
+  <div className="w-5 h-5 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-xs font-bold">₮</div>
+);
+const RippleIcon = () => (
+  <div className="w-5 h-5 bg-gradient-to-br from-blue-300 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">✕</div>
+);
+import { getWalletAddress, copyToClipboard } from '@/lib/walletConfig';
 
 const Donate: React.FC = () => {
   const [donationAmount, setDonationAmount] = useState('');
@@ -23,12 +35,12 @@ const Donate: React.FC = () => {
     btc: {
       name: 'Bitcoin (BTC)',
       symbol: 'BTC',
-      icon: SiBitcoin,
+      icon: BitcoinIcon,
       color: 'from-orange-500 to-orange-600',
       networks: {
         bitcoin: {
           name: 'Bitcoin Network',
-          address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+          address: getWalletAddress('btc')?.address || 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
           explorer: 'https://blockstream.info/tx/'
         }
       }
@@ -36,7 +48,7 @@ const Donate: React.FC = () => {
     eth: {
       name: 'Ethereum (ETH)',
       symbol: 'ETH',
-      icon: SiEthereum,
+      icon: EthereumIcon,
       color: 'from-blue-500 to-blue-600',
       networks: {
         erc20: {
@@ -77,7 +89,7 @@ const Donate: React.FC = () => {
     usdt: {
       name: 'Tether (USDT)',
       symbol: 'USDT',
-      icon: SiTether,
+      icon: TetherIcon,
       color: 'from-green-500 to-green-600',
       networks: {
         sol: {
@@ -105,7 +117,7 @@ const Donate: React.FC = () => {
     xrp: {
       name: 'XRP (XRP)',
       symbol: 'XRP',
-      icon: SiRipple,
+      icon: RippleIcon,
       color: 'from-indigo-500 to-indigo-600',
       networks: {
         xrpl: {
@@ -202,10 +214,12 @@ const Donate: React.FC = () => {
     sortCode: '011-152-003'
   };
 
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedAddress(type);
-    setTimeout(() => setCopiedAddress(''), 2000);
+  const handleCopyToClipboard = async (text: string, type: string) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopiedAddress(type);
+      setTimeout(() => setCopiedAddress(''), 2000);
+    }
   };
 
   const handleCryptoSelect = (cryptoId: string) => {
@@ -456,7 +470,7 @@ const Donate: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <span className="text-white font-medium">{bankDetails.accountNumber}</span>
                           <button
-                            onClick={() => copyToClipboard(bankDetails.accountNumber, 'account')}
+                            onClick={() => handleCopyToClipboard(bankDetails.accountNumber, 'account')}
                             className="text-accent-400 hover:text-accent-300 transition-colors"
                           >
                             {copiedAddress === 'account' ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -560,7 +574,7 @@ const Donate: React.FC = () => {
                             {cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].name} Address ({cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks[selectedNetwork].name}):
                           </span>
                           <button
-                            onClick={() => copyToClipboard(getCurrentCryptoAddress(), 'address')}
+                            onClick={() => handleCopyToClipboard(getCurrentCryptoAddress(), 'address')}
                             className="text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-2"
                           >
                             {copiedAddress === 'address' ? (
@@ -585,7 +599,7 @@ const Donate: React.FC = () => {
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-gray-300 font-medium">Memo/Tag (Required):</span>
                               <button
-                                onClick={() => copyToClipboard(getCurrentMemo(), 'memo')}
+                                onClick={() => handleCopyToClipboard(getCurrentMemo(), 'memo')}
                                 className="text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-2"
                               >
                                 {copiedAddress === 'memo' ? (

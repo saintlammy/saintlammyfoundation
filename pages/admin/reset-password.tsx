@@ -108,13 +108,48 @@ const ResetPassword: React.FC = () => {
     setErrors({});
 
     try {
-      // Note: Supabase automatically handles password reset with the access token
-      // The actual password update is handled by Supabase's built-in flow
-      // This form is primarily for UX and validation
+      // Try direct Supabase approach first
+      try {
+        const { supabase } = await import('@/lib/supabase');
+
+        if (supabase) {
+          const { error } = await supabase.auth.updateUser({
+            password: formData.password
+          });
+
+          if (error) {
+            throw error;
+          }
+
+          setSuccess(true);
+          return;
+        }
+      } catch (directError) {
+        console.warn('Direct Supabase approach failed, trying API fallback:', directError);
+      }
+
+      // Fallback to API endpoint
+      const response = await fetch('/api/auth/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: formData.password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update password');
+      }
 
       setSuccess(true);
     } catch (err) {
-      setErrors({ general: 'Failed to reset password. Please try again.' });
+      console.error('Password reset error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reset password. Please try again.';
+      setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
     }

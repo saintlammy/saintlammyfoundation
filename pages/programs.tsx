@@ -396,4 +396,12 @@ const Programs: React.FC = () => {
   return <ProgramsContent />;
 };
 
+// Enable ISR for better performance
+export async function getStaticProps() {
+  return {
+    props: {},
+    revalidate: 3600 // Revalidate every hour
+  };
+}
+
 export default Programs;

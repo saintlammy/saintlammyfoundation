@@ -50,6 +50,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Auto refresh session before expiry
+  useEffect(() => {
+    if (!session || !supabase) return;
+
+    const refreshTimer = setInterval(async () => {
+      const now = new Date().getTime();
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const timeUntilExpiry = expiresAt - now;
+
+      // Refresh 5 minutes before expiry
+      if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
+        console.log('Auto-refreshing session before expiry');
+        await refreshSession();
+      }
+    }, 60 * 1000); // Check every minute
+
+    return () => clearInterval(refreshTimer);
+  }, [session]);
+
   // Enhanced role-based authentication logic
   const isAdmin = Boolean(
     user?.email?.includes('@saintlammyfoundation.org') ||
@@ -76,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Get initial session
     const getInitialSession = async () => {
       if (!supabase) {
+        console.warn('Supabase not available - skipping session initialization');
         setLoading(false);
         return;
       }
@@ -84,12 +104,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
           console.error('Error getting session:', error);
+          // Don't clear session state on network errors
+          if (!error.message?.includes('fetch failed')) {
+            setSession(null);
+            setUser(null);
+          }
         } else {
           setSession(session);
           setUser(session?.user as AuthUser ?? null);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
+        // Only clear session on non-network errors
+        if (!(error instanceof Error && error.message.includes('fetch failed'))) {
+          setSession(null);
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -99,26 +129,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Set up auth state listener
     if (supabase) {
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        setSession(session);
-        setUser(session?.user as AuthUser ?? null);
-        setLoading(false);
+      try {
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state changed:', event, session?.user?.email);
+          setSession(session);
+          setUser(session?.user as AuthUser ?? null);
+          setLoading(false);
 
-        // Handle auth events
-        if (event === 'SIGNED_OUT') {
-          router.push('/admin/login');
-        } else if (event === 'SIGNED_IN') {
-          // Redirect to admin dashboard if signing in and on login page
-          if (router.pathname === '/admin/login') {
-            router.push('/admin');
+          // Handle auth events
+          if (event === 'SIGNED_OUT') {
+            // Clear local storage and redirect
+            localStorage.removeItem('supabase.auth.token');
+            router.push('/admin/login');
+          } else if (event === 'SIGNED_IN') {
+            // Redirect to admin dashboard if signing in and on login page
+            if (router.pathname === '/admin/login') {
+              router.push('/admin');
+            }
+          } else if (event === 'TOKEN_REFRESHED') {
+            console.log('Session token refreshed successfully');
           }
-        }
-      });
+        });
 
-      return () => subscription.unsubscribe();
+        return () => {
+          try {
+            subscription.unsubscribe();
+          } catch (error) {
+            console.warn('Error unsubscribing from auth state changes:', error);
+          }
+        };
+      } catch (error) {
+        console.error('Error setting up auth state listener:', error);
+      }
     }
   }, [router]);
 
@@ -228,22 +272,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const resetPassword = async (email: string) => {
     if (!supabase) {
-      return { error: new Error('Supabase not available') as AuthError };
+      return { error: new Error('Authentication service not available. Please contact support.') as AuthError };
     }
 
     try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { error: new Error('Please enter a valid email address') as AuthError };
+      }
+
+      // Only allow admin emails for password reset
+      const isValidAdminEmail = email.includes('@saintlammyfoundation.org') ||
+                               email === 'saintlammyfoundation@gmail.com' ||
+                               email === 'saintlammy@gmail.com';
+
+      if (!isValidAdminEmail) {
+        return { error: new Error('Password reset is only available for admin accounts') as AuthError };
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin/reset-password`
       });
 
       if (error) {
         console.error('Reset password error:', error);
+        // Handle specific error cases
+        if (error.message.includes('fetch failed') || error.message.includes('network')) {
+          return { error: new Error('Network error. Please check your connection and try again.') as AuthError };
+        }
         return { error };
       }
 
       return { error: null };
     } catch (error) {
       console.error('Reset password error:', error);
+      if (error instanceof Error && error.message.includes('fetch failed')) {
+        return { error: new Error('Network error. Please check your connection and try again.') as AuthError };
+      }
       return { error: error as AuthError };
     }
   };
@@ -276,18 +342,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const refreshSession = async () => {
-    if (!supabase) return;
+    if (!supabase) {
+      console.warn('Supabase not available - cannot refresh session');
+      return;
+    }
 
     try {
       const { data: { session }, error } = await supabase.auth.refreshSession();
       if (error) {
         console.error('Refresh session error:', error);
+        // If token refresh fails, try to get existing session
+        try {
+          const { data: { session: existingSession } } = await supabase.auth.getSession();
+          if (existingSession) {
+            setSession(existingSession);
+            setUser(existingSession.user as AuthUser ?? null);
+          } else {
+            // No valid session - clear state
+            setSession(null);
+            setUser(null);
+          }
+        } catch (getSessionError) {
+          console.error('Failed to get existing session:', getSessionError);
+          // Clear session state if everything fails
+          setSession(null);
+          setUser(null);
+        }
       } else {
         setSession(session);
         setUser(session?.user as AuthUser ?? null);
       }
     } catch (error) {
       console.error('Refresh session error:', error);
+      // If network error or other issue, try to maintain existing session
+      if (error instanceof Error && error.message.includes('fetch failed')) {
+        console.warn('Network error during session refresh - maintaining existing session');
+        // Don't clear the session if it's a network error
+      } else {
+        // Other errors - clear session state
+        setSession(null);
+        setUser(null);
+      }
     }
   };
 

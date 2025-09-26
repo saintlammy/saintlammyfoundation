@@ -277,4 +277,12 @@ const About: React.FC = () => {
   );
 };
 
+// Enable ISR for better performance
+export async function getStaticProps() {
+  return {
+    props: {},
+    revalidate: 3600 // Revalidate every hour
+  };
+}
+
 export default About;

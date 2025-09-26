@@ -78,17 +78,20 @@ class DonationService {
         return { encrypted: data, hash: hashData };
       } catch (rpcError) {
         // Fallback to client-side encryption if RPC functions don't exist
-        throw rpcError;
+        console.warn('RPC functions not available, using client-side encryption:', rpcError);
+        // Fall through to client-side encryption below
       }
     } catch (error) {
-      // Fallback to simple encryption if database functions aren't available
-      const key = process.env.ENCRYPTION_KEY || 'saintlammy-foundation-2024';
-      const cipher = crypto.createCipher('aes256', key);
-      const encrypted = cipher.update(email, 'utf8', 'hex') + cipher.final('hex');
-      const hash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex');
-
-      return { encrypted, hash };
+      console.warn('Supabase client error, using client-side encryption:', error);
     }
+
+    // Client-side encryption fallback
+    const key = process.env.ENCRYPTION_KEY || 'saintlammy-foundation-2024';
+    const cipher = crypto.createCipher('aes256', key);
+    const encrypted = cipher.update(email, 'utf8', 'hex') + cipher.final('hex');
+    const hash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex');
+
+    return { encrypted, hash };
   }
 
   /**
@@ -618,17 +621,41 @@ class DonationService {
    */
   async testConnection(): Promise<boolean> {
     try {
+      // First check if Supabase is configured and available
+      if (!isSupabaseAvailable || !supabase) {
+        console.warn('Supabase not configured or not available');
+        return false;
+      }
+
       const testClient = getTypedSupabaseClient();
       const { error } = await (testClient as any)
         .from('donations')
         .select('id')
-        .limit(1)
-        .single();
+        .limit(1);
 
-      // Even if no data, a successful query means connection works
-      return error?.code !== 'PGRST301'; // Not a connection error
+      // Check for specific connection errors
+      if (error) {
+        // Common connection error codes
+        const connectionErrors = ['PGRST301', 'network_error', 'fetch_error'];
+        if (connectionErrors.some(code => error.code === code || error.message?.includes('fetch failed'))) {
+          console.error('Database connection failed:', error);
+          return false;
+        }
+        // Other errors (like no data) don't indicate connection issues
+        return true;
+      }
+
+      return true;
     } catch (error) {
       console.error('Database connection test failed:', error);
+      // Check if it's a network/fetch error
+      if (error instanceof Error && (
+        error.message.includes('fetch failed') ||
+        error.message.includes('Could not resolve host') ||
+        error.message.includes('network')
+      )) {
+        return false;
+      }
       return false;
     }
   }
