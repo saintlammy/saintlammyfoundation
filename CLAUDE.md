@@ -11,6 +11,18 @@ This is a Next.js website for the Saintlammy Foundation, a non-profit organizati
 
 ## Recent Completed Work
 
+### Fixed Website Button Functionality (September 27, 2025)
+- **Fixed 25+ unconnected buttons** across all website pages
+- **Connected newsletter subscription** to backend API endpoint
+- **Added donation modal integration** to multiple pages with proper context
+- **Improved user experience** by making all buttons functional
+
+### Fixed Crypto Payment System (September 27, 2025)
+- **Resolved "Generate payment address or QR code resulted in Failed payment" error**
+- **Fixed 400 status errors** in wallet generation API
+- **Updated system to use existing static wallet addresses** instead of broken dynamic generation
+- **Verified QR code generation works** for all supported cryptocurrencies
+
 ### Fixed CMS Frontend Issues (September 26-27, 2025)
 - **Fixed all non-working Add and Action buttons** in content management pages
 - **Resolved ContentEditor modal integration** - Added missing `isOpen` prop
@@ -43,10 +55,12 @@ All content types now have fully functional management interfaces:
 - 📱 **Responsive Design** for all devices
 - 🛡️ **Admin Dashboard** with complete content management
 - 📊 **Analytics Dashboard** with donation and engagement metrics
-- 💰 **Donation System** with multiple payment options
+- 💰 **Donation System** with multiple payment options including cryptocurrency
+- 🪙 **Crypto Payment System** with QR code generation for Bitcoin, Ethereum, XRP, Solana, Tron, BSC
 - 👥 **Volunteer Management** system
-- 📧 **Newsletter Signup** integration
+- 📧 **Newsletter Signup** integration connected to backend
 - 🔒 **Authentication System** for admin access
+- 🔗 **Functional UI** with all buttons properly connected to actions
 
 ## Development Commands
 ```bash
@@ -93,6 +107,14 @@ All content management APIs follow RESTful patterns:
 - **Error Handling**: Graceful degradation with user feedback
 
 ## Recent Bug Fixes
+
+### Latest (September 27, 2025)
+1. **Crypto Payment System**: Fixed 400 errors in wallet generation API by using static addresses
+2. **Button Connectivity**: Connected 25+ unconnected buttons across website pages
+3. **Newsletter Integration**: Synced newsletter signup to backend API instead of placeholder alerts
+4. **Donation Modal**: Enhanced with proper context and navigation integration
+
+### Previous (September 26-27, 2025)
 1. **ContentEditor Integration**: Added missing `isOpen` prop to all modal instances
 2. **Syntax Errors**: Fixed duplicate catch blocks in programs.tsx and stories.tsx
 3. **API Connections**: Updated all content pages to use specific API endpoints
@@ -102,11 +124,24 @@ All content management APIs follow RESTful patterns:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Crypto Wallet Addresses (for donation system)
+NEXT_PUBLIC_BTC_WALLET_ADDRESS=your_bitcoin_address
+NEXT_PUBLIC_ETH_WALLET_ADDRESS=your_ethereum_address
+NEXT_PUBLIC_XRP_WALLET_ADDRESS=your_xrp_address
+NEXT_PUBLIC_XRP_DESTINATION_TAG=your_xrp_tag
+NEXT_PUBLIC_SOL_WALLET_ADDRESS=your_solana_address
+NEXT_PUBLIC_TRX_WALLET_ADDRESS=your_tron_address
+NEXT_PUBLIC_USDT_SOL_ADDRESS=your_usdt_solana_address
+NEXT_PUBLIC_USDC_SOL_ADDRESS=your_usdc_solana_address
 ```
 
 ## Next Steps / TODO
+- [x] ~~Fix crypto payment system~~ ✅ **COMPLETED**
+- [x] ~~Connect unconnected buttons~~ ✅ **COMPLETED**
+- [x] ~~Sync newsletter to backend~~ ✅ **COMPLETED**
 - [ ] Set up proper Supabase database tables
-- [ ] Implement real payment gateway integration
+- [ ] Implement traditional payment gateway integration (Stripe/PayPal)
 - [ ] Add email notification system
 - [ ] Set up automated backups
 - [ ] Performance optimization
@@ -119,6 +154,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 - The system is designed to work with or without database connectivity
 - Admin authentication is ready for production integration
 - All components follow consistent TypeScript patterns
+- Crypto payment system uses static wallet addresses for security
+- All website buttons are now functional and connected
+- Newsletter subscription is synced to backend API
 
 ## Last Updated
-September 27, 2025 - Complete CMS functionality verified and working
+September 27, 2025 - Fixed crypto payment system and unconnected buttons across website

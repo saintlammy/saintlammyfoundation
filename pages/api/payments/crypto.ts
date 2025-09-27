@@ -4,6 +4,7 @@ import * as QRCode from 'qrcode';
 import { donationService } from '@/lib/donationService';
 import { CryptoDonationSchema } from '@/lib/schemas';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
+import { blockchainVerification } from '@/lib/blockchainVerification';
 
 interface CryptoDonationRequest {
   amount: number;
@@ -211,17 +212,49 @@ async function storeCryptoDonation(donationData: any) {
   }
 }
 
-// Function to verify transaction (placeholder for blockchain verification)
-async function verifyTransaction(txHash: string, currency: string, expectedAmount: number, walletAddress: string): Promise<boolean> {
-  // TODO: Implement blockchain verification
-  // This would involve:
-  // 1. Calling blockchain APIs (Bitcoin, Ethereum)
-  // 2. Verifying transaction exists
-  // 3. Confirming amount and recipient address
-  // 4. Checking confirmation count
+// Function to verify transaction using blockchain APIs
+async function verifyTransaction(
+  txHash: string,
+  currency: string,
+  expectedAmount: number,
+  walletAddress: string,
+  network: string
+): Promise<{ isValid: boolean; confirmations: number; details?: any }> {
+  try {
+    console.log('Verifying transaction:', { txHash, currency, expectedAmount, walletAddress, network });
 
-  console.log('Verifying transaction:', { txHash, currency, expectedAmount, walletAddress });
-  return true; // Placeholder
+    const verification = await blockchainVerification.verifyTransaction(
+      txHash,
+      network,
+      expectedAmount,
+      walletAddress,
+      currency
+    );
+
+    console.log('Blockchain verification result:', verification);
+
+    return {
+      isValid: verification.isValid,
+      confirmations: verification.confirmations,
+      details: {
+        actualAmount: verification.amount,
+        fromAddress: verification.fromAddress,
+        toAddress: verification.toAddress,
+        blockHeight: verification.blockHeight,
+        timestamp: verification.timestamp,
+        error: verification.error
+      }
+    };
+  } catch (error) {
+    console.error('Transaction verification error:', error);
+    return {
+      isValid: false,
+      confirmations: 0,
+      details: {
+        error: error instanceof Error ? error.message : 'Unknown verification error'
+      }
+    };
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -410,17 +443,118 @@ Important:
         return res.status(500).json({ error: 'Failed to update donation' });
       }
 
-      // TODO: Implement actual blockchain verification in background
-      // const isValid = await verifyTransaction(txHash, donation.currency, donation.cryptoAmount, donation.walletAddress);
-      // if (isValid) {
-      //   await donationService.updateDonationStatus(donationId, 'completed', txHash);
-      // }
+      // Parse donation notes to get transaction details
+      const notes = typeof donation.notes === 'string' ? JSON.parse(donation.notes) : donation.notes;
+      const expectedAmount = notes?.cryptoAmount || 0;
+      const walletAddress = notes?.walletAddress || '';
+      const network = notes?.network || '';
 
-      return res.status(200).json({
-        success: true,
-        message: 'Transaction submitted for verification',
-        status: 'verifying'
-      });
+      // Perform blockchain verification
+      try {
+        const verificationResult = await verifyTransaction(
+          txHash,
+          donation.currency,
+          expectedAmount,
+          walletAddress,
+          network
+        );
+
+        console.log('Transaction verification completed:', verificationResult);
+
+        // Update donation status based on verification result
+        if (verificationResult.isValid) {
+          await donationService.updateDonationStatus(donationId, 'completed', txHash);
+
+          // Store verification details in notes
+          const updatedNotes = {
+            ...notes,
+            verification: {
+              verified: true,
+              confirmations: verificationResult.confirmations,
+              verifiedAt: new Date().toISOString(),
+              details: verificationResult.details
+            }
+          };
+
+          // Update notes with verification details
+          await donationService.updateDonationNotes(donationId, {
+            txHash,
+            confirmations: verificationResult.confirmations,
+            blockHeight: verificationResult.details?.blockHeight,
+            timestamp: verificationResult.details?.timestamp,
+            verifiedAmount: verificationResult.details?.actualAmount,
+            fromAddress: verificationResult.details?.fromAddress,
+            toAddress: verificationResult.details?.toAddress
+          });
+
+          return res.status(200).json({
+            success: true,
+            message: 'Transaction verified and donation completed',
+            status: 'completed',
+            verification: {
+              confirmed: true,
+              confirmations: verificationResult.confirmations,
+              details: verificationResult.details
+            }
+          });
+        } else {
+          // Verification failed
+          const updatedNotes = {
+            ...notes,
+            verification: {
+              verified: false,
+              confirmations: verificationResult.confirmations,
+              verifiedAt: new Date().toISOString(),
+              details: verificationResult.details
+            }
+          };
+
+          await donationService.updateDonationNotes(donationId, {
+            error: verificationResult.details?.error || 'Transaction verification failed',
+            confirmations: verificationResult.confirmations,
+            verifiedAmount: verificationResult.details?.actualAmount,
+            fromAddress: verificationResult.details?.fromAddress,
+            toAddress: verificationResult.details?.toAddress
+          });
+
+          return res.status(200).json({
+            success: false,
+            message: 'Transaction verification failed',
+            status: 'verification_failed',
+            verification: {
+              confirmed: false,
+              confirmations: verificationResult.confirmations,
+              details: verificationResult.details
+            }
+          });
+        }
+      } catch (verificationError) {
+        console.error('Verification error:', verificationError);
+
+        // Store verification error in notes
+        const updatedNotes = {
+          ...notes,
+          verification: {
+            verified: false,
+            error: verificationError instanceof Error ? verificationError.message : 'Unknown verification error',
+            verifiedAt: new Date().toISOString()
+          }
+        };
+
+        await donationService.updateDonationNotes(donationId, {
+          error: verificationError instanceof Error ? verificationError.message : 'Unknown verification error'
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: 'Transaction submitted for manual verification',
+          status: 'pending_manual_verification',
+          verification: {
+            confirmed: false,
+            error: 'Automatic verification failed - transaction will be manually reviewed'
+          }
+        });
+      }
     } catch (error) {
       console.error('Error updating donation:', error);
       return res.status(500).json({

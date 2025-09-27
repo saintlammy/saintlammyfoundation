@@ -409,6 +409,69 @@ class DonationService {
   }
 
   /**
+   * Update donation notes with blockchain verification data
+   */
+  async updateDonationNotes(
+    donationId: string,
+    verificationData: {
+      txHash?: string;
+      confirmations?: number;
+      blockHeight?: number;
+      timestamp?: string;
+      verifiedAmount?: number;
+      fromAddress?: string;
+      toAddress?: string;
+      error?: string;
+    }
+  ): Promise<boolean> {
+    try {
+      // Get current donation to merge with existing notes
+      const client = getTypedSupabaseClient();
+      const { data: donation, error: fetchError } = await (client as any)
+        .from('donations')
+        .select('notes')
+        .eq('id', donationId)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching donation for notes update:', fetchError);
+        return false;
+      }
+
+      // Parse existing notes
+      const existingNotes = typeof donation.notes === 'string'
+        ? JSON.parse(donation.notes)
+        : donation.notes || {};
+
+      // Merge verification data with existing notes
+      const updatedNotes = {
+        ...existingNotes,
+        verification: {
+          ...existingNotes.verification,
+          ...verificationData,
+          lastVerified: new Date().toISOString(),
+        },
+      };
+
+      // Update the donation with merged notes
+      const { error } = await (client as any)
+        .from('donations')
+        .update({ notes: JSON.stringify(updatedNotes) })
+        .eq('id', donationId);
+
+      if (error) {
+        console.error('Error updating donation notes:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in updateDonationNotes:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update donor's total donated amount
    */
   private async updateDonorTotalDonated(donationId: string): Promise<void> {

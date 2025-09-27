@@ -18,14 +18,12 @@ export const DonationFormSchema = z.object({
 
 export const CryptoDonationSchema = z.object({
   amount: ValidationUtils.amount,
-  currency: ValidationUtils.enum(['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB', 'SOL'], 'cryptocurrency'),
-  network: z.string().min(1, 'Network is required'),
-  cryptoAmount: z.number().positive('Crypto amount must be positive'),
-  walletAddress: ValidationUtils.cryptoAddress,
+  currency: ValidationUtils.enum(['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB', 'SOL', 'TRX'], 'cryptocurrency'),
+  network: z.string().min(1, 'Network is required').optional(),
   donorName: ValidationUtils.name.optional(),
   donorEmail: ValidationUtils.email.optional(),
   message: ValidationUtils.message.optional(),
-  memo: z.string().max(100).optional(),
+  source: z.string().optional(),
   category: ValidationUtils.enum(['orphan', 'widow', 'home', 'general'], 'category').default('general'),
 });
 
