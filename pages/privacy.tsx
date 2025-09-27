@@ -3,10 +3,10 @@ import Head from 'next/head';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Shield, Eye, Lock, Users, Mail, Database } from 'lucide-react';
 
-const PrivacyContent: React.FC = () => {
+const PrivacyPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   return (
@@ -195,12 +195,5 @@ const PrivacyContent: React.FC = () => {
   );
 };
 
-const PrivacyPage: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <PrivacyContent />
-    </DonationModalProvider>
-  );
-};
 
 export default PrivacyPage;

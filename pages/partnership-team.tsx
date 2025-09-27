@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { GetStaticProps } from 'next';
 import Navigation from '@/components/Navigation';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { getTeamMembers, getPartnershipProcess, submitPartnershipApplication, TeamMember, PartnershipProcess } from '@/lib/contentService';
 import {
   Users,

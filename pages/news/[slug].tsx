@@ -6,7 +6,7 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Calendar, Clock, User, ArrowRight, Share2, Facebook, Twitter, Linkedin, Tag, Heart } from 'lucide-react';
 
 interface NewsArticle {
@@ -27,7 +27,7 @@ interface NewsDetailProps {
   relatedArticles: NewsArticle[];
 }
 
-const NewsDetailContent: React.FC<NewsDetailProps> = ({ article, relatedArticles }) => {
+const NewsDetailPage: React.FC<NewsDetailProps> = ({ article, relatedArticles }) => {
   const { openDonationModal } = useDonationModal();
 
   const getCategoryColor = (category: string) => {
@@ -323,9 +323,6 @@ const NewsDetailContent: React.FC<NewsDetailProps> = ({ article, relatedArticles
   );
 };
 
-const NewsDetailPage: React.FC<NewsDetailProps> = (props) => {
-  return <NewsDetailContent {...props} />;
-};
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // In a real app, fetch all article slugs from your CMS/database

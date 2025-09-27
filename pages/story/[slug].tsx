@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Users, GraduationCap, Heart, Building, Calendar, MapPin, Target, ArrowLeft, Share2 } from 'lucide-react';
 
 interface StoryData {
@@ -31,7 +31,7 @@ interface StoryPageProps {
   story: StoryData | null;
 }
 
-const StoryContent: React.FC<StoryPageProps> = ({ story }) => {
+const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   const { openDonationModal } = useDonationModal();
 
   if (!story) {
@@ -352,13 +352,6 @@ const StoryContent: React.FC<StoryPageProps> = ({ story }) => {
   );
 };
 
-const StoryPage: React.FC<StoryPageProps> = (props) => {
-  return (
-    <DonationModalProvider>
-      <StoryContent {...props} />
-    </DonationModalProvider>
-  );
-};
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug as string;

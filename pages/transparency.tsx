@@ -3,10 +3,10 @@ import Head from 'next/head';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { PieChart, BarChart3, TrendingUp, DollarSign, FileText, Download, Eye, Shield } from 'lucide-react';
 
-const TransparencyContent: React.FC = () => {
+const TransparencyPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   const financialData = [
@@ -391,12 +391,5 @@ const TransparencyContent: React.FC = () => {
   );
 };
 
-const TransparencyPage: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <TransparencyContent />
-    </DonationModalProvider>
-  );
-};
 
 export default TransparencyPage;

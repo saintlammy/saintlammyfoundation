@@ -205,8 +205,77 @@ const About: React.FC = () => {
           </div>
         </section>
 
+        {/* Testimonials Section */}
+        <section id="testimonials" className="py-24 bg-white dark:bg-black">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+                What People Say
+              </h2>
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+                Hear from those whose lives have been transformed through our work
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+              {[
+                {
+                  name: 'Mrs. Chinelo Okafor',
+                  role: 'Widow Empowerment Program Beneficiary',
+                  image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
+                  duration: '2 years in program'
+                },
+                {
+                  name: 'Emmanuel Adebayo',
+                  role: 'Educational Program Graduate',
+                  image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
+                  duration: 'Scholarship recipient since 2022'
+                },
+                {
+                  name: 'Dr. Sarah Adunola',
+                  role: 'Medical Volunteer',
+                  image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
+                  duration: '3 years volunteering'
+                },
+                {
+                  name: 'Pastor David Okon',
+                  role: 'Community Partner',
+                  image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
+                  duration: 'Partnership since 2021'
+                }
+              ].map((testimonial, index) => (
+                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
+                  <div className="flex items-center mb-6">
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        fill
+                        className="object-cover object-center"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white font-display">{testimonial.name}</h3>
+                      <p className="text-sm text-accent-400 font-medium">{testimonial.role}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.duration}</p>
+                    </div>
+                  </div>
+
+                  <blockquote className="text-gray-600 dark:text-gray-300 font-light leading-relaxed italic">
+                    "{testimonial.quote}"
+                  </blockquote>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Team */}
-        <section className="py-24 bg-white dark:bg-black">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
@@ -249,7 +318,7 @@ const About: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Join Our Mission

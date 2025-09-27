@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import SponsorModal from '@/components/SponsorModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Heart, Users, GraduationCap, Star, CheckCircle, ArrowRight, Gift, Target, Clock } from 'lucide-react';
 
 interface SponsorshipTier {
@@ -31,7 +31,7 @@ interface Beneficiary {
   isSponsored?: boolean;
 }
 
-const SponsorContent: React.FC = () => {
+const SponsorPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [isSponsorModalOpen, setIsSponsorModalOpen] = useState(false);
@@ -431,12 +431,5 @@ const SponsorContent: React.FC = () => {
   );
 };
 
-const SponsorPage: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <SponsorContent />
-    </DonationModalProvider>
-  );
-};
 
 export default SponsorPage;

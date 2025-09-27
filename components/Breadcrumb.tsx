@@ -33,15 +33,15 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
           return (
             <li key={index} className="flex items-center">
               {index > 0 && (
-                <ChevronRight className="w-4 h-4 text-gray-400 mx-2" />
+                <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400 mx-2" />
               )}
 
               {isLast || !item.href ? (
                 <span
                   className={`${
                     isLast
-                      ? 'text-white font-medium'
-                      : 'text-gray-300 hover:text-white'
+                      ? 'text-gray-900 dark:text-white font-medium'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                   } ${isHome ? 'flex items-center' : ''}`}
                   aria-current={isLast ? 'page' : undefined}
                 >
@@ -51,7 +51,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
               ) : (
                 <Link
                   href={item.href}
-                  className={`text-gray-300 hover:text-white transition-colors ${
+                  className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors ${
                     isHome ? 'flex items-center' : ''
                   }`}
                 >

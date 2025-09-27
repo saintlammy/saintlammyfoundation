@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Users, GraduationCap, Heart, Building, Search, Filter, Calendar, MapPin, ArrowRight } from 'lucide-react';
 
 interface GalleryItem {
@@ -18,7 +18,7 @@ interface GalleryItem {
   date: string;
 }
 
-const GalleryContent: React.FC = () => {
+const GalleryPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -379,12 +379,5 @@ const GalleryContent: React.FC = () => {
   );
 };
 
-const GalleryPage: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <GalleryContent />
-    </DonationModalProvider>
-  );
-};
 
 export default GalleryPage;

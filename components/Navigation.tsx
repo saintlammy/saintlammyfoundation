@@ -178,13 +178,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                                   <a
                                     key={option.href}
                                     href={option.href}
-                                    onClick={(e) => {
-                                      if (option.href === '/donate') {
-                                        e.preventDefault();
-                                        onDonateClick?.({ source: 'megamenu' });
-                                        setOpenMegaMenu(null);
-                                      }
-                                    }}
+                                    onClick={() => setOpenMegaMenu(null)}
                                     className={`flex items-start p-3 rounded-lg transition-colors duration-200 group ${
                                       isOptionActive
                                         ? 'bg-accent-50 dark:bg-accent-900/20 text-accent-600 dark:text-accent-400'
@@ -291,15 +285,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                         <a
                           key={option.href}
                           href={option.href}
-                          onClick={(e) => {
-                            if (option.href === '/donate') {
-                              e.preventDefault();
-                              onDonateClick?.({ source: 'mobile-megamenu' });
-                              setIsOpen(false);
-                            } else {
-                              setIsOpen(false);
-                            }
-                          }}
+                          onClick={() => setIsOpen(false)}
                           className={`flex items-center px-3 py-2 text-sm font-medium transition-colors group rounded-lg ${
                             isOptionActive ? 'text-white bg-accent-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10'
                           }`}

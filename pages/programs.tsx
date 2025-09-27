@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Layout from '@/components/Layout';
 import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award } from 'lucide-react';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 
-const ProgramsContent: React.FC = () => {
+const Programs: React.FC = () => {
   const { openDonationModal } = useDonationModal();
   const mainPrograms = [
     {
@@ -382,13 +382,6 @@ const ProgramsContent: React.FC = () => {
   );
 };
 
-const Programs: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <ProgramsContent />
-    </DonationModalProvider>
-  );
-};
 
 // Enable ISR for better performance
 export async function getStaticProps() {

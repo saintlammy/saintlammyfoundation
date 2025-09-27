@@ -6,7 +6,7 @@ import { GetStaticProps } from 'next';
 import Layout from '@/components/Layout';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Calendar, ArrowRight, Heart, Users, Award, Search, Filter, Tag } from 'lucide-react';
 
 interface NewsArticle {
@@ -28,7 +28,7 @@ interface NewsPageProps {
   categories: string[];
 }
 
-const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
+const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
   const { openDonationModal } = useDonationModal();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -330,13 +330,6 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
   );
 };
 
-const NewsPage: React.FC<NewsPageProps> = (props) => {
-  return (
-    <DonationModalProvider>
-      <NewsContent {...props} />
-    </DonationModalProvider>
-  );
-};
 
 export const getStaticProps: GetStaticProps<NewsPageProps> = async () => {
   // In a real app, fetch from your CMS or database

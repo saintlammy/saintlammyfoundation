@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import {
   Users,
   Heart,
@@ -21,7 +21,7 @@ import {
   Star
 } from 'lucide-react';
 
-const PartnerContent: React.FC = () => {
+const Partner: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   return (
@@ -393,8 +393,5 @@ const PartnerContent: React.FC = () => {
   );
 };
 
-const Partner: React.FC = () => {
-  return <PartnerContent />;
-};
 
 export default Partner;

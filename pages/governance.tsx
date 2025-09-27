@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { Users, Shield, Award, BookOpen, Gavel, Scale, FileText, CheckCircle } from 'lucide-react';
 
 interface BoardMember {
@@ -15,7 +15,7 @@ interface BoardMember {
   credentials: string[];
 }
 
-const GovernanceContent: React.FC = () => {
+const GovernancePage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   const boardMembers: BoardMember[] = [
@@ -409,12 +409,5 @@ const GovernanceContent: React.FC = () => {
   );
 };
 
-const GovernancePage: React.FC = () => {
-  return (
-    <DonationModalProvider>
-      <GovernanceContent />
-    </DonationModalProvider>
-  );
-};
 
 export default GovernancePage;

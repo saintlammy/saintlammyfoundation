@@ -6,7 +6,7 @@ import Navigation from '@/components/Navigation';
 import Breadcrumb from '@/components/Breadcrumb';
 import SponsorModal from '@/components/SponsorModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { User, MapPin, GraduationCap, Home, Heart, Search, Filter, ChevronDown } from 'lucide-react';
 
 interface Beneficiary {
