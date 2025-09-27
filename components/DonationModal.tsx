@@ -14,6 +14,7 @@ interface DonationModalProps {
 
 const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context }) => {
   const [donationAmount, setDonationAmount] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [donationType, setDonationType] = useState('one-time');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [selectedCrypto, setSelectedCrypto] = useState('');
@@ -22,7 +23,15 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
   const [copiedAddress, setCopiedAddress] = useState('');
   const [networkDropdownOpen, setNetworkDropdownOpen] = useState(false);
 
-  const presetAmounts = [25, 50, 100, 250, 500, 1000];
+  const currencies = {
+    USD: { symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
+    NGN: { symbol: '₦', name: 'Nigerian Naira', flag: '🇳🇬' }
+  };
+
+  const presetAmounts = {
+    USD: [25, 50, 100, 250, 500, 1000],
+    NGN: [10000, 20000, 40000, 100000, 200000, 400000]
+  };
 
   // Initialize values based on context
   useEffect(() => {
@@ -275,10 +284,19 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
     setDonationAmount(amount.toString());
   };
 
+  const getCurrencySymbol = () => currencies[selectedCurrency as keyof typeof currencies].symbol;
+  const getCurrentPresetAmounts = () => presetAmounts[selectedCurrency as keyof typeof presetAmounts];
+
+  const formatAmount = (amount: number, currency: string) => {
+    const symbol = currencies[currency as keyof typeof currencies].symbol;
+    return `${symbol}${amount.toLocaleString()}`;
+  };
+
   const handleDonation = () => {
     // Track donation with context for analytics
     const donationData = {
       amount: parseFloat(donationAmount) || 0,
+      currency: selectedCurrency,
       type: donationType,
       paymentMethod,
       timestamp: new Date().toISOString(),
@@ -316,7 +334,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
     }
 
     // For now, just show success message
-    alert(`Donation of $${donationAmount} initiated successfully! Source: ${donationData.source}`);
+    alert(`Donation of ${formatAmount(parseFloat(donationAmount), selectedCurrency)} initiated successfully! Source: ${donationData.source}`);
     onClose();
   };
 
@@ -400,13 +418,44 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
               </div>
             </div>
 
+            {/* Currency Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Currency
+              </label>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {Object.entries(currencies).map(([code, currency]) => (
+                  <button
+                    key={code}
+                    onClick={() => {
+                      setSelectedCurrency(code);
+                      setDonationAmount(''); // Reset amount when changing currency
+                    }}
+                    className={`p-4 rounded-xl border-2 transition-colors text-left ${
+                      selectedCurrency === code
+                        ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{currency.flag}</span>
+                      <div>
+                        <div className="font-semibold">{currency.symbol} {code}</div>
+                        <div className="text-sm opacity-75">{currency.name}</div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Donation Amount */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Donation Amount (USD)
+                Donation Amount ({selectedCurrency})
               </label>
               <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
-                {presetAmounts.map((amount) => (
+                {getCurrentPresetAmounts().map((amount) => (
                   <button
                     key={amount}
                     onClick={() => handleAmountSelect(amount)}
@@ -416,7 +465,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                         : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                     }`}
                   >
-                    ${amount}
+                    {formatAmount(amount, selectedCurrency)}
                   </button>
                 ))}
               </div>

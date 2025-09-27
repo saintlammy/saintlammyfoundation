@@ -6,8 +6,7 @@ import {
   CheckCircle, Heart, Download, Share2, Mail, Calendar,
   ArrowRight, Gift, Star, Users
 } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import Layout from '@/components/Layout';
 
 const DonationSuccess: React.FC = () => {
   const router = useRouter();
@@ -83,14 +82,12 @@ const DonationSuccess: React.FC = () => {
   }
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>Donation Successful - Thank You! | Saintlammy Foundation</title>
         <meta name="description" content="Thank you for your generous donation to Saintlammy Foundation. Your support helps transform lives." />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-
-      <Navigation />
 
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-20">
         <div className="max-w-4xl mx-auto px-4">
@@ -322,9 +319,7 @@ const DonationSuccess: React.FC = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
-    </>
+    </Layout>
   );
 };
 

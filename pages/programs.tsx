@@ -149,16 +149,16 @@ const Programs: React.FC = () => {
               src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
               alt="Educational program"
               fill
-              className="object-cover object-center opacity-30"
+              className="object-cover object-center opacity-40"
             />
-            <div className="absolute inset-0 bg-black/60"></div>
+            <div className="absolute inset-0 bg-black/70"></div>
           </div>
 
           <div className="relative max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-medium text-white mb-6 font-display tracking-tight">
               Our Programs
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 font-light leading-relaxed">
               Comprehensive programs designed to create lasting impact in the lives of widows, orphans, and vulnerable communities.
             </p>
           </div>

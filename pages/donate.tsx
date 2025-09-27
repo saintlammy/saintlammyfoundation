@@ -19,6 +19,7 @@ import { getWalletAddress, copyToClipboard } from '@/lib/walletConfig';
 
 const Donate: React.FC = () => {
   const [donationAmount, setDonationAmount] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [donationType, setDonationType] = useState('one-time');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [selectedCrypto, setSelectedCrypto] = useState('');
@@ -27,7 +28,15 @@ const Donate: React.FC = () => {
   const [copiedAddress, setCopiedAddress] = useState('');
   const [networkDropdownOpen, setNetworkDropdownOpen] = useState(false);
 
-  const presetAmounts = [25, 50, 100, 250, 500, 1000];
+  const currencies = {
+    USD: { symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
+    NGN: { symbol: '₦', name: 'Nigerian Naira', flag: '🇳🇬' }
+  };
+
+  const presetAmounts = {
+    USD: [25, 50, 100, 250, 500, 1000],
+    NGN: [10000, 20000, 40000, 100000, 200000, 400000]
+  };
 
   type CryptoCurrencyKey = 'btc' | 'eth' | 'usdc' | 'usdt' | 'xrp';
 
@@ -130,50 +139,96 @@ const Donate: React.FC = () => {
     }
   };
 
-  const impactLevels = [
-    {
-      amount: 25,
-      title: 'Feed a Family',
-      description: 'Provides a week of nutritious meals for a family of 4',
-      icon: Heart,
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      amount: 50,
-      title: 'School Supplies',
-      description: 'Complete school supplies package for one child',
-      icon: TrendingUp,
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      amount: 100,
-      title: 'Medical Care',
-      description: 'Basic medical treatment for one person',
-      icon: Shield,
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      amount: 250,
-      title: 'Monthly Support',
-      description: 'One month of comprehensive support for a widow',
-      icon: Heart,
-      color: 'from-red-500 to-red-600'
-    },
-    {
-      amount: 500,
-      title: 'Skills Training',
-      description: 'Vocational training course for one person',
-      icon: TrendingUp,
-      color: 'from-yellow-500 to-yellow-600'
-    },
-    {
-      amount: 1000,
-      title: 'Transform a Life',
-      description: 'Comprehensive support package for 6 months',
-      icon: Shield,
-      color: 'from-accent-500 to-accent-600'
-    }
-  ];
+  const impactLevels = {
+    USD: [
+      {
+        amount: 25,
+        title: 'Feed a Family',
+        description: 'Provides a week of nutritious meals for a family of 4',
+        icon: Heart,
+        color: 'from-green-500 to-green-600'
+      },
+      {
+        amount: 50,
+        title: 'School Supplies',
+        description: 'Complete school supplies package for one child',
+        icon: TrendingUp,
+        color: 'from-blue-500 to-blue-600'
+      },
+      {
+        amount: 100,
+        title: 'Medical Care',
+        description: 'Basic medical treatment for one person',
+        icon: Shield,
+        color: 'from-purple-500 to-purple-600'
+      },
+      {
+        amount: 250,
+        title: 'Monthly Support',
+        description: 'One month of comprehensive support for a widow',
+        icon: Heart,
+        color: 'from-red-500 to-red-600'
+      },
+      {
+        amount: 500,
+        title: 'Skills Training',
+        description: 'Vocational training course for one person',
+        icon: TrendingUp,
+        color: 'from-yellow-500 to-yellow-600'
+      },
+      {
+        amount: 1000,
+        title: 'Transform a Life',
+        description: 'Comprehensive support package for 6 months',
+        icon: Shield,
+        color: 'from-accent-500 to-accent-600'
+      }
+    ],
+    NGN: [
+      {
+        amount: 10000,
+        title: 'Feed a Family',
+        description: 'Provides a week of nutritious meals for a family of 4',
+        icon: Heart,
+        color: 'from-green-500 to-green-600'
+      },
+      {
+        amount: 20000,
+        title: 'School Supplies',
+        description: 'Complete school supplies package for one child',
+        icon: TrendingUp,
+        color: 'from-blue-500 to-blue-600'
+      },
+      {
+        amount: 40000,
+        title: 'Medical Care',
+        description: 'Basic medical treatment for one person',
+        icon: Shield,
+        color: 'from-purple-500 to-purple-600'
+      },
+      {
+        amount: 100000,
+        title: 'Monthly Support',
+        description: 'One month of comprehensive support for a widow',
+        icon: Heart,
+        color: 'from-red-500 to-red-600'
+      },
+      {
+        amount: 200000,
+        title: 'Skills Training',
+        description: 'Vocational training course for one person',
+        icon: TrendingUp,
+        color: 'from-yellow-500 to-yellow-600'
+      },
+      {
+        amount: 400000,
+        title: 'Transform a Life',
+        description: 'Comprehensive support package for 6 months',
+        icon: Shield,
+        color: 'from-accent-500 to-accent-600'
+      }
+    ]
+  };
 
   const donationMethods = [
     {
@@ -272,6 +327,15 @@ const Donate: React.FC = () => {
     setDonationAmount(amount.toString());
   };
 
+  const getCurrencySymbol = () => currencies[selectedCurrency as keyof typeof currencies].symbol;
+  const getCurrentPresetAmounts = () => presetAmounts[selectedCurrency as keyof typeof presetAmounts];
+  const getCurrentImpactLevels = () => impactLevels[selectedCurrency as keyof typeof impactLevels];
+
+  const formatAmount = (amount: number, currency: string) => {
+    const symbol = currencies[currency as keyof typeof currencies].symbol;
+    return `${symbol}${amount.toLocaleString()}`;
+  };
+
   return (
     <Layout>
       <Head>
@@ -305,7 +369,7 @@ const Donate: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {impactLevels.map((level, index) => (
+              {getCurrentImpactLevels().map((level, index) => (
                 <div
                   key={index}
                   className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 hover:border-accent-500 transition-colors cursor-pointer group"
@@ -315,7 +379,7 @@ const Donate: React.FC = () => {
                     <level.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-semibold text-accent-400 mb-2">${level.amount}</div>
+                    <div className="text-2xl font-semibold text-accent-400 mb-2">{formatAmount(level.amount, selectedCurrency)}</div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{level.title}</h3>
                     <p className="text-gray-600 dark:text-gray-300 text-sm font-light">{level.description}</p>
                   </div>
@@ -370,13 +434,44 @@ const Donate: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Currency Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Currency
+                  </label>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {Object.entries(currencies).map(([code, currency]) => (
+                      <button
+                        key={code}
+                        onClick={() => {
+                          setSelectedCurrency(code);
+                          setDonationAmount(''); // Reset amount when changing currency
+                        }}
+                        className={`p-4 rounded-xl border-2 transition-colors text-left ${
+                          selectedCurrency === code
+                            ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{currency.flag}</span>
+                          <div>
+                            <div className="font-semibold">{currency.symbol} {code}</div>
+                            <div className="text-sm opacity-75">{currency.name}</div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Donation Amount */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Donation Amount (USD)
+                    Donation Amount ({selectedCurrency})
                   </label>
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
-                    {presetAmounts.map((amount) => (
+                    {getCurrentPresetAmounts().map((amount) => (
                       <button
                         key={amount}
                         onClick={() => handleAmountSelect(amount)}
@@ -386,7 +481,7 @@ const Donate: React.FC = () => {
                             : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                         }`}
                       >
-                        ${amount}
+                        {formatAmount(amount, selectedCurrency)}
                       </button>
                     ))}
                   </div>
