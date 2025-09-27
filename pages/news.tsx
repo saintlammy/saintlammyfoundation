@@ -308,12 +308,30 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
                 Subscribe to our newsletter to receive the latest updates on our programs and impact stories.
               </p>
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  const email = (e.target as HTMLFormElement).email.value;
+                  const formData = new FormData(e.target as HTMLFormElement);
+                  const email = formData.get('email') as string;
+
                   if (email) {
-                    alert('Thank you for subscribing! You will receive updates on our latest news and impact stories.');
-                    (e.target as HTMLFormElement).reset();
+                    try {
+                      const response = await fetch('/api/newsletter', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, name: '', source: 'news-page' })
+                      });
+
+                      const result = await response.json();
+
+                      if (response.ok) {
+                        alert(result.message || 'Thank you for subscribing! You will receive updates on our latest news and impact stories.');
+                        (e.target as HTMLFormElement).reset();
+                      } else {
+                        alert(result.message || 'Failed to subscribe. Please try again.');
+                      }
+                    } catch (error) {
+                      alert('Failed to subscribe. Please check your connection and try again.');
+                    }
                   }
                 }}
                 className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto"
