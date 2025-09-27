@@ -307,16 +307,31 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
               <p className="text-gray-600 dark:text-gray-300 mb-8 font-light">
                 Subscribe to our newsletter to receive the latest updates on our programs and impact stories.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const email = (e.target as HTMLFormElement).email.value;
+                  if (email) {
+                    alert('Thank you for subscribing! You will receive updates on our latest news and impact stories.');
+                    (e.target as HTMLFormElement).reset();
+                  }
+                }}
+                className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto"
+              >
                 <input
                   type="email"
+                  name="email"
                   placeholder="Enter your email"
+                  required
                   className="flex-grow px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
-                <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button
+                  type="submit"
+                  className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
                   Subscribe
                 </button>
-              </div>
+              </form>
             </div>
           </section>
           </main>

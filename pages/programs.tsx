@@ -256,12 +256,30 @@ const Programs: React.FC = () => {
                       </div>
 
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+                        <button
+                          onClick={() => openDonationModal({
+                            source: 'programs-page',
+                            category: program.title.toLowerCase().includes('education') ? 'education' :
+                                     program.title.toLowerCase().includes('health') ? 'healthcare' :
+                                     program.title.toLowerCase().includes('empowerment') ? 'empowerment' : 'general',
+                            title: `Support ${program.title}`,
+                            description: `Help us continue our ${program.title.toLowerCase()} program that transforms lives in Nigerian communities.`
+                          })}
+                          className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
+                        >
                           Support This Program
                         </button>
-                        <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+                        <a
+                          href="#program-details"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const element = e.currentTarget.closest('.bg-white, .bg-gray-800\\/50');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }}
+                          className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
+                        >
                           Learn More
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -371,9 +389,12 @@ const Programs: React.FC = () => {
               >
                 Donate Now
               </button>
-              <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <a
+                href="/partner"
+                className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
+              >
                 Become a Partner
-              </button>
+              </a>
             </div>
           </div>
         </section>

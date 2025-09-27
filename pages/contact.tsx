@@ -303,7 +303,16 @@ const Contact: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Can't find what you're looking for?
               </p>
-              <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+              <button
+                onClick={() => {
+                  const subjectField = document.querySelector('#subject') as HTMLInputElement;
+                  const messageField = document.querySelector('#message') as HTMLTextAreaElement;
+                  if (subjectField) subjectField.value = 'General Question';
+                  if (messageField) messageField.focus();
+                  window.scrollTo({ top: document.querySelector('form')?.offsetTop || 0, behavior: 'smooth' });
+                }}
+                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
+              >
                 Ask a Question
               </button>
             </div>

@@ -287,7 +287,14 @@ const TransparencyPage: React.FC = () => {
                           <p className="text-gray-400 text-sm">{doc.date} • {doc.type}</p>
                         </div>
                       </div>
-                      <button className="bg-accent-500 hover:bg-accent-600 text-white p-2 rounded-lg transition-colors">
+                      <button
+                        onClick={() => {
+                          // Placeholder for document download - would connect to actual document in production
+                          alert(`Document "${doc.title}" download will be available soon. Please contact us at hello@saintlammyfoundation.org for access.`);
+                        }}
+                        className="bg-accent-500 hover:bg-accent-600 text-white p-2 rounded-lg transition-colors"
+                        title={`Download ${doc.title}`}
+                      >
                         <Download className="w-4 h-4" />
                       </button>
                     </div>

@@ -874,15 +874,24 @@ const Donate: React.FC = () => {
               Can't donate right now? There are many other ways to support our mission.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <a
+                href="/volunteer"
+                className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans"
+              >
                 Volunteer Your Time
-              </button>
-              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              </a>
+              <a
+                href="/contact?subject=Share Our Mission&message=I would like to help share Saintlammy Foundation's mission with my network. Please provide me with materials and guidance."
+                className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans"
+              >
                 Share Our Mission
-              </button>
-              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              </a>
+              <a
+                href="/contact?subject=Corporate Partnership Inquiry&message=I represent an organization interested in partnering with Saintlammy Foundation. Please contact us to discuss collaboration opportunities."
+                className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans"
+              >
                 Corporate Partnership
-              </button>
+              </a>
             </div>
           </div>
         </section>

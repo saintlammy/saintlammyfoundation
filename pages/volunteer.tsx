@@ -277,9 +277,12 @@ const Volunteer: React.FC = () => {
                     </div>
                   </div>
 
-                  <button className="w-full bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white py-3 px-4 rounded-full font-medium text-sm transition-colors font-sans">
+                  <a
+                    href={`/contact?subject=Volunteer Application - ${opportunity.title}&message=I am interested in applying for the ${opportunity.title} position. Please find my details in the form below.`}
+                    className="w-full bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white py-3 px-4 rounded-full font-medium text-sm transition-colors font-sans text-center block"
+                  >
                     Apply for This Role
-                  </button>
+                  </a>
                 </div>
               ))}
             </div>

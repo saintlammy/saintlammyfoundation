@@ -218,12 +218,23 @@ const Outreaches: React.FC = () => {
                       </div>
 
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+                        <a
+                          href="/volunteer"
+                          className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
+                        >
                           Register to Volunteer
-                        </button>
-                        <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+                        </a>
+                        <a
+                          href="#outreach-details"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const element = e.currentTarget.closest('.bg-white, .bg-gray-800\\/50');
+                            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }}
+                          className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
+                        >
                           Learn More
-                        </button>
+                        </a>
                       </div>
 
                       {outreach.volunteersNeeded && (
@@ -311,12 +322,18 @@ const Outreaches: React.FC = () => {
               Be part of the change. Volunteer with us and help bring hope and healing to communities across Nigeria.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans">
+              <a
+                href="/volunteer"
+                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans text-center inline-block"
+              >
                 Volunteer With Us
-              </button>
-              <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              </a>
+              <a
+                href="/news"
+                className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
+              >
                 Subscribe to Updates
-              </button>
+              </a>
             </div>
           </div>
         </section>

@@ -3,8 +3,11 @@ import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Image from 'next/image';
 import { Heart, Users, Target, Award, MapPin, Calendar, Clock, Globe, Mail, Phone } from 'lucide-react';
+import { useDonationModal } from '@/components/DonationModalProvider';
 
 const About: React.FC = () => {
+  const { openDonationModal } = useDonationModal();
+
   const teamMembers = [
     {
       name: 'Samuel Lammy',
@@ -326,12 +329,22 @@ const About: React.FC = () => {
               Be part of the transformation. Every action, every donation, every prayer makes a difference in the lives we serve.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans">
+              <button
+                onClick={() => openDonationModal({
+                  source: 'about-page',
+                  title: 'Support Our Mission',
+                  description: 'Help us continue transforming lives through education, healthcare, and empowerment programs.'
+                })}
+                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans"
+              >
                 Start Donating
               </button>
-              <button className="bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <a
+                href="/volunteer"
+                className="bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
+              >
                 Become a Volunteer
-              </button>
+              </a>
             </div>
           </div>
         </section>
