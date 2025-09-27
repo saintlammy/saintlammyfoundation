@@ -1,5 +1,6 @@
 import React from 'react';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import BeneficiaryShowcase from '@/components/BeneficiaryShowcase';
@@ -27,105 +28,10 @@ const HomeContent: React.FC<HomeProps> = ({ stats }) => {
 
   return (
     <>
-      <Head>
-        <title>Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities in Nigeria</title>
-        <meta
-          name="description"
-          content="CAC-registered nonprofit supporting 500+ widows and 300+ orphans across Nigeria. Transparent operations, direct aid, education programs, and community development. Donate today to transform lives."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="keywords" content="charity Nigeria, orphan support, widow empowerment, nonprofit organization, CAC registered, community development, education programs, donation, humanitarian aid, transparency, social impact" />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.saintlammyfoundation.org/" />
-        <meta property="og:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
-        <meta property="og:description" content="CAC-registered nonprofit supporting 500+ widows and 300+ orphans across Nigeria. Transparent operations and direct impact." />
-        <meta property="og:image" content="https://www.saintlammyfoundation.org/og-image.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="en_NG" />
-        <meta property="og:site_name" content="Saintlammy Foundation" />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.saintlammyfoundation.org/" />
-        <meta property="twitter:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
-        <meta property="twitter:description" content="CAC-registered nonprofit supporting 500+ widows and 300+ orphans across Nigeria. Transparent operations and direct impact." />
-        <meta property="twitter:image" content="https://www.saintlammyfoundation.org/twitter-image.jpg" />
-
-        {/* Additional SEO Meta Tags */}
-        <meta name="robots" content="index, follow" />
-        <meta name="author" content="Saintlammy Foundation" />
-        <meta name="geo.region" content="NG" />
-        <meta name="geo.country" content="Nigeria" />
-        <meta name="language" content="English" />
-        <meta name="theme-color" content="#3B82F6" />
-
-        {/* Canonical URL */}
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/" />
-        <link rel="icon" href="/favicon.ico" />
-
-        {/* Structured Data - Organization */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "NonprofitOrganization",
-              "name": "Saintlammy Foundation",
-              "alternateName": "Saintlammy Community Care Initiative",
-              "url": "https://www.saintlammyfoundation.org",
-              "logo": "https://www.saintlammyfoundation.org/logo.png",
-              "description": "CAC-registered nonprofit organization dedicated to supporting orphans, empowering widows, and uplifting vulnerable communities across Nigeria.",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "NG",
-                "addressRegion": "Nigeria"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+234-XXX-XXX-XXXX",
-                "contactType": "customer service",
-                "email": "hello@saintlammyfoundation.org"
-              },
-              "foundingDate": "2022",
-              "founder": {
-                "@type": "Person",
-                "name": "Saintlammy Foundation Team"
-              },
-              "mission": "Hope Has a Home — Empowering Widows, Orphans, and the Vulnerable",
-              "areaServed": {
-                "@type": "Country",
-                "name": "Nigeria"
-              },
-              "sameAs": [
-                "https://www.facebook.com/saintlammyfoundation",
-                "https://www.twitter.com/saintlammyfoundation",
-                "https://www.instagram.com/saintlammyfoundation"
-              ],
-              "nonprofitStatus": "NonprofitType",
-              "keywords": "charity, orphan support, widow empowerment, Nigeria, nonprofit, community development"
-            })
-          }}
-        />
-
-        {/* Structured Data - Charity Actions */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "DonateAction",
-              "recipient": {
-                "@type": "NonprofitOrganization",
-                "name": "Saintlammy Foundation"
-              },
-              "description": "Support orphans, widows, and vulnerable communities in Nigeria through direct aid, education, and empowerment programs."
-            })
-          }}
-        />
-      </Head>
+      <SEOHead
+        config={pageSEO.home}
+        structuredData={generateStructuredData.organization()}
+      />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

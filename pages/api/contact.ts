@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContactFormSchema } from '@/lib/schemas';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
+import { getTypedSupabaseClient } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -29,22 +30,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       phone: contactData.phone ? sanitizeHtml(contactData.phone) : undefined
     };
 
-    // TODO: Implement email service integration
-    console.log('Contact form submission:', sanitizedData);
+    // Store in Supabase database
+    const client = getTypedSupabaseClient();
 
-    // In a real implementation, you would:
-    // 1. Store the contact submission in the database
-    // 2. Send email notification to admin
-    // 3. Send confirmation email to user
-    // 4. Log the interaction for follow-up
+    // Convert to database format
+    const messageData = {
+      sender_name: sanitizedData.name,
+      sender_email: sanitizedData.email,
+      subject: sanitizedData.subject,
+      content: sanitizedData.message,
+      status: 'unread' as const,
+      priority: 'normal' as const,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
-    // For now, simulate processing
-    const submissionId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const { data: newMessage, error } = await (client as any)
+      .from('messages')
+      .insert([messageData])
+      .select()
+      .single();
 
-    return res.status(200).json({
+    if (error) {
+      console.error('Error storing contact message:', error);
+      return res.status(500).json({
+        error: 'Failed to send message',
+        message: 'Please try again later.'
+      });
+    }
+
+    console.log('Contact form submission stored:', {
+      id: newMessage.id,
+      email: messageData.sender_email,
+      timestamp: messageData.created_at
+    });
+
+    return res.status(201).json({
       success: true,
       message: 'Thank you for your message. We will get back to you soon!',
-      submissionId,
+      submissionId: newMessage.id,
       timestamp: new Date().toISOString()
     });
 

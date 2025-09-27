@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ComponentProps } from '@/types';
-import { Heart, Menu, X, Shield, Wallet, BarChart3, Users, Settings } from 'lucide-react';
+import { Heart, Menu, X, Shield, Wallet, BarChart3, Users, Settings, FileText, Newspaper, Image } from 'lucide-react';
 
 interface AdminNavigationProps extends ComponentProps {}
 
@@ -14,6 +14,9 @@ const AdminNavigation: React.FC<AdminNavigationProps> = ({ className = '' }) => 
     { href: '/admin/wallet-management', label: 'Wallets', icon: Wallet },
     { href: '/admin/donations', label: 'Donations', icon: Heart },
     { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin/content/stories', label: 'Stories', icon: FileText },
+    { href: '/admin/content/news', label: 'News', icon: Newspaper },
+    { href: '/admin/content/gallery', label: 'Gallery', icon: Image },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
     { href: '/', label: 'Back to Site', icon: null },
   ];

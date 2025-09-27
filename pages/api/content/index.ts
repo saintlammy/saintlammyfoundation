@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '../../../lib/supabase';
+import { getTypedSupabaseClient } from '@/lib/supabase';
+import { validateInput, sanitizeHtml } from '@/lib/validation';
+import { ContentSchema } from '@/lib/schemas';
 
 export interface ContentItem {
   id: string;
@@ -21,186 +23,363 @@ export interface ContentItem {
   updated_at: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!supabase) {
-    return res.status(503).json({
-      error: 'Database not available',
-      message: 'Supabase client is not configured'
-    });
+interface ContentRequest {
+  id?: string;
+  title: string;
+  slug?: string;
+  content: string;
+  excerpt?: string;
+  type: 'page' | 'blog' | 'program' | 'story' | 'media' | 'team' | 'partnership';
+  status: 'published' | 'draft' | 'scheduled' | 'archived';
+  featured_image?: string;
+  publish_date?: string;
+  metadata?: Record<string, any>;
+  author_id?: string;
+}
+
+// Generate slug from title
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .trim();
+}
+
+// Ensure slug is unique
+async function ensureUniqueSlug(client: any, slug: string, excludeId?: string): Promise<string> {
+  let uniqueSlug = slug;
+  let counter = 1;
+
+  while (true) {
+    const query = client
+      .from('content_pages')
+      .select('id')
+      .eq('slug', uniqueSlug);
+
+    if (excludeId) {
+      query.neq('id', excludeId);
+    }
+
+    const { data } = await query.single();
+
+    if (!data) {
+      break; // Slug is unique
+    }
+
+    uniqueSlug = `${slug}-${counter}`;
+    counter++;
   }
 
-  const { method } = req;
+  return uniqueSlug;
+}
 
-  switch (method) {
-    case 'GET':
-      try {
-        const {
-          type = 'all',
-          status = 'all',
-          limit = 50,
-          offset = 0,
-          search = ''
-        } = req.query;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // Basic auth check
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized - Admin access required'
+      });
+    }
 
-        let query = supabase
-          .from('content')
-          .select('*')
-          .order('updated_at', { ascending: false })
-          .range(Number(offset), Number(offset) + Number(limit) - 1);
+    const client = getTypedSupabaseClient();
 
-        if (type !== 'all') {
-          query = query.eq('type', type);
-        }
+    if (req.method === 'GET') {
+      // GET - Fetch content with filtering and pagination
+      const {
+        type = 'all',
+        status = 'all',
+        search = '',
+        limit = '50',
+        offset = '0',
+        author_id,
+        date_from,
+        date_to
+      } = req.query;
 
-        if (status !== 'all') {
-          query = query.eq('status', status);
-        }
+      let query = client
+        .from('content_pages')
+        .select(`
+          id,
+          title,
+          slug,
+          content,
+          excerpt,
+          type,
+          status,
+          featured_image,
+          publish_date,
+          metadata,
+          author_id,
+          created_at,
+          updated_at
+        `);
 
-        if (search) {
-          query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%,excerpt.ilike.%${search}%`);
-        }
+      // Apply filters
+      if (type && type !== 'all') {
+        query = query.eq('type', type);
+      }
 
-        const { data, error, count } = await query;
+      if (status && status !== 'all') {
+        query = query.eq('status', status);
+      }
 
-        if (error) {
-          console.error('Content fetch error:', error);
-          return res.status(500).json({
-            error: 'Failed to fetch content',
-            message: error.message
-          });
-        }
+      if (author_id) {
+        query = query.eq('author_id', author_id);
+      }
 
-        return res.status(200).json({
-          success: true,
-          data: data || [],
-          total: count || 0,
-          limit: Number(limit),
-          offset: Number(offset)
-        });
+      if (date_from) {
+        query = query.gte('created_at', date_from);
+      }
 
-      } catch (error) {
-        console.error('Content API error:', error);
+      if (date_to) {
+        query = query.lte('created_at', date_to);
+      }
+
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%,excerpt.ilike.%${search}%`);
+      }
+
+      // Get total count for pagination
+      const { count } = await client
+        .from('content_pages')
+        .select('*', { count: 'exact', head: true });
+
+      // Apply pagination and ordering
+      const { data: contentItems, error } = await query
+        .order('created_at', { ascending: false })
+        .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1);
+
+      if (error) {
+        console.error('Error fetching content:', error);
         return res.status(500).json({
-          error: 'Internal server error',
-          message: error instanceof Error ? error.message : 'Unknown error'
+          success: false,
+          error: 'Failed to fetch content',
+          details: error.message
         });
       }
 
-    case 'POST':
-      try {
-        const contentData = req.body;
-
-        // Generate slug if not provided
-        if (!contentData.slug) {
-          contentData.slug = contentData.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '');
+      // Transform data to include mock author info for now
+      const transformedData = contentItems.map(item => ({
+        ...item,
+        views: Math.floor(Math.random() * 1000), // Mock views for now
+        author: {
+          name: 'Admin User', // In production, fetch from users table
+          email: 'admin@saintlammyfoundation.org'
         }
+      }));
 
-        const { data, error } = await (supabase as any)
-          .from('content')
-          .insert([contentData])
-          .select()
-          .single();
+      return res.status(200).json({
+        success: true,
+        data: transformedData,
+        total: count || 0,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      });
 
-        if (error) {
-          console.error('Content creation error:', error);
-          return res.status(400).json({
-            error: 'Failed to create content',
-            message: error.message
-          });
-        }
-
-        return res.status(201).json({
-          success: true,
-          data
-        });
-
-      } catch (error) {
-        console.error('Content creation error:', error);
-        return res.status(500).json({
-          error: 'Internal server error',
-          message: error instanceof Error ? error.message : 'Unknown error'
+    } else if (req.method === 'POST') {
+      // POST - Create new content
+      const validation = validateInput(ContentSchema)(req.body);
+      if (!validation.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid input data',
+          details: validation.errors
         });
       }
 
-    case 'PUT':
-      try {
-        const { id, ...updateData } = req.body;
+      const contentData = validation.data as ContentRequest;
 
-        if (!id) {
-          return res.status(400).json({
-            error: 'Content ID is required'
-          });
-        }
+      // Sanitize content
+      const sanitizedData = {
+        title: sanitizeHtml(contentData.title),
+        content: contentData.content, // Don't sanitize rich content, just validate
+        excerpt: contentData.excerpt ? sanitizeHtml(contentData.excerpt) : null,
+        type: contentData.type,
+        status: contentData.status,
+        featured_image: contentData.featured_image || null,
+        publish_date: contentData.publish_date || null,
+        metadata: contentData.metadata || {},
+        author_id: contentData.author_id || null
+      };
 
-        const { data, error } = await (supabase as any)
-          .from('content')
-          .update(updateData)
-          .eq('id', id)
-          .select()
-          .single();
+      // Generate and ensure unique slug
+      const baseSlug = contentData.slug || generateSlug(sanitizedData.title);
+      const uniqueSlug = await ensureUniqueSlug(client, baseSlug);
 
-        if (error) {
-          console.error('Content update error:', error);
-          return res.status(400).json({
-            error: 'Failed to update content',
-            message: error.message
-          });
-        }
+      const dbData = {
+        ...sanitizedData,
+        slug: uniqueSlug,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-        return res.status(200).json({
-          success: true,
-          data
-        });
+      const { data: newContent, error } = await client
+        .from('content_pages')
+        .insert([dbData])
+        .select()
+        .single();
 
-      } catch (error) {
-        console.error('Content update error:', error);
+      if (error) {
+        console.error('Error creating content:', error);
         return res.status(500).json({
-          error: 'Internal server error',
-          message: error instanceof Error ? error.message : 'Unknown error'
+          success: false,
+          error: 'Failed to create content',
+          details: error.message
         });
       }
 
-    case 'DELETE':
-      try {
-        const { id } = req.query;
+      return res.status(201).json({
+        success: true,
+        data: {
+          ...newContent,
+          author: {
+            name: 'Admin User',
+            email: 'admin@saintlammyfoundation.org'
+          }
+        },
+        message: 'Content created successfully'
+      });
 
-        if (!id) {
-          return res.status(400).json({
-            error: 'Content ID is required'
-          });
-        }
+    } else if (req.method === 'PUT') {
+      // PUT - Update existing content
+      const { id, ...updateData } = req.body;
 
-        const { error } = await supabase
-          .from('content')
-          .delete()
-          .eq('id', id);
-
-        if (error) {
-          console.error('Content deletion error:', error);
-          return res.status(400).json({
-            error: 'Failed to delete content',
-            message: error.message
-          });
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: 'Content deleted successfully'
-        });
-
-      } catch (error) {
-        console.error('Content deletion error:', error);
-        return res.status(500).json({
-          error: 'Internal server error',
-          message: error instanceof Error ? error.message : 'Unknown error'
+      if (!id) {
+        return res.status(400).json({
+          success: false,
+          error: 'Content ID is required for updates'
         });
       }
 
-    default:
-      res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-      return res.status(405).json({ error: 'Method not allowed' });
+      const validation = validateInput(ContentSchema)(updateData);
+      if (!validation.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid input data',
+          details: validation.errors
+        });
+      }
+
+      // Sanitize update data
+      const sanitizedData: any = {};
+
+      if (updateData.title) {
+        sanitizedData.title = sanitizeHtml(updateData.title);
+      }
+      if (updateData.content !== undefined) {
+        sanitizedData.content = updateData.content;
+      }
+      if (updateData.excerpt !== undefined) {
+        sanitizedData.excerpt = updateData.excerpt ? sanitizeHtml(updateData.excerpt) : null;
+      }
+      if (updateData.type) {
+        sanitizedData.type = updateData.type;
+      }
+      if (updateData.status) {
+        sanitizedData.status = updateData.status;
+      }
+      if (updateData.featured_image !== undefined) {
+        sanitizedData.featured_image = updateData.featured_image;
+      }
+      if (updateData.publish_date !== undefined) {
+        sanitizedData.publish_date = updateData.publish_date;
+      }
+      if (updateData.metadata !== undefined) {
+        sanitizedData.metadata = updateData.metadata;
+      }
+
+      // Handle slug updates
+      if (updateData.slug || updateData.title) {
+        const newSlug = updateData.slug || generateSlug(sanitizedData.title || updateData.title);
+        sanitizedData.slug = await ensureUniqueSlug(client, newSlug, id);
+      }
+
+      sanitizedData.updated_at = new Date().toISOString();
+
+      const { data: updatedContent, error } = await client
+        .from('content_pages')
+        .update(sanitizedData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating content:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to update content',
+          details: error.message
+        });
+      }
+
+      if (!updatedContent) {
+        return res.status(404).json({
+          success: false,
+          error: 'Content not found'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          ...updatedContent,
+          author: {
+            name: 'Admin User',
+            email: 'admin@saintlammyfoundation.org'
+          }
+        },
+        message: 'Content updated successfully'
+      });
+
+    } else if (req.method === 'DELETE') {
+      // DELETE - Remove content
+      const { id } = req.query;
+
+      if (!id) {
+        return res.status(400).json({
+          success: false,
+          error: 'Content ID is required for deletion'
+        });
+      }
+
+      const { error } = await client
+        .from('content_pages')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting content:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to delete content',
+          details: error.message
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Content deleted successfully'
+      });
+
+    } else {
+      // Method not allowed
+      return res.status(405).json({
+        success: false,
+        error: 'Method not allowed'
+      });
+    }
+
+  } catch (error) {
+    console.error('Content API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

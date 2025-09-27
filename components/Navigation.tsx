@@ -15,6 +15,8 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
   const navLinks = [
     { href: '/', label: 'Home', type: 'link' },
     { href: '/about', label: 'About', type: 'link' },
+    { href: '/stories', label: 'Stories', type: 'link' },
+    { href: '/news', label: 'News', type: 'link' },
     { href: '/outreaches', label: 'Outreaches', type: 'link' },
     { href: '/programs', label: 'Programs', type: 'link' },
     { href: '/donate', label: 'Donate', type: 'button' },

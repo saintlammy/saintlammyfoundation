@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
@@ -31,96 +31,90 @@ import {
   ResponsiveContainer,
   Legend
 } from 'recharts';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AdminDashboard: React.FC = () => {
-  // Mock data for charts
-  const donationTrends = [
-    { month: 'Jan', amount: 65000, donors: 120 },
-    { month: 'Feb', amount: 78000, donors: 145 },
-    { month: 'Mar', amount: 92000, donors: 170 },
-    { month: 'Apr', amount: 88000, donors: 165 },
-    { month: 'May', amount: 105000, donors: 190 },
-    { month: 'Jun', amount: 125000, donors: 220 },
-  ];
+  const { session } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<any>(null);
 
-  const donationMethods = [
-    { name: 'Bank Transfer', value: 45, color: '#3B82F6' },
-    { name: 'Credit Card', value: 30, color: '#10B981' },
-    { name: 'Cryptocurrency', value: 20, color: '#F59E0B' },
-    { name: 'International', value: 5, color: '#EF4444' },
-  ];
+  useEffect(() => {
+    loadStats();
+  }, [session]);
 
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'donation',
-      user: 'Sarah Johnson',
-      amount: 5000,
-      method: 'Bank Transfer',
-      time: '2 minutes ago'
-    },
-    {
-      id: 2,
-      type: 'volunteer',
-      user: 'Michael Chen',
-      program: 'Orphan Care',
-      time: '15 minutes ago'
-    },
-    {
-      id: 3,
-      type: 'donation',
-      user: 'Anonymous',
-      amount: 25000,
-      method: 'Cryptocurrency',
-      time: '1 hour ago'
-    },
-    {
-      id: 4,
-      type: 'user',
-      user: 'Emma Williams',
-      action: 'Account created',
-      time: '2 hours ago'
-    },
-    {
-      id: 5,
-      type: 'donation',
-      user: 'David Brown',
-      amount: 10000,
-      method: 'Credit Card',
-      time: '3 hours ago'
+  const loadStats = async () => {
+    if (!session?.access_token) {
+      setLoading(false);
+      return;
     }
+
+    try {
+      const response = await fetch('/api/admin/stats', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data.data);
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Default/fallback data
+  const donationTrends = stats?.donationTrends || [
+    { month: 'Jan', amount: 0, donors: 0 },
+    { month: 'Feb', amount: 0, donors: 0 },
+    { month: 'Mar', amount: 0, donors: 0 },
+    { month: 'Apr', amount: 0, donors: 0 },
+    { month: 'May', amount: 0, donors: 0 },
+    { month: 'Jun', amount: 0, donors: 0 },
   ];
+
+  const donationMethods = stats?.donationMethods || [
+    { name: 'Bank Transfer', value: 0, color: '#3B82F6' },
+    { name: 'Card Payment', value: 0, color: '#10B981' },
+    { name: 'Cryptocurrency', value: 0, color: '#F59E0B' },
+    { name: 'Other', value: 0, color: '#EF4444' },
+  ];
+
+  const recentActivities = stats?.recentActivities || [];
 
   const statsCards = [
     {
       title: 'Total Donations',
-      value: '₦2,847,592',
-      change: '+12.5%',
+      value: stats ? `₦${stats.totalDonations.toLocaleString()}` : '₦0',
+      change: '+0%',
       trend: 'up',
       icon: Heart,
       color: 'bg-gradient-to-r from-pink-500 to-rose-500'
     },
     {
       title: 'Active Donors',
-      value: '1,234',
-      change: '+8.2%',
+      value: stats ? stats.donorCount.toLocaleString() : '0',
+      change: '+0%',
       trend: 'up',
       icon: Users,
       color: 'bg-gradient-to-r from-blue-500 to-blue-600'
     },
     {
       title: 'Crypto Wallets',
-      value: '45',
-      change: '+15.3%',
+      value: stats ? stats.cryptoWallets.toString() : '6',
+      change: '+0%',
       trend: 'up',
       icon: Wallet,
       color: 'bg-gradient-to-r from-yellow-500 to-orange-500'
     },
     {
       title: 'Monthly Revenue',
-      value: '₦485,632',
-      change: '-2.1%',
-      trend: 'down',
+      value: stats ? `₦${stats.monthlyDonations.toLocaleString()}` : '₦0',
+      change: '+0%',
+      trend: 'up',
       icon: TrendingUp,
       color: 'bg-gradient-to-r from-green-500 to-emerald-500'
     }
@@ -347,21 +341,21 @@ const AdminDashboard: React.FC = () => {
                 <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
                   <TrendingUp className="w-8 h-8 text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">94.2%</p>
+                <p className="text-2xl font-bold text-white">{stats ? `${stats.successRate}%` : '0%'}</p>
                 <p className="text-gray-400 text-sm">Donation Success Rate</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-3">
                   <Heart className="w-8 h-8 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">₦1.2M</p>
+                <p className="text-2xl font-bold text-white">{stats ? `₦${(stats.totalDonations / 6).toFixed(0)}K` : '₦0'}</p>
                 <p className="text-gray-400 text-sm">Average Monthly Donations</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
                   <Users className="w-8 h-8 text-purple-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">2,834</p>
+                <p className="text-2xl font-bold text-white">{stats ? (stats.donorCount + stats.volunteerCount).toLocaleString() : '0'}</p>
                 <p className="text-gray-400 text-sm">Active Community Members</p>
               </div>
             </div>

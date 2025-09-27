@@ -4,9 +4,89 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        {/* SEO Meta Tags */}
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* Primary Meta Tags */}
+        <meta name="title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities in Nigeria" />
+        <meta name="description" content="Hope Has a Home. Join Saintlammy Foundation in building a future where no widow is forgotten, no orphan left behind. Supporting vulnerable communities across Nigeria with love, structure, and action." />
+        <meta name="keywords" content="Nigeria charity, orphan care, widow empowerment, community development, charitable foundation, nonprofit organization, vulnerable families, social impact" />
+        <meta name="author" content="Saintlammy Foundation" />
+        <meta name="robots" content="index, follow" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://saintlammyfoundation.org/" />
+        <meta property="og:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
+        <meta property="og:description" content="Hope Has a Home. Join us in building a future where no widow is forgotten, no orphan left behind. Supporting vulnerable communities across Nigeria." />
+        <meta property="og:image" content="https://saintlammyfoundation.org/og-image.jpg" />
+        <meta property="og:site_name" content="Saintlammy Foundation" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://saintlammyfoundation.org/" />
+        <meta property="twitter:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
+        <meta property="twitter:description" content="Hope Has a Home. Join us in building a future where no widow is forgotten, no orphan left behind." />
+        <meta property="twitter:image" content="https://saintlammyfoundation.org/og-image.jpg" />
+
+        {/* Favicons */}
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#4f46e5" />
+
+        {/* Performance & SEO */}
+        <link rel="canonical" href="https://saintlammyfoundation.org/" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+        {/* Structured Data for Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NGO",
+              "name": "Saintlammy Foundation",
+              "alternateName": "Saintlammy Community Care Initiative",
+              "url": "https://saintlammyfoundation.org",
+              "logo": "https://saintlammyfoundation.org/logo.png",
+              "description": "A Nigerian charitable foundation empowering widows, orphans, and vulnerable communities through love, structure, and action.",
+              "foundingDate": "2022",
+              "founders": [
+                {
+                  "@type": "Person",
+                  "name": "Saintlammy"
+                }
+              ],
+              "areaServed": {
+                "@type": "Country",
+                "name": "Nigeria"
+              },
+              "mission": "Building a future where no widow is forgotten, no orphan left behind, and no vulnerable home stands alone.",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+234-123-456-7890",
+                "contactType": "customer service",
+                "email": "info@saintlammyfoundation.org"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "Nigeria"
+              },
+              "sameAs": [
+                "https://facebook.com/saintlammyfoundation",
+                "https://twitter.com/saintlammyfnd",
+                "https://instagram.com/saintlammyfoundation"
+              ]
+            })
+          }}
+        />
         <style dangerouslySetInnerHTML={{
           __html: `
             @import url('https://db.onlinewebfonts.com/c/94f8c3b3e75e90b4c374c2d0f88e5ce1?family=Sohne');

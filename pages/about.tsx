@@ -1,5 +1,6 @@
 import React from 'react';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import { Heart, Users, Target, Award, MapPin, Calendar, Clock, Globe, Mail, Phone } from 'lucide-react';
@@ -61,10 +62,7 @@ const About: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>About Us - Saintlammy Foundation</title>
-        <meta name="description" content="Learn about Saintlammy Foundation's mission to empower widows, orphans, and vulnerable communities across Nigeria." />
-      </Head>
+      <SEOHead config={pageSEO.about} />
 
       <Navigation />
 

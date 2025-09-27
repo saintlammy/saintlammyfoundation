@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ComponentProps } from '@/types';
 import { Calendar, ArrowRight, Heart, Users, Award } from 'lucide-react';
@@ -16,35 +16,25 @@ interface NewsItem {
 interface NewsUpdatesProps extends ComponentProps {}
 
 const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
-  const newsItems: NewsItem[] = [
-    {
-      id: '1',
-      title: 'December Medical Outreach Reaches 200+ Families',
-      excerpt: 'Our largest medical outreach program provided free health screenings, medications, and health education to over 200 families in rural Ogun State.',
-      date: '2024-12-15',
-      category: 'outreach',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      readTime: '3 min read'
-    },
-    {
-      id: '2',
-      title: 'Partnership with Local Schools Expands Education Access',
-      excerpt: 'New partnerships with 5 primary schools will provide educational materials, scholarships, and mentorship programs for 150 orphaned children.',
-      date: '2024-12-10',
-      category: 'partnership',
-      image: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      readTime: '4 min read'
-    },
-    {
-      id: '3',
-      title: 'Widow Empowerment Program Celebrates 50 New Businesses',
-      excerpt: 'Through micro-loans and business training, 50 widows have successfully launched small businesses, achieving financial independence for their families.',
-      date: '2024-12-05',
-      category: 'achievement',
-      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      readTime: '2 min read'
-    }
-  ];
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await fetch('/api/news?limit=3');
+        const data = await response.json();
+        setNewsItems(data);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        setNewsItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -93,7 +83,21 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {newsItems.map((item, index) => {
+          {loading ? (
+            [...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden animate-pulse">
+                <div className="h-48 bg-gray-700"></div>
+                <div className="p-6">
+                  <div className="h-4 bg-gray-700 rounded mb-3 w-32"></div>
+                  <div className="h-5 bg-gray-700 rounded mb-3"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-4 w-3/4"></div>
+                  <div className="h-4 bg-gray-700 rounded w-20"></div>
+                </div>
+              </div>
+            ))
+          ) : (
+            newsItems.map((item, index) => {
             const CategoryIcon = getCategoryIcon(item.category);
 
             return (
@@ -151,7 +155,8 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
                 </div>
               </article>
             );
-          })}
+            })
+          )}
         </div>
 
         {/* View All Button */}

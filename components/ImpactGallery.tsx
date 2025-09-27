@@ -1,46 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Users, GraduationCap, Heart, Home } from 'lucide-react';
+import { Users, GraduationCap, Heart, Home, Building } from 'lucide-react';
+
+interface ImpactStory {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  icon: string;
+  category: string;
+  date: string;
+}
 
 const ImpactGallery: React.FC = () => {
-  const impactStories = [
-    {
-      id: 1,
-      title: 'Education Program Launch',
-      description: 'New computer lab opening at Hope Children Home, providing digital literacy training to 50+ children.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: GraduationCap,
-      category: 'Education',
-      date: 'March 2024'
-    },
-    {
-      id: 2,
-      title: 'Clean Water Project',
-      description: 'Installing clean water systems in rural communities, providing safe drinking water to 200+ families.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: Heart,
-      category: 'Healthcare',
-      date: 'February 2024'
-    },
-    {
-      id: 3,
-      title: 'Widow Empowerment',
-      description: 'Skills training program helping widows start small businesses and become financially independent.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: Users,
-      category: 'Empowerment',
-      date: 'January 2024'
-    },
-    {
-      id: 4,
-      title: 'Home Renovation',
-      description: 'Complete renovation of Grace Orphanage, creating safer and healthier living spaces for 30 children.',
-      image: 'https://images.unsplash.com/photo-1519452575417-564c1401ecc0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80',
-      icon: Home,
-      category: 'Infrastructure',
-      date: 'December 2023'
+  const [impactStories, setImpactStories] = useState<ImpactStory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch('/api/gallery?limit=4');
+        const data = await response.json();
+        setImpactStories(data);
+      } catch (error) {
+        console.error('Error fetching gallery:', error);
+        setImpactStories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
+  }, []);
+
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case 'GraduationCap':
+        return GraduationCap;
+      case 'Heart':
+        return Heart;
+      case 'Users':
+        return Users;
+      case 'Building':
+        return Building;
+      default:
+        return GraduationCap;
     }
-  ];
+  };
 
   return (
     <section className="py-24 bg-black">
@@ -56,7 +62,21 @@ const ImpactGallery: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {impactStories.map((story, index) => (
+          {loading ? (
+            [...Array(4)].map((_, index) => (
+              <div
+                key={index}
+                className={`animate-pulse bg-gray-800 rounded-2xl ${
+                  index === 0 ? 'md:col-span-2 h-96' : 'h-80'
+                }`}
+              >
+                <div className="h-full bg-gray-700 rounded-2xl"></div>
+              </div>
+            ))
+          ) : (
+            impactStories.map((story, index) => {
+              const IconComponent = getIconComponent(story.icon);
+              return (
             <div
               key={story.id}
               className={`group relative overflow-hidden rounded-2xl ${
@@ -78,8 +98,8 @@ const ImpactGallery: React.FC = () => {
               <div className="absolute inset-0 flex flex-col justify-end p-8">
                 {/* Category Badge */}
                 <div className="flex items-center mb-4">
-                  <div className="bg-openai-500 rounded-full p-2 mr-3">
-                    <story.icon className="w-4 h-4 text-white" />
+                  <div className="bg-accent-500 rounded-full p-2 mr-3">
+                    <IconComponent className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-accent-400 text-sm font-medium font-sans tracking-wide uppercase">
                     {story.category}
@@ -106,7 +126,9 @@ const ImpactGallery: React.FC = () => {
                 </button>
               </div>
             </div>
-          ))}
+              );
+            })
+          )}
         </div>
 
         {/* Bottom Statistics */}

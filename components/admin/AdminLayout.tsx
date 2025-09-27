@@ -21,7 +21,9 @@ import {
   ChevronDown,
   LogOut,
   Bell,
-  Search
+  Search,
+  Newspaper,
+  Image
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -100,6 +102,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       icon: FileText,
       children: [
         { id: 'content-pages', label: 'Pages', icon: Globe, href: '/admin/content/pages' },
+        { id: 'content-stories', label: 'Stories', icon: FileText, href: '/admin/content/stories' },
+        { id: 'content-news', label: 'News', icon: Newspaper, href: '/admin/content/news' },
+        { id: 'content-gallery', label: 'Gallery', icon: Image, href: '/admin/content/gallery' },
         { id: 'content-programs', label: 'Programs', icon: Heart, href: '/admin/content/programs' },
         { id: 'content-outreaches', label: 'Outreaches', icon: Calendar, href: '/admin/content/outreaches' },
         { id: 'content-testimonials', label: 'Testimonials', icon: MessageSquare, href: '/admin/content/testimonials' }

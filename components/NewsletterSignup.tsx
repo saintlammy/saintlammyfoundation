@@ -5,19 +5,42 @@ const NewsletterSignup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would integrate with your email service
-    console.log('Newsletter signup:', { name, email });
-    setIsSubscribed(true);
-    setEmail('');
-    setName('');
+    setIsLoading(true);
+    setError('');
 
-    // Reset success message after 3 seconds
-    setTimeout(() => {
-      setIsSubscribed(false);
-    }, 3000);
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Failed to subscribe');
+      }
+
+      setIsSubscribed(true);
+      setEmail('');
+      setName('');
+
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setIsSubscribed(false);
+      }, 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to subscribe. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,6 +72,12 @@ const NewsletterSignup: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
+                  <p className="text-red-400 text-sm">{error}</p>
+                </div>
+              )}
+
               <div className="space-y-4 mb-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
@@ -62,6 +91,7 @@ const NewsletterSignup: React.FC = () => {
                     className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     placeholder="Enter your full name"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -77,16 +107,18 @@ const NewsletterSignup: React.FC = () => {
                     className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     placeholder="Enter your email address"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl flex items-center justify-center font-sans"
+                disabled={isLoading}
+                className="w-full bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl flex items-center justify-center font-sans"
               >
                 <Send className="w-5 h-5 mr-2" />
-                Subscribe to Hope Dispatch
+                {isLoading ? 'Subscribing...' : 'Subscribe to Hope Dispatch'}
               </button>
             </form>
           )}

@@ -54,6 +54,12 @@ export const VolunteerFormSchema = z.object({
   commitment: ValidationUtils.limitedString(1, 200, 'Commitment'),
 });
 
+// Newsletter subscription schema
+export const NewsletterFormSchema = z.object({
+  name: ValidationUtils.name,
+  email: ValidationUtils.email,
+});
+
 // Admin authentication schemas
 export const LoginSchema = z.object({
   email: ValidationUtils.email,
@@ -175,6 +181,7 @@ export type DonationFormData = z.infer<typeof DonationFormSchema>;
 export type CryptoDonationData = z.infer<typeof CryptoDonationSchema>;
 export type ContactFormData = z.infer<typeof ContactFormSchema>;
 export type VolunteerFormData = z.infer<typeof VolunteerFormSchema>;
+export type NewsletterFormData = z.infer<typeof NewsletterFormSchema>;
 export type LoginData = z.infer<typeof LoginSchema>;
 export type SignupData = z.infer<typeof SignupSchema>;
 export type ContentData = z.infer<typeof ContentSchema>;
