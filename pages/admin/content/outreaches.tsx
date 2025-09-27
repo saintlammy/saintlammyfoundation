@@ -172,8 +172,6 @@ const OutreachesManagement: React.FC = () => {
 
       setOutreaches(filteredOutreaches);
       updateStats(filteredOutreaches);
-    } catch (error) {
-      console.error('Error loading outreaches:', error);
     } finally {
       setLoading(false);
     }
