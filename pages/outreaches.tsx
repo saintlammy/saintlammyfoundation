@@ -105,15 +105,13 @@ const Outreaches: React.FC = () => {
   ];
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>Outreaches - Saintlammy Foundation</title>
         <meta name="description" content="Join Saintlammy Foundation's community outreaches. Medical care, educational support, feeding programs, and skills training across Nigeria." />
       </Head>
-
-      <Layout>
         {/* Hero Section */}
-        <section className="relative py-32 bg-gray-900">
+        <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
               src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
@@ -121,7 +119,7 @@ const Outreaches: React.FC = () => {
               fill
               className="object-cover object-center opacity-30"
             />
-            <div className="absolute inset-0 bg-white dark:bg-black/60"></div>
+            <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
           </div>
 
           <div className="relative max-w-4xl mx-auto px-6 text-center">
@@ -323,9 +321,7 @@ const Outreaches: React.FC = () => {
             </div>
           </div>
         </section>
-      </Layout>
-
-    </>
+    </Layout>
   );
 };
 

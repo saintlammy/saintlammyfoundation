@@ -1,16 +1,18 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Footer from './Footer';
-import { DonationModalProvider } from './DonationModalProvider';
+import Navigation from './Navigation';
+import { DonationModalProvider, useDonationModal } from './DonationModalProvider';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const LayoutContent: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
+  const { openDonationModal } = useDonationModal();
 
-  // Pages that should NOT have footer
+  // Pages that should NOT have footer or navigation
   const noFooterPages = [
     '/admin',
     '/admin/dashboard',
@@ -25,13 +27,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 
   return (
-    <DonationModalProvider>
-      <div className="min-h-screen flex flex-col">
-        <div className="flex-grow">
-          {children}
-        </div>
-        {!shouldHideFooter && <Footer />}
+    <div className="min-h-screen flex flex-col">
+      {!shouldHideFooter && (
+        <Navigation
+          onDonateClick={() => openDonationModal({
+            source: 'navigation',
+            title: 'Support Our Mission',
+            description: 'Your donation helps us transform lives across Nigeria'
+          })}
+        />
+      )}
+      <div className="flex-grow">
+        {children}
       </div>
+      {!shouldHideFooter && <Footer />}
+    </div>
+  );
+};
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <DonationModalProvider>
+      <LayoutContent>{children}</LayoutContent>
     </DonationModalProvider>
   );
 };

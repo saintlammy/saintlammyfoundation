@@ -66,7 +66,7 @@ const About: React.FC = () => {
 
       <main>
         {/* Hero Section */}
-        <section className="relative py-32 bg-gray-900">
+        <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
               src="https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
@@ -74,14 +74,14 @@ const About: React.FC = () => {
               fill
               className="object-cover object-center opacity-30"
             />
-            <div className="absolute inset-0 bg-black/60"></div>
+            <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
           </div>
 
           <div className="relative max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-white mb-6 font-display tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               About Our Mission
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
               Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.
             </p>
           </div>

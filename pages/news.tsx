@@ -101,9 +101,9 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
       <Layout>
 
       <ErrorBoundary>
-          <main className="min-h-screen bg-gray-50 dark:bg-gray-50 dark:bg-gray-900 pt-16">
+          <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
           {/* Header Section */}
-          <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+          <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-black">
             <div className="max-w-7xl mx-auto px-6">
               <Breadcrumb
                 items={[{ label: 'News & Updates', current: true }]}

@@ -73,19 +73,19 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
   return (
     <Layout>
       <Head>
-        <title>Success Stories - Saintlammy Foundation</title>
-        <meta name="description" content="Read inspiring success stories from beneficiaries of Saintlammy Foundation. Real people, real impact across Nigeria." />
+        <title>Impact Stories - Saintlammy Foundation</title>
+        <meta name="description" content="Read inspiring impact stories from beneficiaries of Saintlammy Foundation. Real people, real impact across Nigeria." />
         <meta name="keywords" content="success stories, testimonials, impact, Nigeria, charity, foundation" />
       </Head>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <section className="relative pt-24 pb-16 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-black dark:to-gray-900">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-display-lg md:text-display-xl font-medium text-white mb-6 font-display tracking-tight">
-            Success Stories
+          <h1 className="text-display-lg md:text-display-xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+            Impact Stories
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
             Every donation creates opportunities for transformation. These are the real faces and stories behind our mission to change lives across Nigeria.
           </p>
         </div>
