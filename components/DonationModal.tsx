@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin, Banknote, Globe, ChevronDown, ExternalLink, X } from 'lucide-react';
 import { SiBitcoin, SiEthereum, SiTether, SiRipple } from 'react-icons/si';
-import { walletManager } from '@/lib/wallet';
 import { DonationContext } from './DonationModalProvider';
 
 type CryptoCurrencyKey = 'btc' | 'eth' | 'usdc' | 'usdt' | 'xrp';
@@ -249,13 +248,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
   const getCurrentCryptoAddress = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
 
-    // Try to get address from wallet manager first
-    const dynamicAddress = walletManager.getDonationAddress(selectedCrypto.toUpperCase(), selectedNetwork);
-    if (dynamicAddress) {
-      return dynamicAddress;
-    }
-
-    // Fallback to static addresses
+    // Use static addresses directly (no wallet generation needed)
     const crypto = cryptoCurrencies[selectedCrypto as CryptoCurrencyKey];
     return (crypto?.networks as any)?.[selectedNetwork]?.address || '';
   };
@@ -269,13 +262,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
   const getCurrentMemo = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
 
-    // Try to get memo from wallet manager first
-    const dynamicMemo = walletManager.getDonationMemo(selectedCrypto.toUpperCase(), selectedNetwork);
-    if (dynamicMemo) {
-      return dynamicMemo;
-    }
-
-    // Fallback to static memo
+    // Use static memos directly (no wallet generation needed)
     const crypto = cryptoCurrencies[selectedCrypto as CryptoCurrencyKey];
     return (crypto?.networks as any)?.[selectedNetwork]?.memo || '';
   };
