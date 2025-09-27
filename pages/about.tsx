@@ -1,8 +1,8 @@
 import React from 'react';
+import Layout from '@/components/Layout';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Image from 'next/image';
-import Navigation from '@/components/Navigation';
 import { Heart, Users, Target, Award, MapPin, Calendar, Clock, Globe, Mail, Phone } from 'lucide-react';
 
 const About: React.FC = () => {
@@ -61,10 +61,8 @@ const About: React.FC = () => {
   ];
 
   return (
-    <>
+    <Layout>
       <SEOHead config={pageSEO.about} />
-
-      <Navigation />
 
       <main>
         {/* Hero Section */}
@@ -90,31 +88,31 @@ const About: React.FC = () => {
         </section>
 
         {/* Mission & Vision */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
                 <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
                   <Target className="w-8 h-8 text-accent-400" />
                 </div>
-                <h2 className="text-3xl font-semibold text-white mb-6 font-display">Our Mission</h2>
-                <p className="text-gray-300 text-lg font-light leading-relaxed mb-6">
+                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">Our Mission</h2>
+                <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
                   To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency.
                 </p>
-                <p className="text-gray-300 font-light leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                   We believe that every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances.
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
                 <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
                   <Heart className="w-8 h-8 text-accent-400" />
                 </div>
-                <h2 className="text-3xl font-semibold text-white mb-6 font-display">Our Vision</h2>
-                <p className="text-gray-300 text-lg font-light leading-relaxed mb-6">
+                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">Our Vision</h2>
+                <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
                   A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all.
                 </p>
-                <p className="text-gray-300 font-light leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                   Through faith-driven action and sustainable solutions, we're building a future of hope and transformation.
                 </p>
               </div>
@@ -123,25 +121,25 @@ const About: React.FC = () => {
         </section>
 
         {/* Our Story */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Our Story
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                 From a vision to a movement - how Saintlammy Foundation began
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700">
-              <p className="text-gray-300 text-lg font-light leading-relaxed mb-6">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
                 Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.
               </p>
-              <p className="text-gray-300 text-lg font-light leading-relaxed mb-6">
+              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
                 What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
               </p>
-              <p className="text-gray-300 text-lg font-light leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed">
                 Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.
               </p>
             </div>
@@ -149,13 +147,13 @@ const About: React.FC = () => {
         </section>
 
         {/* Timeline */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Our Journey
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                 Key milestones in our mission to transform lives
               </p>
             </div>
@@ -168,12 +166,12 @@ const About: React.FC = () => {
                       <milestone.icon className="w-8 h-8 text-accent-400" />
                     </div>
                   </div>
-                  <div className="flex-1 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700">
+                  <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-4 mb-3">
                       <span className="text-accent-400 font-semibold text-lg">{milestone.year}</span>
                       <div className="h-px bg-gray-600 flex-1"></div>
                     </div>
-                    <p className="text-white text-lg font-medium">{milestone.event}</p>
+                    <p className="text-gray-900 dark:text-white text-lg font-medium">{milestone.event}</p>
                   </div>
                 </div>
               ))}
@@ -182,25 +180,25 @@ const About: React.FC = () => {
         </section>
 
         {/* Values */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Our Values
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 The principles that guide our work and define our character
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {values.map((value, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700 hover:border-accent-500 transition-colors">
+                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
                   <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-6">
                     <value.icon className="w-6 h-6 text-accent-400" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-4 font-display">{value.title}</h3>
-                  <p className="text-gray-300 font-light leading-relaxed">{value.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{value.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{value.description}</p>
                 </div>
               ))}
             </div>
@@ -208,20 +206,20 @@ const About: React.FC = () => {
         </section>
 
         {/* Team */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Meet Our Team
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 Dedicated individuals working tirelessly to create positive change
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {teamMembers.map((member, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-gray-700 hover:border-accent-500 transition-colors group">
+                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors group">
                   <div className="relative h-64">
                     <Image
                       src={member.image}
@@ -231,9 +229,9 @@ const About: React.FC = () => {
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-white mb-2 font-display">{member.name}</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 font-display">{member.name}</h3>
                     <p className="text-accent-400 font-medium text-sm mb-4">{member.role}</p>
-                    <p className="text-gray-300 text-sm font-light leading-relaxed mb-4">{member.bio}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">{member.bio}</p>
                     <a
                       href={member.linkedin}
                       className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors"
@@ -251,27 +249,26 @@ const About: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+            <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Join Our Mission
             </h2>
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
               Be part of the transformation. Every action, every donation, every prayer makes a difference in the lives we serve.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans">
+              <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans">
                 Start Donating
               </button>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
                 Become a Volunteer
               </button>
             </div>
           </div>
         </section>
       </main>
-
-    </>
+    </Layout>
   );
 };
 

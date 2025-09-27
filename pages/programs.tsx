@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Navigation from '@/components/Navigation';
+import Layout from '@/components/Layout';
 import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award } from 'lucide-react';
 import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
 
@@ -143,13 +143,7 @@ const ProgramsContent: React.FC = () => {
         <meta name="description" content="Explore Saintlammy Foundation's comprehensive programs supporting orphans, widows, education, and healthcare across Nigeria." />
       </Head>
 
-      <Navigation onDonateClick={() => openDonationModal({
-        source: 'general',
-        title: 'Support Our Programs',
-        description: 'Your donation helps us run life-changing programs'
-      })} />
-
-      <main>
+      <Layout>
         {/* Hero Section */}
         <section className="relative py-32 bg-gray-900">
           <div className="absolute inset-0">
@@ -173,13 +167,13 @@ const ProgramsContent: React.FC = () => {
         </section>
 
         {/* Program Stats */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Program Impact Overview
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 Real numbers showing the tangible difference our programs make every month
               </p>
             </div>
@@ -193,7 +187,7 @@ const ProgramsContent: React.FC = () => {
                   <div className="text-3xl md:text-4xl font-medium text-accent-400 mb-2 group-hover:scale-110 transition-transform font-display tracking-tight">
                     {stat.value}
                   </div>
-                  <div className="text-gray-300 font-medium text-sm font-sans">
+                  <div className="text-gray-600 dark:text-gray-300 font-medium text-sm font-sans">
                     {stat.label}
                   </div>
                 </div>
@@ -203,20 +197,20 @@ const ProgramsContent: React.FC = () => {
         </section>
 
         {/* Main Programs */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Core Programs
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 Our flagship programs addressing the most critical needs in our communities
               </p>
             </div>
 
             <div className="space-y-16">
               {mainPrograms.map((program, index) => (
-                <div key={program.id} className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl overflow-hidden border border-gray-700 hover:border-accent-500 transition-colors">
+                <div key={program.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className={`md:flex ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                     <div className="md:w-1/2 relative h-64 md:h-80">
                       <Image
@@ -238,28 +232,28 @@ const ProgramsContent: React.FC = () => {
                           <program.icon className="w-6 h-6 text-accent-400" />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-semibold text-white font-display">{program.title}</h3>
+                          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">{program.title}</h3>
                           <p className="text-accent-400 text-sm font-medium">{program.beneficiaries} Beneficiaries</p>
                         </div>
                       </div>
 
-                      <p className="text-gray-300 font-light leading-relaxed mb-6">{program.description}</p>
+                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{program.description}</p>
 
                       <div className="space-y-2 mb-6">
-                        <h4 className="text-white font-semibold text-sm mb-3">Program Features:</h4>
+                        <h4 className="text-gray-900 dark:text-white font-semibold text-sm mb-3">Program Features:</h4>
                         {program.features.map((feature, featureIndex) => (
                           <div key={featureIndex} className="flex items-start gap-2">
                             <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
-                            <span className="text-gray-300 text-sm">{feature}</span>
+                            <span className="text-gray-600 dark:text-gray-300 text-sm">{feature}</span>
                           </div>
                         ))}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         {Object.entries(program.impact).map(([key, value]) => (
-                          <div key={key} className="text-center p-3 bg-gray-700/50 rounded-lg">
+                          <div key={key} className="text-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                             <div className="text-accent-400 font-semibold text-sm">{value}</div>
-                            <div className="text-gray-400 text-xs">{key}</div>
+                            <div className="text-gray-500 dark:text-gray-400 text-xs">{key}</div>
                           </div>
                         ))}
                       </div>
@@ -268,7 +262,7 @@ const ProgramsContent: React.FC = () => {
                         <button className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
                           Support This Program
                         </button>
-                        <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
+                        <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans">
                           Learn More
                         </button>
                       </div>
@@ -281,25 +275,25 @@ const ProgramsContent: React.FC = () => {
         </section>
 
         {/* Support Programs */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Support Programs
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 Additional programs complementing our core initiatives
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {supportPrograms.map((program, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 hover:border-accent-500 transition-colors text-center group">
+                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors text-center group shadow-lg dark:shadow-none">
                   <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <program.icon className="w-6 h-6 text-accent-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 font-display">{program.title}</h3>
-                  <p className="text-gray-300 text-sm font-light mb-4">{program.description}</p>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{program.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm font-light mb-4">{program.description}</p>
                   <div className="inline-flex items-center px-3 py-1 bg-accent-500/20 text-accent-400 rounded-full text-xs font-medium">
                     {program.budget}
                   </div>
@@ -310,13 +304,13 @@ const ProgramsContent: React.FC = () => {
         </section>
 
         {/* How Programs Work */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 How Our Programs Work
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                 A systematic approach ensuring maximum impact and transparency
               </p>
             </div>
@@ -351,8 +345,8 @@ const ProgramsContent: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-white mb-2 font-display">{item.title}</h3>
-                    <p className="text-gray-300 font-light leading-relaxed">{item.description}</p>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 font-display">{item.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{item.description}</p>
                   </div>
                 </div>
               ))}
@@ -361,12 +355,12 @@ const ProgramsContent: React.FC = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+            <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Support Our Programs
             </h2>
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
               Your support makes these programs possible. Choose how you'd like to contribute to transforming lives.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -380,20 +374,24 @@ const ProgramsContent: React.FC = () => {
               >
                 Donate Now
               </button>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
                 Become a Partner
               </button>
             </div>
           </div>
         </section>
-      </main>
+      </Layout>
 
     </>
   );
 };
 
 const Programs: React.FC = () => {
-  return <ProgramsContent />;
+  return (
+    <DonationModalProvider>
+      <ProgramsContent />
+    </DonationModalProvider>
+  );
 };
 
 // Enable ISR for better performance

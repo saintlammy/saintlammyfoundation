@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Navigation from '@/components/Navigation';
+import Layout from '@/components/Layout';
 import { Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin, Banknote, Globe, ChevronDown, ExternalLink } from 'lucide-react';
 // Use simple SVG icons instead of heavy react-icons
 const BitcoinIcon = () => (
@@ -240,10 +240,10 @@ const Donate: React.FC = () => {
   const getCurrentCryptoAddress = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
 
-    // Try to get address from wallet manager first
-    const dynamicAddress = walletManager.getDonationAddress(selectedCrypto.toUpperCase(), selectedNetwork);
-    if (dynamicAddress) {
-      return dynamicAddress;
+    // Try to get address from wallet config first
+    const walletInfo = getWalletAddress(selectedCrypto.toLowerCase());
+    if (walletInfo && walletInfo.network === selectedNetwork) {
+      return walletInfo.address;
     }
 
     // Fallback to static addresses
@@ -258,10 +258,10 @@ const Donate: React.FC = () => {
   const getCurrentMemo = () => {
     if (!selectedCrypto || !selectedNetwork) return '';
 
-    // Try to get memo from wallet manager first
-    const dynamicMemo = walletManager.getDonationMemo(selectedCrypto.toUpperCase(), selectedNetwork);
-    if (dynamicMemo) {
-      return dynamicMemo;
+    // Try to get memo from wallet config first
+    const walletInfo = getWalletAddress(selectedCrypto.toLowerCase());
+    if (walletInfo && walletInfo.memo) {
+      return walletInfo.memo;
     }
 
     // Fallback to static memo
@@ -273,35 +273,33 @@ const Donate: React.FC = () => {
   };
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>Donate - Saintlammy Foundation</title>
         <meta name="description" content="Support Saintlammy Foundation with secure donations. Credit card, bank transfer, cryptocurrency, and international payment options available." />
       </Head>
 
-      <Navigation />
-
       <main>
         {/* Hero Section */}
-        <section className="py-32 bg-gray-900">
+        <section className="py-32 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-white mb-6 font-display tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Make a Donation
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
               Your generosity transforms lives. Choose how you'd like to support our mission of empowering widows, orphans, and vulnerable communities.
             </p>
           </div>
         </section>
 
         {/* Impact Levels */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Your Impact
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 See exactly how your donation creates positive change in our communities
               </p>
             </div>
@@ -310,7 +308,7 @@ const Donate: React.FC = () => {
               {impactLevels.map((level, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 hover:border-accent-500 transition-colors cursor-pointer group"
+                  className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 hover:border-accent-500 transition-colors cursor-pointer group"
                   onClick={() => handleAmountSelect(level.amount)}
                 >
                   <div className={`w-16 h-16 bg-gradient-to-br ${level.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
@@ -318,8 +316,8 @@ const Donate: React.FC = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-semibold text-accent-400 mb-2">${level.amount}</div>
-                    <h3 className="text-lg font-semibold text-white mb-2 font-display">{level.title}</h3>
-                    <p className="text-gray-300 text-sm font-light">{level.description}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{level.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light">{level.description}</p>
                   </div>
                 </div>
               ))}
@@ -328,14 +326,14 @@ const Donate: React.FC = () => {
         </section>
 
         {/* Donation Form */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6">
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-300 dark:border-gray-700">
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4 font-display">
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
                   Complete Your Donation
                 </h2>
-                <p className="text-gray-300 font-light">
+                <p className="text-gray-600 dark:text-gray-300 font-light">
                   Choose your donation amount and preferred payment method
                 </p>
               </div>
@@ -343,7 +341,7 @@ const Donate: React.FC = () => {
               <div className="space-y-8">
                 {/* Donation Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Donation Type
                   </label>
                   <div className="grid grid-cols-2 gap-4">
@@ -351,8 +349,8 @@ const Donate: React.FC = () => {
                       onClick={() => setDonationType('one-time')}
                       className={`p-4 rounded-xl border-2 transition-colors text-center ${
                         donationType === 'one-time'
-                          ? 'border-accent-500 bg-accent-500/10 text-white'
-                          : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                          ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                          : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
                     >
                       <div className="font-semibold">One-time</div>
@@ -362,8 +360,8 @@ const Donate: React.FC = () => {
                       onClick={() => setDonationType('monthly')}
                       className={`p-4 rounded-xl border-2 transition-colors text-center ${
                         donationType === 'monthly'
-                          ? 'border-accent-500 bg-accent-500/10 text-white'
-                          : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                          ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                          : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                       }`}
                     >
                       <div className="font-semibold">Monthly</div>
@@ -374,7 +372,7 @@ const Donate: React.FC = () => {
 
                 {/* Donation Amount */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Donation Amount (USD)
                   </label>
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
@@ -384,8 +382,8 @@ const Donate: React.FC = () => {
                         onClick={() => handleAmountSelect(amount)}
                         className={`p-3 rounded-lg border transition-colors ${
                           donationAmount === amount.toString()
-                            ? 'border-accent-500 bg-accent-500/10 text-white'
-                            : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                            ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                         }`}
                       >
                         ${amount}
@@ -397,13 +395,13 @@ const Donate: React.FC = () => {
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(e.target.value)}
                     placeholder="Enter custom amount"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                   />
                 </div>
 
                 {/* Payment Method */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Payment Method
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -414,15 +412,15 @@ const Donate: React.FC = () => {
                         className={`p-4 rounded-xl border-2 transition-colors text-left ${
                           paymentMethod === method.id
                             ? 'border-accent-500 bg-accent-500/10'
-                            : 'border-gray-600 hover:border-gray-500'
+                            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                         }`}
                       >
                         <div className="flex items-center gap-3 mb-2">
                           <method.icon className="w-5 h-5 text-accent-400" />
-                          <span className="font-semibold text-white">{method.title}</span>
+                          <span className="font-semibold text-gray-900 dark:text-white">{method.title}</span>
                         </div>
-                        <p className="text-sm text-gray-300 mb-1">{method.description}</p>
-                        <p className="text-xs text-gray-400">Fees: {method.fees}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{method.description}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Fees: {method.fees}</p>
                       </button>
                     ))}
                   </div>
@@ -431,27 +429,27 @@ const Donate: React.FC = () => {
                 {/* Payment Details Based on Method */}
                 {paymentMethod === 'card' && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">Credit/Debit Card Information</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Credit/Debit Card Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <input
                         type="text"
                         placeholder="Card Number"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="text"
                         placeholder="Cardholder Name"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="text"
                         placeholder="MM/YY"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="text"
                         placeholder="CVV"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                     </div>
                   </div>
@@ -459,16 +457,16 @@ const Donate: React.FC = () => {
 
                 {paymentMethod === 'bank' && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">Bank Transfer Details</h3>
-                    <div className="bg-gray-700/50 rounded-xl p-6 space-y-3">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Bank Transfer Details</h3>
+                    <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-xl p-6 space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Account Name:</span>
-                        <span className="text-white font-medium">{bankDetails.accountName}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Account Name:</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{bankDetails.accountName}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Account Number:</span>
+                        <span className="text-gray-600 dark:text-gray-300">Account Number:</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{bankDetails.accountNumber}</span>
+                          <span className="text-gray-900 dark:text-white font-medium">{bankDetails.accountNumber}</span>
                           <button
                             onClick={() => handleCopyToClipboard(bankDetails.accountNumber, 'account')}
                             className="text-accent-400 hover:text-accent-300 transition-colors"
@@ -478,15 +476,15 @@ const Donate: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Bank:</span>
-                        <span className="text-white font-medium">{bankDetails.bankName}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Bank:</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{bankDetails.bankName}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-300">Sort Code:</span>
-                        <span className="text-white font-medium">{bankDetails.sortCode}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Sort Code:</span>
+                        <span className="text-gray-900 dark:text-white font-medium">{bankDetails.sortCode}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Please send us the transfer receipt at hello@saintlammyfoundation.org
                     </p>
                   </div>
@@ -494,11 +492,11 @@ const Donate: React.FC = () => {
 
                 {paymentMethod === 'crypto' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-white">Cryptocurrency Donation</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cryptocurrency Donation</h3>
 
                     {/* Cryptocurrency Selection */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                         Select Cryptocurrency
                       </label>
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -510,8 +508,8 @@ const Donate: React.FC = () => {
                               onClick={() => handleCryptoSelect(cryptoId)}
                               className={`p-4 rounded-lg border transition-colors text-center group ${
                                 selectedCrypto === cryptoId
-                                  ? 'border-accent-500 bg-accent-500/10 text-white'
-                                  : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                                  ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                                  : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                               }`}
                             >
                               <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${crypto.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
@@ -531,13 +529,13 @@ const Donate: React.FC = () => {
                     {/* Network Selection */}
                     {selectedCrypto && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-3">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Select Network
                         </label>
                         <div className="relative">
                           <button
                             onClick={() => setNetworkDropdownOpen(!networkDropdownOpen)}
-                            className="w-full p-4 bg-gray-700 border border-gray-600 rounded-xl text-white text-left flex items-center justify-between hover:border-gray-500 transition-colors"
+                            className="w-full p-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
                           >
                             <span>
                               {selectedNetwork
@@ -550,12 +548,12 @@ const Donate: React.FC = () => {
                           </button>
 
                           {networkDropdownOpen && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-xl overflow-hidden z-10">
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden z-10">
                               {Object.entries(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks).map(([networkId, network]) => (
                                 <button
                                   key={networkId}
                                   onClick={() => handleNetworkSelect(networkId)}
-                                  className="w-full p-4 text-left text-white hover:bg-gray-600 transition-colors border-b border-gray-600 last:border-b-0"
+                                  className="w-full p-4 text-left text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border-b border-gray-200 dark:border-gray-600 last:border-b-0"
                                 >
                                   {(network as any).name}
                                 </button>
@@ -568,9 +566,9 @@ const Donate: React.FC = () => {
 
                     {/* Wallet Address Display */}
                     {selectedCrypto && selectedNetwork && (
-                      <div className="bg-gray-700/50 rounded-xl p-6 space-y-4">
+                      <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-xl p-6 space-y-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-300 font-medium">
+                          <span className="text-gray-700 dark:text-gray-300 font-medium">
                             {cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].name} Address ({cryptoCurrencies[selectedCrypto as CryptoCurrencyKey].networks[selectedNetwork].name}):
                           </span>
                           <button
@@ -590,14 +588,14 @@ const Donate: React.FC = () => {
                             )}
                           </button>
                         </div>
-                        <div className="bg-gray-800 rounded-lg p-4 font-mono text-sm text-white break-all">
+                        <div className="bg-gray-300 dark:bg-gray-800 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white break-all">
                           {getCurrentCryptoAddress()}
                         </div>
 
                         {getCurrentMemo() && (
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-gray-300 font-medium">Memo/Tag (Required):</span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">Memo/Tag (Required):</span>
                               <button
                                 onClick={() => handleCopyToClipboard(getCurrentMemo(), 'memo')}
                                 className="text-accent-400 hover:text-accent-300 transition-colors flex items-center gap-2"
@@ -615,7 +613,7 @@ const Donate: React.FC = () => {
                                 )}
                               </button>
                             </div>
-                            <div className="bg-gray-800 rounded-lg p-4 font-mono text-sm text-white">
+                            <div className="bg-gray-300 dark:bg-gray-800 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white">
                               {getCurrentMemo()}
                             </div>
                           </div>
@@ -625,22 +623,22 @@ const Donate: React.FC = () => {
 
                     {/* Donor Information Form */}
                     {selectedCrypto && selectedNetwork && (
-                      <div className="bg-gray-700/30 rounded-xl p-6 space-y-4">
-                        <h4 className="text-white font-semibold mb-4">Donor Information</h4>
+                      <div className="bg-gray-200/30 dark:bg-gray-700/30 rounded-xl p-6 space-y-4">
+                        <h4 className="text-gray-900 dark:text-white font-semibold mb-4">Donor Information</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <input
                             type="text"
                             placeholder="Full Name"
                             value={cryptoFormData.name}
                             onChange={(e) => handleCryptoFormChange('name', e.target.value)}
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                            className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                           />
                           <input
                             type="email"
                             placeholder="Email Address"
                             value={cryptoFormData.email}
                             onChange={(e) => handleCryptoFormChange('email', e.target.value)}
-                            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                            className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                           />
                         </div>
                         <input
@@ -648,7 +646,7 @@ const Donate: React.FC = () => {
                           placeholder="Transaction Hash (after sending)"
                           value={cryptoFormData.transactionHash}
                           onChange={(e) => handleCryptoFormChange('transactionHash', e.target.value)}
-                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                         />
 
                         {cryptoFormData.transactionHash && getCurrentNetworkExplorer() && (
@@ -672,11 +670,11 @@ const Donate: React.FC = () => {
                         <div className="flex items-start gap-3">
                           <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
                           <div className="space-y-2 text-sm">
-                            <p className="text-white font-medium">Blockchain Traceability & Dynamic Wallets</p>
-                            <p className="text-gray-300">
+                            <p className="text-gray-900 dark:text-white font-medium">Blockchain Traceability & Dynamic Wallets</p>
+                            <p className="text-gray-700 dark:text-gray-300">
                               All cryptocurrency donations are fully traceable on the blockchain. This address is dynamically generated and managed through our secure wallet system for enhanced security and tracking.
                             </p>
-                            <p className="text-gray-400 text-xs">
+                            <p className="text-gray-600 dark:text-gray-400 text-xs">
                               Please ensure you send the exact amount to the address above. Double-check the network before sending.
                             </p>
                           </div>
@@ -688,12 +686,12 @@ const Donate: React.FC = () => {
 
                 {paymentMethod === 'international' && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">International Payment</h3>
-                    <div className="bg-gray-700/50 rounded-xl p-6">
-                      <p className="text-gray-300 mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">International Payment</h3>
+                    <div className="bg-gray-200/50 dark:bg-gray-700/50 rounded-xl p-6">
+                      <p className="text-gray-700 dark:text-gray-300 mb-4">
                         For international donations, we support:
                       </p>
-                      <ul className="space-y-2 text-gray-300 mb-4">
+                      <ul className="space-y-2 text-gray-700 dark:text-gray-300 mb-4">
                         <li className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-accent-400 rounded-full"></div>
                           PayPal: donations@saintlammyfoundation.org
@@ -707,7 +705,7 @@ const Donate: React.FC = () => {
                           Wise (Bank Transfer)
                         </li>
                       </ul>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         Contact us at hello@saintlammyfoundation.org for assistance with international donations.
                       </p>
                     </div>
@@ -727,44 +725,44 @@ const Donate: React.FC = () => {
         </section>
 
         {/* Security & Transparency */}
-        <section className="py-24 bg-black">
+        <section className="py-24 bg-white dark:bg-black">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Security & Transparency
               </h2>
-              <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                 Your donations are secure and every naira is tracked with complete transparency
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 text-center">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 text-center">
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-6 h-6 text-green-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 font-display">Secure Payments</h3>
-                <p className="text-gray-300 text-sm font-light">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">Secure Payments</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-light">
                   Bank-level encryption and secure payment processing for all transactions
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 text-center">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 text-center">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <TrendingUp className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 font-display">100% Transparency</h3>
-                <p className="text-gray-300 text-sm font-light">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">100% Transparency</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-light">
                   Detailed financial reports and impact tracking for every donation
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 text-center">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 text-center">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-6 h-6 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 font-display">Tax Receipts</h3>
-                <p className="text-gray-300 text-sm font-light">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">Tax Receipts</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-light">
                   Automatic tax-deductible receipts for all eligible donations
                 </p>
               </div>
@@ -773,30 +771,29 @@ const Donate: React.FC = () => {
         </section>
 
         {/* Other Ways to Help */}
-        <section className="py-24 bg-gray-900">
+        <section className="py-24 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+            <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Other Ways to Help
             </h2>
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
               Can't donate right now? There are many other ways to support our mission.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
                 Volunteer Your Time
               </button>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
                 Share Our Mission
               </button>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-gray-200/50 dark:bg-white/10 hover:bg-gray-300/50 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans">
                 Corporate Partnership
               </button>
             </div>
           </div>
         </section>
       </main>
-
-    </>
+    </Layout>
   );
 };
 

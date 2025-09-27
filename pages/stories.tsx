@@ -92,7 +92,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
       </section>
 
       {/* Filters and Search */}
-      <section className="py-8 bg-gray-900">
+      <section className="py-8 bg-gray-100 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             {/* Search */}
@@ -103,17 +103,17 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
                 placeholder="Search stories..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-accent-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-accent-500 focus:outline-none"
               />
             </div>
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="text-gray-400 w-5 h-5" />
+              <Filter className="text-gray-500 dark:text-gray-400 w-5 h-5" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-accent-500 focus:outline-none"
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:border-accent-500 focus:outline-none"
               >
                 {categories.map((category) => (
                   <option key={category.value} value={category.value}>
@@ -125,18 +125,18 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
           </div>
 
           {/* Results count */}
-          <div className="mt-4 text-gray-400 text-sm">
+          <div className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
             Showing {filteredStories.length} of {stories.length} stories
           </div>
         </div>
       </section>
 
       {/* Stories Grid */}
-      <section className="py-16 bg-gray-900">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
           {filteredStories.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-gray-400 text-lg mb-4">No stories found matching your criteria.</div>
+              <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">No stories found matching your criteria.</div>
               <button
                 onClick={() => {
                   setSelectedCategory('all');
@@ -152,7 +152,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
               {filteredStories.map((story, index) => (
                 <article
                   key={story.id}
-                  className="group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 hover:border-gray-600 transition-all duration-300"
+                  className="group bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800/70 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300"
                 >
                   {/* Image */}
                   <div className="relative h-64 overflow-hidden">
@@ -164,7 +164,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
                       loading={index > 2 ? 'lazy' : 'eager'}
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4">
@@ -185,10 +185,10 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="text-xl font-semibold text-white mb-1 font-display">
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1 font-display">
                           {story.name}
                         </h3>
-                        <div className="flex items-center text-sm text-gray-400 gap-4">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 gap-4">
                           {story.age && <span>Age {story.age}</span>}
                           <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
@@ -203,26 +203,26 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
                       </div>
                     </div>
 
-                    <p className="text-gray-300 text-sm leading-relaxed mb-4 font-light">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
                       {story.story.length > 150 ? `${story.story.substring(0, 150)}...` : story.story}
                     </p>
 
                     <blockquote className="border-l-4 border-accent-500 pl-4 mb-4">
-                      <p className="text-accent-100 text-sm italic font-medium leading-relaxed">
+                      <p className="text-accent-600 dark:text-accent-100 text-sm italic font-medium leading-relaxed">
                         "{story.quote.length > 100 ? `${story.quote.substring(0, 100)}...` : story.quote}"
                       </p>
                     </blockquote>
 
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-400">Impact:</span>
+                        <span className="text-gray-500 dark:text-gray-400">Impact:</span>
                         <span className="text-green-400 font-medium">Successful</span>
                       </div>
-                      <p className="text-xs text-gray-300 leading-relaxed">
+                      <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                         {story.impact}
                       </p>
-                      <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-700">
-                        <div className="flex items-center gap-1 text-gray-400">
+                      <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                           <Calendar className="w-3 h-3" />
                           Supported since {story.dateHelped}
                         </div>
@@ -237,12 +237,12 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-black">
+      <section className="py-16 bg-white dark:bg-black">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold text-white mb-6 font-display">
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 font-display">
             Be Part of the Next Success Story
           </h2>
-          <p className="text-xl text-gray-300 mb-8 font-light leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 font-light leading-relaxed">
             Every donation creates opportunities for transformation. Join us in writing more success stories across Nigeria.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -259,7 +259,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
             </button>
             <a
               href="/volunteer"
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-full font-medium text-lg transition-colors"
+              className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 px-8 py-4 rounded-full font-medium text-lg transition-colors"
             >
               Volunteer With Us
             </a>

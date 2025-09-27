@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { GetStaticProps } from 'next';
-import Navigation from '@/components/Navigation';
+import Layout from '@/components/Layout';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
@@ -74,7 +74,7 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
       case 'story':
         return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-gray-500 dark:text-gray-400 border-gray-500/30';
     }
   };
 
@@ -98,14 +98,10 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
         <link rel="canonical" href="https://www.saintlammyfoundation.org/news" />
       </Head>
 
-      <Navigation onDonateClick={() => openDonationModal({
-        source: 'newsletter',
-        title: 'Support Our Work',
-        description: 'Stay updated and support our ongoing humanitarian efforts'
-      })} />
+      <Layout>
 
       <ErrorBoundary>
-        <main className="min-h-screen bg-gray-900 pt-16">
+          <main className="min-h-screen bg-gray-50 dark:bg-gray-50 dark:bg-gray-900 pt-16">
           {/* Header Section */}
           <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
             <div className="max-w-7xl mx-auto px-6">
@@ -115,10 +111,10 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
               />
 
               <div className="text-center">
-                <h1 className="text-display-lg md:text-display-xl font-medium text-white mb-6 font-display tracking-tight">
+                <h1 className="text-display-lg md:text-display-xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   News & Updates
                 </h1>
-                <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
                   Follow our journey as we transform lives across Nigeria. Read about our latest outreach programs, partnerships, achievements, and the inspiring stories of those we serve.
                 </p>
               </div>
@@ -127,10 +123,10 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
 
           {/* Featured Article */}
           {featuredArticle && (
-            <section className="py-16 bg-gray-900">
+            <section className="py-16 bg-gray-50 dark:bg-gray-900">
               <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-2xl font-semibold text-white mb-8 font-display">Featured Story</h2>
-                <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 transition-all duration-300">
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-8 font-display">Featured Story</h2>
+                <div className="bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-100 dark:bg-gray-800/70 transition-all duration-300">
                   <div className="grid grid-cols-1 lg:grid-cols-2">
                     <div className="relative h-64 lg:h-full">
                       <Image
@@ -147,17 +143,17 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(featuredArticle.category)}`}>
                           Featured
                         </span>
-                        <span className="text-gray-400 text-sm">{formatDate(featuredArticle.date)}</span>
+                        <span className="text-gray-500 dark:text-gray-400 text-sm">{formatDate(featuredArticle.date)}</span>
                       </div>
-                      <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4 font-display">
+                      <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 font-display">
                         {featuredArticle.title}
                       </h3>
-                      <p className="text-gray-300 mb-6 font-light leading-relaxed">
+                      <p className="text-gray-600 dark:text-gray-300 mb-6 font-light leading-relaxed">
                         {featuredArticle.excerpt}
                       </p>
                       <Link
                         href={`/news/${featuredArticle.id}`}
-                        className="inline-flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium transition-colors"
+                        className="inline-flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium transition-colors"
                       >
                         <span>Read Full Story</span>
                         <ArrowRight className="w-4 h-4" />
@@ -170,28 +166,28 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
           )}
 
           {/* Search and Filter */}
-          <section className="py-8 bg-black">
+          <section className="py-8 bg-white dark:bg-black">
             <div className="max-w-7xl mx-auto px-6">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 {/* Search */}
                 <div className="relative flex-grow max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search articles..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Category Filter */}
                 <div className="flex items-center space-x-2">
-                  <Filter className="w-5 h-5 text-gray-400" />
+                  <Filter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-gray-800 border border-gray-700 rounded-lg text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     <option value="all">All Categories</option>
                     {categories.map(category => (
@@ -204,14 +200,14 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
               </div>
 
               {/* Results Count */}
-              <div className="mt-4 text-gray-400 text-sm">
+              <div className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
                 Showing {currentArticles.length} of {filteredArticles.length} articles
               </div>
             </div>
           </section>
 
           {/* Articles Grid */}
-          <section className="py-16 bg-gray-900">
+          <section className="py-16 bg-gray-50 dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {currentArticles.map((article, index) => {
@@ -221,7 +217,7 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                     <Link
                       href={`/news/${article.id}`}
                       key={article.id}
-                      className="group block bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 hover:border-gray-600 transition-all duration-300 cursor-pointer"
+                      className="group block bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-100 dark:bg-gray-800/70 hover:border-gray-600 transition-all duration-300 cursor-pointer"
                     >
                       <div className="relative h-48 overflow-hidden">
                         <Image
@@ -241,23 +237,23 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                         </div>
 
                         <div className="absolute bottom-4 right-4">
-                          <span className="bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                          <span className="bg-white dark:bg-black/60 backdrop-blur-sm text-gray-900 dark:text-white text-xs px-2 py-1 rounded-full">
                             {article.readTime}
                           </span>
                         </div>
                       </div>
 
                       <div className="p-6">
-                        <div className="flex items-center text-sm text-gray-400 mb-3">
+                        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
                           <Calendar className="w-4 h-4 mr-2" />
                           {formatDate(article.date)}
                         </div>
 
-                        <h3 className="text-lg font-semibold text-white mb-3 font-display group-hover:text-accent-400 transition-colors line-clamp-2">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display group-hover:text-accent-400 transition-colors line-clamp-2">
                           {article.title}
                         </h3>
 
-                        <p className="text-gray-300 text-sm leading-relaxed mb-4 font-light line-clamp-3">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light line-clamp-3">
                           {article.excerpt}
                         </p>
 
@@ -269,7 +265,7 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
 
                           <div className="flex items-center space-x-1">
                             {article.tags.slice(0, 2).map(tag => (
-                              <span key={tag} className="inline-flex items-center text-xs text-gray-400">
+                              <span key={tag} className="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
                                 <Tag className="w-3 h-3 mr-1" />
                                 {tag}
                               </span>
@@ -292,8 +288,8 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                         onClick={() => setCurrentPage(page)}
                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                           currentPage === page
-                            ? 'bg-accent-500 text-white'
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                            ? 'bg-accent-500 text-gray-900 dark:text-white'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-700'
                         }`}
                       >
                         {page}
@@ -306,35 +302,40 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
           </section>
 
           {/* Newsletter CTA */}
-          <section className="py-16 bg-black">
+          <section className="py-16 bg-white dark:bg-black">
             <div className="max-w-4xl mx-auto px-6 text-center">
-              <h2 className="text-2xl font-semibold text-white mb-4 font-display">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
                 Stay Updated
               </h2>
-              <p className="text-gray-300 mb-8 font-light">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 font-light">
                 Subscribe to our newsletter to receive the latest updates on our programs and impact stories.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="flex-grow px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
-                <button className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors">
                   Subscribe
                 </button>
               </div>
             </div>
           </section>
-        </main>
-      </ErrorBoundary>
+          </main>
+        </ErrorBoundary>
+      </Layout>
 
     </>
   );
 };
 
 const NewsPage: React.FC<NewsPageProps> = (props) => {
-  return <NewsContent {...props} />;
+  return (
+    <DonationModalProvider>
+      <NewsContent {...props} />
+    </DonationModalProvider>
+  );
 };
 
 export const getStaticProps: GetStaticProps<NewsPageProps> = async () => {
