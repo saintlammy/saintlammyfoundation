@@ -35,7 +35,7 @@ const BeneficiaryShowcase: React.FC = () => {
       story: 'Dreams of becoming a doctor to help other children like herself. Your support provides her with education, healthcare, and hope.',
       needs: ['School fees and supplies', 'Healthcare', 'Nutritious meals', 'Educational materials'],
       monthlyCost: 45,
-      image: 'https://images.unsplash.com/photo-1544550581-7f2cc2c4fbe8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       schoolGrade: '3',
       dreamAspiration: 'I want to become a doctor so I can help sick children get better and make them smile again.',
       isSponsored: false,
@@ -50,7 +50,7 @@ const BeneficiaryShowcase: React.FC = () => {
       story: 'Mother of three children, learning new skills to provide for her family. Your support helps her start a small business.',
       needs: ['Business training', 'Micro-loan support', 'Childcare assistance', 'Basic necessities'],
       monthlyCost: 80,
-      image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       familySize: 4,
       dreamAspiration: 'I want to build a successful tailoring business so my children can have the education I never had.',
       isSponsored: false,
@@ -65,7 +65,7 @@ const BeneficiaryShowcase: React.FC = () => {
       story: 'Passionate about technology and coding. Your support gives him access to education and the tools to build his future.',
       needs: ['Computer access', 'Internet connectivity', 'Programming books', 'School fees'],
       monthlyCost: 55,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       schoolGrade: '7',
       dreamAspiration: 'I want to become a software engineer and create apps that help people in my community.',
       isSponsored: false,
@@ -79,13 +79,13 @@ const BeneficiaryShowcase: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-gray-900">
+    <section className="py-24 bg-gray-100 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
             Meet the Lives You're Transforming
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             Every donation has a face, a story, and a dream. Here are some of the amazing people
             your support is helping to thrive.
           </p>
@@ -95,7 +95,7 @@ const BeneficiaryShowcase: React.FC = () => {
           {beneficiaries.map((beneficiary) => (
             <div
               key={beneficiary.id}
-              className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-700 hover:border-accent-500"
+              className="group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500"
             >
               {/* Photo */}
               <div className="relative h-64 overflow-hidden">
@@ -122,40 +122,40 @@ const BeneficiaryShowcase: React.FC = () => {
               {/* Content */}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-white font-display">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white font-display">
                     {beneficiary.name}, {beneficiary.age}
                   </h3>
-                  <div className="flex items-center text-sm text-gray-400">
+                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                     <MapPin className="w-4 h-4 mr-1" />
                     {beneficiary.location.split(',')[0]}
                   </div>
                 </div>
 
-                <p className="text-gray-300 text-sm font-light leading-relaxed mb-4">
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">
                   {beneficiary.story}
                 </p>
 
                 {/* Support Info */}
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400 font-medium">Monthly Need</span>
-                    <span className="font-semibold text-white">${beneficiary.monthlyCost}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Monthly Need</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">${beneficiary.monthlyCost}</span>
                   </div>
 
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400 font-medium">Days Supported</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">Days Supported</span>
                     <span className="font-semibold text-accent-400">{beneficiary.daysSupported} days</span>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-accent-500 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(((beneficiary.daysSupported || 0) / 365) * 100, 100)}%` }}
                     ></div>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-gray-400">
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>Goal: 365 days</span>
                     <span>{Math.round(((beneficiary.daysSupported || 0) / 365) * 100)}% funded</span>
                   </div>
@@ -175,7 +175,7 @@ const BeneficiaryShowcase: React.FC = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-gray-300 mb-6 font-light">
+          <p className="text-gray-600 dark:text-gray-300 mb-6 font-light">
             Join over 15,000 donors who are making a real difference in these lives
           </p>
           <Link

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { ComponentProps } from '@/types';
 import { DonationContext } from './DonationModalProvider';
 import { Heart, Menu, X } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 interface NavigationProps extends ComponentProps {
   onDonateClick?: (context?: DonationContext) => void;
@@ -25,7 +26,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 ${className}`}>
+    <nav className={`fixed top-0 w-full z-50 bg-white/90 dark:bg-black/80 backdrop-blur-xl border-b border-gray-200/20 dark:border-white/10 ${className}`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -34,7 +35,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
               <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center mr-3">
                 <Heart className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-xl font-semibold text-white font-display tracking-tight">
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
                 <span className="text-accent-400">Saint</span>lammy Foundation
               </h1>
             </div>
@@ -42,7 +43,9 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
 
           {/* Desktop Navigation */}
           <div className="hidden md:block ml-auto">
-            <div className="flex items-baseline space-x-4">
+            <div className="flex items-center space-x-4">
+              <ThemeToggle variant="navigation" size="sm" />
+              <div className="flex items-baseline space-x-4">
               {navLinks.map((link) => {
                 const isActive = router.pathname === link.href;
 
@@ -63,7 +66,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                     key={link.href}
                     href={link.href}
                     className={`relative px-3 py-2 text-sm font-medium font-sans transition-colors duration-200 group ${
-                      isActive ? 'text-white' : 'text-gray-300 hover:text-white'
+                      isActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     {link.label}
@@ -74,11 +77,13 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                   </a>
                 );
               })}
+              </div>
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button and theme toggle */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle variant="navigation" size="sm" />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-400 hover:text-white hover:bg-white/10 inline-flex items-center justify-center p-2 rounded-md transition-colors"

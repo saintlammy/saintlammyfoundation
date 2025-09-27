@@ -12,10 +12,10 @@ const WebsiteAnalyticsManagement: React.FC = () => {
 
       <AdminLayout title="Website Analytics">
         <div className="space-y-6">
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Website Analytics</h3>
-              <div className="text-gray-400 text-center py-12">
+              <div className="text-gray-600 dark:text-gray-400 text-center py-12">
                 Website analytics interface - ready for implementation
               </div>
             </div>

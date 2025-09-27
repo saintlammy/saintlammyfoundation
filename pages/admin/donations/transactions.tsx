@@ -129,40 +129,40 @@ const DonationTransactions: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Total Transactions</p>
-                  <p className="text-2xl font-bold text-white">1,234</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Transactions</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">1,234</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Completed</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Completed</p>
                   <p className="text-2xl font-bold text-green-400">1,156</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Pending</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Pending</p>
                   <p className="text-2xl font-bold text-yellow-400">67</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Failed</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Failed</p>
                   <p className="text-2xl font-bold text-red-400">11</p>
                 </div>
                 <XCircle className="w-8 h-8 text-red-500" />
@@ -171,7 +171,7 @@ const DonationTransactions: React.FC = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -181,7 +181,7 @@ const DonationTransactions: React.FC = () => {
                     placeholder="Search transactions..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ const DonationTransactions: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Status</option>
                 <option value="completed">Completed</option>
@@ -200,7 +200,7 @@ const DonationTransactions: React.FC = () => {
               <select
                 value={methodFilter}
                 onChange={(e) => setMethodFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Methods</option>
                 <option value="card">Credit Card</option>
@@ -217,7 +217,7 @@ const DonationTransactions: React.FC = () => {
                 Refresh
               </button>
 
-              <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg flex items-center gap-2 transition-colors">
+              <button className="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors">
                 <Download className="w-4 h-4" />
                 Export
               </button>
@@ -225,30 +225,30 @@ const DonationTransactions: React.FC = () => {
           </div>
 
           {/* Transactions Table */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-700">
+                <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Transaction
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Donor
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Method
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -256,47 +256,47 @@ const DonationTransactions: React.FC = () => {
                 <tbody className="divide-y divide-gray-700">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
                         Loading transactions...
                       </td>
                     </tr>
                   ) : filteredTransactions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
                         No transactions found
                       </td>
                     </tr>
                   ) : (
                     filteredTransactions.map((transaction) => (
-                      <tr key={transaction.id} className="hover:bg-gray-700/50">
+                      <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {getStatusIcon(transaction.status)}
-                            <span className="ml-2 text-sm font-medium text-white">
+                            <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
                               #{transaction.id}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-white">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {transaction.donorName}
                             </div>
-                            <div className="text-sm text-gray-400">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
                               {transaction.donorEmail}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-white">
+                          <div className="text-sm font-bold text-gray-900 dark:text-white">
                             {transaction.amount} {transaction.currency}
                           </div>
-                          <div className="text-sm text-gray-400 capitalize">
+                          <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
                             {transaction.category}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-300">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
                             {transaction.paymentMethod}
                           </span>
                         </td>
@@ -305,16 +305,16 @@ const DonationTransactions: React.FC = () => {
                             {transaction.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                           {new Date(transaction.createdAt).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-2">
-                            <button className="text-accent-400 hover:text-accent-300">
+                            <button className="text-accent-500 hover:text-accent-600 dark:text-accent-400 dark:hover:text-accent-300">
                               <Eye className="w-4 h-4" />
                             </button>
                             {transaction.txHash && (
-                              <button className="text-gray-400 hover:text-white">
+                              <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
                                 <ExternalLink className="w-4 h-4" />
                               </button>
                             )}

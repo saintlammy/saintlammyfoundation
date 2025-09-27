@@ -7,23 +7,23 @@ interface UrgentNeedsProps {
 
 const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
   return (
-    <section className="py-24 bg-black">
+    <section className="py-24 bg-gray-100 dark:bg-black">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-red-500/20 text-red-400 text-sm font-medium mb-6">
             <AlertCircle className="w-4 h-4 mr-2" />
             URGENT NEEDS
           </div>
-          <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
             Help Right Now
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             Every day without your support means another hungry child or struggling mother. Be the reason someone breathes again.
           </p>
         </div>
 
         {/* Main Campaign */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-700">
+        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-200 dark:border-gray-700">
           <div className="md:flex">
             <div className="md:w-1/2 p-8 md:p-12">
               <div className="flex items-center mb-4">
@@ -33,13 +33,13 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
                 <span className="text-red-400 font-semibold text-sm tracking-wide uppercase">URGENT CAMPAIGN</span>
               </div>
 
-              <h3 className="text-3xl md:text-4xl font-semibold text-white mb-4 font-display">
+              <h3 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
                 Feed 100 Widows Before Christmas
               </h3>
 
               <div className="flex items-center mb-6">
                 <Target className="w-5 h-5 text-gray-400 mr-2" />
-                <span className="text-lg font-medium text-white">Goal: ₦2,500,000 / $1,800</span>
+                <span className="text-lg font-medium text-gray-900 dark:text-white">Goal: ₦2,500,000 / $1,800</span>
               </div>
 
               <div className="flex items-center mb-6">
@@ -49,19 +49,19 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
 
               {/* Progress Bar */}
               <div className="mb-8">
-                <div className="flex justify-between text-sm text-gray-300 mb-2">
+                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
                   <span>Progress</span>
                   <span>45% raised</span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-3">
+                <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-3">
                   <div className="bg-gradient-to-r from-red-500 to-orange-500 h-3 rounded-full transition-all duration-500" style={{width: '45%'}}></div>
                 </div>
-                <div className="text-sm text-gray-400 mt-2">₁,125,000 raised of ₦2,500,000 goal</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">₁,125,000 raised of ₦2,500,000 goal</div>
               </div>
 
               <div className="space-y-4 mb-8">
-                <h4 className="font-semibold text-white font-display">Your Impact:</h4>
-                <div className="space-y-2 text-sm text-gray-300">
+                <h4 className="font-semibold text-gray-900 dark:text-white font-display">Your Impact:</h4>
+                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div>₦5,000 / $4 = Feeds one widow for 2 weeks</div>
                   <div>₦25,000 / $18 = Supports a widow's family for a month</div>
                 </div>
@@ -99,7 +99,7 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <p className="text-gray-300 mb-6 font-light text-lg">
+          <p className="text-gray-600 dark:text-gray-300 mb-6 font-light text-lg">
             "You can't change the whole world. But you can change someone's world."
           </p>
           <div className="flex flex-wrap justify-center gap-4">

@@ -38,7 +38,7 @@ const StickyDonationButton: React.FC<StickyDonationButtonProps> = ({
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute -top-2 -right-2 w-6 h-6 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-colors duration-200 border border-gray-600"
+          className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-full flex items-center justify-center transition-colors duration-200 border border-gray-300 dark:border-gray-600"
           aria-label="Dismiss donation reminder"
         >
           <X className="w-3 h-3" />
@@ -61,9 +61,9 @@ const StickyDonationButton: React.FC<StickyDonationButtonProps> = ({
 
         {/* Tooltip */}
         <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          <div className="bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
+          <div className="bg-gray-800 dark:bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
             Help transform lives today
-            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 dark:border-t-gray-900"></div>
           </div>
         </div>
       </div>

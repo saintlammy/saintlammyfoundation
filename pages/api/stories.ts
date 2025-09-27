@@ -78,7 +78,7 @@ function getMockStories(limit?: number) {
       location: 'Lagos, Nigeria',
       story: 'Amara lost both parents in a car accident when she was 8. Through our orphan support program, she has received consistent education funding, healthcare, and emotional support.',
       quote: "Before Saintlammy Foundation found me, I thought my dreams of becoming a doctor were impossible. Now I'm excelling in school and know that anything is possible with the right support.",
-      image: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       category: 'orphan',
       impact: 'Maintained 95% attendance rate and top 10% academic performance',
       dateHelped: 'January 2022'
@@ -90,7 +90,7 @@ function getMockStories(limit?: number) {
       location: 'Ibadan, Nigeria',
       story: 'After losing her husband, Folake struggled to feed her three children. Our widow empowerment program provided monthly stipends and helped her start a small tailoring business.',
       quote: "The foundation didn't just give me money - they gave me hope and the tools to build a better future for my children. My tailoring business now supports my family independently.",
-      image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       category: 'widow',
       impact: 'Achieved financial independence and expanded business to employ 3 others',
       dateHelped: 'March 2022'
@@ -102,7 +102,7 @@ function getMockStories(limit?: number) {
       location: 'Abuja, Nigeria',
       story: 'Emmanuel was living on the streets when our outreach team found him. Through our comprehensive support program, he was enrolled in school and provided with safe housing.',
       quote: "I never thought I'd see the inside of a classroom again. Now I'm preparing for university and want to become an engineer to help build better communities.",
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       category: 'orphan',
       impact: 'Completed secondary education with honors and received university scholarship',
       dateHelped: 'September 2021'

@@ -6,7 +6,6 @@ export default function Document() {
       <Head>
         {/* SEO Meta Tags */}
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Primary Meta Tags */}
         <meta name="title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities in Nigeria" />

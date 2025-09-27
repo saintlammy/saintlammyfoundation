@@ -87,7 +87,7 @@ function getMockGallery(limit?: number) {
       id: '1',
       title: 'Education Support Program',
       description: 'Providing school supplies, uniforms, and scholarships to orphaned children across Lagos State.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       icon: 'GraduationCap',
       category: 'Education',
       date: '2024-01-15'
@@ -96,7 +96,7 @@ function getMockGallery(limit?: number) {
       id: '2',
       title: 'Mobile Health Clinics',
       description: 'Bringing medical care directly to underserved communities with our mobile healthcare units.',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
       icon: 'Heart',
       category: 'Healthcare',
       date: '2024-01-10'
@@ -105,7 +105,7 @@ function getMockGallery(limit?: number) {
       id: '3',
       title: 'Women Empowerment Initiative',
       description: 'Training widows in skills acquisition and providing micro-loans for sustainable businesses.',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
       icon: 'Users',
       category: 'Empowerment',
       date: '2024-01-05'
@@ -114,7 +114,7 @@ function getMockGallery(limit?: number) {
       id: '4',
       title: 'Water Infrastructure Projects',
       description: 'Building wells and water purification systems in rural communities to ensure clean water access.',
-      image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
       icon: 'Building',
       category: 'Infrastructure',
       date: '2023-12-20'

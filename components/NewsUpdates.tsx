@@ -11,6 +11,7 @@ interface NewsItem {
   category: 'outreach' | 'achievement' | 'partnership' | 'update';
   image: string;
   readTime: string;
+  slug?: string;
 }
 
 interface NewsUpdatesProps extends ComponentProps {}
@@ -71,13 +72,13 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
   };
 
   return (
-    <section className={`py-24 bg-gray-900 ${className}`}>
+    <section className={`py-24 bg-gray-100 dark:bg-gray-900 ${className}`}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
             Latest News & Updates
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             Stay connected with our ongoing work and the impact we're creating together across Nigerian communities.
           </p>
         </div>
@@ -85,14 +86,14 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {loading ? (
             [...Array(3)].map((_, index) => (
-              <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-700"></div>
+              <div key={index} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden animate-pulse">
+                <div className="h-48 bg-gray-200 dark:bg-gray-700"></div>
                 <div className="p-6">
-                  <div className="h-4 bg-gray-700 rounded mb-3 w-32"></div>
-                  <div className="h-5 bg-gray-700 rounded mb-3"></div>
-                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-700 rounded mb-4 w-3/4"></div>
-                  <div className="h-4 bg-gray-700 rounded w-20"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-3 w-32"></div>
+                  <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4 w-3/4"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
                 </div>
               </div>
             ))
@@ -101,9 +102,10 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
             const CategoryIcon = getCategoryIcon(item.category);
 
             return (
-              <article
+              <a
+                href={`/news/${item.slug || item.id}`}
                 key={item.id}
-                className="group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 hover:border-gray-600 transition-all duration-300"
+                className="group block bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-50 dark:hover:bg-gray-800/70 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-pointer"
               >
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden">
@@ -115,7 +117,7 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
                     loading={index > 0 ? 'lazy' : 'eager'}
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4">
@@ -135,25 +137,28 @@ const NewsUpdates: React.FC<NewsUpdatesProps> = ({ className = '' }) => {
 
                 {/* Content */}
                 <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-400 mb-3">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-3">
                     <Calendar className="w-4 h-4 mr-2" />
                     {formatDate(item.date)}
                   </div>
 
-                  <h3 className="text-lg font-semibold text-white mb-3 font-display group-hover:text-accent-400 transition-colors">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display group-hover:text-accent-400 transition-colors">
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-300 text-sm leading-relaxed mb-4 font-light">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
                     {item.excerpt}
                   </p>
 
-                  <button className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm group/link transition-colors">
+                  <a
+                    href={`/news/${item.slug || item.id}`}
+                    className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm group/link transition-colors"
+                  >
                     Read More
                     <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                  </button>
+                  </a>
                 </div>
-              </article>
+              </a>
             );
             })
           )}

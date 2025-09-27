@@ -165,37 +165,37 @@ const NewsletterManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Total Subscribers</p>
-                  <p className="text-2xl font-bold text-white">{stats.total}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Subscribers</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
                 </div>
                 <Users className="w-8 h-8 text-blue-500" />
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Active Subscribers</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Active Subscribers</p>
                   <p className="text-2xl font-bold text-green-400">{stats.active}</p>
                 </div>
                 <UserCheck className="w-8 h-8 text-green-500" />
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Growth Rate</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Growth Rate</p>
                   <p className="text-2xl font-bold text-purple-400">+{stats.total > 0 ? Math.round((stats.active / stats.total) * 100) : 0}%</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-purple-500" />
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Inactive</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Inactive</p>
                   <p className="text-2xl font-bold text-red-400">{stats.inactive}</p>
                 </div>
                 <Mail className="w-8 h-8 text-red-500" />
@@ -204,24 +204,24 @@ const NewsletterManagement: React.FC = () => {
           </div>
 
           {/* Actions */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search subscribers..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -232,21 +232,21 @@ const NewsletterManagement: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={exportSubscribers}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   Export CSV
                 </button>
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Subscriber
                 </button>
                 <button
                   onClick={loadSubscribers}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Refresh
@@ -256,10 +256,10 @@ const NewsletterManagement: React.FC = () => {
           </div>
 
           {/* Subscribers Table */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Subscriber
@@ -281,25 +281,25 @@ const NewsletterManagement: React.FC = () => {
                 <tbody className="divide-y divide-gray-700">
                   {loading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                      <td colSpan={5} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
                         Loading subscribers...
                       </td>
                     </tr>
                   ) : filteredSubscribers.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                      <td colSpan={5} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
                         No subscribers found
                       </td>
                     </tr>
                   ) : (
                     filteredSubscribers.map((subscriber) => (
-                      <tr key={subscriber.id} className="hover:bg-gray-700/50">
+                      <tr key={subscriber.id} className="hover:bg-gray-50 dark:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-white">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {subscriber.name}
                             </div>
-                            <div className="text-sm text-gray-400">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
                               {subscriber.email}
                             </div>
                           </div>
@@ -327,8 +327,8 @@ const NewsletterManagement: React.FC = () => {
                               onClick={() => updateSubscriberStatus(subscriber.id, !subscriber.is_active)}
                               className={`px-3 py-1 rounded text-xs transition-colors ${
                                 subscriber.is_active
-                                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                                  : 'bg-green-600 hover:bg-green-700 text-white'
+                                  ? 'bg-red-600 hover:bg-red-700 text-gray-900 dark:text-white'
+                                  : 'bg-green-600 hover:bg-green-700 text-gray-900 dark:text-white'
                               }`}
                             >
                               {subscriber.is_active ? 'Deactivate' : 'Activate'}
@@ -352,12 +352,12 @@ const NewsletterManagement: React.FC = () => {
           {/* Add Subscriber Modal */}
           {showAddModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">Add New Subscriber</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Add New Subscriber</h3>
                   <button
                     onClick={() => setShowAddModal(false)}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -370,7 +370,7 @@ const NewsletterManagement: React.FC = () => {
                       type="text"
                       value={newSubscriber.name}
                       onChange={(e) => setNewSubscriber({...newSubscriber, name: e.target.value})}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter subscriber name"
                     />
                   </div>
@@ -381,7 +381,7 @@ const NewsletterManagement: React.FC = () => {
                       type="email"
                       value={newSubscriber.email}
                       onChange={(e) => setNewSubscriber({...newSubscriber, email: e.target.value})}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter email address"
                     />
                   </div>
@@ -390,13 +390,13 @@ const NewsletterManagement: React.FC = () => {
                     <button
                       onClick={addSubscriber}
                       disabled={!newSubscriber.name || !newSubscriber.email}
-                      className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                      className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-gray-900 dark:text-white rounded-lg transition-colors"
                     >
                       Add Subscriber
                     </button>
                     <button
                       onClick={() => setShowAddModal(false)}
-                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
                     >
                       Cancel
                     </button>

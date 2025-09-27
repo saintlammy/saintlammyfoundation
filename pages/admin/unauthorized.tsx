@@ -35,7 +35,7 @@ const Unauthorized: React.FC = () => {
         <meta name="robots" content="noindex,nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full text-center">
           {/* Icon */}
           <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -43,35 +43,35 @@ const Unauthorized: React.FC = () => {
           </div>
 
           {/* Header */}
-          <h1 className="text-3xl font-bold text-white mb-4 font-display">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-display">
             Access Denied
           </h1>
-          <p className="text-gray-400 text-lg mb-8">
+          <p className="text-gray-600 dark:text-gray-400 text-lg mb-8">
             You don't have permission to access this admin area.
           </p>
 
           {/* User Info */}
           {user && (
-            <div className="bg-gray-800 rounded-lg p-4 mb-8 text-left">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-8 text-left border border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-3 mb-3">
                 <Shield className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300 font-medium">Current Session</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Current Session</span>
               </div>
               <div className="space-y-2">
                 <div>
-                  <span className="text-gray-400 text-sm">Email:</span>
-                  <p className="text-white font-mono text-sm">{user.email}</p>
+                  <span className="text-gray-600 dark:text-gray-400 text-sm">Email:</span>
+                  <p className="text-gray-900 dark:text-white font-mono text-sm">{user.email}</p>
                 </div>
                 <div>
-                  <span className="text-gray-400 text-sm">Role:</span>
-                  <p className="text-white text-sm">
+                  <span className="text-gray-600 dark:text-gray-400 text-sm">Role:</span>
+                  <p className="text-gray-900 dark:text-white text-sm">
                     {user.user_metadata?.role || 'user'}
                   </p>
                 </div>
                 {user.user_metadata?.organization && (
                   <div>
-                    <span className="text-gray-400 text-sm">Organization:</span>
-                    <p className="text-white text-sm">
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">Organization:</span>
+                    <p className="text-gray-900 dark:text-white text-sm">
                       {user.user_metadata.organization}
                     </p>
                   </div>
@@ -102,7 +102,7 @@ const Unauthorized: React.FC = () => {
             {user && (
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors"
               >
                 <Shield className="w-5 h-5" />
                 <span>Sign Out & Login Again</span>
@@ -112,7 +112,7 @@ const Unauthorized: React.FC = () => {
             {/* Go Back */}
             <button
               onClick={() => router.back()}
-              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Go Back</span>
@@ -121,7 +121,7 @@ const Unauthorized: React.FC = () => {
             {/* Home */}
             <Link
               href="/"
-              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <Home className="w-5 h-5" />
               <span>Return to Homepage</span>
@@ -129,8 +129,8 @@ const Unauthorized: React.FC = () => {
           </div>
 
           {/* Contact */}
-          <div className="mt-8 pt-6 border-t border-gray-700">
-            <p className="text-gray-400 text-sm mb-2">Need help?</p>
+          <div className="mt-8 pt-6 border-t border-gray-300 dark:border-gray-700">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Need help?</p>
             <Link
               href="mailto:admin@saintlammyfoundation.org"
               className="inline-flex items-center space-x-2 text-accent-400 hover:text-accent-300 text-sm"

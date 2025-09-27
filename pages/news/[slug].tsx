@@ -250,13 +250,20 @@ const NewsDetailContent: React.FC<NewsDetailProps> = ({ article, relatedArticles
                 </p>
                 <button
                   onClick={() => openDonationModal({
-                    source: 'newsletter',
-                    title: 'Support This Work',
-                    description: 'Help us continue this important humanitarian work'
+                    source: 'story-page',
+                    category: article.category === 'outreach' ? 'outreach' as const :
+                              article.category === 'achievement' ? 'empowerment' as const :
+                              article.category === 'partnership' ? 'infrastructure' as const : 'education' as const,
+                    title: `Support ${article.category} Programs`,
+                    description: `Help us continue the important work featured in "${article.title}"`,
+                    suggestedAmount: article.category === 'outreach' ? 75 :
+                                   article.category === 'achievement' ? 100 : 50,
+                    storyId: article.id,
+                    programType: article.category
                   })}
                   className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3 rounded-full font-medium transition-colors"
                 >
-                  Donate Now
+                  Support This Work
                 </button>
               </div>
             </div>

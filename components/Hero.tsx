@@ -17,39 +17,46 @@ const Hero: React.FC<HeroProps> = ({
 }) => {
   return (
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
-      {/* Background Image */}
+      {/* Background */}
       <div className="absolute inset-0">
+        {/* Primary gradient background - always visible */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 dark:from-blue-900 dark:via-purple-900 dark:to-gray-900"></div>
+
+        {/* Background Image with better error handling - temporarily disabled due to network issues */}
+        {/*
         <Image
-          src="https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
-          alt="Smiling children and families in a vibrant Nigerian community setting, representing hope and the impact of charitable work with orphans, widows, and vulnerable families"
+          src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          alt="Boy in white shirt sitting on brown wooden desk chair, representing education, hope, and the transformative impact of charitable work with children"
           fill
-          className="object-cover object-center"
-          priority
+          className="object-cover object-center opacity-60"
           sizes="100vw"
           style={{
             objectFit: 'cover',
             objectPosition: 'center'
           }}
           onError={(e) => {
-            // Fallback to a solid color background if image fails to load
+            // Hide image if it fails to load, fallback shows gradient
             const target = e.target as HTMLImageElement;
             target.style.display = 'none';
           }}
+          onLoad={() => {
+            console.log('Hero background image loaded successfully');
+          }}
         />
-        {/* Fallback gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-gray-900"></div>
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/70"></div>
+        */}
+
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-white/40 dark:bg-black/40"></div>
       </div>
 
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-black/80"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100/80 via-gray-200/60 to-white/80 dark:from-gray-900/80 dark:via-gray-900/60 dark:to-black/80"></div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         <div className="animate-slide-up">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-sm font-medium text-white/90 mb-8">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-900/10 dark:bg-white/10 backdrop-blur-sm border border-gray-900/20 dark:border-white/20 text-sm font-medium text-gray-900 dark:text-white mb-8">
             <span className="w-2 h-2 bg-accent-400 rounded-full mr-3 animate-pulse"></span>
             CAC Registered: Saintlammy Community Care Initiative
           </div>
@@ -62,7 +69,7 @@ const Hero: React.FC<HeroProps> = ({
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto mb-12 font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-4xl mx-auto mb-12 font-light leading-relaxed">
             {subtitle}
           </p>
 
@@ -77,7 +84,7 @@ const Hero: React.FC<HeroProps> = ({
 
             <a
               href="/about"
-              className="group px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-medium text-base rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300 text-center"
+              className="group px-8 py-4 bg-white/10 dark:bg-white/10 backdrop-blur-sm text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/20 dark:border-white/20 hover:bg-white/20 dark:hover:bg-white/20 transition-all duration-300 text-center"
             >
               <span className="flex items-center font-sans">
                 Learn More
@@ -89,7 +96,7 @@ const Hero: React.FC<HeroProps> = ({
 
             <a
               href="/volunteer"
-              className="group px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-medium text-base rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300 text-center"
+              className="group px-8 py-4 bg-white/10 dark:bg-white/10 backdrop-blur-sm text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/20 dark:border-white/20 hover:bg-white/20 dark:hover:bg-white/20 transition-all duration-300 text-center"
             >
               <span className="flex items-center font-sans">
                 Volunteer
@@ -112,7 +119,7 @@ const Hero: React.FC<HeroProps> = ({
             ].map((feature, index) => (
               <span
                 key={index}
-                className="flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/80 border border-white/20 font-medium text-sm hover:bg-white/20 transition-all"
+                className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-full text-gray-900 dark:text-white/80 border border-gray-900/20 dark:border-white/20 font-medium text-sm hover:bg-white/20 dark:hover:bg-white/20 transition-all"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <feature.icon className="w-4 h-4 mr-2" />
@@ -131,10 +138,10 @@ const Hero: React.FC<HeroProps> = ({
             { label: 'Years of Service', value: '2+' }
           ].map((stat, index) => (
             <div key={index} className="group">
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-accent-400 transition-colors font-display">
+              <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors font-display">
                 {stat.value}
               </div>
-              <div className="text-gray-400 text-sm font-medium">
+              <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">
                 {stat.label}
               </div>
             </div>

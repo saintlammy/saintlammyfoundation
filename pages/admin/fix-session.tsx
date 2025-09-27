@@ -73,7 +73,7 @@ const FixSession: React.FC = () => {
           </h1>
 
           {/* Current Status */}
-          <div className="bg-gray-700 p-4 rounded mb-6">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded mb-6">
             <h3 className="text-white font-semibold mb-3">Current Status:</h3>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
@@ -149,7 +149,7 @@ const FixSession: React.FC = () => {
 
           {/* Debug Info */}
           {user && (
-            <div className="mt-6 bg-gray-700 p-4 rounded">
+            <div className="mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded">
               <h3 className="text-white font-semibold mb-2">Debug Info:</h3>
               <div className="text-sm space-y-1">
                 <div className="text-gray-300">

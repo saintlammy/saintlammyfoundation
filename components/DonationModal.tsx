@@ -344,24 +344,24 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/80 dark:bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative min-h-screen flex items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-700">
+        <div className="relative bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
           {/* Header */}
-          <div className="sticky top-0 bg-gradient-to-br from-gray-800 to-gray-900 border-b border-gray-700 p-6 flex items-center justify-between rounded-t-3xl">
+          <div className="sticky top-0 bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between rounded-t-3xl">
             <div>
-              <h2 className="text-2xl md:text-3xl font-semibold text-white font-display">
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white font-display">
                 {context?.title || 'Make a Donation'}
               </h2>
-              <p className="text-gray-300 font-light">
+              <p className="text-gray-600 dark:text-gray-300 font-light">
                 {context?.description || 'Your generosity transforms lives'}
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 p-2 rounded-full transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -371,7 +371,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
           <div className="p-6 space-y-8">
             {/* Donation Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Donation Type
               </label>
               <div className="grid grid-cols-2 gap-4">
@@ -379,8 +379,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                   onClick={() => setDonationType('one-time')}
                   className={`p-4 rounded-xl border-2 transition-colors text-center ${
                     donationType === 'one-time'
-                      ? 'border-accent-500 bg-accent-500/10 text-white'
-                      : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                      ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                   }`}
                 >
                   <div className="font-semibold">One-time</div>
@@ -390,8 +390,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                   onClick={() => setDonationType('monthly')}
                   className={`p-4 rounded-xl border-2 transition-colors text-center ${
                     donationType === 'monthly'
-                      ? 'border-accent-500 bg-accent-500/10 text-white'
-                      : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                      ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                   }`}
                 >
                   <div className="font-semibold">Monthly</div>
@@ -402,7 +402,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
             {/* Donation Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Donation Amount (USD)
               </label>
               <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-4">
@@ -412,8 +412,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                     onClick={() => handleAmountSelect(amount)}
                     className={`p-3 rounded-lg border transition-colors ${
                       donationAmount === amount.toString()
-                        ? 'border-accent-500 bg-accent-500/10 text-white'
-                        : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                        ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                     }`}
                   >
                     ${amount}
@@ -425,13 +425,13 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                 value={donationAmount}
                 onChange={(e) => setDonationAmount(e.target.value)}
                 placeholder="Enter custom amount"
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
               />
             </div>
 
             {/* Payment Method */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Payment Method
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -442,15 +442,15 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                     className={`p-4 rounded-xl border-2 transition-colors text-left ${
                       paymentMethod === method.id
                         ? 'border-accent-500 bg-accent-500/10'
-                        : 'border-gray-600 hover:border-gray-500'
+                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <method.icon className="w-5 h-5 text-accent-400" />
-                      <span className="font-semibold text-white">{method.title}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{method.title}</span>
                     </div>
-                    <p className="text-sm text-gray-300 mb-1">{method.description}</p>
-                    <p className="text-xs text-gray-400">Fees: {method.fees}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{method.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Fees: {method.fees}</p>
                   </button>
                 ))}
               </div>
@@ -459,27 +459,27 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
             {/* Payment Details Based on Method */}
             {paymentMethod === 'card' && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Credit/Debit Card Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Credit/Debit Card Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
                     type="text"
                     placeholder="Card Number"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                   />
                   <input
                     type="text"
                     placeholder="Cardholder Name"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                   />
                   <input
                     type="text"
                     placeholder="MM/YY"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                   />
                   <input
                     type="text"
                     placeholder="CVV"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                   />
                 </div>
               </div>
@@ -487,16 +487,16 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
             {paymentMethod === 'bank' && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Bank Transfer Details</h3>
-                <div className="bg-gray-700/50 rounded-xl p-6 space-y-3">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Bank Transfer Details</h3>
+                <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-6 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Account Name:</span>
-                    <span className="text-white font-medium">{bankDetails.accountName}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Account Name:</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{bankDetails.accountName}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Account Number:</span>
+                    <span className="text-gray-600 dark:text-gray-300">Account Number:</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">{bankDetails.accountNumber}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{bankDetails.accountNumber}</span>
                       <button
                         onClick={() => copyToClipboard(bankDetails.accountNumber, 'account')}
                         className="text-accent-400 hover:text-accent-300 transition-colors"
@@ -506,15 +506,15 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Bank:</span>
-                    <span className="text-white font-medium">{bankDetails.bankName}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Bank:</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{bankDetails.bankName}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Sort Code:</span>
-                    <span className="text-white font-medium">{bankDetails.sortCode}</span>
+                    <span className="text-gray-600 dark:text-gray-300">Sort Code:</span>
+                    <span className="text-gray-900 dark:text-white font-medium">{bankDetails.sortCode}</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Please send us the transfer receipt at hello@saintlammyfoundation.org
                 </p>
               </div>
@@ -522,11 +522,11 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
             {paymentMethod === 'crypto' && (
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-white">Cryptocurrency Donation</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cryptocurrency Donation</h3>
 
                 {/* Cryptocurrency Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Select Cryptocurrency
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -538,8 +538,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                           onClick={() => handleCryptoSelect(cryptoId)}
                           className={`p-4 rounded-lg border transition-colors text-center group ${
                             selectedCrypto === cryptoId
-                              ? 'border-accent-500 bg-accent-500/10 text-white'
-                              : 'border-gray-600 text-gray-300 hover:border-gray-500'
+                              ? 'border-accent-500 bg-accent-500/10 text-gray-900 dark:text-white'
+                              : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
                           }`}
                         >
                           <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${crypto.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
@@ -555,13 +555,13 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                 {/* Network Selection */}
                 {selectedCrypto && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Select Network
                     </label>
                     <div className="relative">
                       <button
                         onClick={() => setNetworkDropdownOpen(!networkDropdownOpen)}
-                        className="w-full p-4 bg-gray-700 border border-gray-600 rounded-xl text-white text-left flex items-center justify-between hover:border-gray-500 transition-colors"
+                        className="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
                       >
                         <span>
                           {selectedNetwork
@@ -574,12 +574,12 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                       </button>
 
                       {networkDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-xl overflow-hidden z-10">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden z-10 shadow-lg">
                           {Object.entries(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks || {}).map(([networkId, network]) => (
                             <button
                               key={networkId}
                               onClick={() => handleNetworkSelect(networkId)}
-                              className="w-full p-4 text-left text-white hover:bg-gray-600 transition-colors border-b border-gray-600 last:border-b-0"
+                              className="w-full p-4 text-left text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border-b border-gray-200 dark:border-gray-600 last:border-b-0"
                             >
                               {(network as any).name}
                             </button>
@@ -592,9 +592,9 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
                 {/* Wallet Address Display */}
                 {selectedCrypto && selectedNetwork && (
-                  <div className="bg-gray-700/50 rounded-xl p-6 space-y-4">
+                  <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-300 font-medium">
+                      <span className="text-gray-600 dark:text-gray-300 font-medium">
                         {cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.name} Address ({(cryptoCurrencies[selectedCrypto as CryptoCurrencyKey]?.networks as any)?.[selectedNetwork]?.name}):
                       </span>
                       <button
@@ -614,7 +614,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                         )}
                       </button>
                     </div>
-                    <div className="bg-gray-800 rounded-lg p-4 font-mono text-sm text-white break-all">
+                    <div className="bg-gray-200 dark:bg-gray-800 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white break-all">
                       {getCurrentCryptoAddress()}
                     </div>
 
@@ -657,14 +657,14 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                         placeholder="Full Name"
                         value={cryptoFormData.name}
                         onChange={(e) => handleCryptoFormChange('name', e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="email"
                         placeholder="Email Address"
                         value={cryptoFormData.email}
                         onChange={(e) => handleCryptoFormChange('email', e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                     </div>
                     <input
@@ -672,7 +672,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
                       placeholder="Transaction Hash (after sending)"
                       value={cryptoFormData.transactionHash}
                       onChange={(e) => handleCryptoFormChange('transactionHash', e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     />
 
                     {cryptoFormData.transactionHash && getCurrentNetworkExplorer() && (
@@ -712,7 +712,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
 
             {paymentMethod === 'international' && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">International Payment</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">International Payment</h3>
                 <div className="bg-gray-700/50 rounded-xl p-6">
                   <p className="text-gray-300 mb-4">
                     For international donations, we support:

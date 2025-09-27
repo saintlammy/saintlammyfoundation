@@ -2,12 +2,15 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import NewDonationModal from './NewDonationModal';
 
 export interface DonationContext {
-  source: 'general' | 'widow-support' | 'family-feeding' | 'outreach-sponsorship' | 'crypto-donation' | 'hero-cta' | 'sticky-button' | 'success-stories' | 'urgent-needs' | 'newsletter' | 'footer';
-  category?: 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency';
+  source: 'general' | 'widow-support' | 'family-feeding' | 'outreach-sponsorship' | 'crypto-donation' | 'hero-cta' | 'sticky-button' | 'success-stories' | 'urgent-needs' | 'newsletter' | 'footer' | 'impact-story' | 'gallery' | 'story-page' | 'sponsorship' | 'transparency';
+  category?: 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure';
   amount?: number;
+  suggestedAmount?: number;
   title?: string;
   description?: string;
   preferredMethod?: 'card' | 'crypto' | 'bank';
+  storyId?: string;
+  programType?: string;
 }
 
 interface DonationModalContextType {

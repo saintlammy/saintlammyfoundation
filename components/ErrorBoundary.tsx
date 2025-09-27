@@ -58,33 +58,33 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center px-6">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
+            <div className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
               {/* Error Icon */}
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="w-8 h-8 text-red-400" />
               </div>
 
               {/* Error Message */}
-              <h1 className="text-3xl font-bold text-white mb-4 font-display">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-display">
                 Oops! Something went wrong
               </h1>
-              <p className="text-gray-300 mb-8 font-light leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 font-light leading-relaxed">
                 We're sorry, but it looks like there was an unexpected error. Our team has been notified and is working to fix this issue.
               </p>
 
               {/* Error Details (Development Only) */}
               {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="bg-gray-900 border border-gray-600 rounded-lg p-4 mb-6 text-left">
-                  <h3 className="text-red-400 font-medium mb-2">Error Details:</h3>
-                  <pre className="text-gray-400 text-sm overflow-auto max-h-40">
+                <div className="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-6 text-left">
+                  <h3 className="text-red-600 dark:text-red-400 font-medium mb-2">Error Details:</h3>
+                  <pre className="text-gray-700 dark:text-gray-400 text-sm overflow-auto max-h-40">
                     {this.state.error.message}
                   </pre>
                   {this.state.errorInfo && (
                     <details className="mt-2">
-                      <summary className="text-red-400 cursor-pointer">Stack Trace</summary>
-                      <pre className="text-gray-400 text-xs mt-2 overflow-auto max-h-40">
+                      <summary className="text-red-600 dark:text-red-400 cursor-pointer">Stack Trace</summary>
+                      <pre className="text-gray-700 dark:text-gray-400 text-xs mt-2 overflow-auto max-h-40">
                         {this.state.errorInfo.componentStack}
                       </pre>
                     </details>
@@ -104,7 +104,7 @@ class ErrorBoundary extends Component<Props, State> {
 
                 <button
                   onClick={this.handleReload}
-                  className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-full font-medium transition-colors"
+                  className="flex items-center justify-center space-x-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Reload Page</span>
@@ -112,7 +112,7 @@ class ErrorBoundary extends Component<Props, State> {
 
                 <a
                   href="/"
-                  className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-3 rounded-full font-medium transition-colors"
+                  className="flex items-center justify-center space-x-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 px-6 py-3 rounded-full font-medium transition-colors"
                 >
                   <Home className="w-4 h-4" />
                   <span>Go Home</span>
@@ -120,13 +120,13 @@ class ErrorBoundary extends Component<Props, State> {
               </div>
 
               {/* Contact Support */}
-              <div className="mt-8 pt-6 border-t border-gray-700">
-                <p className="text-gray-400 text-sm mb-3">
+              <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
                   If this problem persists, please contact our support team:
                 </p>
                 <a
                   href="mailto:hello@saintlammyfoundation.org"
-                  className="inline-flex items-center space-x-2 text-accent-400 hover:text-accent-300 transition-colors"
+                  className="inline-flex items-center space-x-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
                   <span className="text-sm">hello@saintlammyfoundation.org</span>
@@ -174,17 +174,17 @@ export function PageErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Page Error
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               This page encountered an error and couldn't load properly.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+              className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-2 rounded-md transition-colors">
             >
               Reload Page
             </button>
@@ -205,7 +205,7 @@ export function FormErrorBoundary({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
@@ -213,10 +213,10 @@ export function FormErrorBoundary({ children }: { children: ReactNode }) {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
                 Form Error
               </h3>
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
                 This form encountered an error. Please refresh the page and try again.
               </p>
             </div>
@@ -243,8 +243,8 @@ export function ComponentErrorBoundary({
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
-          <p className="text-sm text-yellow-800">
+        <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
             {componentName ? `${componentName} component` : 'Component'} failed to load.
           </p>
         </div>

@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   Shield,
   Mail,
@@ -161,10 +162,10 @@ const AdminSignup: React.FC = () => {
   // Show loading spinner while checking auth
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader className="w-6 h-6 animate-spin text-accent-500" />
-          <span className="text-gray-400">Loading...</span>
+          <span className="text-gray-600 dark:text-gray-400">Loading...</span>
         </div>
       </div>
     );
@@ -183,34 +184,36 @@ const AdminSignup: React.FC = () => {
         <meta name="robots" content="noindex,nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="dark min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        {/* Admin signup uses permanent dark mode */}
+
         <div className="max-w-md w-full space-y-8">
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-accent-500 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-white font-display">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-display">
               Create Admin Account
             </h2>
-            <p className="mt-2 text-gray-400">
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
               Register for Saintlammy Foundation dashboard access
             </p>
           </div>
 
           {/* Error Message */}
           {errors.general && (
-            <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-4 flex items-center space-x-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">{errors.general}</p>
+            <div className="bg-red-50 dark:bg-red-900/50 border border-red-300 dark:border-red-500/50 rounded-lg p-4 flex items-center space-x-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <p className="text-red-600 dark:text-red-400 text-sm">{errors.general}</p>
             </div>
           )}
 
           {/* Success Message */}
           {success && (
-            <div className="bg-green-900/50 border border-green-500/50 rounded-lg p-4 flex items-center space-x-3">
-              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-              <p className="text-green-400 text-sm">{success}</p>
+            <div className="bg-green-50 dark:bg-green-900/50 border border-green-300 dark:border-green-500/50 rounded-lg p-4 flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+              <p className="text-green-600 dark:text-green-400 text-sm">{success}</p>
             </div>
           )}
 
@@ -219,11 +222,11 @@ const AdminSignup: React.FC = () => {
             <div className="space-y-4">
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Full Name *
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="name"
                     name="name"
@@ -231,22 +234,22 @@ const AdminSignup: React.FC = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
-                      errors.name ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                      errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="Enter your full name"
                   />
                 </div>
-                {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name}</p>}
+                {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email Address *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="email"
                     name="email"
@@ -254,51 +257,51 @@ const AdminSignup: React.FC = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
-                      errors.email ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                      errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="admin@saintlammyfoundation.org or saintlammy@gmail.com"
                   />
                 </div>
-                {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
+                {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
               </div>
 
               {/* Phone */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Phone Number
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
-                      errors.phone ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                      errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="+234 XXX XXX XXXX"
                   />
                 </div>
-                {errors.phone && <p className="mt-1 text-sm text-red-400">{errors.phone}</p>}
+                {errors.phone && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.phone}</p>}
               </div>
 
               {/* Organization */}
               <div>
-                <label htmlFor="organization" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="organization" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Organization
                 </label>
                 <div className="relative">
-                  <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="organization"
                     name="organization"
                     type="text"
                     value={formData.organization}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                     placeholder="Saintlammy Foundation"
                   />
                 </div>
@@ -306,11 +309,11 @@ const AdminSignup: React.FC = () => {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="password"
                     name="password"
@@ -318,29 +321,29 @@ const AdminSignup: React.FC = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-12 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
-                      errors.password ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                      errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="Enter secure password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
-                {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password}</p>}
+                {errors.password && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password}</p>}
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Confirm Password *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -348,20 +351,20 @@ const AdminSignup: React.FC = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-12 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                      errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="Confirm your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
-                {errors.confirmPassword && <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>}
+                {errors.confirmPassword && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>}
               </div>
             </div>
 
@@ -384,15 +387,15 @@ const AdminSignup: React.FC = () => {
 
           {/* Footer */}
           <div className="text-center space-y-2">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               Already have an account?{' '}
-              <Link href="/admin/login" className="text-accent-400 hover:text-accent-300">
+              <Link href="/admin/login" className="text-accent-500 dark:text-accent-400 hover:text-accent-600 dark:hover:text-accent-300">
                 Sign in here
               </Link>
             </p>
             <Link
               href="/"
-              className="text-sm text-gray-400 hover:text-accent-400 transition-colors block"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 dark:hover:text-accent-400 transition-colors block"
             >
               ← Back to Saintlammy Foundation
             </Link>

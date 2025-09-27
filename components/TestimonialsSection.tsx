@@ -34,13 +34,13 @@ const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 bg-gray-900">
+    <section className="py-24 bg-gray-200 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-white mb-6 font-display tracking-tight">
+          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
             Stories That Inspire Us
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
             Voices from the field - hear from donors, partners, and communities who make our mission possible.
             Every story represents hope in action and lives transformed through love and service.
           </p>
@@ -50,7 +50,7 @@ const TestimonialsSection: React.FC = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-700 hover:border-accent-500 relative"
+              className="group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-accent-500 relative"
             >
               {/* Quote Icon */}
               <div className="absolute top-6 right-6 opacity-20 group-hover:opacity-30 transition-opacity">
@@ -68,20 +68,20 @@ const TestimonialsSection: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white font-display">
+                  <h3 className="font-semibold text-gray-900 dark:text-white font-display">
                     {testimonial.name}
                   </h3>
-                  <p className="text-sm text-gray-300 font-light">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 font-light">
                     {testimonial.role}
                   </p>
-                  <p className="text-xs text-gray-400 font-light">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-light">
                     {testimonial.location}
                   </p>
                 </div>
               </div>
 
               {/* Quote */}
-              <blockquote className="text-gray-300 mb-6 font-light leading-relaxed text-sm italic">
+              <blockquote className="text-gray-600 dark:text-gray-300 mb-6 font-light leading-relaxed text-sm italic">
                 "{testimonial.quote}"
               </blockquote>
 
@@ -95,11 +95,11 @@ const TestimonialsSection: React.FC = () => {
 
         {/* Bottom Section */}
         <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl p-8 md:p-12 border border-gray-600">
-            <h3 className="text-2xl md:text-3xl font-medium text-white mb-4 font-display tracking-tight">
+          <div className="bg-gradient-to-r from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8 md:p-12 border border-gray-300 dark:border-gray-600">
+            <h3 className="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4 font-display tracking-tight">
               Join Our Community of Change-Makers
             </h3>
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
               Every donor, volunteer, and supporter becomes part of an extraordinary story of transformation.
               Your story could be next.
             </p>
@@ -107,7 +107,7 @@ const TestimonialsSection: React.FC = () => {
               <button className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3 rounded-full font-medium text-base transition-colors font-sans">
                 Start Your Impact Story
               </button>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-full font-medium text-base transition-colors font-sans">
+              <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-8 py-3 rounded-full font-medium text-base transition-colors font-sans">
                 Read More Stories
               </button>
             </div>

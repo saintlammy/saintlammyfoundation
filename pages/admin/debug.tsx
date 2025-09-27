@@ -52,7 +52,7 @@ const AdminDebug: React.FC = () => {
 
             {/* Authentication Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
                   <User className="w-5 h-5 mr-2" />
                   Authentication Status
@@ -77,7 +77,7 @@ const AdminDebug: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
                   <Info className="w-5 h-5 mr-2" />
                   Wallet Access
@@ -101,7 +101,7 @@ const AdminDebug: React.FC = () => {
 
             {/* User Details */}
             {user && (
-              <div className="bg-gray-700 rounded-lg p-4 mb-6">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
                 <h3 className="text-lg font-semibold text-white mb-3">User Details</h3>
                 <div className="space-y-2 text-gray-300">
                   <div><strong>Email:</strong> {user.email}</div>
@@ -115,7 +115,7 @@ const AdminDebug: React.FC = () => {
 
             {/* User Metadata */}
             {user?.user_metadata && (
-              <div className="bg-gray-700 rounded-lg p-4 mb-6">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
                 <h3 className="text-lg font-semibold text-white mb-3">User Metadata</h3>
                 <pre className="bg-gray-800 p-3 rounded text-green-400 text-sm overflow-auto">
                   {JSON.stringify(user.user_metadata, null, 2)}
@@ -124,7 +124,7 @@ const AdminDebug: React.FC = () => {
             )}
 
             {/* Admin Email Check */}
-            <div className="bg-gray-700 rounded-lg p-4 mb-6">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
               <h3 className="text-lg font-semibold text-white mb-3">Admin Email Validation</h3>
               <div className="space-y-2 text-gray-300">
                 <div className="flex items-center space-x-2">
@@ -166,7 +166,7 @@ const AdminDebug: React.FC = () => {
               </a>
               <a
                 href="/admin/login"
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-white rounded-lg transition-colors"
               >
                 Back to Login
               </a>

@@ -12,7 +12,7 @@ const ProgramsContent: React.FC = () => {
       id: 1,
       title: 'Orphan Adoption Program',
       description: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support.',
-      image: 'https://images.unsplash.com/photo-1544550581-7f2cc2c4fbe8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+      image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
       icon: Heart,
       category: 'Child Welfare',
       beneficiaries: 300,

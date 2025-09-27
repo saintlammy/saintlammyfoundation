@@ -1,7 +1,8 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   BarChart3,
   Users,
@@ -156,10 +157,53 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
     return router.pathname === href;
   };
 
+  const isMenuActive = (item: MenuItem): boolean => {
+    if (item.href && isActiveRoute(item.href)) {
+      return true;
+    }
+    if (item.children) {
+      return item.children.some(child => isMenuActive(child));
+    }
+    return false;
+  };
+
+  // Auto-expand parent menus when child routes are active
+  useEffect(() => {
+    const findParentMenusToExpand = (items: MenuItem[], currentPath: string): string[] => {
+      const menusToExpand: string[] = [];
+
+      const checkMenuItem = (item: MenuItem): boolean => {
+        if (item.href === currentPath) {
+          return true;
+        }
+        if (item.children) {
+          const hasActiveChild = item.children.some(child => checkMenuItem(child));
+          if (hasActiveChild) {
+            menusToExpand.push(item.id);
+            return true;
+          }
+        }
+        return false;
+      };
+
+      items.forEach(item => checkMenuItem(item));
+      return menusToExpand;
+    };
+
+    const menusToExpand = findParentMenusToExpand(menuItems, router.pathname);
+    if (menusToExpand.length > 0) {
+      setExpandedMenus(prev => {
+        const newExpanded = [...new Set([...prev, ...menusToExpand])];
+        return newExpanded;
+      });
+    }
+  }, [router.pathname]);
+
   const renderMenuItem = (item: MenuItem, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedMenus.includes(item.id);
     const isActive = item.href ? isActiveRoute(item.href) : false;
+    const hasActiveChild = hasChildren && isMenuActive(item);
 
     if (hasChildren) {
       return (
@@ -168,8 +212,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             onClick={() => toggleMenu(item.id)}
             className={clsx(
               'w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-colors',
-              level === 0 ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50',
-              isExpanded && 'text-white bg-gray-700'
+              level === 0 ? 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50',
+              (isExpanded || hasActiveChild) && 'text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700'
             )}
             style={{ paddingLeft: `${12 + level * 16}px` }}
           >
@@ -184,11 +228,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             </div>
             <ChevronDown className={clsx(
               'w-4 h-4 transition-transform',
-              isExpanded && 'rotate-180'
+              (isExpanded || hasActiveChild) && 'rotate-180'
             )} />
           </button>
 
-          {isExpanded && item.children && (
+          {(isExpanded || hasActiveChild) && item.children && (
             <div className="mt-1 space-y-1">
               {item.children.map(child => renderMenuItem(child, level + 1))}
             </div>
@@ -206,8 +250,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             isActive
               ? 'text-white bg-accent-500'
               : level === 0
-                ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50'
+                ? 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
           )}
           style={{ paddingLeft: `${12 + level * 16}px` }}
         >
@@ -227,24 +271,24 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
 
   return (
     <ProtectedRoute requireAdmin={true}>
-    <div className="flex h-screen bg-gray-900">
+    <div className="dark flex h-screen bg-gray-900">
       {/* Sidebar */}
       <div className={clsx(
         'fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="flex items-center justify-between h-16 px-4 bg-gray-900">
+        <div className="flex items-center justify-between h-16 px-4 bg-gray-900 border-b border-gray-700">
           <div className="flex items-center">
             <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center mr-3">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-lg font-semibold text-white font-display">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white font-display">
               Admin Panel
             </h1>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-400 hover:text-white"
+            className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -266,14 +310,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               </span>
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {user?.user_metadata?.name || user?.email?.split('@')[0] || 'Admin'}
               </p>
-              <p className="text-xs text-gray-400">Administrator</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Administrator</p>
             </div>
             <button
               onClick={handleSignOut}
-              className="text-gray-400 hover:text-white"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
               title="Sign Out"
             >
               <LogOut className="w-5 h-5" />
@@ -290,11 +334,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-400 hover:text-white mr-4"
+                className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white mr-4"
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <h1 className="text-2xl font-semibold text-white font-display">
+              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
                 {title}
               </h1>
             </div>
@@ -302,16 +346,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             <div className="flex items-center space-x-4">
               {/* Search */}
               <div className="relative hidden md:block">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
 
+              {/* Admin Dashboard uses permanent dark mode */}
               {/* Notifications */}
-              <button className="relative text-gray-400 hover:text-white">
+              <button className="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
                 <Bell className="w-6 h-6" />
                 <span className="absolute -top-2 -right-2 w-4 h-4 bg-accent-500 rounded-full text-xs text-white flex items-center justify-center">
                   3

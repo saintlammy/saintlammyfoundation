@@ -51,7 +51,7 @@ const TestAccess: React.FC = () => {
               <span className="text-gray-300">Moderator status: {isModerator ? 'YES' : 'NO'}</span>
             </div>
 
-            <div className="bg-gray-700 p-4 rounded">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
               <h3 className="text-white font-semibold mb-2">Email Checks:</h3>
               <div className="space-y-1 text-sm">
                 <div className="flex items-center space-x-2">

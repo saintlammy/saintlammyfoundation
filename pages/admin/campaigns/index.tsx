@@ -404,7 +404,7 @@ const AdminCampaigns: React.FC = () => {
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-white">Campaign Performance</h3>
-              <select className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-white text-sm">
+              <select className="bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-white text-sm">
                 <option>Last 7 days</option>
                 <option>Last 30 days</option>
                 <option>Last 90 days</option>
@@ -469,7 +469,7 @@ const AdminCampaigns: React.FC = () => {
               </select>
               <button
                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors"
               >
                 {viewMode === 'grid' ? 'List' : 'Grid'}
               </button>
@@ -520,7 +520,7 @@ const AdminCampaigns: React.FC = () => {
                           type="checkbox"
                           checked={selectedCampaigns.includes(campaign.id)}
                           onChange={() => toggleCampaignSelection(campaign.id)}
-                          className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
+                          className="rounded border-gray-600 bg-gray-50 dark:bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
                         />
                       </div>
                       <div className="absolute top-4 right-4 flex space-x-2">
@@ -555,7 +555,7 @@ const AdminCampaigns: React.FC = () => {
                             </span>
                             <span className="text-white">{Math.round(progressPercentage)}%</span>
                           </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div className="w-full bg-gray-50 dark:bg-gray-700 rounded-full h-2">
                             <div
                               className="bg-gradient-to-r from-accent-500 to-accent-600 h-2 rounded-full transition-all duration-300"
                               style={{ width: `${progressPercentage}%` }}
@@ -640,14 +640,14 @@ const AdminCampaigns: React.FC = () => {
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
                       <th className="px-6 py-3 text-left">
                         <input
                           type="checkbox"
                           checked={selectedCampaigns.length === filteredCampaigns.length}
                           onChange={toggleSelectAll}
-                          className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
+                          className="rounded border-gray-600 bg-gray-50 dark:bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
                         />
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -683,13 +683,13 @@ const AdminCampaigns: React.FC = () => {
                         : 0;
 
                       return (
-                        <tr key={campaign.id} className="hover:bg-gray-700 transition-colors">
+                        <tr key={campaign.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
                           <td className="px-6 py-4">
                             <input
                               type="checkbox"
                               checked={selectedCampaigns.includes(campaign.id)}
                               onChange={() => toggleCampaignSelection(campaign.id)}
-                              className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
+                              className="rounded border-gray-600 bg-gray-50 dark:bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-800"
                             />
                           </td>
                           <td className="px-6 py-4">
@@ -715,7 +715,7 @@ const AdminCampaigns: React.FC = () => {
                                 <div className="flex justify-between text-xs mb-1">
                                   <span className="text-gray-400">{Math.round(progressPercentage)}%</span>
                                 </div>
-                                <div className="w-full bg-gray-700 rounded-full h-1.5">
+                                <div className="w-full bg-gray-50 dark:bg-gray-700 rounded-full h-1.5">
                                   <div
                                     className="bg-gradient-to-r from-accent-500 to-accent-600 h-1.5 rounded-full"
                                     style={{ width: `${progressPercentage}%` }}
@@ -770,13 +770,13 @@ const AdminCampaigns: React.FC = () => {
               Showing {filteredCampaigns.length} of {campaigns.length} campaigns
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
                 Previous
               </button>
               <button className="px-3 py-1 bg-accent-500 text-white rounded">
                 1
               </button>
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
                 Next
               </button>
             </div>

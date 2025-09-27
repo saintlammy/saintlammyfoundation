@@ -75,40 +75,40 @@ const DonationAnalytics: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Monthly Growth</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Monthly Growth</p>
                   <p className="text-2xl font-bold text-green-400">{loading ? '...' : calculateGrowth()}</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Avg Donation</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Avg Donation</p>
                   <p className="text-2xl font-bold text-blue-400">{loading ? '...' : `₦${calculateAvgDonation().toLocaleString()}`}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-blue-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Retention Rate</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Retention Rate</p>
                   <p className="text-2xl font-bold text-purple-400">{loading ? '...' : calculateRetention()}</p>
                 </div>
                 <Users className="w-8 h-8 text-purple-500" />
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Peak Day</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Peak Day</p>
                   <p className="text-2xl font-bold text-yellow-400">{loading ? '...' : getPeakDay()}</p>
                 </div>
                 <Calendar className="w-8 h-8 text-yellow-500" />
@@ -117,25 +117,25 @@ const DonationAnalytics: React.FC = () => {
           </div>
 
           {/* Charts Placeholder */}
-          <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
-            <h3 className="text-xl font-semibold text-white mb-4">Donation Trends</h3>
-            <div className="h-64 bg-gray-700 rounded-lg flex items-center justify-center">
-              <p className="text-gray-400">Chart component placeholder - integrate with analytics service</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Donation Trends</h3>
+            <div className="h-64 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+              <p className="text-gray-600 dark:text-gray-400">Chart component placeholder - integrate with analytics service</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Payment Methods</h3>
-              <div className="h-48 bg-gray-700 rounded-lg flex items-center justify-center">
-                <p className="text-gray-400">Pie chart placeholder</p>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Payment Methods</h3>
+              <div className="h-48 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                <p className="text-gray-600 dark:text-gray-400">Pie chart placeholder</p>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Donation Categories</h3>
-              <div className="h-48 bg-gray-700 rounded-lg flex items-center justify-center">
-                <p className="text-gray-400">Bar chart placeholder</p>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Donation Categories</h3>
+              <div className="h-48 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                <p className="text-gray-600 dark:text-gray-400">Bar chart placeholder</p>
               </div>
             </div>
           </div>

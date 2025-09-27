@@ -55,7 +55,8 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
       date: item.publish_date || item.created_at,
       category: item.news_details?.category || 'update',
       image: item.featured_image || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      readTime: item.news_details?.read_time || '3 min read'
+      readTime: item.news_details?.read_time || '3 min read',
+      slug: item.slug || item.id
     }));
 
     res.status(200).json(transformedData);
@@ -74,8 +75,9 @@ function getMockNews(limit?: number) {
       excerpt: 'Our comprehensive back-to-school program has successfully provided school supplies, uniforms, and educational support to over 500 children across Lagos and Abuja.',
       date: '2024-01-15',
       category: 'outreach',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      readTime: '4 min read'
+      image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      readTime: '4 min read',
+      slug: 'december-medical-outreach-2024'
     },
     {
       id: '2',
@@ -83,8 +85,9 @@ function getMockNews(limit?: number) {
       excerpt: 'New partnerships with three major healthcare centers in Ibadan have enabled us to provide free medical consultations and treatments to over 1,000 beneficiaries.',
       date: '2024-01-10',
       category: 'partnership',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      readTime: '3 min read'
+      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      readTime: '3 min read',
+      slug: 'school-partnership-expansion-2024'
     },
     {
       id: '3',
@@ -92,8 +95,9 @@ function getMockNews(limit?: number) {
       excerpt: 'Twenty-five widows have successfully completed our skills acquisition program, with 90% now running their own sustainable businesses.',
       date: '2024-01-05',
       category: 'achievement',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      readTime: '5 min read'
+      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+      readTime: '5 min read',
+      slug: 'widow-empowerment-success-2024'
     }
   ];
 

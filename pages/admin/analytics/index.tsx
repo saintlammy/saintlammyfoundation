@@ -191,19 +191,19 @@ const Analytics: React.FC = () => {
               <select
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value)}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="7d">Last 7 days</option>
                 <option value="30d">Last 30 days</option>
                 <option value="90d">Last 3 months</option>
                 <option value="1y">Last year</option>
               </select>
-              <button className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors border border-gray-200 dark:border-gray-700">
                 <RefreshCw className="w-4 h-4" />
                 Refresh
               </button>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white rounded-lg transition-colors">
               <Download className="w-4 h-4" />
               Export Report
             </button>
@@ -212,11 +212,11 @@ const Analytics: React.FC = () => {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {kpiCards.map((kpi, index) => (
-              <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm font-medium">{kpi.title}</p>
-                    <p className="text-2xl font-bold text-white mt-1">{kpi.value}</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{kpi.title}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{kpi.value}</p>
                     <div className="flex items-center mt-2">
                       {kpi.trend === 'up' ? (
                         <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
@@ -228,7 +228,7 @@ const Analytics: React.FC = () => {
                       }`}>
                         {kpi.change}
                       </span>
-                      <span className="text-gray-400 text-sm ml-1">{kpi.period}</span>
+                      <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">{kpi.period}</span>
                     </div>
                   </div>
                   <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center">
@@ -242,8 +242,8 @@ const Analytics: React.FC = () => {
           {/* Main Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Donation Trends */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-6">Donation Trends</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Donation Trends</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <ComposedChart data={donationTrends}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -289,8 +289,8 @@ const Analytics: React.FC = () => {
             </div>
 
             {/* Website Traffic */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-6">Website Traffic</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Website Traffic</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={websiteTraffic}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -328,8 +328,8 @@ const Analytics: React.FC = () => {
           {/* Secondary Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Donation Sources */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-6">Donation Sources</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Donation Sources</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
@@ -359,8 +359,8 @@ const Analytics: React.FC = () => {
             </div>
 
             {/* Device Breakdown */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-6">Device Breakdown</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Device Breakdown</h3>
               <div className="space-y-4">
                 {deviceBreakdown.map((device, index) => (
                   <div key={index} className="flex items-center justify-between">
@@ -368,10 +368,10 @@ const Analytics: React.FC = () => {
                       {device.name === 'Desktop' && <Monitor className="w-5 h-5 text-purple-400 mr-3" />}
                       {device.name === 'Mobile' && <Smartphone className="w-5 h-5 text-cyan-400 mr-3" />}
                       {device.name === 'Tablet' && <Globe className="w-5 h-5 text-lime-400 mr-3" />}
-                      <span className="text-white">{device.name}</span>
+                      <span className="text-gray-900 dark:text-white">{device.name}</span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-24 h-2 bg-gray-700 rounded-full mr-3">
+                      <div className="w-24 h-2 bg-gray-50 dark:bg-gray-700 rounded-full mr-3">
                         <div
                           className="h-2 rounded-full"
                           style={{ width: `${device.value}%`, backgroundColor: device.color }}
@@ -385,22 +385,22 @@ const Analytics: React.FC = () => {
             </div>
 
             {/* Conversion Funnel */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-6">Conversion Funnel</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Conversion Funnel</h3>
               <div className="space-y-4">
                 {conversionFunnel.map((step, index) => (
                   <div key={index} className="relative">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-white text-sm">{step.step}</span>
+                      <span className="text-gray-900 dark:text-white text-sm">{step.step}</span>
                       <span className="text-gray-300 text-sm">{step.count.toLocaleString()}</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-700 rounded-full">
+                    <div className="w-full h-3 bg-gray-50 dark:bg-gray-700 rounded-full">
                       <div
                         className="h-3 bg-gradient-to-r from-accent-500 to-accent-400 rounded-full transition-all duration-500"
                         style={{ width: `${step.percentage}%` }}
                       />
                     </div>
-                    <span className="text-gray-400 text-xs">{step.percentage}%</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-xs">{step.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -408,13 +408,13 @@ const Analytics: React.FC = () => {
           </div>
 
           {/* Top Pages Table */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-            <div className="p-6 border-b border-gray-700">
-              <h3 className="text-lg font-semibold text-white">Top Performing Pages</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Top Performing Pages</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-700/50">
+                <thead className="bg-gray-50 dark:bg-gray-700/50">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Page</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Visits</th>
@@ -424,9 +424,9 @@ const Analytics: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-700">
                   {topPages.map((page, index) => (
-                    <tr key={index} className="hover:bg-gray-700/20">
+                    <tr key={index} className="hover:bg-gray-50 dark:bg-gray-700/20">
                       <td className="px-6 py-4">
-                        <span className="text-white font-mono">{page.page}</span>
+                        <span className="text-gray-900 dark:text-white font-mono">{page.page}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-gray-300">{page.visits.toLocaleString()}</span>
@@ -435,7 +435,7 @@ const Analytics: React.FC = () => {
                         <span className="text-gray-300">{page.conversions}%</span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="w-24 h-2 bg-gray-700 rounded-full">
+                        <div className="w-24 h-2 bg-gray-50 dark:bg-gray-700 rounded-full">
                           <div
                             className="h-2 bg-accent-500 rounded-full"
                             style={{ width: `${(page.conversions / 10) * 100}%` }}

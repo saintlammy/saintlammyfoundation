@@ -270,7 +270,7 @@ const AdminPartnerships: React.FC = () => {
               <p className="text-gray-400 mt-1">Manage partnership applications and team members</p>
             </div>
             <div className="flex gap-2">
-              <button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              <button className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
@@ -294,7 +294,7 @@ const AdminPartnerships: React.FC = () => {
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Applications</span>
-                <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                <span className="bg-gray-50 dark:bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
                   {applications.length}
                 </span>
               </button>
@@ -308,7 +308,7 @@ const AdminPartnerships: React.FC = () => {
               >
                 <Users className="w-4 h-4" />
                 <span>Team Members</span>
-                <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                <span className="bg-gray-50 dark:bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
                   {teamMembers.length}
                 </span>
               </button>
@@ -322,7 +322,7 @@ const AdminPartnerships: React.FC = () => {
               >
                 <Settings className="w-4 h-4" />
                 <span>Process Steps</span>
-                <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                <span className="bg-gray-50 dark:bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
                   {partnershipProcess.length}
                 </span>
               </button>
@@ -374,7 +374,7 @@ const AdminPartnerships: React.FC = () => {
             <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                         Organization
@@ -401,10 +401,10 @@ const AdminPartnerships: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                     {filteredApplications.map((application) => (
-                      <tr key={application.id} className="hover:bg-gray-700 transition-colors">
+                      <tr key={application.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-start space-x-3">
-                            <div className="flex items-center justify-center w-10 h-10 bg-gray-700 rounded-lg">
+                            <div className="flex items-center justify-center w-10 h-10 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               {getOrganizationTypeIcon(application.organizationType)}
                             </div>
                             <div>
@@ -510,7 +510,7 @@ const AdminPartnerships: React.FC = () => {
                       <p className="text-gray-300 text-sm font-medium mb-2">Focus Areas:</p>
                       <div className="flex flex-wrap gap-1">
                         {member.focus.map((area, index) => (
-                          <span key={index} className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
+                          <span key={index} className="bg-gray-50 dark:bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
                             {area}
                           </span>
                         ))}
@@ -616,7 +616,7 @@ const AdminPartnerships: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Default Process Duration
                     </label>
-                    <select className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
+                    <select className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
                       <option>4-6 weeks</option>
                       <option>6-8 weeks</option>
                       <option>8-12 weeks</option>
@@ -627,7 +627,7 @@ const AdminPartnerships: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Auto-assign Applications
                     </label>
-                    <select className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
+                    <select className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
                       <option>Round Robin</option>
                       <option>By Expertise</option>
                       <option>Manual Only</option>

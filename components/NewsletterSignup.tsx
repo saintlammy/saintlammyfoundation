@@ -44,17 +44,17 @@ const NewsletterSignup: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-gray-900">
+    <section className="py-24 bg-gray-100 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-700">
+        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-200 dark:border-gray-700">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Mail className="w-8 h-8 text-accent-400" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4 font-display tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-4 font-display tracking-tight">
               Stay In the Loop
             </h2>
-            <p className="text-lg text-gray-300 font-light leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-300 font-light leading-relaxed">
               Subscribe to our <strong>Hope Dispatch</strong> newsletter and get monthly updates,
               prayer requests, and photos from the field delivered to your inbox.
             </p>
@@ -66,21 +66,21 @@ const NewsletterSignup: React.FC = () => {
               <h3 className="text-2xl font-semibold text-green-400 mb-2 font-display">
                 Thank You!
               </h3>
-              <p className="text-gray-300">
+              <p className="text-gray-600 dark:text-gray-300">
                 You're now subscribed to Hope Dispatch. Watch for your first update soon!
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
               {error && (
-                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
-                  <p className="text-red-400 text-sm">{error}</p>
+                <div className="mb-6 p-4 bg-red-100 dark:bg-red-500/20 border border-red-300 dark:border-red-500/30 rounded-xl">
+                  <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
                 </div>
               )}
 
               <div className="space-y-4 mb-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Your Name
                   </label>
                   <input
@@ -88,7 +88,7 @@ const NewsletterSignup: React.FC = () => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     placeholder="Enter your full name"
                     required
                     disabled={isLoading}
@@ -96,7 +96,7 @@ const NewsletterSignup: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email Address
                   </label>
                   <input
@@ -104,7 +104,7 @@ const NewsletterSignup: React.FC = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     placeholder="Enter your email address"
                     required
                     disabled={isLoading}
@@ -124,10 +124,10 @@ const NewsletterSignup: React.FC = () => {
           )}
 
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-400 font-light">
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-light">
               <Mail className="w-4 h-4 inline mr-2" /> Get monthly updates, prayer requests, and photos from the field.
             </p>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
               We respect your privacy. Unsubscribe at any time.
             </p>
           </div>

@@ -218,9 +218,10 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                   const CategoryIcon = getCategoryIcon(article.category);
 
                   return (
-                    <article
+                    <Link
+                      href={`/news/${article.id}`}
                       key={article.id}
-                      className="group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 hover:border-gray-600 transition-all duration-300"
+                      className="group block bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-800/70 hover:border-gray-600 transition-all duration-300 cursor-pointer"
                     >
                       <div className="relative h-48 overflow-hidden">
                         <Image
@@ -261,13 +262,10 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                         </p>
 
                         <div className="flex items-center justify-between">
-                          <Link
-                            href={`/news/${article.id}`}
-                            className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm group/link transition-colors"
-                          >
+                          <span className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm group/link transition-colors">
                             Read More
                             <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                          </Link>
+                          </span>
 
                           <div className="flex items-center space-x-1">
                             {article.tags.slice(0, 2).map(tag => (
@@ -279,7 +277,7 @@ const NewsContent: React.FC<NewsPageProps> = ({ articles, categories }) => {
                           </div>
                         </div>
                       </div>
-                    </article>
+                    </Link>
                   );
                 })}
               </div>

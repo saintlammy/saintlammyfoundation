@@ -1418,7 +1418,7 @@ const AdminWalletManagement: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white">Wallet Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Wallet Management</h1>
               <p className="text-gray-400 mt-1">Manage cryptocurrency wallets and donation addresses</p>
             </div>
             <div className="flex gap-2">
@@ -1464,68 +1464,68 @@ const AdminWalletManagement: React.FC = () => {
 
           {/* Portfolio Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">Total Portfolio Value</p>
-                  <p className="text-2xl font-bold text-white mt-1">${totalPortfolioValue.toLocaleString()}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Portfolio Value</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">${totalPortfolioValue.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
                     <span className="text-green-400 text-sm font-medium">+8.5%</span>
-                    <span className="text-gray-400 text-sm ml-1">24h</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">24h</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-white" />
+                  <DollarSign className="w-6 h-6 text-gray-700 dark:text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">Active Networks</p>
-                  <p className="text-2xl font-bold text-white mt-1">{walletData.filter(w => w.status === 'active').length}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Active Networks</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{walletData.filter(w => w.status === 'active').length}</p>
                   <div className="flex items-center mt-2">
                     <CheckCircle className="w-4 h-4 text-blue-400 mr-1" />
-                    <span className="text-gray-400 text-sm">All operational</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">All operational</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                  <Wallet className="w-6 h-6 text-white" />
+                  <Wallet className="w-6 h-6 text-gray-700 dark:text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">24h Donations</p>
-                  <p className="text-2xl font-bold text-white mt-1">${dailyDonations.toLocaleString()}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">24h Donations</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">${dailyDonations.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
                     <span className="text-green-400 text-sm font-medium">+12.3%</span>
-                    <span className="text-gray-400 text-sm ml-1">vs yesterday</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">vs yesterday</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-white" />
+                  <TrendingUp className="w-6 h-6 text-gray-700 dark:text-white" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium">Security Status</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Security Status</p>
                   <p className="text-2xl font-bold text-green-400 mt-1">Secure</p>
                   <div className="flex items-center mt-2">
                     <Shield className="w-4 h-4 text-green-400 mr-1" />
-                    <span className="text-gray-400 text-sm">All wallets protected</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">All wallets protected</span>
                   </div>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-white" />
+                  <Shield className="w-6 h-6 text-gray-700 dark:text-white" />
                 </div>
               </div>
             </div>
@@ -1534,19 +1534,19 @@ const AdminWalletManagement: React.FC = () => {
           {/* Search and Filters */}
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" />
               <input
                 type="text"
                 placeholder="Search wallets..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
               />
             </div>
             <select
               value={filterCurrency}
               onChange={(e) => setFilterCurrency(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+              className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
             >
               <option value="all">All Tokens</option>
               <option value="BTC">Bitcoin (BTC)</option>
@@ -1560,10 +1560,10 @@ const AdminWalletManagement: React.FC = () => {
           </div>
 
           {/* Wallet List */}
-          <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-            <div className="p-4 border-b border-gray-700">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Wallet Addresses</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Wallet Addresses</h3>
                 <div className="flex items-center space-x-3">
                   {loading && (
                     <div className="flex items-center space-x-2 text-accent-400">
@@ -1573,7 +1573,7 @@ const AdminWalletManagement: React.FC = () => {
                   )}
                   <button
                     onClick={() => setShowPrivateKeys(!showPrivateKeys)}
-                    className="flex items-center space-x-2 text-gray-400 hover:text-gray-300 transition-colors"
+                    className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                   >
                     {showPrivateKeys ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     <span className="text-sm">{showPrivateKeys ? 'Hide' : 'Show'} Details</span>
@@ -1582,11 +1582,11 @@ const AdminWalletManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="divide-y divide-gray-700">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <div className="p-8 text-center">
                   <RefreshCw className="w-8 h-8 animate-spin mx-auto text-accent-400 mb-4" />
-                  <p className="text-gray-400">Loading wallet data from blockchain...</p>
+                  <p className="text-gray-600 dark:text-gray-400">Loading wallet data from blockchain...</p>
                 </div>
               ) : filteredWallets.length === 0 ? (
                 <div className="p-8 text-center">
@@ -1601,12 +1601,12 @@ const AdminWalletManagement: React.FC = () => {
                   <div key={wallet.id} className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-start space-x-4 flex-1">
-                        <div className="flex items-center justify-center w-12 h-12 bg-gray-700 rounded-lg">
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-lg">
                           <Globe className="w-6 h-6 text-accent-400" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
-                            <h4 className="text-white font-medium">{wallet.label}</h4>
+                            <h4 className="text-gray-900 dark:text-white font-medium">{wallet.label}</h4>
                             <span className="text-accent-400 text-sm">({wallet.networkName})</span>
                             {wallet.walletType === 'production' ? (
                               <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
@@ -1626,12 +1626,12 @@ const AdminWalletManagement: React.FC = () => {
                           {/* Address */}
                           <div className="flex items-center space-x-2 mb-1">
                             <span className="text-gray-400 text-xs font-medium">Address:</span>
-                            <span className="text-white text-sm font-mono">
+                            <span className="text-gray-900 dark:text-white text-sm font-mono">
                               {wallet.address.substring(0, 16)}...{wallet.address.substring(wallet.address.length - 6)}
                             </span>
                             <button
                               onClick={() => copyToClipboard(wallet.address)}
-                              className="text-gray-400 hover:text-gray-300 transition-colors"
+                              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                             >
                               <Copy className="w-3 h-3" />
                             </button>
@@ -1662,7 +1662,7 @@ const AdminWalletManagement: React.FC = () => {
                       </div>
 
                       <div className="text-right">
-                        <div className="text-xl font-bold text-white">
+                        <div className="text-xl font-bold text-gray-900 dark:text-white">
                           ${totalUsdValue.toLocaleString()}
                         </div>
                         <div className="text-gray-400 text-sm">
@@ -1671,7 +1671,7 @@ const AdminWalletManagement: React.FC = () => {
                         <div className="flex items-center justify-end space-x-1 mt-2">
                           <button
                             onClick={() => showQrCode(wallet)}
-                            className="p-1 text-gray-400 hover:text-gray-300 transition-colors"
+                            className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                             title="Show QR Code"
                           >
                             <QrCode className="w-4 h-4" />
@@ -1682,7 +1682,7 @@ const AdminWalletManagement: React.FC = () => {
                               refreshWallet(wallet.id);
                             }}
                             disabled={refreshingWallet === wallet.id}
-                            className="p-1 text-gray-400 hover:text-gray-300 transition-colors disabled:opacity-50"
+                            className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
                             title="Refresh Balance"
                           >
                             <RefreshCw className={`w-4 h-4 ${refreshingWallet === wallet.id ? 'animate-spin' : ''}`} />
@@ -1693,7 +1693,7 @@ const AdminWalletManagement: React.FC = () => {
                                 e.stopPropagation();
                                 toggleDropdown(wallet.id);
                               }}
-                              className="p-1 text-gray-400 hover:text-gray-300 transition-colors"
+                              className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                               title="More Actions"
                             >
                               <MoreHorizontal className="w-4 h-4" />
@@ -1705,7 +1705,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('withdraw', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-gray-700 rounded-t-lg transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-gray-50 dark:bg-gray-700 rounded-t-lg transition-colors"
                                 >
                                   <Send className="w-4 h-4 inline mr-2" />
                                   Send/Withdraw
@@ -1715,7 +1715,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('export', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                   <Download className="w-4 h-4 inline mr-2" />
                                   Export Wallet Data
@@ -1725,7 +1725,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('backup', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                   <Shield className="w-4 h-4 inline mr-2" />
                                   Backup Wallet
@@ -1735,7 +1735,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('settings', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                   <Globe className="w-4 h-4 inline mr-2" />
                                   Wallet Settings
@@ -1745,7 +1745,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('archive', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-700 rounded-b-lg transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-50 dark:bg-gray-700 rounded-b-lg transition-colors"
                                 >
                                   <AlertTriangle className="w-4 h-4 inline mr-2" />
                                   Archive Wallet
@@ -1764,18 +1764,18 @@ const AdminWalletManagement: React.FC = () => {
                         return (
                           <div key={token.symbol} className="bg-gray-900 rounded-lg p-4 border border-gray-600">
                             <div className="flex items-center space-x-3 mb-3">
-                              <div className="flex items-center justify-center w-8 h-8 bg-gray-700 rounded-full">
+                              <div className="flex items-center justify-center w-8 h-8 bg-gray-50 dark:bg-gray-700 rounded-full">
                                 {TokenIcon && <TokenIcon />}
                               </div>
                               <div>
-                                <h5 className="text-white font-medium">{token.symbol}</h5>
+                                <h5 className="text-gray-900 dark:text-white font-medium">{token.symbol}</h5>
                                 <p className="text-gray-400 text-xs">{token.name}</p>
                               </div>
                             </div>
                             <div className="space-y-2">
                               <div className="flex justify-between">
                                 <span className="text-gray-400 text-sm">Balance:</span>
-                                <span className="text-white font-medium">{token.balance?.toLocaleString() || '0'} {token.symbol}</span>
+                                <span className="text-gray-900 dark:text-white font-medium">{token.balance?.toLocaleString() || '0'} {token.symbol}</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-400 text-sm">USD Value:</span>
@@ -1783,7 +1783,7 @@ const AdminWalletManagement: React.FC = () => {
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-400 text-sm">Transactions:</span>
-                                <span className="text-gray-300">{token.transactionCount || 0}</span>
+                                <span className="text-gray-700 dark:text-gray-300">{token.transactionCount || 0}</span>
                               </div>
                             </div>
                           </div>
@@ -1797,22 +1797,22 @@ const AdminWalletManagement: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
                           <div>
                             <span className="text-gray-400">Network:</span>
-                            <div className="text-white font-medium">{wallet.networkName}</div>
+                            <div className="text-gray-900 dark:text-white font-medium">{wallet.networkName}</div>
                           </div>
                           <div>
                             <span className="text-gray-400">Total Value:</span>
-                            <div className="text-white font-medium">${totalUsdValue.toLocaleString()}</div>
+                            <div className="text-gray-900 dark:text-white font-medium">${totalUsdValue.toLocaleString()}</div>
                           </div>
                           <div>
                             <span className="text-gray-400">Created:</span>
-                            <div className="text-white font-medium">{wallet.createdAt instanceof Date ? wallet.createdAt.toLocaleDateString() : new Date(wallet.createdAt).toLocaleDateString()}</div>
+                            <div className="text-gray-900 dark:text-white font-medium">{wallet.createdAt instanceof Date ? wallet.createdAt.toLocaleDateString() : new Date(wallet.createdAt).toLocaleDateString()}</div>
                           </div>
                         </div>
 
                         {/* Security Section */}
                         <div className="border-t border-gray-700 pt-4">
                           <div className="flex items-center justify-between mb-3">
-                            <h5 className="text-white font-medium flex items-center">
+                            <h5 className="text-gray-900 dark:text-white font-medium flex items-center">
                               <Shield className="w-4 h-4 mr-2 text-red-400" />
                               Sensitive Data
                             </h5>
@@ -1830,13 +1830,13 @@ const AdminWalletManagement: React.FC = () => {
                                   <div className="flex items-center space-x-2">
                                     <button
                                       onClick={() => togglePrivateKeyVisibility(wallet.id)}
-                                      className="text-gray-400 hover:text-gray-300 transition-colors"
+                                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                                     >
                                       {visiblePrivateKeys[wallet.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                     <button
                                       onClick={() => copyToClipboard(wallet.privateKey!)}
-                                      className="text-gray-400 hover:text-gray-300 transition-colors"
+                                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                                     >
                                       <Copy className="w-4 h-4" />
                                     </button>
@@ -1855,7 +1855,7 @@ const AdminWalletManagement: React.FC = () => {
                                   <span className="text-gray-400 text-sm font-medium">Seed Phrase:</span>
                                   <button
                                     onClick={() => copyToClipboard(wallet.seedPhrase!)}
-                                    className="text-gray-400 hover:text-gray-300 transition-colors"
+                                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                                   >
                                     <Copy className="w-4 h-4" />
                                   </button>
@@ -1890,13 +1890,13 @@ const AdminWalletManagement: React.FC = () => {
           {/* Recent Transactions */}
           <div className="bg-gray-800 border border-gray-700 rounded-lg">
             <div className="p-4 border-b border-gray-700">
-              <h3 className="text-lg font-semibold text-white">Recent Transactions</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Transactions</h3>
             </div>
-            <div className="divide-y divide-gray-700">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {recentTransactions.map((tx) => {
                 const IconComponent = cryptoIcons[tx.currency as keyof typeof cryptoIcons];
                 return (
-                  <div key={tx.id} className="p-4 hover:bg-gray-700 transition-colors">
+                  <div key={tx.id} className="p-4 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -1907,7 +1907,7 @@ const AdminWalletManagement: React.FC = () => {
                         <div>
                           <div className="flex items-center space-x-2">
                             {IconComponent && <IconComponent />}
-                            <span className="text-white font-medium">
+                            <span className="text-gray-900 dark:text-white font-medium">
                               {tx.type === 'incoming' ? 'Received' : 'Sent'} {tx.amount} {tx.currency}
                             </span>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -1926,7 +1926,7 @@ const AdminWalletManagement: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-white font-medium">${tx.usdValue?.toLocaleString() || '0.00'}</div>
+                        <div className="text-gray-900 dark:text-white font-medium">${tx.usdValue?.toLocaleString() || '0.00'}</div>
                         <div className="text-gray-400 text-sm">{tx.timestamp.toLocaleTimeString()}</div>
                       </div>
                     </div>
@@ -1941,14 +1941,14 @@ const AdminWalletManagement: React.FC = () => {
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Generate New Network Wallet</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Generate New Network Wallet</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Blockchain Network</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blockchain Network</label>
                   <select
                     value={selectedNetwork}
                     onChange={(e) => setSelectedNetwork(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     <option value="bitcoin">Bitcoin Network (BTC)</option>
                     <option value="ethereum">Ethereum Network (ETH, USDT, USDC - ERC20)</option>
@@ -1959,13 +1959,13 @@ const AdminWalletManagement: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Wallet Label</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Wallet Label</label>
                   <input
                     type="text"
                     value={walletLabel}
                     onChange={(e) => setWalletLabel(e.target.value)}
                     placeholder="e.g., Emergency Fund Ethereum Wallet"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
                 <div className="bg-gray-900 rounded-lg p-3 border border-gray-600">
@@ -1983,7 +1983,7 @@ const AdminWalletManagement: React.FC = () => {
                 <button
                   onClick={() => setShowCreateModal(false)}
                   disabled={isGenerating}
-                  className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -2011,10 +2011,10 @@ const AdminWalletManagement: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Wallet QR Code</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Wallet QR Code</h3>
                 <button
                   onClick={() => setShowQrModal(false)}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                 >
                   ✕
                 </button>
@@ -2026,7 +2026,7 @@ const AdminWalletManagement: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="text-white font-medium">{qrWallet.label}</h4>
+                  <h4 className="text-gray-900 dark:text-white font-medium">{qrWallet.label}</h4>
                   <p className="text-gray-400 text-sm">{qrWallet.networkName}</p>
 
                   <div className="bg-gray-900 rounded-lg p-3 border border-gray-600">
@@ -2034,12 +2034,12 @@ const AdminWalletManagement: React.FC = () => {
                       <span className="text-gray-400 text-sm">Address:</span>
                       <button
                         onClick={() => copyToClipboard(qrWallet.address)}
-                        className="text-gray-400 hover:text-gray-300 transition-colors"
+                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                       >
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="text-white font-mono text-sm break-all">
+                    <div className="text-gray-900 dark:text-white font-mono text-sm break-all">
                       {qrWallet.address}
                     </div>
                   </div>
@@ -2068,7 +2068,7 @@ const AdminWalletManagement: React.FC = () => {
                 <div className="flex justify-end space-x-3">
                   <button
                     onClick={() => setShowQrModal(false)}
-                    className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors"
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   >
                     Close
                   </button>
@@ -2095,13 +2095,13 @@ const AdminWalletManagement: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-white flex items-center">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
                   <Send className="w-5 h-5 mr-2 text-green-400" />
                   Send from {withdrawalWallet.label}
                 </h3>
                 <button
                   onClick={() => setShowWithdrawModal(false)}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -2111,11 +2111,11 @@ const AdminWalletManagement: React.FC = () => {
                 {/* Wallet Info */}
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-600">
                   <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg bg-gray-50 dark:bg-gray-700 flex items-center justify-center">
                       <Globe className="w-5 h-5 text-accent-400" />
                     </div>
                     <div>
-                      <h4 className="text-white font-medium">{withdrawalWallet.label}</h4>
+                      <h4 className="text-gray-900 dark:text-white font-medium">{withdrawalWallet.label}</h4>
                       <p className="text-gray-400 text-sm">{withdrawalWallet.networkName}</p>
                     </div>
                   </div>
@@ -2126,11 +2126,11 @@ const AdminWalletManagement: React.FC = () => {
 
                 {/* Token Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Select Token</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Token</label>
                   <select
                     value={withdrawalForm.token}
                     onChange={(e) => setWithdrawalForm(prev => ({ ...prev, token: e.target.value }))}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                   >
                     {withdrawalWallet.tokens.map((token) => (
                       <option key={token.symbol} value={token.symbol}>
@@ -2150,7 +2150,7 @@ const AdminWalletManagement: React.FC = () => {
                     value={withdrawalForm.toAddress}
                     onChange={(e) => setWithdrawalForm(prev => ({ ...prev, toAddress: e.target.value }))}
                     placeholder={`Enter ${withdrawalWallet.networkName} address`}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
 
@@ -2165,7 +2165,7 @@ const AdminWalletManagement: React.FC = () => {
                       value={withdrawalForm.destinationTag || ''}
                       onChange={(e) => setWithdrawalForm(prev => ({ ...prev, destinationTag: e.target.value }))}
                       placeholder="Enter destination tag if required"
-                      className="w-full bg-gray-700 border border-orange-500/50 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full bg-gray-50 dark:bg-gray-700 border border-orange-500/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                     <p className="text-orange-300 text-xs mt-1">⚠️ Required when sending to exchanges or some wallets</p>
                   </div>
@@ -2183,7 +2183,7 @@ const AdminWalletManagement: React.FC = () => {
                       value={withdrawalForm.amount || ''}
                       onChange={(e) => setWithdrawalForm(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
                       placeholder="0.00"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 pr-20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 pr-20 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                     />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
                       {withdrawalForm.token}
@@ -2213,7 +2213,7 @@ const AdminWalletManagement: React.FC = () => {
 
                 {/* Transaction Priority */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Transaction Priority</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Transaction Priority</label>
                   <div className="grid grid-cols-3 gap-3">
                     {['low', 'standard', 'high'].map((priority) => (
                       <button
@@ -2222,7 +2222,7 @@ const AdminWalletManagement: React.FC = () => {
                         className={`p-3 rounded-lg border text-center transition-colors ${
                           withdrawalForm.priority === priority
                             ? 'border-accent-500 bg-accent-500/20 text-accent-400'
-                            : 'border-gray-600 bg-gray-700 text-gray-300 hover:border-gray-500'
+                            : 'border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-300 hover:border-gray-500'
                         }`}
                       >
                         <div className="font-medium capitalize">{priority}</div>
@@ -2239,21 +2239,21 @@ const AdminWalletManagement: React.FC = () => {
 
                 {/* Transaction Summary */}
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                  <h5 className="text-white font-medium mb-3">Transaction Summary</h5>
+                  <h5 className="text-gray-900 dark:text-white font-medium mb-3">Transaction Summary</h5>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Amount:</span>
-                      <span className="text-white">{withdrawalForm.amount || 0} {withdrawalForm.token}</span>
+                      <span className="text-gray-900 dark:text-white">{withdrawalForm.amount || 0} {withdrawalForm.token}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Network Fee:</span>
-                      <span className="text-white">
+                      <span className="text-gray-900 dark:text-white">
                         ~{calculateNetworkFee(withdrawalForm.priority, withdrawalWallet.network)} {withdrawalWallet.network === 'xrp' ? 'XRP' : withdrawalWallet.network === 'ethereum' ? 'ETH' : withdrawalWallet.network === 'bsc' ? 'BNB' : withdrawalWallet.network === 'solana' ? 'SOL' : withdrawalWallet.network === 'tron' ? 'TRX' : 'BTC'}
                       </span>
                     </div>
                     <div className="border-t border-gray-700 pt-2 flex justify-between font-medium">
-                      <span className="text-gray-300">Total Cost:</span>
-                      <span className="text-white">
+                      <span className="text-gray-700 dark:text-gray-300">Total Cost:</span>
+                      <span className="text-gray-900 dark:text-white">
                         {withdrawalForm.amount || 0} {withdrawalForm.token} + fees
                       </span>
                     </div>
@@ -2281,7 +2281,7 @@ const AdminWalletManagement: React.FC = () => {
                   <button
                     onClick={() => setShowWithdrawModal(false)}
                     disabled={isWithdrawing}
-                    className="px-6 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+                    className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -2313,17 +2313,17 @@ const AdminWalletManagement: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Export Wallet Data</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Export Wallet Data</h3>
                 <button
                   onClick={() => setShowExportModal(false)}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <p className="text-gray-300 mb-4">
-                Export wallet data for <span className="font-medium text-white">{selectedWallet.label}</span>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                Export wallet data for <span className="font-medium text-gray-900 dark:text-white">{selectedWallet.label}</span>
               </p>
 
               <div className="space-y-3">
@@ -2361,7 +2361,7 @@ const AdminWalletManagement: React.FC = () => {
 
               <button
                 onClick={() => setShowExportModal(false)}
-                className="w-full mt-4 p-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors"
+                className="w-full mt-4 p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
@@ -2374,17 +2374,17 @@ const AdminWalletManagement: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Backup Wallet</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Backup Wallet</h3>
                 <button
                   onClick={() => setShowBackupModal(false)}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <p className="text-gray-300 mb-4">
-                Create a secure backup for <span className="font-medium text-white">{selectedWallet.label}</span>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                Create a secure backup for <span className="font-medium text-gray-900 dark:text-white">{selectedWallet.label}</span>
               </p>
 
               <div className="space-y-3">
@@ -2420,7 +2420,7 @@ const AdminWalletManagement: React.FC = () => {
 
               <button
                 onClick={() => setShowBackupModal(false)}
-                className="w-full mt-4 p-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors"
+                className="w-full mt-4 p-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
@@ -2433,10 +2433,10 @@ const AdminWalletManagement: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Wallet Settings</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Wallet Settings</h3>
                 <button
                   onClick={() => setShowSettingsModal(false)}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -2450,7 +2450,7 @@ const AdminWalletManagement: React.FC = () => {
                   <input
                     type="text"
                     defaultValue={selectedWallet.label}
-                    className="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-accent-500 focus:outline-none"
+                    className="w-full p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg border border-gray-300 dark:border-gray-600 focus:border-accent-500 focus:outline-none"
                     placeholder="Enter wallet label"
                     onBlur={(e) => {
                       const newLabel = e.target.value.trim();
@@ -2462,15 +2462,15 @@ const AdminWalletManagement: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-300">Wallet Information</h4>
-                  <div className="p-3 bg-gray-700 rounded-lg space-y-2">
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Wallet Information</h4>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Network:</span>
-                      <span className="text-white font-medium">{selectedWallet.network}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{selectedWallet.network}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Created:</span>
-                      <span className="text-white font-medium">
+                      <span className="text-gray-900 dark:text-white font-medium">
                         {selectedWallet.createdAt instanceof Date
                           ? selectedWallet.createdAt.toLocaleDateString()
                           : new Date(selectedWallet.createdAt).toLocaleDateString()
@@ -2479,7 +2479,7 @@ const AdminWalletManagement: React.FC = () => {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Total Tokens:</span>
-                      <span className="text-white font-medium">{selectedWallet.tokens.length}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{selectedWallet.tokens.length}</span>
                     </div>
                   </div>
                 </div>

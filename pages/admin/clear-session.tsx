@@ -58,7 +58,7 @@ const ClearSession: React.FC = () => {
           </h1>
 
           {user && (
-            <div className="bg-gray-700 p-4 rounded mb-6">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded mb-6">
               <h3 className="text-white font-semibold mb-2">Current User:</h3>
               <p className="text-gray-300">Email: {user.email}</p>
               <p className="text-gray-300">ID: {user.id}</p>
@@ -98,7 +98,7 @@ const ClearSession: React.FC = () => {
 
             <button
               onClick={forceReload}
-              className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-white rounded-lg transition-colors"
             >
               <RefreshCw className="w-5 h-5" />
               <span>Force Page Reload</span>
