@@ -29,6 +29,7 @@ const Hero: React.FC<HeroProps> = ({
           fill
           className="object-cover object-center opacity-60"
           sizes="100vw"
+          unoptimized
           style={{
             objectFit: 'cover',
             objectPosition: 'center'
@@ -147,8 +148,8 @@ const Hero: React.FC<HeroProps> = ({
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/60 rounded-full mt-2"></div>
+        <div className="w-6 h-10 border-2 border-gray-400/50 dark:border-white/30 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-gray-600/80 dark:bg-white/60 rounded-full mt-2"></div>
         </div>
       </div>
     </section>

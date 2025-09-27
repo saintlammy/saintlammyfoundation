@@ -166,7 +166,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                         title: 'Support Our Mission',
                         description: 'Your donation helps us continue our humanitarian work'
                       })}
-                      className="text-gray-300 hover:text-accent-400 transition-colors text-sm font-light text-left"
+                      className="text-gray-600 dark:text-gray-300 hover:text-accent-400 transition-colors text-sm font-light text-left"
                     >
                       Make a Donation
                     </button>
@@ -174,7 +174,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                   <li>
                     <Link
                       href="/volunteer"
-                      className="text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
+                      className="text-gray-600 dark:text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
                     >
                       Become a Volunteer
                     </Link>
@@ -182,7 +182,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                   <li>
                     <Link
                       href="/partner"
-                      className="text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
+                      className="text-gray-600 dark:text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
                     >
                       Partner With Us
                     </Link>
@@ -190,7 +190,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                   <li>
                     <Link
                       href="/sponsor"
-                      className="text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
+                      className="text-gray-600 dark:text-gray-300 hover:text-accent-400 transition-colors text-sm font-light"
                     >
                       Sponsor a Child
                     </Link>
