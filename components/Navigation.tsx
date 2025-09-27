@@ -135,7 +135,6 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
           {/* Desktop Navigation */}
           <div className="hidden md:block ml-auto">
             <div className="flex items-center space-x-4">
-              <ThemeToggle variant="navigation" size="sm" />
               <div className="flex items-baseline space-x-4 relative">
               {navLinks.map((link) => {
                 const isActive = link.href ? router.pathname === link.href : false;
@@ -243,6 +242,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                 );
               })}
               </div>
+              <ThemeToggle variant="navigation" size="sm" />
             </div>
           </div>
 
