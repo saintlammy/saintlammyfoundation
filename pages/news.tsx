@@ -3,7 +3,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { GetStaticProps } from 'next';
-import Layout from '@/components/Layout';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
@@ -97,8 +96,6 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
         <meta name="keywords" content="charity news, Nigeria nonprofit updates, orphan support news, widow empowerment stories, community outreach" />
         <link rel="canonical" href="https://www.saintlammyfoundation.org/news" />
       </Head>
-
-      <Layout>
 
       <ErrorBoundary>
           <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
@@ -324,7 +321,6 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
           </section>
           </main>
         </ErrorBoundary>
-      </Layout>
 
     </>
   );

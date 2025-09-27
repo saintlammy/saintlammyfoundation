@@ -2,7 +2,6 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { AlertCircle, ArrowLeft, Heart, HelpCircle, RotateCcw } from 'lucide-react';
-import Layout from '@/components/Layout';
 
 const DonationCancelled: React.FC = () => {
   const reasons = [
@@ -30,7 +29,7 @@ const DonationCancelled: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Donation Cancelled | Saintlammy Foundation</title>
         <meta name="description" content="Your donation was cancelled. No charges were made to your account." />
@@ -209,7 +208,7 @@ const DonationCancelled: React.FC = () => {
           </div>
         </div>
       </main>
-    </Layout>
+    </>
   );
 };
 

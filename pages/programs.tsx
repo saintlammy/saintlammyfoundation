@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Layout from '@/components/Layout';
 import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
 
@@ -137,7 +136,7 @@ const Programs: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Programs - Saintlammy Foundation</title>
         <meta name="description" content="Explore Saintlammy Foundation's comprehensive programs supporting orphans, widows, education, and healthcare across Nigeria." />
@@ -378,7 +377,7 @@ const Programs: React.FC = () => {
             </div>
           </div>
         </section>
-    </Layout>
+    </>
   );
 };
 

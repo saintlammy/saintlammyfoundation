@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Layout from '@/components/Layout';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
 
 const Outreaches: React.FC = () => {
@@ -105,7 +104,7 @@ const Outreaches: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Outreaches - Saintlammy Foundation</title>
         <meta name="description" content="Join Saintlammy Foundation's community outreaches. Medical care, educational support, feeding programs, and skills training across Nigeria." />
@@ -321,7 +320,7 @@ const Outreaches: React.FC = () => {
             </div>
           </div>
         </section>
-    </Layout>
+    </>
   );
 };
 

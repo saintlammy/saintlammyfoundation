@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import Layout from '@/components/Layout';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, User, Globe } from 'lucide-react';
 
 const Contact: React.FC = () => {
@@ -106,7 +105,6 @@ const Contact: React.FC = () => {
         <meta name="description" content="Get in touch with Saintlammy Foundation. Contact us for donations, volunteer opportunities, partnerships, or general inquiries." />
       </Head>
 
-      <Layout>
         {/* Hero Section */}
         <section className="py-32 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-6 text-center">
@@ -333,7 +331,6 @@ const Contact: React.FC = () => {
             </div>
           </div>
         </section>
-      </Layout>
 
     </>
   );

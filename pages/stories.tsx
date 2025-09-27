@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { GetStaticProps } from 'next';
-import Layout from '@/components/Layout';
 import Image from 'next/image';
 import { Quote, Star, Calendar, MapPin, ArrowLeft, Filter, Search } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
@@ -71,7 +70,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
   ];
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Impact Stories - Saintlammy Foundation</title>
         <meta name="description" content="Read inspiring impact stories from beneficiaries of Saintlammy Foundation. Real people, real impact across Nigeria." />
@@ -266,7 +265,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

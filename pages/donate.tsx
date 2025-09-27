@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Layout from '@/components/Layout';
 import { Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin, Banknote, Globe, ChevronDown, ExternalLink } from 'lucide-react';
 // Use simple SVG icons instead of heavy react-icons
 const BitcoinIcon = () => (
@@ -337,7 +336,7 @@ const Donate: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Donate - Saintlammy Foundation</title>
         <meta name="description" content="Support Saintlammy Foundation with secure donations. Credit card, bank transfer, cryptocurrency, and international payment options available." />
@@ -888,7 +887,7 @@ const Donate: React.FC = () => {
           </div>
         </section>
       </main>
-    </Layout>
+    </>
   );
 };
 

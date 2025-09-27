@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Layout from '@/components/Layout';
 import { Heart, Users, Clock, MapPin, Send, Star, CheckCircle, Calendar } from 'lucide-react';
 
 interface VolunteerFormData {
@@ -174,7 +173,7 @@ const Volunteer: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Volunteer - Saintlammy Foundation</title>
         <meta name="description" content="Join Saintlammy Foundation as a volunteer. Make a difference in the lives of widows, orphans, and vulnerable communities across Nigeria." />
@@ -532,7 +531,7 @@ const Volunteer: React.FC = () => {
             </div>
           </div>
         </section>
-    </Layout>
+    </>
   );
 };
 

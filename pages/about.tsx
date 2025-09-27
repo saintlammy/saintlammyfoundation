@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '@/components/Layout';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Image from 'next/image';
@@ -61,7 +60,7 @@ const About: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <SEOHead config={pageSEO.about} />
 
       <main>
@@ -337,7 +336,7 @@ const About: React.FC = () => {
           </div>
         </section>
       </main>
-    </Layout>
+    </>
   );
 };
 
