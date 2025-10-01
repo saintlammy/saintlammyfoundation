@@ -11,7 +11,7 @@ export interface DonationData {
   source?: string;
   category?: string;
   paymentMethod: 'paypal' | 'crypto' | 'card' | 'bank';
-  cryptoCurrency?: 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB';
+  cryptoCurrency?: 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB' | 'SOL' | 'TRX';
   network?: string;
 }
 
@@ -300,7 +300,7 @@ class PaymentService {
    * Get supported crypto currencies
    */
   getSupportedCryptoCurrencies(): string[] {
-    return ['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB'];
+    return ['BTC', 'ETH', 'USDT', 'USDC', 'XRP', 'BNB', 'SOL', 'TRX'];
   }
 
   /**
@@ -319,6 +319,10 @@ class PaymentService {
         return ['xrpl'];
       case 'BNB':
         return ['bep20'];
+      case 'SOL':
+        return ['sol'];
+      case 'TRX':
+        return ['trc20'];
       default:
         return [];
     }

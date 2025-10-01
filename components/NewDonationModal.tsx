@@ -22,7 +22,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
   const [amount, setAmount] = useState('');
   const [donationType, setDonationType] = useState<'one-time' | 'monthly' | 'yearly'>('one-time');
   const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'crypto' | 'card' | 'bank'>('paypal');
-  const [cryptoCurrency, setCryptoCurrency] = useState<'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB'>('BTC');
+  const [cryptoCurrency, setCryptoCurrency] = useState<'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB' | 'SOL' | 'TRX'>('BTC');
   const [selectedNetwork, setSelectedNetwork] = useState('');
   const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD');
 
@@ -165,6 +165,11 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
   };
 
   const handleCryptoPayment = async () => {
+    // Validate form before processing
+    if (!validateForm()) {
+      return;
+    }
+
     setIsProcessing(true);
     setError('');
 
