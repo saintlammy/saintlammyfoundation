@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
 
@@ -269,17 +270,17 @@ const Programs: React.FC = () => {
                         >
                           Support This Program
                         </button>
-                        <a
-                          href="#program-details"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const element = e.currentTarget.closest('.bg-white, .bg-gray-800\\/50');
-                            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }}
+                        <Link
+                          href={
+                            program.id === 1 ? '/programs/orphan-adoption' :
+                            program.id === 2 ? '/programs/widow-empowerment' :
+                            program.id === 3 ? '/programs/educational-excellence' :
+                            program.id === 4 ? '/programs/healthcare-access' : '#'
+                          }
                           className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
                           Learn More
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

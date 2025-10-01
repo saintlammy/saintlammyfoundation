@@ -16,12 +16,12 @@ export const ValidationUtils = {
     .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number format')
     .optional(),
 
-  // Name validation (prevents XSS)
+  // Name validation (prevents XSS, allows alphanumeric)
   name: z.string()
     .trim()
     .min(1, 'Name is required')
     .max(100, 'Name must be less than 100 characters')
-    .regex(/^[a-zA-Z\s\-\.\']+$/, 'Name contains invalid characters'),
+    .regex(/^[a-zA-Z0-9\s\-\.\']+$/, 'Name contains invalid characters'),
 
   // Currency amount validation
   amount: z.number()

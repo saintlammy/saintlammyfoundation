@@ -19,7 +19,7 @@ const Hero: React.FC<HeroProps> = ({
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
       {/* Background */}
       <div className="absolute inset-0">
-        {/* Primary gradient background - always visible */}
+        {/* Primary gradient background - fallback if image fails */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 dark:from-blue-900 dark:via-purple-900 dark:to-gray-900"></div>
 
         {/* Background Image with error handling */}
@@ -27,7 +27,7 @@ const Hero: React.FC<HeroProps> = ({
           src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
           alt="Boy in white shirt sitting on brown wooden desk chair, representing education, hope, and the transformative impact of charitable work with children"
           fill
-          className="object-cover object-center opacity-60"
+          className="object-cover object-center"
           sizes="100vw"
           style={{
             objectFit: 'cover',
@@ -41,12 +41,9 @@ const Hero: React.FC<HeroProps> = ({
           priority
         />
 
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-white/40 dark:bg-black/40"></div>
+        {/* Single overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-white/70 dark:from-black/70 dark:via-black/50 dark:to-black/70"></div>
       </div>
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100/80 via-gray-200/60 to-white/80 dark:from-gray-900/80 dark:via-gray-900/60 dark:to-black/80"></div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">

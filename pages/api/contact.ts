@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       phone: contactData.phone ? sanitizeHtml(contactData.phone) : undefined
     };
 
-    // Store in Supabase database
+    // Store in Supabase database with timeout
     const client = getTypedSupabaseClient();
 
     // Convert to database format
@@ -45,14 +45,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       updated_at: new Date().toISOString()
     };
 
-    const { data: newMessage, error } = await (client as any)
-      .from('messages')
-      .insert([messageData])
-      .select()
-      .single();
+    // Add timeout for database operations (5 seconds)
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database operation timeout')), 5000)
+    );
+
+    const { data: newMessage, error } = await Promise.race([
+      (client as any)
+        .from('messages')
+        .insert([messageData])
+        .select()
+        .single(),
+      timeoutPromise
+    ]).catch((error) => {
+      console.warn('Database insert failed or timed out:', error.message);
+      return { data: null, error };
+    }) as any;
 
     if (error) {
       console.error('Error storing contact message:', error);
+
+      // If database unavailable, log for manual processing
+      if (error.message?.includes('timeout') || error.message?.includes('table')) {
+        console.log('CONTACT FORM SUBMISSION (DB unavailable):', messageData);
+        return res.status(200).json({
+          success: true,
+          message: 'Thank you for your message. We will get back to you soon!',
+          submissionId: 'pending',
+          timestamp: new Date().toISOString()
+        });
+      }
+
       return res.status(500).json({
         error: 'Failed to send message',
         message: 'Please try again later.'

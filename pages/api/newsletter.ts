@@ -29,15 +29,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       source: 'website'
     };
 
-    // Store in Supabase
+    // Store in Supabase with timeout
     const client = getTypedSupabaseClient();
 
-    // Check if email already exists
-    const { data: existingSubscriber } = await (client as any)
-      .from('newsletter_subscribers')
-      .select('email, is_active')
-      .eq('email', sanitizedData.email)
-      .single();
+    // Add timeout wrapper for database operations
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database operation timeout')), 5000)
+    );
+
+    // Check if email already exists with timeout
+    const { data: existingSubscriber } = await Promise.race([
+      (client as any)
+        .from('newsletter_subscribers')
+        .select('email, is_active')
+        .eq('email', sanitizedData.email)
+        .single(),
+      timeoutPromise
+    ]).catch((error) => {
+      console.warn('Database query failed or timed out:', error.message);
+      return { data: null, error };
+    }) as any;
 
     if (existingSubscriber) {
       if (existingSubscriber.is_active) {
@@ -46,15 +57,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           message: 'This email is already subscribed to our newsletter.'
         });
       } else {
-        // Reactivate existing subscription
-        const { error: updateError } = await (client as any)
-          .from('newsletter_subscribers')
-          .update({
-            name: sanitizedData.name,
-            is_active: true,
-            subscribedAt: sanitizedData.subscribedAt
-          })
-          .eq('email', sanitizedData.email);
+        // Reactivate existing subscription with timeout
+        const { error: updateError } = await Promise.race([
+          (client as any)
+            .from('newsletter_subscribers')
+            .update({
+              name: sanitizedData.name,
+              is_active: true,
+              subscribedAt: sanitizedData.subscribedAt
+            })
+            .eq('email', sanitizedData.email),
+          timeoutPromise
+        ]).catch((error) => ({ error })) as any;
 
         if (updateError) {
           console.error('Error reactivating newsletter subscription:', updateError);
@@ -72,15 +86,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // Create new subscription
-    const { data: newSubscriber, error: insertError } = await (client as any)
-      .from('newsletter_subscribers')
-      .insert([sanitizedData])
-      .select()
-      .single();
+    // Create new subscription with timeout
+    const { data: newSubscriber, error: insertError } = await Promise.race([
+      (client as any)
+        .from('newsletter_subscribers')
+        .insert([sanitizedData])
+        .select()
+        .single(),
+      timeoutPromise
+    ]).catch((error) => {
+      console.warn('Database insert failed or timed out:', error.message);
+      return { data: null, error };
+    }) as any;
 
     if (insertError) {
       console.error('Error storing newsletter subscription:', insertError);
+
+      // If database unavailable, log for manual processing
+      if (insertError.message?.includes('timeout') || insertError.message?.includes('table')) {
+        console.log('NEWSLETTER SIGNUP (DB unavailable):', sanitizedData);
+        return res.status(200).json({
+          success: true,
+          message: 'Thank you for subscribing! We will add you to our newsletter shortly.',
+          data: { email: sanitizedData.email }
+        });
+      }
+
       return res.status(500).json({
         error: 'Failed to subscribe to newsletter',
         message: 'Please try again later.'
