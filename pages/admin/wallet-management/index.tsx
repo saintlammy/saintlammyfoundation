@@ -733,6 +733,42 @@ const AdminWalletManagement: React.FC = () => {
             transactionCount: 0
           }
         ]
+      },
+      {
+        id: 'tron_main',
+        network: 'tron' as const,
+        networkName: 'Tron (TRC20)',
+        address: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || process.env.NEXT_PUBLIC_TRON_WALLET_ADDRESS || '',
+        label: 'Tron Donations',
+        tokens: [
+          {
+            symbol: 'BTC' as const, // TRX not in the type but using as placeholder
+            name: 'Tron',
+            balance: 0,
+            usdValue: 0,
+            totalReceived: 0,
+            totalSent: 0,
+            transactionCount: 0
+          },
+          {
+            symbol: 'USDT' as const,
+            name: 'Tether USD (TRC20)',
+            balance: 0,
+            usdValue: 0,
+            totalReceived: 0,
+            totalSent: 0,
+            transactionCount: 0
+          },
+          {
+            symbol: 'USDC' as const,
+            name: 'USD Coin (TRC20)',
+            balance: 0,
+            usdValue: 0,
+            totalReceived: 0,
+            totalSent: 0,
+            transactionCount: 0
+          }
+        ]
       }
     ];
 
