@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { ComponentProps } from '@/types';
 import { Heart, Users, GraduationCap, TrendingUp, Handshake, MapPin } from 'lucide-react';
 
@@ -19,30 +18,18 @@ const Hero: React.FC<HeroProps> = ({
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
       {/* Background */}
       <div className="absolute inset-0">
-        {/* Primary gradient background - fallback if image fails */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-gray-50 dark:from-blue-900 dark:via-purple-900 dark:to-gray-900"></div>
-
-        {/* Background Image with error handling */}
-        <Image
-          src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-          alt="Boy in white shirt sitting on brown wooden desk chair, representing education, hope, and the transformative impact of charitable work with children"
-          fill
-          className="object-cover object-center"
-          sizes="100vw"
+        {/* Background Image using CSS - more reliable */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
           style={{
-            objectFit: 'cover',
-            objectPosition: 'center'
+            backgroundImage: 'url(https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
           }}
-          onError={(e) => {
-            // Hide image if it fails to load, fallback shows gradient
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
-          priority
-        />
+        ></div>
 
-        {/* Single overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-white/70 dark:from-black/70 dark:via-black/50 dark:to-black/70"></div>
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/60 dark:from-black/60 dark:via-black/40 dark:to-black/60"></div>
       </div>
 
       {/* Main Content */}
