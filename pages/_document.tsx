@@ -221,6 +221,22 @@ export default function Document() {
         }} />
       </Head>
       <body>
+        {/* Prevent theme flash on page load - runs before React hydration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('saintlammy-theme') ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  document.documentElement.classList.add(theme);
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `
+          }}
+        />
         <Main />
         <NextScript />
       </body>

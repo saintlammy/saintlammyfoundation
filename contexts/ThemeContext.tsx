@@ -35,7 +35,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const initialTheme = savedTheme || systemTheme;
 
     setTheme(initialTheme);
-    applyTheme(initialTheme);
   }, []);
 
   useEffect(() => {
@@ -44,13 +43,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       localStorage.setItem('saintlammy-theme', theme);
     }
   }, [theme, mounted]);
-
-  // Apply initial dark theme immediately to prevent white flash (only during SSR)
-  useEffect(() => {
-    if (!mounted) {
-      applyTheme('dark');
-    }
-  }, [mounted]);
 
   const applyTheme = (newTheme: Theme) => {
     if (typeof window === 'undefined') return;
