@@ -28,28 +28,28 @@ const Hero: React.FC<HeroProps> = ({
           }}
         ></div>
 
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/60 dark:from-black/60 dark:via-black/40 dark:to-black/60"></div>
+        {/* Overlay for text readability - stronger in light mode */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/75 to-white/85 dark:from-black/60 dark:via-black/40 dark:to-black/60"></div>
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         <div className="animate-slide-up">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-900/10 dark:bg-white/10 backdrop-blur-sm border border-gray-900/20 dark:border-white/20 text-sm font-medium text-gray-900 dark:text-white mb-8">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-900/20 dark:bg-white/10 backdrop-blur-md border border-gray-900/30 dark:border-white/20 text-sm font-medium text-gray-900 dark:text-white mb-8 shadow-sm">
             <span className="w-2 h-2 bg-accent-400 rounded-full mr-3 animate-pulse"></span>
             CAC Registered: Saintlammy Community Care Initiative
           </div>
 
           {/* Main Heading */}
           <h1 className="text-display-lg md:text-display-xl lg:text-display-2xl font-medium mb-8 tracking-tight">
-            <span className="openai-gradient-text font-display max-w-5xl mx-auto">
+            <span className="openai-gradient-text font-display max-w-5xl mx-auto drop-shadow-sm">
               {title}
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-4xl mx-auto mb-12 font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-800 dark:text-gray-300 max-w-4xl mx-auto mb-12 font-light leading-relaxed drop-shadow-sm">
             {subtitle}
           </p>
 
@@ -64,7 +64,7 @@ const Hero: React.FC<HeroProps> = ({
 
             <a
               href="/about"
-              className="group px-8 py-4 bg-white/10 dark:bg-white/10 backdrop-blur-sm text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/20 dark:border-white/20 hover:bg-white/20 dark:hover:bg-white/20 transition-all duration-300 text-center"
+              className="group px-8 py-4 bg-white/30 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/30 dark:border-white/20 hover:bg-white/40 dark:hover:bg-white/20 transition-all duration-300 text-center shadow-md"
             >
               <span className="flex items-center font-sans">
                 Learn More
@@ -76,7 +76,7 @@ const Hero: React.FC<HeroProps> = ({
 
             <a
               href="/volunteer"
-              className="group px-8 py-4 bg-white/10 dark:bg-white/10 backdrop-blur-sm text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/20 dark:border-white/20 hover:bg-white/20 dark:hover:bg-white/20 transition-all duration-300 text-center"
+              className="group px-8 py-4 bg-white/30 dark:bg-white/10 backdrop-blur-md text-gray-900 dark:text-white font-medium text-base rounded-xl border border-gray-900/30 dark:border-white/20 hover:bg-white/40 dark:hover:bg-white/20 transition-all duration-300 text-center shadow-md"
             >
               <span className="flex items-center font-sans">
                 Volunteer
@@ -99,7 +99,7 @@ const Hero: React.FC<HeroProps> = ({
             ].map((feature, index) => (
               <span
                 key={index}
-                className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-full text-gray-900 dark:text-white/80 border border-gray-900/20 dark:border-white/20 font-medium text-sm hover:bg-white/20 dark:hover:bg-white/20 transition-all"
+                className="flex items-center px-4 py-2 bg-white/25 dark:bg-white/10 backdrop-blur-md rounded-full text-gray-900 dark:text-white/80 border border-gray-900/25 dark:border-white/20 font-medium text-sm hover:bg-white/35 dark:hover:bg-white/20 transition-all shadow-sm"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <feature.icon className="w-4 h-4 mr-2" />
@@ -118,10 +118,10 @@ const Hero: React.FC<HeroProps> = ({
             { label: 'Years of Service', value: '2+' }
           ].map((stat, index) => (
             <div key={index} className="group">
-              <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors font-display">
+              <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors font-display drop-shadow-sm">
                 {stat.value}
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+              <div className="text-gray-800 dark:text-gray-400 text-sm font-medium drop-shadow-sm">
                 {stat.label}
               </div>
             </div>
