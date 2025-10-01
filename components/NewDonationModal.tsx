@@ -106,11 +106,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
       setError(`Please enter a valid donation amount (minimum ${currencySymbol}${minAmount})`);
       return false;
     }
-    if (!donorEmail) {
-      setError('Email address is required');
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
+    // Email is optional, but if provided, must be valid
+    if (donorEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
       setError('Please enter a valid email address');
       return false;
     }
@@ -133,8 +130,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
     currency,
     donationType,
     donorName: donorName || 'Anonymous',
-    donorEmail,
-    message: donorMessage,
+    donorEmail: donorEmail || undefined, // Send undefined instead of empty string
+    message: donorMessage || undefined,
     source: context?.source || 'modal',
     category: context?.category,
     paymentMethod,
