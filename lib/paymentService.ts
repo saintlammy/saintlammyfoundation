@@ -120,6 +120,19 @@ class PaymentService {
       }
     } catch (error) {
       console.error('Crypto payment error:', error);
+
+      // Extract detailed error message from API response
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const apiError = error.response.data;
+        const errorMessage = apiError.error || apiError.message || 'Crypto payment failed';
+        const errorDetails = apiError.details ? `\n${JSON.stringify(apiError.details)}` : '';
+
+        return {
+          success: false,
+          error: `${errorMessage}${errorDetails}`
+        };
+      }
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Crypto payment failed'
