@@ -112,10 +112,10 @@ const Hero: React.FC<HeroProps> = ({
         {/* Stats Preview */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center animate-slide-up" style={{animationDelay: '0.5s'}}>
           {[
-            { label: 'Widows Supported', value: '500+' },
-            { label: 'Orphans Connected', value: '300+' },
-            { label: 'Community Outreaches', value: '20+' },
-            { label: 'Years of Service', value: '2+' }
+            { label: 'Widows Supported', value: '50+' },
+            { label: 'Orphans Connected', value: '24' },
+            { label: 'Community Outreaches', value: '3' },
+            { label: 'Years of Service', value: '0.5+' }
           ].map((stat, index) => (
             <div key={index} className="group">
               <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-accent-400 transition-colors font-display drop-shadow-sm">
@@ -131,8 +131,8 @@ const Hero: React.FC<HeroProps> = ({
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/60 rounded-full mt-2"></div>
+        <div className="w-6 h-10 border-2 border-gray-900/30 dark:border-white/30 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-gray-900/60 dark:bg-white/60 rounded-full mt-2"></div>
         </div>
       </div>
     </section>

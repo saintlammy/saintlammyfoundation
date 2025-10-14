@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin,
   X, Clock, AlertCircle, ExternalLink, Loader2, RefreshCw
@@ -48,28 +48,29 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
     : [5000, 10000, 25000, 50000, 100000, 250000]; // NGN amounts
 
   // Initialize from context
-  useEffect(() => {
-    if (context && isOpen) {
-      if (context.amount) setAmount(context.amount.toString());
-      if (context.preferredMethod === 'crypto') {
-        setPaymentMethod('crypto');
-      } else if (context.preferredMethod === 'card') {
-        setPaymentMethod('paypal'); // Default to PayPal for now
-      }
-    }
-  }, [context, isOpen]);
-
-  // Reset state when modal opens/closes
-  useEffect(() => {
+  // Initialize and reset state when modal opens (consolidated to prevent flickering)
+  // useLayoutEffect runs synchronously before browser paint, preventing flicker
+  useLayoutEffect(() => {
     if (isOpen) {
+      // Reset state first
       setCurrentStep('details');
       setError('');
       setPaymentResult(null);
       setCryptoPaymentData(null);
       setTransactionHash('');
       setCopiedAddress(false);
+
+      // Then apply context values if provided
+      if (context) {
+        if (context.amount) setAmount(context.amount.toString());
+        if (context.preferredMethod === 'crypto') {
+          setPaymentMethod('crypto');
+        } else if (context.preferredMethod === 'card') {
+          setPaymentMethod('paypal'); // Default to PayPal for now
+        }
+      }
     }
-  }, [isOpen]);
+  }, [context, isOpen]);
 
   // Reset payment method when currency changes (skip initial mount)
   const [isInitialMount, setIsInitialMount] = useState(true);
@@ -141,6 +142,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
     message: donorMessage || undefined,
     source: context?.source || 'modal',
     category: context?.category,
+    campaignId: context?.campaignId, // Link donation to campaign
     paymentMethod,
     cryptoCurrency: paymentMethod === 'crypto' ? cryptoCurrency : undefined,
     network: paymentMethod === 'crypto' ? selectedNetwork : undefined

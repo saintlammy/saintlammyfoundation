@@ -600,6 +600,8 @@ class DonationService {
     avgDonationAmount: number;
     donationsByStatus: { [key: string]: number };
     donationsByMethod: { [key: string]: number };
+    pendingAmount?: number;
+    successRate?: number;
   }> {
     try {
       // Get total donations and amount
@@ -624,19 +626,26 @@ class DonationService {
       }
 
       const donations = totalData || [];
-      const totalDonations = donations.length;
-      const totalAmount = donations.reduce((sum: number, d: any) => sum + d.amount, 0);
+
+      // Filter only completed donations for stats (ignore pending/failed)
+      const completedDonations = donations.filter((d: any) => d.status === 'completed');
+      const pendingDonations = donations.filter((d: any) => d.status === 'pending');
+
+      const totalDonations = completedDonations.length;
+      const totalAmount = completedDonations.reduce((sum: number, d: any) => sum + d.amount, 0);
+      const pendingAmount = pendingDonations.reduce((sum: number, d: any) => sum + d.amount, 0);
       const totalDonors = donorCount || 0;
       const avgDonationAmount = totalDonations > 0 ? totalAmount / totalDonations : 0;
+      const successRate = donations.length > 0 ? (completedDonations.length / donations.length) * 100 : 0;
 
-      // Group by status
+      // Group by status (for all donations to show breakdown)
       const donationsByStatus = donations.reduce((acc: any, d: any) => {
         acc[d.status] = (acc[d.status] || 0) + 1;
         return acc;
       }, {} as { [key: string]: number });
 
-      // Group by payment method
-      const donationsByMethod = donations.reduce((acc: any, d: any) => {
+      // Group by payment method (only completed)
+      const donationsByMethod = completedDonations.reduce((acc: any, d: any) => {
         acc[d.payment_method] = (acc[d.payment_method] || 0) + 1;
         return acc;
       }, {} as { [key: string]: number });
@@ -648,6 +657,8 @@ class DonationService {
         avgDonationAmount,
         donationsByStatus,
         donationsByMethod,
+        pendingAmount,
+        successRate,
       };
     } catch (error) {
       console.error('Error in getDonationStats:', error);
@@ -720,6 +731,48 @@ class DonationService {
         return false;
       }
       return false;
+    }
+  }
+
+  /**
+   * Bulk delete donations
+   */
+  async bulkDeleteDonations(donationIds: string[]): Promise<{ success: boolean; deletedCount: number; error?: string }> {
+    if (!isSupabaseAvailable || !supabase) {
+      return {
+        success: false,
+        deletedCount: 0,
+        error: 'Supabase not configured'
+      };
+    }
+
+    try {
+      const client = getTypedSupabaseClient();
+      const { error, count } = await (client as any)
+        .from('donations')
+        .delete({ count: 'exact' })
+        .in('id', donationIds);
+
+      if (error) {
+        console.error('Error deleting donations:', error);
+        return {
+          success: false,
+          deletedCount: 0,
+          error: handleSupabaseError(error)
+        };
+      }
+
+      return {
+        success: true,
+        deletedCount: count || donationIds.length
+      };
+    } catch (error) {
+      console.error('Error in bulkDeleteDonations:', error);
+      return {
+        success: false,
+        deletedCount: 0,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 }

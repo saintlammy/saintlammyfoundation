@@ -185,7 +185,6 @@ export function PageErrorBoundary({ children }: { children: ReactNode }) {
             <button
               onClick={() => window.location.reload()}
               className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-2 rounded-md transition-colors">
-            >
               Reload Page
             </button>
           </div>

@@ -79,72 +79,55 @@ const Analytics: React.FC = () => {
     }
   };
 
-  // Use real data or fallback to mock data
-  const donationTrends = [
-    { date: '2024-01-01', amount: 65000, donors: 120, conversions: 3.2 },
-    { date: '2024-01-08', amount: 78000, donors: 145, conversions: 3.8 },
-    { date: '2024-01-15', amount: 92000, donors: 170, conversions: 4.1 },
-    { date: '2024-01-22', amount: 88000, donors: 165, conversions: 3.9 },
-    { date: '2024-01-29', amount: 105000, donors: 190, conversions: 4.5 },
-    { date: '2024-02-05', amount: 125000, donors: 220, conversions: 5.1 },
-    { date: '2024-02-12', amount: 138000, donors: 245, conversions: 5.3 },
-    { date: '2024-02-19', amount: 142000, donors: 260, conversions: 5.7 },
-    { date: '2024-02-26', amount: 155000, donors: 280, conversions: 6.2 },
-    { date: '2024-03-05', amount: 168000, donors: 295, conversions: 6.5 },
-    { date: '2024-03-12', amount: 172000, donors: 310, conversions: 6.8 },
-    { date: '2024-03-19', amount: 185000, donors: 325, conversions: 7.1 }
-  ];
+  // Use real data from analytics service
+  const donationTrends = analyticsData?.donations?.monthlyTrend?.map((item: any) => ({
+    date: item.month,
+    amount: item.amount,
+    donors: item.count,
+    conversions: analyticsData?.traffic?.conversionRate || 0
+  })) || [];
 
-  const websiteTraffic = [
-    { date: '2024-03-01', visitors: 1250, pageviews: 3850, sessions: 1180 },
-    { date: '2024-03-02', visitors: 1380, pageviews: 4200, sessions: 1320 },
-    { date: '2024-03-03', visitors: 1520, pageviews: 4650, sessions: 1450 },
-    { date: '2024-03-04', visitors: 1420, pageviews: 4350, sessions: 1380 },
-    { date: '2024-03-05', visitors: 1680, pageviews: 5100, sessions: 1620 },
-    { date: '2024-03-06', visitors: 1850, pageviews: 5650, sessions: 1780 },
-    { date: '2024-03-07', visitors: 2100, pageviews: 6400, sessions: 2020 }
-  ];
+  const websiteTraffic = analyticsData?.traffic?.dailyStats?.map((item: any) => ({
+    date: item.date,
+    visitors: item.visitors || 0,
+    pageviews: item.pageviews || 0,
+    sessions: item.sessions || item.visitors || 0
+  })) || [];
 
-  const donationSources = [
-    { name: 'Direct Website', value: 45, color: '#3B82F6' },
-    { name: 'Social Media', value: 30, color: '#10B981' },
-    { name: 'Email Campaign', value: 15, color: '#F59E0B' },
-    { name: 'Referrals', value: 10, color: '#EF4444' }
-  ];
+  const donationSources = analyticsData?.donations?.byMethod ?
+    Object.entries(analyticsData.donations.byMethod).map(([name, value], idx) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      value: value as number,
+      color: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'][idx % 5]
+    })) : [];
 
-  const deviceBreakdown = [
-    { name: 'Desktop', value: 55, color: '#8B5CF6' },
-    { name: 'Mobile', value: 35, color: '#06B6D4' },
-    { name: 'Tablet', value: 10, color: '#84CC16' }
-  ];
+  const deviceBreakdown = analyticsData?.traffic?.deviceBreakdown ?
+    Object.entries(analyticsData.traffic.deviceBreakdown).map(([name, value], idx) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      value: value as number,
+      color: ['#8B5CF6', '#06B6D4', '#84CC16'][idx % 3]
+    })) : [];
 
-  const topPages = [
-    { page: '/donate', visits: 15420, conversions: 8.5 },
-    { page: '/', visits: 12350, conversions: 3.2 },
-    { page: '/programs', visits: 8940, conversions: 2.1 },
-    { page: '/about', visits: 7650, conversions: 1.8 },
-    { page: '/volunteer', visits: 5280, conversions: 4.3 }
-  ];
+  const topPages = analyticsData?.traffic?.topPages?.map((item: any) => ({
+    page: item.page,
+    visits: item.views,
+    conversions: (item.uniqueViews / item.views * 100) || 0
+  })) || [];
 
-  const conversionFunnel = [
-    { step: 'Website Visitors', count: 25000, percentage: 100 },
-    { step: 'Donation Page Views', count: 8500, percentage: 34 },
-    { step: 'Started Donation', count: 3200, percentage: 12.8 },
-    { step: 'Completed Donation', count: 1650, percentage: 6.6 }
-  ];
+  const conversionFunnel = analyticsData?.traffic?.funnel || [];
 
   const kpiCards = [
     {
       title: 'Total Revenue',
-      value: '₦2,847,592',
-      change: '+15.3%',
-      trend: 'up',
+      value: formatCurrency(analyticsData?.donations?.totalAmount || 0),
+      change: `${analyticsData?.donations?.monthlyGrowth >= 0 ? '+' : ''}${analyticsData?.donations?.monthlyGrowth?.toFixed(1) || 0}%`,
+      trend: (analyticsData?.donations?.monthlyGrowth || 0) >= 0 ? 'up' : 'down',
       icon: DollarSign,
       period: 'vs last month'
     },
     {
       title: 'Conversion Rate',
-      value: '6.8%',
+      value: formatPercentage(analyticsData?.traffic?.conversionRate || 0),
       change: '+0.5%',
       trend: 'up',
       icon: TrendingUp,
@@ -152,7 +135,7 @@ const Analytics: React.FC = () => {
     },
     {
       title: 'Average Donation',
-      value: '₦18,450',
+      value: formatCurrency(analyticsData?.donations?.averageAmount || 0),
       change: '-2.1%',
       trend: 'down',
       icon: Heart,
@@ -160,7 +143,7 @@ const Analytics: React.FC = () => {
     },
     {
       title: 'Website Visitors',
-      value: '47,284',
+      value: (analyticsData?.traffic?.uniqueVisitors || 0).toLocaleString(),
       change: '+23.7%',
       trend: 'up',
       icon: Eye,

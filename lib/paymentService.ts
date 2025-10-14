@@ -10,6 +10,7 @@ export interface DonationData {
   message?: string;
   source?: string;
   category?: string;
+  campaignId?: string; // Link to campaign
   paymentMethod: 'paypal' | 'crypto' | 'card' | 'bank';
   cryptoCurrency?: 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'XRP' | 'BNB' | 'SOL' | 'TRX';
   network?: string;
@@ -98,7 +99,8 @@ class PaymentService {
         donorEmail: donationData.donorEmail,
         message: donationData.message,
         source: donationData.source,
-        category: donationData.category
+        category: donationData.category,
+        campaignId: donationData.campaignId
       });
 
       if (response.data.success) {

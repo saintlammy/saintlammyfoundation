@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationBell from '@/components/NotificationBell';
 import {
   BarChart3,
   Users,
@@ -24,7 +25,8 @@ import {
   Bell,
   Search,
   Newspaper,
-  Image
+  Image,
+  Target
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -78,6 +80,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         { id: 'donations-recurring', label: 'Recurring', icon: Calendar, href: '/admin/donations/recurring' },
         { id: 'donations-analytics', label: 'Analytics', icon: BarChart3, href: '/admin/donations/analytics' }
       ]
+    },
+    {
+      id: 'campaigns',
+      label: 'Campaigns',
+      icon: Target,
+      href: '/admin/campaigns'
     },
     {
       id: 'wallets',
@@ -356,12 +364,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
 
               {/* Admin Dashboard uses permanent dark mode */}
               {/* Notifications */}
-              <button className="relative text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
-                <Bell className="w-6 h-6" />
-                <span className="absolute -top-2 -right-2 w-4 h-4 bg-accent-500 rounded-full text-xs text-white flex items-center justify-center">
-                  3
-                </span>
-              </button>
+              <NotificationBell />
 
               {/* User Menu */}
               <div className="flex items-center">

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { getTypedSupabaseClient } from '@/lib/supabase';
 import {
   Search,
   Filter,
@@ -43,70 +44,86 @@ const UsersManagement: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddUser, setShowAddUser] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock users data
-  const users: User[] = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      phone: '+234 801 234 5678',
-      location: 'Lagos, Nigeria',
-      role: 'donor',
-      status: 'active',
-      joinDate: new Date('2024-01-15'),
-      lastActivity: new Date('2024-03-15T10:30:00'),
-      totalDonations: 150000,
-      verified: true
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      email: 'michael@example.com',
-      phone: '+234 802 345 6789',
-      location: 'Abuja, Nigeria',
-      role: 'volunteer',
-      status: 'active',
-      joinDate: new Date('2024-02-20'),
-      lastActivity: new Date('2024-03-14T16:45:00'),
-      verified: true
-    },
-    {
-      id: '3',
-      name: 'Admin User',
-      email: 'admin@saintlammyfoundation.org',
-      role: 'admin',
-      status: 'active',
-      joinDate: new Date('2023-12-01'),
-      lastActivity: new Date('2024-03-15T11:20:00'),
-      verified: true
-    },
-    {
-      id: '4',
-      name: 'Emma Williams',
-      email: 'emma@example.com',
-      phone: '+234 803 456 7890',
-      location: 'Port Harcourt, Nigeria',
-      role: 'donor',
-      status: 'inactive',
-      joinDate: new Date('2024-01-08'),
-      lastActivity: new Date('2024-02-28T14:15:00'),
-      totalDonations: 75000,
-      verified: false
-    },
-    {
-      id: '5',
-      name: 'David Brown',
-      email: 'david@example.com',
-      phone: '+234 804 567 8901',
-      location: 'Kano, Nigeria',
-      role: 'volunteer',
-      status: 'active',
-      joinDate: new Date('2024-02-10'),
-      lastActivity: new Date('2024-03-13T09:30:00'),
-      verified: true
+  // Load users from database
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const client = getTypedSupabaseClient();
+
+      // Fetch from donors table (users are stored as donors)
+      const { data: donorsData, error: donorsError } = await (client as any)
+        .from('donors')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (donorsError) {
+        console.error('Error fetching users:', donorsError);
+        // Use fallback data
+        setUsers(getFallbackUsers());
+        return;
+      }
+
+      // Transform donors data to User format
+      const transformedUsers: User[] = (donorsData || []).map((donor: any) => ({
+        id: donor.id,
+        name: donor.name || 'Unknown',
+        email: donor.email || 'No email',
+        phone: donor.phone,
+        location: donor.location || donor.address,
+        role: donor.role || 'donor',
+        status: donor.status || 'active',
+        joinDate: new Date(donor.created_at),
+        lastActivity: new Date(donor.updated_at || donor.created_at),
+        totalDonations: donor.total_donated || 0,
+        verified: donor.verified || false,
+        avatar: donor.avatar
+      }));
+
+      setUsers(transformedUsers);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      setUsers(getFallbackUsers());
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getFallbackUsers = (): User[] => {
+    return [
+      {
+        id: '1',
+        name: 'Sarah Johnson',
+        email: 'sarah@example.com',
+        phone: '+234 801 234 5678',
+        location: 'Lagos, Nigeria',
+        role: 'donor',
+        status: 'active',
+        joinDate: new Date('2024-01-15'),
+        lastActivity: new Date('2024-03-15T10:30:00'),
+        totalDonations: 150000,
+        verified: true
+      },
+      {
+        id: '2',
+        name: 'Michael Chen',
+        email: 'michael@example.com',
+        phone: '+234 802 345 6789',
+        location: 'Abuja, Nigeria',
+        role: 'volunteer',
+        status: 'active',
+        joinDate: new Date('2024-02-20'),
+        lastActivity: new Date('2024-03-14T16:45:00'),
+        verified: true
+      }
+    ];
+  };
 
   const stats = {
     totalUsers: users.length,

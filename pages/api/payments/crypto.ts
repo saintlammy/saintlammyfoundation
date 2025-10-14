@@ -15,6 +15,7 @@ interface CryptoDonationRequest {
   message?: string;
   source?: string;
   category?: string;
+  campaignId?: string; // Link donation to campaign
 }
 
 interface CryptoRates {
@@ -185,6 +186,36 @@ function generatePaymentURI(currency: string, network: string, address: string, 
   }
 }
 
+// Function to update campaign progress
+async function updateCampaignProgress(campaignId: string, donationAmount: number) {
+  try {
+    // Fetch current campaign
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/campaigns?id=${campaignId}`);
+    const result = await response.json();
+
+    if (result.success && result.data.length > 0) {
+      const campaign = result.data[0];
+      const newAmount = campaign.current_amount + donationAmount;
+
+      // Update campaign with new amount
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/campaigns?id=${campaignId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          current_amount: newAmount,
+          // Auto-complete campaign if goal reached
+          status: newAmount >= campaign.goal_amount ? 'completed' : campaign.status
+        })
+      });
+
+      console.log(`Updated campaign ${campaignId}: ${newAmount}/${campaign.goal_amount}`);
+    }
+  } catch (error) {
+    console.error('Error updating campaign progress:', error);
+    // Don't throw - campaign update failure shouldn't break donation
+  }
+}
+
 // Function to store donation attempt in database
 async function storeCryptoDonation(donationData: any) {
   try {
@@ -201,6 +232,7 @@ async function storeCryptoDonation(donationData: any) {
       message: donationData.message,
       source: donationData.source,
       category: donationData.category as 'orphan' | 'widow' | 'home' | 'general',
+      campaignId: donationData.campaignId, // Add campaign ID
     });
 
     console.log('Stored crypto donation with ID:', donationId);
@@ -261,9 +293,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     // Create crypto donation request
     try {
+      // Log incoming request for debugging
+      console.log('📥 Crypto payment request received:', {
+        category: req.body.category,
+        amount: req.body.amount,
+        currency: req.body.currency
+      });
+
       // Validate input using schema
       const validation = validateInput(CryptoDonationSchema)(req.body);
       if (!validation.success) {
+        console.error('❌ Validation failed:', validation.errors);
         return res.status(400).json({
           error: 'Invalid input data',
           details: validation.errors
@@ -464,6 +504,11 @@ Important:
         // Update donation status based on verification result
         if (verificationResult.isValid) {
           await donationService.updateDonationStatus(donationId, 'completed', txHash);
+
+          // Update campaign progress if donation is linked to a campaign
+          if (donation.campaign_id) {
+            await updateCampaignProgress(donation.campaign_id, donation.amount);
+          }
 
           // Store verification details in notes
           const updatedNotes = {

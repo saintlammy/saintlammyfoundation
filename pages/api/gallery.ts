@@ -85,39 +85,39 @@ function getMockGallery(limit?: number) {
   const mockGallery = [
     {
       id: '1',
-      title: 'Education Support Program',
-      description: 'Providing school supplies, uniforms, and scholarships to orphaned children across Lagos State.',
-      image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      icon: 'GraduationCap',
-      category: 'Education',
-      date: '2024-01-15'
+      title: 'Widows Food Support Outreach',
+      description: 'Over 30 widows received carefully packed food supplies including rice, oil, garri, and seasoning items during our second official outreach.',
+      image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=600&auto=format&fit=crop',
+      icon: 'Heart',
+      category: 'Relief',
+      date: '2025-08-25'
     },
     {
       id: '2',
-      title: 'Mobile Health Clinics',
-      description: 'Bringing medical care directly to underserved communities with our mobile healthcare units.',
-      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+      title: 'Open Medical Checkup Outreach',
+      description: 'Free medical consultations and basic treatments provided for over 40 widows and less privileged individuals during our second outreach.',
+      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=600&auto=format&fit=crop',
       icon: 'Heart',
       category: 'Healthcare',
-      date: '2024-01-10'
+      date: '2025-09-21'
     },
     {
       id: '3',
-      title: 'Women Empowerment Initiative',
-      description: 'Training widows in skills acquisition and providing micro-loans for sustainable businesses.',
-      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+      title: 'Widow Empowerment Starter Support',
+      description: 'Selected widows began receiving business starter items and monthly stipends, with one-on-one support sessions launched.',
+      image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=600&auto=format&fit=crop',
       icon: 'Users',
       category: 'Empowerment',
-      date: '2024-01-05'
+      date: '2025-10-14'
     },
     {
       id: '4',
-      title: 'Water Infrastructure Projects',
-      description: 'Building wells and water purification systems in rural communities to ensure clean water access.',
-      image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-      icon: 'Building',
-      category: 'Infrastructure',
-      date: '2023-12-20'
+      title: 'Community Support for Vulnerable Homes',
+      description: 'Groceries, sanitary materials, and children\'s supplies distributed to families in poor housing conditions throughout Lagos.',
+      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop',
+      icon: 'Home',
+      category: 'Relief',
+      date: '2025-08-01'
     }
   ];
 

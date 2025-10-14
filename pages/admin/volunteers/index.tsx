@@ -301,6 +301,12 @@ const AdminVolunteers: React.FC = () => {
   const totalHours = volunteers.reduce((sum, v) => sum + v.totalHours, 0);
   const pendingApplications = applications.filter(a => a.status === 'pending').length;
 
+  // Calculate average rating from volunteers with ratings
+  const volunteersWithRatings = volunteers.filter(v => v.rating > 0);
+  const averageRating = volunteersWithRatings.length > 0
+    ? (volunteersWithRatings.reduce((sum, v) => sum + v.rating, 0) / volunteersWithRatings.length).toFixed(1)
+    : '0.0';
+
   const toggleVolunteerSelection = (volunteerId: string) => {
     setSelectedVolunteers(prev =>
       prev.includes(volunteerId)
@@ -400,10 +406,17 @@ const AdminVolunteers: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm font-medium">Average Rating</p>
-                  <p className="text-2xl font-bold text-white mt-1">4.7</p>
+                  <p className="text-2xl font-bold text-white mt-1">{averageRating}</p>
                   <div className="flex items-center mt-2">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
+                      <Star
+                        key={star}
+                        className={`w-4 h-4 ${
+                          star <= Math.round(parseFloat(averageRating))
+                            ? 'text-yellow-400 fill-current'
+                            : 'text-gray-600'
+                        }`}
+                      />
                     ))}
                   </div>
                 </div>

@@ -337,31 +337,43 @@ const Home: React.FC<HomeProps> = (props) => {
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
-    // In a real app, fetch from Supabase here
-    const stats: DashboardStats = {
-      totalDonations: 2847592,
-      totalDonors: 15673,
-      totalBeneficiaries: 45821,
-      totalPrograms: 127,
-      totalVolunteers: 2834,
-      totalPartnerships: 186,
-      monthlyRevenue: 485632,
-      monthlyExpenses: 421847,
-      activeAdoptions: 8947,
-      pendingGrants: 23,
-    };
+    // Fetch stats from API endpoint
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/stats`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch stats');
+    }
+
+    const { data } = await response.json();
 
     return {
       props: {
-        stats,
+        stats: data,
       },
-      revalidate: 3600, // Revalidate every hour
+      revalidate: 3600, // Revalidate every hour to get fresh data
     };
   } catch (error) {
     console.error('Error fetching stats:', error);
 
+    // Fallback stats if API fails
+    const fallbackStats: DashboardStats = {
+      totalDonations: 8420,
+      totalDonors: 45,
+      totalBeneficiaries: 312,
+      totalPrograms: 6,
+      totalVolunteers: 45,
+      totalPartnerships: 7,
+      monthlyRevenue: 1200,
+      monthlyExpenses: 950,
+      activeAdoptions: 312,
+      pendingGrants: 3,
+    };
+
     return {
-      props: {},
+      props: {
+        stats: fallbackStats,
+      },
       revalidate: 300, // Retry in 5 minutes on error
     };
   }

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { partnershipService, PartnershipApplication as APIPartnershipApplication, PartnershipTeamMember as APITeamMember } from '@/lib/partnershipService';
 import {
   Plus,
   Search,
@@ -73,57 +74,71 @@ const AdminPartnerships: React.FC = () => {
   const [selectedPriority, setSelectedPriority] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [applications, setApplications] = useState<PartnershipApplication[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for partnership applications
-  const applications: PartnershipApplication[] = [
-    {
-      id: '1',
-      organizationName: 'TechCorp Nigeria',
-      contactName: 'Adebayo Johnson',
-      email: 'adebayo@techcorp.ng',
-      phone: '+234 801 234 5678',
-      organizationType: 'corporation',
-      partnershipType: 'corporate-csr',
-      message: 'We are interested in partnering with your foundation for our annual CSR initiative. We would like to focus on education and technology programs for orphaned children.',
-      timeline: 'short-term',
-      status: 'new',
-      priority: 'high',
-      submittedAt: new Date('2024-01-15T09:30:00'),
-      lastUpdated: new Date('2024-01-15T09:30:00')
-    },
-    {
-      id: '2',
-      organizationName: 'Green Earth Foundation',
-      contactName: 'Sarah Okafor',
-      email: 'sarah@greenearth.org',
-      phone: '+234 803 456 7890',
-      organizationType: 'ngo',
-      partnershipType: 'program-collaboration',
-      message: 'Our foundation focuses on environmental sustainability. We would like to collaborate on community development programs that include environmental education.',
-      timeline: 'medium-term',
-      status: 'under-review',
-      priority: 'medium',
-      submittedAt: new Date('2024-01-12T14:15:00'),
-      lastUpdated: new Date('2024-01-14T10:20:00'),
-      assignedTo: 'Michael Okafor'
-    },
-    {
-      id: '3',
-      organizationName: 'Lagos State Ministry of Youth',
-      contactName: 'Dr. Kemi Adebisi',
-      email: 'k.adebisi@lagosstate.gov.ng',
-      phone: '+234 805 678 9012',
-      organizationType: 'government',
-      partnershipType: 'funding',
-      message: 'The Lagos State Government is looking to partner with credible NGOs for youth empowerment programs. We have reviewed your work and would like to discuss funding opportunities.',
-      timeline: 'long-term',
-      status: 'approved',
-      priority: 'high',
-      submittedAt: new Date('2024-01-08T11:45:00'),
-      lastUpdated: new Date('2024-01-13T16:30:00'),
-      assignedTo: 'Sarah Adebayo'
+  // Load data from API
+  useEffect(() => {
+    loadData();
+  }, [selectedStatus, selectedPriority]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch partnership applications
+      const appsResult = await partnershipService.getApplications({
+        status: selectedStatus,
+        priority: selectedPriority
+      });
+
+      // Transform API data to match component interface
+      const transformedApps: PartnershipApplication[] = appsResult.applications.map((app: APIPartnershipApplication) => ({
+        id: app.id,
+        organizationName: app.organization_name,
+        contactName: app.contact_name,
+        email: app.email,
+        phone: app.phone,
+        organizationType: app.organization_type,
+        partnershipType: app.partnership_type,
+        message: app.message,
+        timeline: app.timeline,
+        status: app.status,
+        priority: app.priority,
+        submittedAt: new Date(app.created_at),
+        lastUpdated: new Date(app.updated_at),
+        assignedTo: app.assigned_to,
+        notes: app.notes
+      }));
+
+      setApplications(transformedApps);
+
+      // Fetch team members
+      const teamResult = await partnershipService.getTeamMembers();
+
+      // Transform API data to match component interface
+      const transformedTeam: TeamMember[] = teamResult.members.map((member: APITeamMember) => ({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        expertise: member.expertise || '',
+        experience: member.experience || '',
+        focus: member.focus || [],
+        email: member.email,
+        phone: member.phone,
+        status: member.status,
+        avatar: member.avatar
+      }));
+
+      setTeamMembers(transformedTeam);
+    } catch (error) {
+      console.error('Error loading partnership data:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
 
   // Mock data for partnership process
   const partnershipProcess: PartnershipProcess[] = [
@@ -157,42 +172,6 @@ const AdminPartnerships: React.FC = () => {
     }
   ];
 
-  // Mock data for team members
-  const teamMembers: TeamMember[] = [
-    {
-      id: '1',
-      name: 'Sarah Adebayo',
-      role: 'Partnership Director',
-      expertise: 'Corporate Partnerships & Strategic Alliances',
-      experience: '8+ years in nonprofit partnerships',
-      focus: ['Corporate CSR', 'Strategic Planning', 'Impact Measurement'],
-      email: 'sarah.adebayo@saintlammyfoundation.org',
-      phone: '+234 801 111 2222',
-      status: 'active'
-    },
-    {
-      id: '2',
-      name: 'Michael Okafor',
-      role: 'NGO Relations Manager',
-      expertise: 'Inter-organizational Collaboration',
-      experience: '6+ years in NGO partnerships',
-      focus: ['NGO Alliances', 'Resource Sharing', 'Joint Programs'],
-      email: 'michael.okafor@saintlammyfoundation.org',
-      phone: '+234 802 333 4444',
-      status: 'active'
-    },
-    {
-      id: '3',
-      name: 'Fatima Ibrahim',
-      role: 'Community Engagement Lead',
-      expertise: 'Individual & Community Partnerships',
-      experience: '5+ years in community development',
-      focus: ['Volunteer Programs', 'Individual Donors', 'Local Communities'],
-      email: 'fatima.ibrahim@saintlammyfoundation.org',
-      phone: '+234 803 555 6666',
-      status: 'active'
-    }
-  ];
 
   const filteredApplications = applications.filter(app => {
     const matchesSearch = app.organizationName.toLowerCase().includes(searchTerm.toLowerCase()) ||

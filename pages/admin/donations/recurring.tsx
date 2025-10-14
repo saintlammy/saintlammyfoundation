@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { donationService } from '@/lib/donationService';
 import {
   Search,
   Filter,
@@ -45,38 +46,84 @@ const RecurringDonations: React.FC = () => {
   const loadRecurringDonations = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with actual API call
-      const mockDonations: RecurringDonation[] = [
-        {
-          id: '1',
-          donorName: 'John Doe',
-          donorEmail: 'john@example.com',
-          amount: 5000,
-          currency: 'NGN',
-          frequency: 'monthly',
-          status: 'active',
-          nextPayment: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-          totalCollected: 15000,
-          successfulPayments: 3,
-          failedPayments: 0
-        },
-        {
-          id: '2',
-          donorName: 'Jane Smith',
-          donorEmail: 'jane@example.com',
-          amount: 10000,
-          currency: 'NGN',
-          frequency: 'weekly',
-          status: 'active',
-          nextPayment: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          totalCollected: 40000,
-          successfulPayments: 4,
-          failedPayments: 1
+
+      // Fetch real donations from database
+      const response = await donationService.getDonations({
+        limit: 500
+      });
+
+      // Filter for recurring donations (monthly, weekly, yearly, quarterly)
+      const recurringOnly = response.donations.filter((d: any) =>
+        d.frequency && d.frequency !== 'one-time'
+      );
+
+      // Group donations by donor to calculate recurring stats
+      const donorMap = new Map<string, any>();
+
+      recurringOnly.forEach((donation: any) => {
+        const donorKey = donation.donor?.email || donation.donor_id || donation.id;
+        if (!donorMap.has(donorKey)) {
+          donorMap.set(donorKey, {
+            id: donation.donor_id || donation.id,
+            donorName: donation.donor?.name || 'Anonymous',
+            donorEmail: donation.donor?.email || 'N/A',
+            amount: donation.amount,
+            currency: donation.currency,
+            frequency: donation.frequency,
+            status: donation.status === 'completed' ? 'active' : 'paused',
+            startDate: donation.created_at,
+            donations: [donation]
+          });
+        } else {
+          const existing = donorMap.get(donorKey);
+          existing.donations.push(donation);
         }
-      ];
-      setDonations(mockDonations);
+      });
+
+      // Calculate stats for each recurring donor
+      const transformedDonations: RecurringDonation[] = Array.from(donorMap.values()).map((donor: any) => {
+        const successfulPayments = donor.donations.filter((d: any) => d.status === 'completed').length;
+        const failedPayments = donor.donations.filter((d: any) => d.status === 'failed').length;
+        const totalCollected = donor.donations
+          .filter((d: any) => d.status === 'completed')
+          .reduce((sum: number, d: any) => sum + d.amount, 0);
+
+        // Calculate next payment based on frequency
+        const lastPayment = new Date(donor.donations[donor.donations.length - 1].created_at);
+        const nextPayment = new Date(lastPayment);
+
+        switch (donor.frequency) {
+          case 'weekly':
+            nextPayment.setDate(nextPayment.getDate() + 7);
+            break;
+          case 'monthly':
+            nextPayment.setMonth(nextPayment.getMonth() + 1);
+            break;
+          case 'quarterly':
+            nextPayment.setMonth(nextPayment.getMonth() + 3);
+            break;
+          case 'yearly':
+            nextPayment.setFullYear(nextPayment.getFullYear() + 1);
+            break;
+        }
+
+        return {
+          id: donor.id,
+          donorName: donor.donorName,
+          donorEmail: donor.donorEmail,
+          amount: donor.amount,
+          currency: donor.currency,
+          frequency: donor.frequency,
+          status: donor.status,
+          nextPayment: nextPayment.toISOString(),
+          startDate: donor.startDate,
+          totalCollected,
+          successfulPayments,
+          failedPayments
+        };
+      });
+
+      setDonations(transformedDonations);
     } catch (error) {
       console.error('Error loading recurring donations:', error);
     } finally {
@@ -126,6 +173,11 @@ const RecurringDonations: React.FC = () => {
       return sum + (d.amount * multiplier);
     }, 0);
 
+  // Calculate success rate from all donations
+  const totalPayments = donations.reduce((sum, d) => sum + d.successfulPayments + d.failedPayments, 0);
+  const successfulPayments = donations.reduce((sum, d) => sum + d.successfulPayments, 0);
+  const successRate = totalPayments > 0 ? (successfulPayments / totalPayments) * 100 : 0;
+
   return (
     <>
       <Head>
@@ -161,7 +213,7 @@ const RecurringDonations: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Success Rate</p>
-                  <p className="text-2xl font-bold text-blue-400">94.2%</p>
+                  <p className="text-2xl font-bold text-blue-400">{successRate.toFixed(1)}%</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-blue-500" />
               </div>

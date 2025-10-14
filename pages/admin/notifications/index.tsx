@@ -296,6 +296,20 @@ const AdminNotifications: React.FC = () => {
     return Math.round((metrics.clicked / metrics.delivered) * 100);
   };
 
+  // Calculate average open rate from all sent notifications with metrics
+  const calculateAvgOpenRate = () => {
+    const sentWithMetrics = notifications.filter(n => n.status === 'sent' && n.metrics);
+    if (sentWithMetrics.length === 0) return 0;
+
+    const totalOpenRate = sentWithMetrics.reduce((sum, n) => {
+      return sum + getOpenRate(n.metrics);
+    }, 0);
+
+    return Math.round(totalOpenRate / sentWithMetrics.length);
+  };
+
+  const avgOpenRate = calculateAvgOpenRate();
+
   return (
     <>
       <Head>
@@ -365,7 +379,7 @@ const AdminNotifications: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg. Open Rate</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">76%</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{avgOpenRate}%</p>
                   <p className="text-green-600 dark:text-green-400 text-sm mt-2">+3% this month</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">

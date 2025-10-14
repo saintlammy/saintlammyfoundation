@@ -44,59 +44,59 @@ const ImpactGallery: React.FC = () => {
         setImpactStories(transformedData);
       } catch (error) {
         console.error('Error fetching gallery:', error);
-        // Fallback to mock data
+        // Fallback to real 2025 data
         setImpactStories([
           {
             id: '1',
-            title: 'School Supplies Drive Success',
-            description: 'Over 500 children received complete school supply packages, uniforms, and educational materials for the new academic year.',
+            title: 'Widows Food Support Outreach',
+            description: 'Over 30 widows received carefully packed food supplies including rice, oil, garri, and seasoning items during our second official outreach.',
             image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            icon: 'GraduationCap',
-            category: 'Education',
-            date: 'January 2024',
-            fullStory: 'The 2024 Back-to-School Initiative was our most successful educational outreach to date. Working closely with local schools across Lagos and Abuja, we identified 500 children from vulnerable families who needed support to start the new academic year.\n\nEach child received a comprehensive package including school bags, notebooks, pens, pencils, mathematical sets, and age-appropriate reading materials. Additionally, we provided school uniforms and shoes to ensure every child could attend school with dignity.\n\nThe initiative also included educational scholarships for 50 orphaned children, covering their full tuition fees for the academic year. We established partnerships with three schools to ensure ongoing monitoring and support.\n\nParent feedback has been overwhelmingly positive, with 98% reporting improved school attendance and academic performance among their children.',
-            location: 'Lagos & Abuja, Nigeria',
-            beneficiaries: 500,
-            outcome: '98% improved school attendance and academic performance'
+            icon: 'Heart',
+            category: 'Relief',
+            date: 'August 25, 2025',
+            fullStory: 'August 25, 2025 marked our second official outreach, bringing essential food relief to over 30 widows in Lagos. Held at our partner church location, this outreach addressed one of the most pressing needs faced by vulnerable widows—access to nutritious food.\n\nEach widow received carefully packed food supplies including rice, oil, garri, and essential seasoning items. These are staple foods that provide sustenance for entire households, and for many widows, these supplies meant the difference between eating and going hungry.\n\nThe distribution was deeply personal. Many widows shared heartbreaking stories of going days without proper meals before this outreach. Some spoke of feeding their children while going without food themselves. Others described the daily anxiety of not knowing where the next meal would come from.\n\nThe atmosphere was filled with testimonies of renewed hope, physical relief, and deep gratitude. Widows expressed that beyond the food, they felt seen, valued, and remembered. This outreach reinforced our core mission: to bring dignity and stability to every widow we encounter.\n\nImmediate nourishment was provided to 30+ vulnerable homes, but the impact went beyond physical sustenance—it restored hope and demonstrated that these courageous women are not forgotten.',
+            location: 'Lagos, Nigeria',
+            beneficiaries: 30,
+            outcome: 'Immediate nourishment for 30+ homes. Testimonies of renewed hope and dignity.'
           },
           {
             id: '2',
-            title: 'Mobile Health Clinic Launch',
-            description: 'Our new mobile healthcare unit reached 12 rural communities, providing free medical checkups and treatments.',
+            title: 'Open Medical Checkup Outreach',
+            description: 'Free medical consultations and basic treatments provided for over 40 widows and less privileged individuals during our second outreach.',
             image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
             icon: 'Heart',
             category: 'Healthcare',
-            date: 'February 2024',
-            fullStory: 'Our mobile health clinic initiative brings essential healthcare services directly to underserved rural communities across Nigeria. The fully equipped medical van visits remote villages where healthcare access is limited or non-existent.\n\nThe clinic is staffed by qualified doctors, nurses, and community health workers who provide comprehensive services including general consultations, maternal health services, childhood immunizations, and health education sessions.\n\nDuring the first quarter, we reached 12 communities and served over 1,200 patients. Common conditions treated included malaria, respiratory infections, and hypertension. We also conducted health screenings that led to early detection of serious conditions in 45 patients, who were then referred to partner hospitals.\n\nThe program has established permanent health records for each community and trained local health ambassadors to provide basic care between clinic visits.',
-            location: 'Rural communities across Nigeria',
-            beneficiaries: 1200,
-            outcome: 'Early detection of serious conditions in 45 patients, 100% immunization coverage'
+            date: 'September 21, 2025',
+            fullStory: 'Our second major outreach on September 21, 2025 brought free healthcare services directly to those who needed it most. Held in partnership with a local church, the medical outreach provided comprehensive health screenings and consultations for over 40 widows and less privileged community members.\n\nQualified medical professionals volunteered their time to conduct thorough examinations, checking blood pressure, vision, and general health status. The screening led to early detection of 8+ health concerns including hypertension and vision challenges that would have otherwise gone undiagnosed.\n\nOne particularly touching moment was providing specialized eye drops and health supplements to a widow struggling with vision impairment. She had been unable to afford proper medical care and was brought to tears by the compassionate attention and practical help she received.\n\nDozens of attendees received hope, health guidance, and follow-up referrals. The outreach demonstrated that healthcare should be accessible to all, regardless of economic status.',
+            location: 'Lagos, Nigeria',
+            beneficiaries: 40,
+            outcome: 'Early detection of 8+ health concerns. Dozens received hope and health guidance.'
           },
           {
             id: '3',
-            title: 'Widow Empowerment Graduation',
-            description: '35 widows completed our skills training program and received startup funds for their new businesses.',
+            title: 'Widow Empowerment Starter Support',
+            description: 'Selected widows began receiving business starter items and monthly stipends, with one-on-one support sessions launched.',
             image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
             icon: 'Users',
             category: 'Empowerment',
-            date: 'March 2024',
-            fullStory: 'The Widow Empowerment Program represents our commitment to helping vulnerable women achieve financial independence and dignity. This comprehensive 6-month program combines skills training, financial literacy, and mentorship.\n\nParticipants chose from various vocational tracks including tailoring, catering, hairdressing, soap making, and small-scale farming. Each program included business management training, basic accounting, and marketing skills.\n\nUpon graduation, each participant received a startup package worth ₦150,000 including equipment, initial inventory, and working capital. We also facilitated access to microfinance loans for business expansion.\n\nSix months post-graduation, 90% of participants report sustainable income generation, with average monthly earnings of ₦85,000. Many have expanded their businesses and now employ others in their communities.',
-            location: 'Ibadan, Kaduna & Port Harcourt',
-            beneficiaries: 35,
-            outcome: '90% achieved financial independence with average monthly income of ₦85,000'
+            date: 'October 14, 2025',
+            fullStory: 'October 14, 2025 marked the beginning of our structured Widow Empowerment Program, representing a shift from one-time relief to sustainable support. This initiative focuses on helping vulnerable widows achieve financial independence through practical business support and ongoing mentorship.\n\nThe first wave of the program saw 10+ carefully selected widows onboarded into our monthly adoption pipeline. Each widow receives business starter items tailored to their skills and interests, along with monthly stipends to help stabilize their households while they build their enterprises.\n\nWhat sets this program apart is the personalized approach. One-on-one support sessions were launched to provide individualized guidance, business mentorship, and emotional support. We recognize that each widow\'s journey is unique, and our support is designed to meet them where they are.\n\nThis is more than charity—it\'s partnership. We walk alongside these courageous women as they rebuild their lives, restore dignity to their families, and create sustainable income streams. The program continues to expand as we identify more widows in need and secure resources for their empowerment.',
+            location: 'Lagos, Nigeria',
+            beneficiaries: 10,
+            outcome: 'First wave activated. 10+ widows onboarded into monthly adoption pipeline.'
           },
           {
             id: '4',
-            title: 'Community Center Opening',
-            description: 'Grand opening of our new community center in Abuja, providing safe space for education and community activities.',
+            title: 'Community Support for Vulnerable Homes',
+            description: 'Groceries, sanitary materials, and children\'s supplies distributed to families in poor housing conditions throughout Lagos.',
             image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-            icon: 'Building',
-            category: 'Infrastructure',
-            date: 'April 2024',
-            fullStory: 'The Abuja Community Center project addresses the critical need for safe, accessible community spaces in underserved neighborhoods. The 2,000 square meter facility serves as a hub for education, skills training, and community gatherings.\n\nThe center features six classrooms, a computer laboratory with 20 workstations, a library stocked with over 1,000 books, a multipurpose hall for community events, and a playground for children. Solar panels provide sustainable electricity, and a borehole ensures clean water access.\n\nSince opening, the center has hosted literacy classes for 150 adults, after-school programs for 200 children, and weekend skills workshops. The facility also serves as a venue for community meetings, cultural events, and emergency shelter during crises.\n\nLocal community leaders report significant improvements in youth engagement and a 60% reduction in juvenile delinquency in the surrounding area.',
-            location: 'Kubwa, Abuja',
-            beneficiaries: 2500,
-            outcome: '60% reduction in juvenile delinquency, 350 people in regular programs'
+            icon: 'Home',
+            category: 'Relief',
+            date: 'Ongoing since August 2025',
+            fullStory: 'Since August 2025, we have been running continuous community support initiatives targeting vulnerable homes throughout Lagos. This ongoing program addresses the daily struggles faced by families living in poor housing conditions, battling inflation, and dealing with health crises.\n\nOur field teams regularly visit identified homes to deliver essential supplies including groceries, sanitary materials, and children\'s necessities. These distributions are done with dignity and respect, recognizing that every family deserves to be treated with honor regardless of their circumstances.\n\nThe economic pressures of inflation have pushed many families to the breaking point. A bag of rice that once cost ₦30,000 now exceeds ₦100,000. Medical expenses continue to rise. Our intervention has helped stabilize several homes that were under severe pressure, preventing situations from deteriorating into crisis.\n\nWhat makes this program special is the relational approach. We don\'t just drop off supplies—we build relationships, understand each family\'s specific needs, and provide tailored support. Some families need help with children\'s school fees. Others need medical support. Some need food security. We meet each need with compassion and practical action.\n\nThis work continues daily, funded by generous donors who understand that consistent, dignified care can make the difference between despair and hope for vulnerable families.',
+            location: 'Lagos, Nigeria',
+            beneficiaries: 200,
+            outcome: 'Stabilized several homes under pressure. Direct care delivered with dignity.'
           }
         ]);
       } finally {
@@ -196,6 +196,7 @@ const ImpactGallery: React.FC = () => {
                 src={story.image}
                 alt={story.title}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
 
@@ -245,8 +246,8 @@ const ImpactGallery: React.FC = () => {
         {/* Bottom Statistics */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { number: '127', label: 'Active Projects' },
-            { number: '15.8K', label: 'Lives Impacted' },
+            { number: '6', label: 'Active Programs' },
+            { number: '312', label: 'Lives Impacted' },
             { number: '89%', label: 'Funds to Programs' },
             { number: '24/7', label: 'Transparency' }
           ].map((stat, index) => (
@@ -290,6 +291,7 @@ const ImpactGallery: React.FC = () => {
                 src={selectedStory.image}
                 alt={selectedStory.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 896px"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent"></div>

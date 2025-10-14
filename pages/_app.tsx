@@ -6,6 +6,9 @@ import ErrorBoundary from '@/components/ui/ErrorBoundary';
 import Layout from '@/components/Layout';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import NotificationContainer from '@/components/NotificationContainer';
+import NotificationEventListener from '@/components/NotificationEventListener';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -19,15 +22,19 @@ export default function App({ Component, pageProps }: AppProps) {
       <ErrorBoundary>
         <ThemeProvider>
           <AuthProvider>
-            {isAdminRoute ? (
-              // Admin routes don't use the main Layout
-              <Component {...pageProps} />
-            ) : (
-              // Public routes use the main Layout
-              <Layout>
+            <NotificationProvider>
+              <NotificationEventListener />
+              {isAdminRoute ? (
+                // Admin routes don't use the main Layout
                 <Component {...pageProps} />
-              </Layout>
-            )}
+              ) : (
+                // Public routes use the main Layout
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              )}
+              <NotificationContainer />
+            </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>
       </ErrorBoundary>

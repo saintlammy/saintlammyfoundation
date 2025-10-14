@@ -39,6 +39,12 @@ const DonationTransactions: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
   const [dateRange, setDateRange] = useState('all');
+  const [stats, setStats] = useState({
+    total: 0,
+    completed: 0,
+    pending: 0,
+    failed: 0
+  });
 
   useEffect(() => {
     loadTransactions();
@@ -47,33 +53,42 @@ const DonationTransactions: React.FC = () => {
   const loadTransactions = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockTransactions: Transaction[] = [
-        {
-          id: '1',
-          amount: 50000,
-          currency: 'NGN',
-          status: 'completed',
-          donorName: 'John Doe',
-          donorEmail: 'john@example.com',
-          paymentMethod: 'Credit Card',
-          createdAt: new Date().toISOString(),
-          category: 'general'
-        },
-        {
-          id: '2',
-          amount: 0.001,
-          currency: 'BTC',
-          status: 'pending',
-          donorName: 'Jane Smith',
-          donorEmail: 'jane@example.com',
-          paymentMethod: 'Bitcoin',
-          txHash: '1a2b3c4d5e6f...',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          category: 'orphan'
-        }
-      ];
-      setTransactions(mockTransactions);
+
+      // Fetch real donations from database
+      const response = await donationService.getDonations({
+        limit: 100,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        paymentMethod: methodFilter !== 'all' ? methodFilter : undefined
+      });
+
+      // Transform donations to transactions format
+      const transformedTransactions: Transaction[] = response.donations.map((donation: any) => ({
+        id: donation.id,
+        amount: donation.amount,
+        currency: donation.currency,
+        status: donation.status as 'completed' | 'pending' | 'failed',
+        donorName: donation.donor?.name || 'Anonymous',
+        donorEmail: donation.donor?.email || 'N/A',
+        paymentMethod: donation.payment_method === 'crypto'
+          ? `${donation.currency} (Crypto)`
+          : donation.payment_method || 'Unknown',
+        txHash: donation.transaction_hash,
+        createdAt: donation.created_at,
+        category: donation.category || 'general'
+      }));
+
+      setTransactions(transformedTransactions);
+
+      // Calculate stats from all donations
+      const allDonations = await donationService.getDonations({ limit: 1000 });
+      const statsData = {
+        total: allDonations.donations.length,
+        completed: allDonations.donations.filter((d: any) => d.status === 'completed').length,
+        pending: allDonations.donations.filter((d: any) => d.status === 'pending').length,
+        failed: allDonations.donations.filter((d: any) => d.status === 'failed').length
+      };
+      setStats(statsData);
+
     } catch (error) {
       console.error('Error loading transactions:', error);
     } finally {
@@ -127,13 +142,13 @@ const DonationTransactions: React.FC = () => {
 
       <AdminLayout title="Donation Transactions">
         <div className="space-y-6">
-          {/* Stats Cards */}
+          {/* Stats Cards - Dynamic */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Total Transactions</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">1,234</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total.toLocaleString()}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-500" />
               </div>
@@ -143,7 +158,7 @@ const DonationTransactions: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Completed</p>
-                  <p className="text-2xl font-bold text-green-400">1,156</p>
+                  <p className="text-2xl font-bold text-green-400">{stats.completed.toLocaleString()}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
@@ -153,7 +168,7 @@ const DonationTransactions: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-400">67</p>
+                  <p className="text-2xl font-bold text-yellow-400">{stats.pending.toLocaleString()}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-500" />
               </div>
@@ -163,7 +178,7 @@ const DonationTransactions: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Failed</p>
-                  <p className="text-2xl font-bold text-red-400">11</p>
+                  <p className="text-2xl font-bold text-red-400">{stats.failed.toLocaleString()}</p>
                 </div>
                 <XCircle className="w-8 h-8 text-red-500" />
               </div>

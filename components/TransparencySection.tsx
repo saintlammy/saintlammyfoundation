@@ -23,32 +23,32 @@ interface Certification {
 const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '' }) => {
   const fundAllocations: FundAllocation[] = [
     {
-      category: 'Direct Beneficiary Support',
-      percentage: 75,
-      amount: '$2,134,694',
+      category: '🥫 Direct Beneficiary Support',
+      percentage: 39.3,
+      amount: '₦3,026,250 (~$2,175)',
       color: 'bg-accent-500',
-      description: 'Direct aid, stipends, education, and healthcare for orphans and widows'
+      description: 'Food supplies, widow support, orphan care, open medical outreach'
     },
     {
-      category: 'Program Operations',
-      percentage: 15,
-      amount: '$426,939',
+      category: '🚚 Program Logistics',
+      percentage: 3.6,
+      amount: '₦280,000 (~$201)',
       color: 'bg-blue-500',
-      description: 'Field work, community outreach, and program coordination'
+      description: 'Transportation, delivery costs, on-ground operations'
     },
     {
-      category: 'Administrative Costs',
-      percentage: 7,
-      amount: '$199,331',
+      category: '🧾 Administration & Branding',
+      percentage: 1.8,
+      amount: '₦138,000 (~$99)',
       color: 'bg-green-500',
-      description: 'Essential operational expenses and overhead'
+      description: 'Printing, banners, branding, basic platform operations'
     },
     {
-      category: 'Emergency Reserve',
-      percentage: 3,
-      amount: '$85,428',
+      category: '🛡 Emergency + Strategic Reserve',
+      percentage: 55.3,
+      amount: '₦4,249,826 (~$3,045)',
       color: 'bg-yellow-500',
-      description: 'Emergency fund for urgent community needs'
+      description: 'Includes spendable buffer and unspendable reserve for Q4 outreach & future needs'
     }
   ];
 
@@ -97,9 +97,9 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
               </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
-                  Fund Allocation 2024
+                  Fund Allocation 2025
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Total: $2,846,392</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Total: ₦7,694,076 (~$5,520)</p>
               </div>
             </div>
 
@@ -108,19 +108,19 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
               <div className="relative h-4 bg-gray-300 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="absolute left-0 top-0 h-full bg-accent-500 rounded-l-full"
-                  style={{ width: '75%' }}
+                  style={{ width: '39.3%' }}
                 ></div>
                 <div
                   className="absolute top-0 h-full bg-blue-500"
-                  style={{ left: '75%', width: '15%' }}
+                  style={{ left: '39.3%', width: '3.6%' }}
                 ></div>
                 <div
                   className="absolute top-0 h-full bg-green-500"
-                  style={{ left: '90%', width: '7%' }}
+                  style={{ left: '42.9%', width: '1.8%' }}
                 ></div>
                 <div
                   className="absolute top-0 h-full bg-yellow-500 rounded-r-full"
-                  style={{ left: '97%', width: '3%' }}
+                  style={{ left: '44.7%', width: '55.3%' }}
                 ></div>
               </div>
             </div>
@@ -179,7 +179,7 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
             {/* Annual Report Download */}
             <div className="bg-gradient-to-r from-accent-500/10 to-accent-600/10 border border-accent-500/20 rounded-xl p-6">
               <h4 className="text-gray-900 dark:text-white font-semibold mb-2 font-display">
-                Annual Financial Report 2024
+                Annual Financial Report 2025
               </h4>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 font-light">
                 Complete breakdown of our finances, impact metrics, and strategic initiatives.

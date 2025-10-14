@@ -24,7 +24,7 @@ export const CryptoDonationSchema = z.object({
   donorEmail: ValidationUtils.email.optional(),
   message: ValidationUtils.message.optional(),
   source: z.string().optional(),
-  category: ValidationUtils.enum(['orphan', 'widow', 'home', 'general'], 'category').default('general'),
+  category: ValidationUtils.enum(['orphan', 'widow', 'home', 'general', 'family', 'outreach', 'emergency', 'education', 'healthcare', 'empowerment', 'infrastructure'], 'category').default('general'),
 });
 
 // Contact form schema

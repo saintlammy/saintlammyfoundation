@@ -46,7 +46,7 @@ const BeneficiaryShowcase: React.FC = () => {
       name: 'Grace',
       age: 35,
       category: 'widow',
-      location: 'Abuja, Nigeria',
+      location: 'Lagos, Nigeria',
       story: 'Mother of three children, learning new skills to provide for her family. Your support helps her start a small business.',
       needs: ['Business training', 'Micro-loan support', 'Childcare assistance', 'Basic necessities'],
       monthlyCost: 80,
@@ -61,7 +61,7 @@ const BeneficiaryShowcase: React.FC = () => {
       name: 'Emmanuel',
       age: 12,
       category: 'orphan',
-      location: 'Port Harcourt, Nigeria',
+      location: 'Lagos, Nigeria',
       story: 'Passionate about technology and coding. Your support gives him access to education and the tools to build his future.',
       needs: ['Computer access', 'Internet connectivity', 'Programming books', 'School fees'],
       monthlyCost: 55,
@@ -103,6 +103,7 @@ const BeneficiaryShowcase: React.FC = () => {
                   src={beneficiary.image}
                   alt={`${beneficiary.name}, ${beneficiary.age} years old`}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
@@ -176,7 +177,7 @@ const BeneficiaryShowcase: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-gray-600 dark:text-gray-300 mb-6 font-light">
-            Join over 15,000 donors who are making a real difference in these lives
+            Join 14 committed donors who are making a real difference in these lives
           </p>
           <Link
             href="/beneficiaries"

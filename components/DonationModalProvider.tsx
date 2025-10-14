@@ -11,6 +11,7 @@ export interface DonationContext {
   preferredMethod?: 'card' | 'crypto' | 'bank';
   storyId?: string;
   programType?: string;
+  campaignId?: string; // Link donation to specific campaign
 }
 
 interface DonationModalContextType {
