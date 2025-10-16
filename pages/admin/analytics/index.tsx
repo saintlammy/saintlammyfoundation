@@ -116,6 +116,15 @@ const Analytics: React.FC = () => {
 
   const conversionFunnel = analyticsData?.traffic?.funnel || [];
 
+  // Helper functions for formatting
+  const formatCurrency = (value: number) => {
+    return `₦${value.toLocaleString()}`;
+  };
+
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
+  };
+
   const kpiCards = [
     {
       title: 'Total Revenue',
@@ -150,14 +159,6 @@ const Analytics: React.FC = () => {
       period: 'vs last month'
     }
   ];
-
-  const formatCurrency = (value: number) => {
-    return `₦${value.toLocaleString()}`;
-  };
-
-  const formatPercentage = (value: number) => {
-    return `${value.toFixed(1)}%`;
-  };
 
   return (
     <>
