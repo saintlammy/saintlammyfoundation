@@ -3,7 +3,7 @@
 
 import { schedule } from '@netlify/functions';
 import { getTypedSupabaseClient } from '../../lib/supabase';
-import { verifyTransaction } from '../../lib/blockchainVerification';
+import { blockchainVerification } from '../../lib/blockchainVerification';
 
 const handler = schedule('*/5 * * * *', async (event) => {
   console.log('🔍 Starting crypto payment monitoring...');
@@ -51,7 +51,7 @@ const handler = schedule('*/5 * * * *', async (event) => {
         console.log(`Checking donation ${donation.id} on ${network}...`);
 
         // Verify transaction on blockchain
-        const verification = await verifyTransaction(
+        const verification = await blockchainVerification.verifyTransaction(
           network,
           walletAddress,
           expectedAmount,
