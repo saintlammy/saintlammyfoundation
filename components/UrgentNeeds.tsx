@@ -173,14 +173,15 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
   };
 
   const getCampaignUrl = (source?: string) => {
-    if (typeof window !== 'undefined') {
-      const baseUrl = `${window.location.origin}/#urgent-campaign`;
-      if (source && featuredCampaign) {
-        return `${baseUrl}?utm_source=${source}&utm_medium=social&utm_campaign=${encodeURIComponent(featuredCampaign.id)}&utm_content=${encodeURIComponent(featuredCampaign.title)}`;
+    if (typeof window !== 'undefined' && featuredCampaign) {
+      // Use dedicated campaign page for better link previews
+      const baseUrl = `${window.location.origin}/campaign/${featuredCampaign.id}`;
+      if (source) {
+        return `${baseUrl}?utm_source=${source}&utm_medium=${source === 'email' || source === 'sms' ? 'direct' : 'social'}&utm_campaign=${encodeURIComponent(featuredCampaign.id)}&utm_content=${encodeURIComponent(featuredCampaign.title)}`;
       }
       return baseUrl;
     }
-    return '';
+    return typeof window !== 'undefined' ? window.location.origin : '';
   };
 
   const handleShare = async (platform: string) => {
