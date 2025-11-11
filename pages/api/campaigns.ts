@@ -25,6 +25,7 @@ export interface Campaign {
   impact_details: Record<string, string>;
   image_url?: string;
   category?: string;
+  share_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -48,6 +49,7 @@ function getMockCampaigns(): Campaign[] {
         '100': 'Provides essential food package for 4 widows'
       },
       category: 'widows',
+      share_count: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     },
@@ -67,6 +69,7 @@ function getMockCampaigns(): Campaign[] {
         '100': 'Full medical care package'
       },
       category: 'medical',
+      share_count: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }

@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar, Share2, Copy, QrCode } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Campaign } from '@/pages/api/campaigns';
+import CampaignQRModal from '@/components/CampaignQRModal';
 
 const CampaignsManagement: React.FC = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [formData, setFormData] = useState<Partial<Campaign>>({
     title: '',
     description: '',
@@ -18,8 +22,12 @@ const CampaignsManagement: React.FC = () => {
     status: 'draft',
     is_featured: false,
     impact_details: {},
-    category: ''
+    category: '',
+    image_url: ''
   });
+  const [impactItems, setImpactItems] = useState<Array<{ amount: string; impact: string }>>([
+    { amount: '', impact: '' }
+  ]);
 
   useEffect(() => {
     fetchCampaigns();
@@ -43,6 +51,19 @@ const CampaignsManagement: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Convert impact items array to impact_details object
+    const impact_details: Record<string, string> = {};
+    impactItems.forEach(item => {
+      if (item.amount && item.impact) {
+        impact_details[item.amount] = item.impact;
+      }
+    });
+
+    const submitData = {
+      ...formData,
+      impact_details
+    };
+
     try {
       const url = editingCampaign
         ? `/api/campaigns?id=${editingCampaign.id}`
@@ -53,7 +74,7 @@ const CampaignsManagement: React.FC = () => {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submitData)
       });
 
       const result = await response.json();
@@ -106,8 +127,17 @@ const CampaignsManagement: React.FC = () => {
       status: campaign.status,
       is_featured: campaign.is_featured,
       impact_details: campaign.impact_details,
-      category: campaign.category
+      category: campaign.category,
+      image_url: campaign.image_url || ''
     });
+
+    // Convert impact_details object to array for editing
+    const impactArray = Object.entries(campaign.impact_details || {}).map(([amount, impact]) => ({
+      amount,
+      impact: impact as string
+    }));
+    setImpactItems(impactArray.length > 0 ? impactArray : [{ amount: '', impact: '' }]);
+
     setShowModal(true);
   };
 
@@ -123,8 +153,24 @@ const CampaignsManagement: React.FC = () => {
       status: 'draft',
       is_featured: false,
       impact_details: {},
-      category: ''
+      category: '',
+      image_url: ''
     });
+    setImpactItems([{ amount: '', impact: '' }]);
+  };
+
+  const addImpactItem = () => {
+    setImpactItems([...impactItems, { amount: '', impact: '' }]);
+  };
+
+  const removeImpactItem = (index: number) => {
+    setImpactItems(impactItems.filter((_, i) => i !== index));
+  };
+
+  const updateImpactItem = (index: number, field: 'amount' | 'impact', value: string) => {
+    const updated = [...impactItems];
+    updated[index][field] = value;
+    setImpactItems(updated);
   };
 
   const getStatusIcon = (status: string) => {
@@ -146,6 +192,18 @@ const CampaignsManagement: React.FC = () => {
 
   const formatCurrency = (amount: number, currency: string) => {
     return currency === 'NGN' ? `₦${amount.toLocaleString()}` : `$${amount.toLocaleString()}`;
+  };
+
+  const handleCopyLink = async (campaign: Campaign) => {
+    try {
+      const url = `${window.location.origin}/#urgent-campaign?utm_source=admin_dashboard&utm_medium=share_link&utm_campaign=${encodeURIComponent(campaign.id)}&utm_content=${encodeURIComponent(campaign.title)}`;
+      await navigator.clipboard.writeText(url);
+      setCopiedId(campaign.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      alert('Failed to copy link to clipboard');
+    }
   };
 
   return (
@@ -219,6 +277,31 @@ const CampaignsManagement: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2 ml-4">
+                    {campaign.is_featured && (
+                      <>
+                        <button
+                          onClick={() => handleCopyLink(campaign)}
+                          className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                          title="Copy shareable link"
+                        >
+                          {copiedId === campaign.id ? (
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                          ) : (
+                            <Share2 className="w-5 h-5 text-blue-500" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCampaign(campaign);
+                            setShowQRModal(true);
+                          }}
+                          className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+                          title="Generate QR Code"
+                        >
+                          <QrCode className="w-5 h-5 text-purple-500" />
+                        </button>
+                      </>
+                    )}
                     <button
                       onClick={() => handleEdit(campaign)}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -386,6 +469,62 @@ const CampaignsManagement: React.FC = () => {
                   </div>
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Campaign Image URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Impact Details (Donation amounts and their impact)
+                  </label>
+                  <div className="space-y-2">
+                    {impactItems.map((item, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="number"
+                          value={item.amount}
+                          onChange={(e) => updateImpactItem(index, 'amount', e.target.value)}
+                          className="w-1/3 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          placeholder="Amount (e.g., 25)"
+                        />
+                        <input
+                          type="text"
+                          value={item.impact}
+                          onChange={(e) => updateImpactItem(index, 'impact', e.target.value)}
+                          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          placeholder="Impact description (e.g., Feeds one widow for 2 weeks)"
+                        />
+                        {impactItems.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeImpactItem(index)}
+                            className="px-3 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={addImpactItem}
+                      className="text-sm text-accent-500 hover:text-accent-600 flex items-center space-x-1"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Impact Level</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -420,6 +559,20 @@ const CampaignsManagement: React.FC = () => {
               </form>
             </div>
           </div>
+        )}
+
+        {/* QR Code Modal */}
+        {selectedCampaign && (
+          <CampaignQRModal
+            isOpen={showQRModal}
+            onClose={() => {
+              setShowQRModal(false);
+              setSelectedCampaign(null);
+            }}
+            campaignId={selectedCampaign.id}
+            campaignTitle={selectedCampaign.title}
+            utmSource="admin_qr"
+          />
         )}
       </div>
     </AdminLayout>
