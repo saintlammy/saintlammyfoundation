@@ -7,28 +7,8 @@ export default function Document() {
         {/* SEO Meta Tags */}
         <meta charSet="utf-8" />
 
-        {/* Primary Meta Tags */}
-        <meta name="title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities in Nigeria" />
-        <meta name="description" content="Hope Has a Home. Join Saintlammy Foundation in building a future where no widow is forgotten, no orphan left behind. Supporting vulnerable communities across Nigeria with love, structure, and action." />
-        <meta name="keywords" content="Nigeria charity, orphan care, widow empowerment, community development, charitable foundation, nonprofit organization, vulnerable families, social impact" />
-        <meta name="author" content="Saintlammy Foundation" />
-        <meta name="robots" content="index, follow" />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://saintlammyfoundation.org/" />
-        <meta property="og:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
-        <meta property="og:description" content="Hope Has a Home. Join us in building a future where no widow is forgotten, no orphan left behind. Supporting vulnerable communities across Nigeria." />
-        <meta property="og:image" content="https://saintlammyfoundation.org/og-image.jpg" />
-        <meta property="og:site_name" content="Saintlammy Foundation" />
-        <meta property="og:locale" content="en_US" />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://saintlammyfoundation.org/" />
-        <meta property="twitter:title" content="Saintlammy Foundation - Empowering Widows, Orphans & Vulnerable Communities" />
-        <meta property="twitter:description" content="Hope Has a Home. Join us in building a future where no widow is forgotten, no orphan left behind." />
-        <meta property="twitter:image" content="https://saintlammyfoundation.org/og-image.jpg" />
+        {/* NOTE: Meta tags for title, description, og:*, twitter:* are defined per-page in individual page components
+            This allows each page to have custom meta tags for better SEO and social sharing */}
 
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -38,8 +18,7 @@ export default function Document() {
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#4f46e5" />
 
-        {/* Performance & SEO */}
-        <link rel="canonical" href="https://saintlammyfoundation.org/" />
+        {/* Performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />

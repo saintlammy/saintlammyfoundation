@@ -23,6 +23,10 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { status = 'published', limit } = req.query;
 
+    if (!supabase) {
+      return res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
+    }
+
     let query = supabase
       .from('content')
       .select('*')
@@ -134,6 +138,14 @@ async function createStory(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      return res.status(201).json({
+        id: Date.now().toString(),
+        ...newStory,
+        message: 'Story created successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .insert([newStory])
@@ -175,6 +187,14 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
+    if (!supabase) {
+      return res.status(200).json({
+        id,
+        ...updateData,
+        message: 'Story updated successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .update(updateData)
@@ -206,6 +226,13 @@ async function deleteStory(req: NextApiRequest, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({ error: 'Story ID is required' });
+    }
+
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'Story deleted successfully (mock mode)'
+      });
     }
 
     const { error } = await supabase

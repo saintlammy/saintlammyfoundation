@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Navigation from '@/components/Navigation';
@@ -25,6 +26,19 @@ interface HomeProps {
 
 const HomeContent: React.FC<HomeProps> = ({ stats }) => {
   const { openDonationModal } = useDonationModal();
+  const router = useRouter();
+
+  // Handle smooth scroll to section on page load if hash is present
+  useEffect(() => {
+    if (router.asPath.includes('#urgent-campaign')) {
+      setTimeout(() => {
+        const element = document.getElementById('urgent-campaign');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [router.asPath]);
 
   return (
     <>

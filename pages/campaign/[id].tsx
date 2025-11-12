@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Clock, Target, Heart, Share2, ArrowLeft } from 'lucide-react';
-import { useDonationModal } from '@/components/DonationModalProvider';
 
 interface Campaign {
   id: string;
@@ -27,7 +26,6 @@ interface CampaignPageProps {
 
 const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   const router = useRouter();
-  const { openDonationModal } = useDonationModal();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -76,13 +74,8 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   };
 
   const handleDonate = () => {
-    openDonationModal({
-      source: 'campaign-page',
-      campaignId: campaign.id,
-      category: campaign.category || 'general',
-      title: `Support: ${campaign.title}`,
-      description: campaign.description
-    });
+    // Redirect to homepage with campaign context
+    router.push(`/?campaign=${campaign.id}#donate`);
   };
 
   return (
@@ -90,32 +83,32 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
       <Head>
         {/* Primary Meta Tags */}
         <title>{campaign.title} | Saintlammy Foundation</title>
-        <meta name="title" content={`${campaign.title} | Saintlammy Foundation`} />
-        <meta name="description" content={ogDescription} />
+        <meta key="title" name="title" content={`${campaign.title} | Saintlammy Foundation`} />
+        <meta key="description" name="description" content={ogDescription} />
 
         {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={campaignUrl} />
-        <meta property="og:title" content={campaign.title} />
-        <meta property="og:description" content={ogDescription} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Saintlammy Foundation" />
+        <meta key="og:type" property="og:type" content="website" />
+        <meta key="og:url" property="og:url" content={campaignUrl} />
+        <meta key="og:title" property="og:title" content={campaign.title} />
+        <meta key="og:description" property="og:description" content={ogDescription} />
+        <meta key="og:image" property="og:image" content={ogImage} />
+        <meta key="og:image:width" property="og:image:width" content="1200" />
+        <meta key="og:image:height" property="og:image:height" content="1200" />
+        <meta key="og:site_name" property="og:site_name" content="Saintlammy Foundation" />
 
         {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={campaignUrl} />
-        <meta property="twitter:title" content={campaign.title} />
-        <meta property="twitter:description" content={ogDescription} />
-        <meta property="twitter:image" content={ogImage} />
+        <meta key="twitter:card" property="twitter:card" content="summary_large_image" />
+        <meta key="twitter:url" property="twitter:url" content={campaignUrl} />
+        <meta key="twitter:title" property="twitter:title" content={campaign.title} />
+        <meta key="twitter:description" property="twitter:description" content={ogDescription} />
+        <meta key="twitter:image" property="twitter:image" content={ogImage} />
 
         {/* Additional Meta Tags */}
-        <meta name="author" content="Saintlammy Foundation" />
-        <meta name="keywords" content={`charity, donation, ${campaign.title}, Nigeria, humanitarian aid, fundraising`} />
+        <meta key="author" name="author" content="Saintlammy Foundation" />
+        <meta key="keywords" name="keywords" content={`charity, donation, ${campaign.title}, Nigeria, humanitarian aid, fundraising`} />
 
         {/* Canonical URL */}
-        <link rel="canonical" href={campaignUrl} />
+        <link key="canonical" rel="canonical" href={campaignUrl} />
       </Head>
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -267,11 +260,45 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (context) => {
+// Use static generation with ISR for proper meta tag rendering
+export const getStaticPaths: GetStaticPaths = async () => {
+  try {
+    // Fetch all active campaigns at build time
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/campaigns?status=active`);
+
+    if (!response.ok) {
+      return {
+        paths: [],
+        fallback: 'blocking' // Generate pages on-demand if not pre-rendered
+      };
+    }
+
+    const result = await response.json();
+    const campaigns = result.success ? result.data : [];
+
+    const paths = campaigns.map((campaign: Campaign) => ({
+      params: { id: campaign.id }
+    }));
+
+    return {
+      paths,
+      fallback: 'blocking' // Enable ISR - generate missing pages on-demand
+    };
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return {
+      paths: [],
+      fallback: 'blocking'
+    };
+  }
+};
+
+export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
   const { id } = context.params as { id: string };
 
   try {
-    // Fetch campaign from API
+    // Fetch campaign data at build time (or on-demand with ISR)
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/campaigns?id=${id}`);
 
@@ -280,7 +307,8 @@ export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (
         props: {
           campaign: null,
           error: 'Failed to load campaign'
-        }
+        },
+        revalidate: 60 // Revalidate every 60 seconds
       };
     }
 
@@ -288,17 +316,15 @@ export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (
 
     if (!result.success || !result.data || result.data.length === 0) {
       return {
-        props: {
-          campaign: null,
-          error: 'Campaign not found'
-        }
+        notFound: true // Return 404 for non-existent campaigns
       };
     }
 
     return {
       props: {
         campaign: result.data[0]
-      }
+      },
+      revalidate: 300 // Revalidate every 5 minutes (ISR)
     };
   } catch (error) {
     console.error('Error fetching campaign:', error);
@@ -306,7 +332,8 @@ export const getServerSideProps: GetServerSideProps<CampaignPageProps> = async (
       props: {
         campaign: null,
         error: 'An error occurred while loading the campaign'
-      }
+      },
+      revalidate: 60
     };
   }
 };

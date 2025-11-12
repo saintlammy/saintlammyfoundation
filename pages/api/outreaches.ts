@@ -22,12 +22,16 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { status = 'published', limit } = req.query;
 
+    if (!supabase) {
+      return res.status(200).json(getMockOutreaches(limit ? parseInt(limit as string) : undefined));
+    }
+
     let query = supabase
       .from('content')
       .select('*')
       .eq('type', 'outreach')
       .eq('status', status)
-      .order('publish_date', { ascending: false });
+      .order('publish_date', { ascending: false});
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -85,6 +89,14 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      return res.status(201).json({
+        id: Date.now().toString(),
+        ...newOutreach,
+        message: 'Outreach created successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .insert([newOutreach])
@@ -124,6 +136,14 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
+    if (!supabase) {
+      return res.status(200).json({
+        id,
+        ...updateData,
+        message: 'Outreach updated successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .update(updateData)
@@ -154,6 +174,13 @@ async function deleteOutreach(req: NextApiRequest, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({ error: 'Outreach ID is required' });
+    }
+
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'Outreach deleted successfully (mock mode)'
+      });
     }
 
     const { error } = await supabase

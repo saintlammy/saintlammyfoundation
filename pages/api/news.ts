@@ -23,6 +23,10 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { status = 'published', limit } = req.query;
 
+    if (!supabase) {
+      return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
+    }
+
     let query = supabase
       .from('content')
       .select('*')
@@ -126,6 +130,14 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      return res.status(201).json({
+        id: Date.now().toString(),
+        ...newNews,
+        message: 'News created successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .insert([newNews])
@@ -167,6 +179,14 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
+    if (!supabase) {
+      return res.status(200).json({
+        id,
+        ...updateData,
+        message: 'News updated successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .update(updateData)
@@ -198,6 +218,13 @@ async function deleteNews(req: NextApiRequest, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({ error: 'News ID is required' });
+    }
+
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'News deleted successfully (mock mode)'
+      });
     }
 
     const { error } = await supabase

@@ -23,6 +23,10 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { status = 'published', limit } = req.query;
 
+    if (!supabase) {
+      return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
+    }
+
     let query = supabase
       .from('content')
       .select('*')
@@ -146,6 +150,14 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      return res.status(201).json({
+        id: Date.now().toString(),
+        ...newGalleryItem,
+        message: 'Gallery item created successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .insert([newGalleryItem])
@@ -187,6 +199,14 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
+    if (!supabase) {
+      return res.status(200).json({
+        id,
+        ...updateData,
+        message: 'Gallery item updated successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .update(updateData)
@@ -218,6 +238,13 @@ async function deleteGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({ error: 'Gallery item ID is required' });
+    }
+
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'Gallery item deleted successfully (mock mode)'
+      });
     }
 
     const { error } = await supabase

@@ -22,6 +22,10 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { status = 'published', limit } = req.query;
 
+    if (!supabase) {
+      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined));
+    }
+
     let query = supabase
       .from('content')
       .select('*')
@@ -87,6 +91,14 @@ async function createPage(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      return res.status(201).json({
+        id: Date.now().toString(),
+        ...newPage,
+        message: 'Page created successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .insert([newPage])
@@ -126,6 +138,14 @@ async function updatePage(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
+    if (!supabase) {
+      return res.status(200).json({
+        id,
+        ...updateData,
+        message: 'Page updated successfully (mock mode)'
+      });
+    }
+
     const { data, error } = await supabase
       .from('content')
       .update(updateData)
@@ -156,6 +176,13 @@ async function deletePage(req: NextApiRequest, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({ error: 'Page ID is required' });
+    }
+
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'Page deleted successfully (mock mode)'
+      });
     }
 
     const { error } = await supabase
