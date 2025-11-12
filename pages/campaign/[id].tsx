@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Clock, Target, Heart, Share2, ArrowLeft } from 'lucide-react';
-import { useDonationModal } from '../components/DonationModalProvider';
+import { useDonationModal } from '../../components/DonationModalProvider';
 
 interface Campaign {
   id: string;
