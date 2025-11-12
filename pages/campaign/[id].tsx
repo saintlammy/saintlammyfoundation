@@ -277,7 +277,8 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     // Fetch all active campaigns at build time
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    // In development, use the actual dev server URL; in production, use the site URL
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window === 'undefined' ? 'http://localhost:3003' : window.location.origin);
     const response = await fetch(`${baseUrl}/api/campaigns?status=active`);
 
     if (!response.ok) {
@@ -312,7 +313,8 @@ export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context)
 
   try {
     // Fetch campaign data at build time (or on-demand with ISR)
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    // In development, use the actual dev server URL; in production, use the site URL
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window === 'undefined' ? 'http://localhost:3003' : window.location.origin);
     const response = await fetch(`${baseUrl}/api/campaigns?id=${id}`);
 
     if (!response.ok) {
