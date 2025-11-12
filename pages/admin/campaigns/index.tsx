@@ -23,7 +23,10 @@ const CampaignsManagement: React.FC = () => {
     is_featured: false,
     impact_details: {},
     category: '',
-    image_url: ''
+    image_url: '',
+    beneficiary_count: 70,
+    stat_label: 'Orphans Need',
+    urgency_message: 'Time is running out'
   });
   const [impactItems, setImpactItems] = useState<Array<{ amount: string; impact: string }>>([
     { amount: '', impact: '' }
@@ -435,6 +438,82 @@ const CampaignsManagement: React.FC = () => {
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="e.g., widows, orphans, medical"
                     />
+                  </div>
+                </div>
+
+                {/* Stats Display Section */}
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    Campaign Stats Display
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Configure the statistics displayed on the campaign card (e.g., "70+ Orphans Need Your Help")
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Beneficiary Count
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.beneficiary_count || 70}
+                        onChange={(e) => setFormData({ ...formData, beneficiary_count: parseInt(e.target.value) || 70 })}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        placeholder="70"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Number shown (e.g., 70+)
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Stat Label
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.stat_label || ''}
+                        onChange={(e) => setFormData({ ...formData, stat_label: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        placeholder="Orphans Need"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Label text (e.g., "Orphans Need")
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Urgency Message
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.urgency_message || ''}
+                        onChange={(e) => setFormData({ ...formData, urgency_message: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        placeholder="Time is running out"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Bottom message
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preview:</p>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {formData.beneficiary_count || 70}+
+                      </div>
+                      <div className="text-base text-gray-700 dark:text-gray-300">
+                        {formData.stat_label || 'Orphans Need'}
+                      </div>
+                      <div className="text-base text-gray-700 dark:text-gray-300">Your Help</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        {formData.urgency_message || 'Time is running out'}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

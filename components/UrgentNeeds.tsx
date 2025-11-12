@@ -18,6 +18,9 @@ interface Campaign {
   is_featured: boolean;
   impact_details: Record<string, string>;
   category?: string;
+  beneficiary_count?: number;
+  stat_label?: string;
+  urgency_message?: string;
 }
 
 interface UrgentNeedsProps {
@@ -135,7 +138,9 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
 
   const progressPercentage = getProgressPercentage(featuredCampaign.current_amount, featuredCampaign.goal_amount);
   const impactEntries = Object.entries(featuredCampaign.impact_details || {});
-  const beneficiaryCount = featuredCampaign.title.match(/\d+/)?.[0] || '100';
+  const beneficiaryCount = featuredCampaign.beneficiary_count || 70;
+  const statLabel = featuredCampaign.stat_label || `${featuredCampaign.category || 'People'} Need`;
+  const urgencyMessage = featuredCampaign.urgency_message || 'Time is running out';
 
   const mapCampaignCategoryToDonationCategory = (campaignCategory?: string): 'orphan' | 'widow' | 'home' | 'general' => {
     // Map campaign categories to valid donation categories
@@ -461,12 +466,12 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
 
             <div className="md:w-1/2 bg-gradient-to-br from-red-500 to-orange-600 p-8 md:p-12 text-white flex items-center justify-center">
               <div className="text-center">
-                <div className="text-6xl md:text-8xl font-bold mb-4 opacity-90">{beneficiaryCount}</div>
-                <div className="text-xl md:text-2xl font-light mb-2">{featuredCampaign.category || 'People'} Need</div>
+                <div className="text-6xl md:text-8xl font-bold mb-4 opacity-90">{beneficiaryCount}+</div>
+                <div className="text-xl md:text-2xl font-light mb-2">{statLabel}</div>
                 <div className="text-xl md:text-2xl font-light">Your Help</div>
                 <div className="mt-8 text-white/80">
                   <Clock className="w-8 h-8 mx-auto mb-2" />
-                  <div className="text-sm">Time is running out</div>
+                  <div className="text-sm">{urgencyMessage}</div>
                 </div>
               </div>
             </div>

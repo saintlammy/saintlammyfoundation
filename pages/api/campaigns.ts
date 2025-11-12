@@ -26,6 +26,9 @@ export interface Campaign {
   image_url?: string;
   category?: string;
   share_count?: number;
+  beneficiary_count?: number;
+  stat_label?: string;
+  urgency_message?: string;
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +53,9 @@ function getMockCampaigns(): Campaign[] {
       },
       category: 'widows',
       share_count: 0,
+      beneficiary_count: 70,
+      stat_label: 'Orphans Need',
+      urgency_message: 'Time is running out',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     },
