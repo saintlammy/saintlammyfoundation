@@ -822,11 +822,11 @@ const AdminWalletManagement: React.FC = () => {
               const liveToken = liveData.balances.find(b => b.symbol === token.symbol);
               return liveToken ? {
                 ...token,
-                balance: liveToken.balance,
-                usdValue: liveToken.usdValue,
-                totalReceived: liveToken.totalReceived || token.totalReceived,
-                totalSent: liveToken.totalSent || token.totalSent,
-                transactionCount: liveToken.transactionCount || token.transactionCount
+                balance: (typeof liveToken.balance === 'number' && !isNaN(liveToken.balance)) ? liveToken.balance : token.balance,
+                usdValue: (typeof liveToken.usdValue === 'number' && !isNaN(liveToken.usdValue)) ? liveToken.usdValue : token.usdValue,
+                totalReceived: (typeof liveToken.totalReceived === 'number' && !isNaN(liveToken.totalReceived)) ? liveToken.totalReceived : token.totalReceived,
+                totalSent: (typeof liveToken.totalSent === 'number' && !isNaN(liveToken.totalSent)) ? liveToken.totalSent : token.totalSent,
+                transactionCount: (typeof liveToken.transactionCount === 'number' && !isNaN(liveToken.transactionCount)) ? liveToken.transactionCount : token.transactionCount
               } : token;
             }),
             lastActivity: liveData.lastActivity ? new Date(liveData.lastActivity) : wallet.lastActivity
