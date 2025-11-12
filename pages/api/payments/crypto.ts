@@ -543,33 +543,39 @@ Important:
             }
           });
         } else {
-          // Verification failed
+          // Verification failed - but still accept for manual review
+          console.log('Automatic verification failed, marking for manual review');
+          await donationService.updateDonationStatus(donationId, 'pending', txHash);
+
           const updatedNotes = {
             ...notes,
             verification: {
               verified: false,
               confirmations: verificationResult.confirmations,
               verifiedAt: new Date().toISOString(),
-              details: verificationResult.details
+              details: verificationResult.details,
+              requiresManualReview: true
             }
           };
 
           await donationService.updateDonationNotes(donationId, {
-            error: verificationResult.details?.error || 'Transaction verification failed',
+            error: verificationResult.details?.error || 'Pending manual verification',
             confirmations: verificationResult.confirmations,
             verifiedAmount: verificationResult.details?.actualAmount,
             fromAddress: verificationResult.details?.fromAddress,
-            toAddress: verificationResult.details?.toAddress
+            toAddress: verificationResult.details?.toAddress,
+            requiresManualReview: true
           });
 
           return res.status(200).json({
-            success: false,
-            message: 'Transaction verification failed',
-            status: 'verification_failed',
+            success: true, // Changed to true to prevent blocking the user
+            message: 'Transaction submitted successfully. Our team will verify it shortly.',
+            status: 'pending_manual_verification',
             verification: {
               confirmed: false,
               confirmations: verificationResult.confirmations,
-              details: verificationResult.details
+              details: verificationResult.details,
+              note: 'Transaction will be manually verified by our team'
             }
           });
         }
