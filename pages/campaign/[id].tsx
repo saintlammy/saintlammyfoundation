@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Clock, Target, Heart, Share2, ArrowLeft } from 'lucide-react';
+import { useDonationModal } from '../components/DonationModalProvider';
 
 interface Campaign {
   id: string;
@@ -27,6 +28,7 @@ interface CampaignPageProps {
 const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const { openModal } = useDonationModal();
 
   useEffect(() => {
     setMounted(true);
@@ -87,8 +89,8 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   };
 
   const handleDonate = () => {
-    // Redirect to homepage with campaign context
-    router.push(`/?campaign=${campaign.id}#donate`);
+    // Open donation modal with this campaign pre-selected
+    openModal(campaign.id);
   };
 
   return (
