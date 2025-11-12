@@ -39,6 +39,27 @@ NEXT_PUBLIC_USDC_TRC_ADDRESS=TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz
 ENCRYPTION_KEY=saintlammy-foundation-2024-secure-key
 ```
 
+### Blockchain API Keys (Required for wallet dashboard and transaction verification)
+**See BLOCKCHAIN_API_SETUP.md for detailed instructions on obtaining these keys**
+
+```
+NEXT_PUBLIC_ETHERSCAN_API_KEY=your_etherscan_api_key_here
+NEXT_PUBLIC_BSCSCAN_API_KEY=your_bscscan_api_key_here
+NEXT_PUBLIC_BLOCKCYPHER_API_KEY=your_blockcypher_token_here
+NEXT_PUBLIC_TRON_API_KEY=your_trongrid_api_key_here
+```
+
+**Optional (for better Solana performance)**:
+```
+NEXT_PUBLIC_SOLANA_RPC_URL=https://solana-mainnet.g.alchemy.com/v2/your_alchemy_key
+```
+
+**Why these are needed**:
+- Without API keys, blockchain services hit rate limits and return errors
+- Wallet dashboard will show $NaN values when API calls fail
+- Transaction verification may fail or be unreliable
+- All these services offer FREE tiers sufficient for most use cases
+
 ## 📋 How to Set Up in Netlify
 
 1. Go to your Netlify dashboard
