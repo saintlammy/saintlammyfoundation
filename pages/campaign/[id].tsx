@@ -53,7 +53,20 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   const campaignUrl = `${siteUrl}/campaign/${campaign.id}`;
   const progressPercentage = Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100).toFixed(0);
 
-  const ogImage = campaign.image_url || `${siteUrl}/images/default-campaign-og.jpg`;
+  // Generate dynamic OG preview image URL
+  const ogImageParams = new URLSearchParams({
+    title: campaign.title,
+    description: campaign.description.substring(0, 150),
+    goalAmount: campaign.goal_amount.toLocaleString(),
+    currentAmount: campaign.current_amount.toLocaleString(),
+    currency: campaign.currency,
+    progress: progressPercentage,
+    beneficiaryCount: String(campaign.beneficiary_count || 70),
+    statLabel: campaign.stat_label || 'Orphans Need',
+    urgencyMessage: campaign.urgency_message || 'Time is running out',
+  });
+
+  const ogImage = `${siteUrl}/api/og-preview?${ogImageParams.toString()}`;
   const ogDescription = `${campaign.description} | ${progressPercentage}% funded | Help us reach our goal of ${campaign.currency === 'USD' ? '$' : '₦'}${campaign.goal_amount.toLocaleString()}`;
 
   const formatCurrency = (amount: number, currency: string) => {

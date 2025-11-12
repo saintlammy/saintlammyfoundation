@@ -15,11 +15,24 @@ interface CampaignMetaTagsProps {
 
 const CampaignMetaTags: React.FC<CampaignMetaTagsProps> = ({ campaign }) => {
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://saintlammyfoundation.org';
-  const campaignUrl = `${siteUrl}/#urgent-campaign?utm_source=social_share&utm_medium=og_meta&utm_campaign=${campaign.id}`;
+  const campaignUrl = `${siteUrl}/campaign/${campaign.id}?utm_source=social_share&utm_medium=og_meta&utm_campaign=${campaign.id}`;
 
-  const ogImage = campaign.image_url || `${siteUrl}/images/default-campaign-og.jpg`;
   const progressPercentage = Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100).toFixed(0);
 
+  // Generate dynamic OG preview image URL
+  const ogImageParams = new URLSearchParams({
+    title: campaign.title,
+    description: campaign.description.substring(0, 150),
+    goalAmount: campaign.goal_amount.toLocaleString(),
+    currentAmount: campaign.current_amount.toLocaleString(),
+    currency: campaign.currency,
+    progress: progressPercentage,
+    beneficiaryCount: String((campaign as any).beneficiary_count || 70),
+    statLabel: (campaign as any).stat_label || 'Orphans Need',
+    urgencyMessage: (campaign as any).urgency_message || 'Time is running out',
+  });
+
+  const ogImage = `${siteUrl}/api/og-preview?${ogImageParams.toString()}`;
   const ogDescription = `${campaign.description} | ${progressPercentage}% funded | Help us reach our goal of ${campaign.currency === 'USD' ? '$' : '₦'}${campaign.goal_amount.toLocaleString()}`;
 
   return (
