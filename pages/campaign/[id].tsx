@@ -28,7 +28,7 @@ interface CampaignPageProps {
 const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const { openModal } = useDonationModal();
+  const { openDonationModal } = useDonationModal();
 
   useEffect(() => {
     setMounted(true);
@@ -90,7 +90,13 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
 
   const handleDonate = () => {
     // Open donation modal with this campaign pre-selected
-    openModal(campaign.id);
+    openDonationModal({
+      source: 'urgent-needs',
+      campaignId: campaign.id,
+      title: campaign.title,
+      description: campaign.description,
+      category: campaign.category as any
+    });
   };
 
   return (
