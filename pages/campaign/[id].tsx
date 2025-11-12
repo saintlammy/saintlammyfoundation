@@ -89,13 +89,33 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   };
 
   const handleDonate = () => {
+    // Map campaign category to donation category (handle plural to singular)
+    const categoryMap: Record<string, 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' | 'general'> = {
+      'orphans': 'orphan',
+      'orphan': 'orphan',
+      'widows': 'widow',
+      'widow': 'widow',
+      'family': 'family',
+      'families': 'family',
+      'outreach': 'outreach',
+      'emergency': 'emergency',
+      'education': 'education',
+      'healthcare': 'healthcare',
+      'empowerment': 'empowerment',
+      'infrastructure': 'infrastructure'
+    };
+
+    const donationCategory = campaign.category
+      ? categoryMap[campaign.category.toLowerCase()] || 'general'
+      : 'general';
+
     // Open donation modal with this campaign pre-selected
     openDonationModal({
       source: 'urgent-needs',
       campaignId: campaign.id,
       title: campaign.title,
       description: campaign.description,
-      category: campaign.category as any
+      category: donationCategory
     });
   };
 
