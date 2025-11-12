@@ -21,7 +21,7 @@ export const getWalletAddresses = (): Record<string, WalletInfo> => {
     eth: {
       currency: 'ETH',
       network: 'erc20',
-      address: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x742d35Cc7e4F8C6f8C4a8e8B8f9C9c8f8c8f8c8f',
+      address: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x284510028B1De5e9469b2392a2824dA2fa4A6063',
       explorer: 'https://etherscan.io/tx/'
     },
     sol: {
@@ -33,13 +33,13 @@ export const getWalletAddresses = (): Record<string, WalletInfo> => {
     usdc: {
       currency: 'USDC',
       network: 'erc20',
-      address: process.env.NEXT_PUBLIC_USDC_ETH_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+      address: process.env.NEXT_PUBLIC_USDC_ETH_ADDRESS || '0x284510028B1De5e9469b2392a2824dA2fa4A6063',
       explorer: 'https://etherscan.io/tx/'
     },
     usdt: {
       currency: 'USDT',
       network: 'erc20',
-      address: process.env.NEXT_PUBLIC_USDT_ETH_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
+      address: process.env.NEXT_PUBLIC_USDT_ETH_ADDRESS || '0x284510028B1De5e9469b2392a2824dA2fa4A6063',
       explorer: 'https://etherscan.io/tx/'
     },
     xrp: {
