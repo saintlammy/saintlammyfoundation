@@ -275,46 +275,34 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
 
 // Use static generation with ISR for proper meta tag rendering
 export const getStaticPaths: GetStaticPaths = async () => {
-  try {
-    // Fetch all active campaigns at build time
-    // In development, use the actual dev server URL; in production, use the site URL
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window === 'undefined' ? 'http://localhost:3003' : window.location.origin);
-    const response = await fetch(`${baseUrl}/api/campaigns?status=active`);
-
-    if (!response.ok) {
-      return {
-        paths: [],
-        fallback: 'blocking' // Generate pages on-demand if not pre-rendered
-      };
-    }
-
-    const result = await response.json();
-    const campaigns = result.success ? result.data : [];
-
-    const paths = campaigns.map((campaign: Campaign) => ({
-      params: { id: campaign.id }
-    }));
-
-    return {
-      paths,
-      fallback: 'blocking' // Enable ISR - generate missing pages on-demand
-    };
-  } catch (error) {
-    console.error('Error in getStaticPaths:', error);
-    return {
-      paths: [],
-      fallback: 'blocking'
-    };
-  }
+  // At build time, we don't pre-render any campaign pages
+  // They will be generated on-demand when first accessed (ISR with fallback: 'blocking')
+  // This avoids the build-time fetch issue while still enabling SSG/ISR benefits
+  return {
+    paths: [],
+    fallback: 'blocking' // Generate pages on-demand with ISR
+  };
 };
 
 export const getStaticProps: GetStaticProps<CampaignPageProps> = async (context) => {
   const { id } = context.params as { id: string };
 
   try {
-    // Fetch campaign data at build time (or on-demand with ISR)
-    // In development, use the actual dev server URL; in production, use the site URL
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window === 'undefined' ? 'http://localhost:3003' : window.location.origin);
+    // Fetch campaign data on-demand (ISR)
+    // Use NEXT_PUBLIC_SITE_URL if available, otherwise use relative URL in production
+    // In development, use localhost with the dev server port
+    let baseUrl: string;
+
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    } else if (process.env.NODE_ENV === 'development') {
+      baseUrl = 'http://localhost:3003';
+    } else {
+      // In production build/runtime, use the deployed URL
+      // Netlify sets DEPLOY_URL or URL env variables
+      baseUrl = process.env.DEPLOY_URL || process.env.URL || 'https://saintlammyfoundation.org';
+    }
+
     const response = await fetch(`${baseUrl}/api/campaigns?id=${id}`);
 
     if (!response.ok) {
