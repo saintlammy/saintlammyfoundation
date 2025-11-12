@@ -314,12 +314,12 @@ const AdminWalletManagement: React.FC = () => {
     try {
       // Get wallet address from environment variables
       const addresses = {
-        bitcoin: process.env.NEXT_PUBLIC_BTC_WALLET_ADDRESS || '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        ethereum: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
-        bsc: process.env.NEXT_PUBLIC_BNB_WALLET_ADDRESS || '0x742d35Cc6634C0532925a3b8D97C3578b43Db34',
-        xrp: process.env.NEXT_PUBLIC_XRP_WALLET_ADDRESS || 'rPVMhWBsfF9iMXYj3aAzJVkPDTFNSyWdKy',
+        bitcoin: process.env.NEXT_PUBLIC_BTC_WALLET_ADDRESS || 'bc1q9fz4dj2chf37akk0us4qum50kam72tntx57wyz',
+        ethereum: process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS || '0x284510028B1De5e9469b2392a2824dA2fa4A6063',
+        bsc: process.env.NEXT_PUBLIC_BNB_WALLET_ADDRESS || '0xb51271A11F107A37523045Ee267D9232B867bd11',
+        xrp: process.env.NEXT_PUBLIC_XRP_WALLET_ADDRESS || 'rsptzf9RFKHjgvuNbjMGBLtkXp37nnEo8X',
         solana: process.env.NEXT_PUBLIC_SOL_WALLET_ADDRESS || '5bKSQ9wpWmA4NxPfq3xiTv4Zpnzxjkfzm5WVwkL4Xrz3',
-        tron: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || 'TLYjP1DqNDkbVpK8vLqZVqQvQzVzVzVzVzVzVz'
+        tron: process.env.NEXT_PUBLIC_TRX_WALLET_ADDRESS || 'TX7UK8Q4n9GsJpnfHkQE4Mf9Z1GukgQyzk'
       };
 
       const address = addresses[network];
