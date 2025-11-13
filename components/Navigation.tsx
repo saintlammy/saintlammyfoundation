@@ -123,8 +123,8 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center mr-3">
-                <Heart className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center mr-3">
+                <Heart className="w-5 h-5 text-white dark:text-black" />
               </div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
                 <span className="text-accent-400">Saint</span>lammy Foundation
