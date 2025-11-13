@@ -57,7 +57,7 @@ export const getCookieConsent = (): CookieConsentData | null => {
 /**
  * Save cookie consent preferences
  */
-export const saveCookieConsent = (preferences: CookiePreferences): void => {
+export const saveCookieConsent = (preferences: CookiePreferences, action?: 'accept_all' | 'reject_all' | 'customize'): void => {
   if (typeof window === 'undefined') return;
 
   const consentData = {
@@ -75,9 +75,69 @@ export const saveCookieConsent = (preferences: CookiePreferences): void => {
 
     // Apply preferences immediately
     applyCookiePreferences(preferences);
+
+    // Log to backend for analytics and compliance
+    logConsentToBackend(preferences, action);
   } catch (error) {
     console.error('Error saving cookie consent:', error);
   }
+};
+
+/**
+ * Log consent to backend for compliance tracking
+ */
+const logConsentToBackend = async (preferences: CookiePreferences, action?: string): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    // Generate or get session ID
+    let sessionId = sessionStorage.getItem('cookie_session_id');
+    if (!sessionId) {
+      sessionId = generateSessionId();
+      sessionStorage.setItem('cookie_session_id', sessionId);
+    }
+
+    // Determine consent action
+    let consentAction: 'accept_all' | 'reject_all' | 'customize' = 'customize';
+    if (action) {
+      consentAction = action as any;
+    } else if (preferences.analytics && preferences.marketing && preferences.preferences) {
+      consentAction = 'accept_all';
+    } else if (!preferences.analytics && !preferences.marketing && !preferences.preferences) {
+      consentAction = 'reject_all';
+    }
+
+    // Send to backend (non-blocking, fire and forget)
+    fetch('/api/cookie-consent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sessionId,
+        consentAction,
+        necessary: preferences.necessary,
+        analytics: preferences.analytics,
+        marketing: preferences.marketing,
+        preferences: preferences.preferences,
+        consentVersion: CONSENT_VERSION,
+        pageUrl: window.location.href,
+        referrer: document.referrer || undefined,
+      }),
+    }).catch(err => {
+      // Silently fail - don't block user experience
+      console.log('Cookie consent logging failed (non-critical):', err);
+    });
+  } catch (error) {
+    console.log('Error logging cookie consent (non-critical):', error);
+  }
+};
+
+/**
+ * Generate a unique session ID
+ */
+const generateSessionId = (): string => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
 /**
@@ -218,14 +278,14 @@ export const acceptAllCookies = (): void => {
     preferences: true,
   };
 
-  saveCookieConsent(allAccepted);
+  saveCookieConsent(allAccepted, 'accept_all');
 };
 
 /**
  * Reject all optional cookies (keep only necessary)
  */
 export const rejectAllCookies = (): void => {
-  saveCookieConsent(defaultPreferences);
+  saveCookieConsent(defaultPreferences, 'reject_all');
 };
 
 /**

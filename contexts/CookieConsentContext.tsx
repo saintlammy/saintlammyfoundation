@@ -78,7 +78,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({ ch
   };
 
   const savePreferences = (newPreferences: CookiePreferences) => {
-    saveCookieConsent(newPreferences);
+    saveCookieConsent(newPreferences, 'customize');
     const consent = getCookieConsent();
     setConsentData(consent);
     setPreferences(newPreferences);
