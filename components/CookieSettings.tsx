@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Shield, TrendingUp, Target, Settings, Check } from 'lucide-react';
 import { useCookieConsent } from '../contexts/CookieConsentContext';
 import { CookiePreferences, getCookieDescriptions } from '../lib/cookieConsent';
@@ -7,6 +7,13 @@ const CookieSettings: React.FC = () => {
   const { showSettings, closeSettings, savePreferences, preferences: initialPreferences } = useCookieConsent();
   const [preferences, setPreferences] = useState<CookiePreferences>(initialPreferences);
   const descriptions = getCookieDescriptions();
+
+  // Update local state when preferences change or modal opens
+  useEffect(() => {
+    if (showSettings) {
+      setPreferences(initialPreferences);
+    }
+  }, [showSettings, initialPreferences]);
 
   if (!showSettings) return null;
 

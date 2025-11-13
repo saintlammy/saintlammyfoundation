@@ -60,19 +60,43 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({ ch
   }, []);
 
   const acceptAll = () => {
+    const allAcceptedPreferences = {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+      preferences: true,
+    };
+
     acceptAllCookies();
+
+    // Update state immediately with the expected values
+    setPreferences(allAcceptedPreferences);
+
+    // Then get the saved consent data
     const consent = getCookieConsent();
     setConsentData(consent);
-    setPreferences(consent?.preferences || defaultPreferences);
+
     setShowBanner(false);
     setShowSettings(false);
   };
 
   const rejectAll = () => {
+    const rejectedPreferences = {
+      necessary: true,
+      analytics: false,
+      marketing: false,
+      preferences: false,
+    };
+
     rejectAllCookies();
+
+    // Update state immediately with the expected values
+    setPreferences(rejectedPreferences);
+
+    // Then get the saved consent data
     const consent = getCookieConsent();
     setConsentData(consent);
-    setPreferences(consent?.preferences || defaultPreferences);
+
     setShowBanner(false);
     setShowSettings(false);
   };
