@@ -94,8 +94,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
             {/* Organization Info - Left Side */}
             <div>
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white dark:text-black" />
+                <div className="h-8 w-auto rounded-lg overflow-hidden flex items-center">
+                  <img
+                    src="/images/logo/logo-icon.svg"
+                    alt="Saintlammy Foundation"
+                    className="h-full w-auto object-contain dark:invert"
+                  />
                 </div>
                 <span className="text-xl font-bold font-display text-gray-900 dark:text-white">Saintlammy Foundation</span>
               </div>
