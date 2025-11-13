@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ComponentProps } from '@/types';
 import { useDonationModal } from './DonationModalProvider';
+import { useCookieConsent } from '@/contexts/CookieConsentContext';
 import {
   Heart,
   Mail,
@@ -13,13 +14,15 @@ import {
   Linkedin,
   Youtube,
   ArrowRight,
-  Globe
+  Globe,
+  Cookie
 } from 'lucide-react';
 
 interface FooterProps extends ComponentProps {}
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const { openDonationModal } = useDonationModal();
+  const { openSettings } = useCookieConsent();
 
   const quickLinks = [
     { href: '/', label: 'Home' },
@@ -42,6 +45,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
   const legalLinks = [
     { href: '/privacy', label: 'Privacy Policy' },
+    { href: '/cookie-policy', label: 'Cookie Policy' },
     { href: '/terms', label: 'Terms of Service' },
     { href: '/transparency', label: 'Financial Transparency' },
     { href: '/governance', label: 'Governance' }
@@ -270,6 +274,15 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
               </div>
               <span>•</span>
               <span>Tax-exempt nonprofit organization</span>
+              <span>•</span>
+              <button
+                onClick={openSettings}
+                className="flex items-center space-x-1 hover:text-green-600 transition-colors"
+                aria-label="Cookie Settings"
+              >
+                <Cookie className="w-4 h-4" />
+                <span>Cookie Settings</span>
+              </button>
             </div>
           </div>
         </div>

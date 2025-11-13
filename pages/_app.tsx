@@ -7,8 +7,11 @@ import Layout from '@/components/Layout';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
+import { CookieConsentProvider } from '@/contexts/CookieConsentContext';
 import NotificationContainer from '@/components/NotificationContainer';
 import NotificationEventListener from '@/components/NotificationEventListener';
+import CookieConsent from '@/components/CookieConsent';
+import CookieSettings from '@/components/CookieSettings';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -23,17 +26,21 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider>
           <AuthProvider>
             <NotificationProvider>
-              <NotificationEventListener />
-              {isAdminRoute ? (
-                // Admin routes don't use the main Layout
-                <Component {...pageProps} />
-              ) : (
-                // Public routes use the main Layout
-                <Layout>
+              <CookieConsentProvider>
+                <NotificationEventListener />
+                {isAdminRoute ? (
+                  // Admin routes don't use the main Layout
                   <Component {...pageProps} />
-                </Layout>
-              )}
-              <NotificationContainer />
+                ) : (
+                  // Public routes use the main Layout
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                )}
+                <NotificationContainer />
+                <CookieConsent />
+                <CookieSettings />
+              </CookieConsentProvider>
             </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>
