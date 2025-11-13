@@ -26,7 +26,8 @@ import {
   Search,
   Newspaper,
   Image,
-  Target
+  Target,
+  Cookie
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -148,6 +149,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         { id: 'settings-general', label: 'General', icon: Settings, href: '/admin/settings' },
         { id: 'settings-payment', label: 'Payment Gateway', icon: Wallet, href: '/admin/settings/payment' },
         { id: 'settings-security', label: 'Security', icon: Shield, href: '/admin/settings/security' },
+        { id: 'settings-cookie-compliance', label: 'Cookie Compliance', icon: Cookie, href: '/admin/cookie-compliance' },
         { id: 'settings-integrations', label: 'Integrations', icon: Globe, href: '/admin/settings/integrations' }
       ]
     }
