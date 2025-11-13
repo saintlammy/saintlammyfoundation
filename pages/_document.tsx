@@ -68,6 +68,47 @@ export default function Document() {
         />
         <style dangerouslySetInnerHTML={{
           __html: `
+            /* Sailec Typeface */
+            @font-face {
+              font-family: 'Sailec';
+              src: url('/fonts/Type Dynamic - Sailec.otf') format('opentype');
+              font-weight: 400;
+              font-style: normal;
+              font-display: swap;
+            }
+
+            @font-face {
+              font-family: 'Sailec';
+              src: url('/fonts/Type Dynamic - Sailec Light.otf') format('opentype');
+              font-weight: 300;
+              font-style: normal;
+              font-display: swap;
+            }
+
+            @font-face {
+              font-family: 'Sailec';
+              src: url('/fonts/Type Dynamic - Sailec Medium.otf') format('opentype');
+              font-weight: 500;
+              font-style: normal;
+              font-display: swap;
+            }
+
+            @font-face {
+              font-family: 'Sailec';
+              src: url('/fonts/Type Dynamic - Sailec Bold.otf') format('opentype');
+              font-weight: 700;
+              font-style: normal;
+              font-display: swap;
+            }
+
+            @font-face {
+              font-family: 'Sailec';
+              src: url('/fonts/Type Dynamic - Sailec Black.otf') format('opentype');
+              font-weight: 900;
+              font-style: normal;
+              font-display: swap;
+            }
+
             @import url('https://db.onlinewebfonts.com/c/94f8c3b3e75e90b4c374c2d0f88e5ce1?family=Sohne');
             @font-face {
               font-family: "Söhne";
