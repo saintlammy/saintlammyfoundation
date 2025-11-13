@@ -17,11 +17,19 @@ const StickyDonationButton: React.FC<StickyDonationButtonProps> = ({
     const handleScroll = () => {
       // Show button after scrolling past hero section (approximately 100vh)
       const scrollPosition = window.scrollY;
-      const shouldShow = scrollPosition > window.innerHeight && !isDismissed;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // Hide when approaching footer (within 400px of bottom)
+      const distanceFromBottom = documentHeight - (scrollPosition + windowHeight);
+      const isNearFooter = distanceFromBottom < 400;
+
+      const shouldShow = scrollPosition > windowHeight && !isDismissed && !isNearFooter;
       setIsVisible(shouldShow);
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isDismissed]);
 
