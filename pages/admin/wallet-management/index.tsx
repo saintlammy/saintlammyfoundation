@@ -270,11 +270,9 @@ const AdminWalletManagement: React.FC = () => {
 
       setWalletData(allWallets);
 
-      // Try to load live balances if APIs are available
-      if (forceApiTest) {
-        console.log('🧪 Testing live blockchain APIs...');
-        await updateWalletsWithLiveData(allWallets);
-      }
+      // Always load live balances automatically on page load
+      console.log('🔄 Loading live blockchain balances...');
+      await updateWalletsWithLiveData(allWallets);
 
       // Load transaction data
       await loadRecentTransactions(allWallets);
@@ -323,7 +321,13 @@ const AdminWalletManagement: React.FC = () => {
       };
 
       const address = addresses[network];
-      const data = await BlockchainService.getWalletData(address, network);
+
+      // Use backend API to avoid CORS issues
+      const response = await fetch(`/api/blockchain/wallet?address=${address}&network=${network}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch wallet data: ${response.statusText}`);
+      }
+      const data = await response.json();
       if (!data || !data.address) return null;
 
       const networkNames = {
@@ -815,7 +819,12 @@ const AdminWalletManagement: React.FC = () => {
     const updatedWallets = await Promise.allSettled(
       wallets.map(async (wallet) => {
         try {
-          const liveData = await BlockchainService.getWalletData(wallet.address, wallet.network);
+          // Use backend API to avoid CORS issues
+          const response = await fetch(`/api/blockchain/wallet?address=${wallet.address}&network=${wallet.network}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch wallet data: ${response.statusText}`);
+          }
+          const liveData = await response.json();
           return {
             ...wallet,
             tokens: wallet.tokens.map(token => {

@@ -262,20 +262,26 @@ export class EthereumService {
   }
 }
 
-// BSC Service (similar to Ethereum but using BSCScan)
+// BSC Service (using direct RPC - BSCScan API is deprecated)
 export class BSCService {
   static async getWalletData(address: string): Promise<WalletData> {
     try {
       const prices = await PriceService.getCryptoPrices();
       const balances: TokenBalance[] = [];
 
-      // Get BNB balance
-      const bnbResponse = await axios.get(
-        `https://api.bscscan.com/api?module=account&action=balance&address=${address}&tag=latest&apikey=${API_KEYS.BSCSCAN}`,
+      // Get BNB balance using direct RPC call
+      const bnbResponse = await axios.post(
+        'https://bsc-dataseed.binance.org/',
+        {
+          jsonrpc: '2.0',
+          method: 'eth_getBalance',
+          params: [address, 'latest'],
+          id: 1
+        },
         { timeout: 15000 }
       );
 
-      const bnbBalance = parseFloat(bnbResponse.data.result) / Math.pow(10, 18);
+      const bnbBalance = parseInt(bnbResponse.data.result, 16) / Math.pow(10, 18);
       balances.push({
         symbol: 'BNB',
         name: 'Binance Coin',
@@ -294,12 +300,23 @@ export class BSCService {
 
       for (const [symbol, contract] of Object.entries(tokenContracts)) {
         try {
-          const tokenResponse = await axios.get(
-            `https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=${contract.address}&address=${address}&tag=latest&apikey=${API_KEYS.BSCSCAN}`,
+          // ERC-20 balanceOf(address) function call
+          const data = '0x70a08231' + address.slice(2).padStart(64, '0');
+          const tokenResponse = await axios.post(
+            'https://bsc-dataseed.binance.org/',
+            {
+              jsonrpc: '2.0',
+              method: 'eth_call',
+              params: [{
+                to: contract.address,
+                data: data
+              }, 'latest'],
+              id: 1
+            },
             { timeout: 10000 }
           );
 
-          const tokenBalance = parseFloat(tokenResponse.data.result) / Math.pow(10, contract.decimals);
+          const tokenBalance = parseInt(tokenResponse.data.result, 16) / Math.pow(10, contract.decimals);
           balances.push({
             symbol,
             name: symbol === 'USDT' ? 'Tether USD (BEP20)' : 'USD Coin (BEP20)',
