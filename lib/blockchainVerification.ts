@@ -103,7 +103,7 @@ export class BlockchainVerificationService {
           return await this.verifyBitcoinTransaction(txHash, expectedAmount, expectedToAddress, config);
         case 'erc20':
         case 'bep20':
-          return await this.verifyEthereumLikeTransaction(txHash, expectedAmount, expectedToAddress, config, network);
+          return await this.verifyEthereumLikeTransaction(txHash, expectedAmount, expectedToAddress, config, network, currency);
         case 'sol':
           return await this.verifySolanaTransaction(txHash, expectedAmount, expectedToAddress, config);
         case 'trc20':
@@ -212,7 +212,8 @@ export class BlockchainVerificationService {
     expectedAmount: number,
     expectedToAddress: string,
     config: NetworkConfig,
-    network: string
+    network: string,
+    currency: string
   ): Promise<TransactionVerification> {
     try {
       const apiKey = network === 'erc20'
@@ -220,20 +221,61 @@ export class BlockchainVerificationService {
         : process.env.BSCSCAN_API_KEY;
 
       if (!apiKey) {
-        console.warn(`No API key configured for ${network} - skipping blockchain verification`);
-        // Return basic validation without API - assume valid for manual verification
+        console.warn(`No API key configured for ${network} - using public RPC endpoint`);
+        // Try using public RPC endpoint as fallback
+        try {
+          const rpcUrl = network === 'erc20'
+            ? 'https://ethereum-rpc.publicnode.com'
+            : 'https://bsc-dataseed.binance.org/';
+
+          return await this.verifyEthereumLikeTransactionViaRPC(
+            txHash,
+            expectedAmount,
+            expectedToAddress,
+            config,
+            network,
+            currency,
+            rpcUrl
+          );
+        } catch (rpcError) {
+          console.error('RPC fallback failed:', rpcError);
+          // Return basic validation without API - assume valid for manual verification
+          return {
+            isValid: true, // Assume valid if we can't verify - will be manually reviewed
+            confirmations: config.confirmationsRequired,
+            amount: expectedAmount,
+            toAddress: expectedToAddress,
+            fromAddress: 'unknown',
+            error: undefined // No error - just not verified automatically
+          };
+        }
+      }
+
+      // Get transaction receipt (includes logs for token transfers)
+      const receiptResponse = await axios.get(config.apiUrl, {
+        params: {
+          module: 'proxy',
+          action: 'eth_getTransactionReceipt',
+          txhash: txHash,
+          apikey: apiKey
+        },
+        timeout: 10000
+      });
+
+      const receipt = receiptResponse.data.result;
+      if (!receipt) {
         return {
-          isValid: true, // Assume valid if we can't verify - will be manually reviewed
-          confirmations: config.confirmationsRequired,
-          amount: expectedAmount,
-          toAddress: expectedToAddress,
-          fromAddress: 'unknown',
-          error: undefined // No error - just not verified automatically
+          isValid: false,
+          confirmations: 0,
+          amount: 0,
+          toAddress: '',
+          fromAddress: '',
+          error: 'Transaction not found'
         };
       }
 
-      // Get transaction receipt
-      const response = await axios.get(config.apiUrl, {
+      // Get transaction details
+      const txResponse = await axios.get(config.apiUrl, {
         params: {
           module: 'proxy',
           action: 'eth_getTransactionByHash',
@@ -243,7 +285,7 @@ export class BlockchainVerificationService {
         timeout: 10000
       });
 
-      const transaction = response.data.result;
+      const transaction = txResponse.data.result;
       if (!transaction) {
         return {
           isValid: false,
@@ -269,23 +311,86 @@ export class BlockchainVerificationService {
       const txBlock = parseInt(transaction.blockNumber, 16);
       const confirmations = currentBlock - txBlock + 1;
 
-      // Convert Wei to Ether
-      const actualAmount = parseInt(transaction.value, 16) / Math.pow(10, config.nativeDecimals);
+      // Check if this is a token transfer (USDT, USDC) or native transfer (ETH, BNB)
+      const isTokenTransfer = currency === 'USDT' || currency === 'USDC';
+
+      let actualAmount = 0;
+      let toAddress = '';
+      let fromAddress = transaction.from;
+
+      if (isTokenTransfer) {
+        // Parse Transfer event from logs
+        // Transfer event signature: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+        const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+        // Find the Transfer event log
+        const transferLog = receipt.logs?.find((log: any) =>
+          log.topics && log.topics[0]?.toLowerCase() === transferEventSignature.toLowerCase()
+        );
+
+        if (!transferLog) {
+          return {
+            isValid: false,
+            confirmations,
+            amount: 0,
+            toAddress: '',
+            fromAddress,
+            error: 'Token transfer event not found in transaction logs'
+          };
+        }
+
+        // Decode transfer event
+        // topics[1] = from address (indexed)
+        // topics[2] = to address (indexed)
+        // data = amount (not indexed)
+
+        // Extract 'to' address from topics[2] (remove padding)
+        toAddress = '0x' + transferLog.topics[2].slice(26);
+
+        // Extract amount from data field
+        const amountHex = transferLog.data;
+        const amountWei = BigInt(amountHex);
+
+        // USDT/USDC decimals vary by network:
+        // - Ethereum (ERC20): 6 decimals
+        // - BSC (BEP20): 18 decimals
+        // - Tron (TRC20): 6 decimals
+        const decimals = network === 'bep20' ? 18 : 6;
+        actualAmount = Number(amountWei) / Math.pow(10, decimals);
+
+      } else {
+        // Native token transfer (ETH, BNB)
+        actualAmount = parseInt(transaction.value, 16) / Math.pow(10, config.nativeDecimals);
+        toAddress = transaction.to;
+      }
 
       // Check if addresses match (case insensitive)
-      const addressMatches = transaction.to.toLowerCase() === expectedToAddress.toLowerCase();
+      const addressMatches = toAddress.toLowerCase() === expectedToAddress.toLowerCase();
 
-      // Allow for small rounding differences
-      const amountMatches = Math.abs(actualAmount - expectedAmount) < 0.000001;
+      // Allow for small rounding differences (0.01 for stablecoins, 0.000001 for others)
+      const tolerance = (currency === 'USDT' || currency === 'USDC') ? 0.01 : 0.000001;
+      const amountMatches = Math.abs(actualAmount - expectedAmount) < tolerance;
+
+      console.log('Transaction verification:', {
+        currency,
+        isTokenTransfer,
+        expectedAmount,
+        actualAmount,
+        expectedToAddress,
+        toAddress,
+        addressMatches,
+        amountMatches,
+        confirmations
+      });
 
       return {
         isValid: addressMatches && amountMatches && confirmations >= config.confirmationsRequired,
         confirmations,
         amount: actualAmount,
-        toAddress: transaction.to,
-        fromAddress: transaction.from,
+        toAddress,
+        fromAddress,
         blockHeight: txBlock,
-        timestamp: new Date().toISOString() // Etherscan doesn't provide timestamp in this call
+        timestamp: new Date().toISOString()
       };
     } catch (error) {
       console.error(`${network} verification error:`, error);
@@ -299,6 +404,161 @@ export class BlockchainVerificationService {
         fromAddress: 'unknown',
         error: undefined // Don't show error to user - mark for manual review
       };
+    }
+  }
+
+  /**
+   * Ethereum/BSC transaction verification via public RPC (fallback when no API key)
+   */
+  private async verifyEthereumLikeTransactionViaRPC(
+    txHash: string,
+    expectedAmount: number,
+    expectedToAddress: string,
+    config: NetworkConfig,
+    network: string,
+    currency: string,
+    rpcUrl: string
+  ): Promise<TransactionVerification> {
+    try {
+      // Get transaction receipt via RPC
+      const receiptResponse = await axios.post(rpcUrl, {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'eth_getTransactionReceipt',
+        params: [txHash]
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 10000
+      });
+
+      const receipt = receiptResponse.data.result;
+      if (!receipt) {
+        return {
+          isValid: false,
+          confirmations: 0,
+          amount: 0,
+          toAddress: '',
+          fromAddress: '',
+          error: 'Transaction not found'
+        };
+      }
+
+      // Get transaction details
+      const txResponse = await axios.post(rpcUrl, {
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'eth_getTransactionByHash',
+        params: [txHash]
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 10000
+      });
+
+      const transaction = txResponse.data.result;
+      if (!transaction) {
+        return {
+          isValid: false,
+          confirmations: 0,
+          amount: 0,
+          toAddress: '',
+          fromAddress: '',
+          error: 'Transaction not found'
+        };
+      }
+
+      // Get current block number
+      const blockResponse = await axios.post(rpcUrl, {
+        jsonrpc: '2.0',
+        id: 3,
+        method: 'eth_blockNumber',
+        params: []
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000
+      });
+
+      const currentBlock = parseInt(blockResponse.data.result, 16);
+      const txBlock = parseInt(transaction.blockNumber, 16);
+      const confirmations = currentBlock - txBlock + 1;
+
+      // Check if this is a token transfer (USDT, USDC) or native transfer (ETH, BNB)
+      const isTokenTransfer = currency === 'USDT' || currency === 'USDC';
+
+      let actualAmount = 0;
+      let toAddress = '';
+      let fromAddress = transaction.from;
+
+      if (isTokenTransfer) {
+        // Parse Transfer event from logs
+        const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+        // Find the Transfer event log
+        const transferLog = receipt.logs?.find((log: any) =>
+          log.topics && log.topics[0]?.toLowerCase() === transferEventSignature.toLowerCase()
+        );
+
+        if (!transferLog) {
+          return {
+            isValid: false,
+            confirmations,
+            amount: 0,
+            toAddress: '',
+            fromAddress,
+            error: 'Token transfer event not found in transaction logs'
+          };
+        }
+
+        // Extract 'to' address from topics[2]
+        toAddress = '0x' + transferLog.topics[2].slice(26);
+
+        // Extract amount from data field
+        const amountHex = transferLog.data;
+        const amountWei = BigInt(amountHex);
+
+        // USDT/USDC decimals vary by network:
+        // - Ethereum (ERC20): 6 decimals
+        // - BSC (BEP20): 18 decimals
+        // - Tron (TRC20): 6 decimals
+        const decimals = network === 'bep20' ? 18 : 6;
+        actualAmount = Number(amountWei) / Math.pow(10, decimals);
+
+      } else {
+        // Native token transfer (ETH, BNB)
+        actualAmount = parseInt(transaction.value, 16) / Math.pow(10, config.nativeDecimals);
+        toAddress = transaction.to;
+      }
+
+      // Check if addresses match (case insensitive)
+      const addressMatches = toAddress.toLowerCase() === expectedToAddress.toLowerCase();
+
+      // Allow for small rounding differences
+      const tolerance = (currency === 'USDT' || currency === 'USDC') ? 0.01 : 0.000001;
+      const amountMatches = Math.abs(actualAmount - expectedAmount) < tolerance;
+
+      console.log('RPC Transaction verification:', {
+        currency,
+        isTokenTransfer,
+        expectedAmount,
+        actualAmount,
+        expectedToAddress,
+        toAddress,
+        addressMatches,
+        amountMatches,
+        confirmations
+      });
+
+      return {
+        isValid: addressMatches && amountMatches && confirmations >= config.confirmationsRequired,
+        confirmations,
+        amount: actualAmount,
+        toAddress,
+        fromAddress,
+        blockHeight: txBlock,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error(`RPC verification error:`, error);
+      throw error; // Throw to trigger fallback in calling function
     }
   }
 
