@@ -167,10 +167,14 @@ class PaymentService {
    */
   async submitCryptoTransaction(donationId: string, txHash: string): Promise<PaymentResult> {
     try {
+      console.log('Submitting crypto transaction:', { donationId, txHash, url: `${this.baseUrl}/api/payments/crypto` });
+
       const response = await axios.put(`${this.baseUrl}/api/payments/crypto`, {
         donationId,
         txHash
       });
+
+      console.log('Crypto transaction response:', response.data);
 
       return {
         success: response.data.success,
@@ -178,6 +182,22 @@ class PaymentService {
       };
     } catch (error) {
       console.error('Error submitting crypto transaction:', error);
+
+      // Log detailed error information
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error details:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          url: error.config?.url
+        });
+
+        return {
+          success: false,
+          error: error.response?.data?.error || error.response?.data?.message || error.message || 'Failed to submit transaction'
+        };
+      }
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to submit transaction'
