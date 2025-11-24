@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { X, Cookie, Shield, TrendingUp, Settings, ChevronDown, ChevronUp } from 'lucide-react';
+import { Cookie, Shield } from 'lucide-react';
 import { useCookieConsent } from '../contexts/CookieConsentContext';
-import { CookiePreferences, getCookieDescriptions } from '../lib/cookieConsent';
 
 const CookieConsent: React.FC = () => {
   const { showBanner, acceptAll, rejectAll, openSettings } = useCookieConsent();
@@ -9,115 +8,92 @@ const CookieConsent: React.FC = () => {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 pointer-events-none">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm pointer-events-auto" />
+    <>
+      {/* Minimal Backdrop */}
+      <div className="fixed inset-0 z-50 bg-black/10 backdrop-blur-[2px] animate-fade-in" />
 
-      {/* Cookie Banner */}
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl pointer-events-auto transform transition-all duration-500 ease-out animate-slide-up">
-        {/* Decorative Top Border */}
-        <div className="h-2 bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 rounded-t-2xl" />
-
-        <div className="p-6 md:p-8">
-          {/* Header */}
-          <div className="flex items-start gap-4 mb-6">
-            <div className="flex-shrink-0">
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Cookie className="w-7 h-7 text-white" />
+      {/* Slick Minimal Banner */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl animate-slide-up">
+        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+          {/* Content */}
+          <div className="px-6 py-5">
+            <div className="flex items-start gap-4">
+              {/* Icon */}
+              <div className="flex-shrink-0 mt-0.5">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                  <Cookie className="w-5 h-5 text-white" />
+                </div>
               </div>
-            </div>
 
-            <div className="flex-1">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                We Value Your Privacy
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                We use cookies to enhance your browsing experience, provide personalized content, and analyze our traffic.
-                By clicking "Accept All", you consent to our use of cookies.
-              </p>
+              {/* Text & Actions */}
+              <div className="flex-1 min-w-0">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    Cookie Preferences
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    We use cookies to improve your experience. Essential cookies are always active.{' '}
+                    <a href="/cookie-policy" className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 underline font-medium">
+                      Learn more
+                    </a>
+                  </p>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={acceptAll}
+                    className="px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    Accept All
+                  </button>
+
+                  <button
+                    onClick={rejectAll}
+                    className="px-5 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                  >
+                    Reject
+                  </button>
+
+                  <button
+                    onClick={openSettings}
+                    className="px-5 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
+                  >
+                    Customize
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Cookie Types Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-              <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-green-900">Necessary</p>
-                <p className="text-xs text-green-700">Always active</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-blue-900">Analytics</p>
-                <p className="text-xs text-blue-700">Improve experience</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-              <Settings className="w-5 h-5 text-purple-600 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-purple-900">Preferences</p>
-                <p className="text-xs text-purple-700">Remember settings</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={acceptAll}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Accept All Cookies
-            </button>
-
-            <button
-              onClick={rejectAll}
-              className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all duration-200"
-            >
-              Reject All
-            </button>
-
-            <button
-              onClick={openSettings}
-              className="px-6 py-3 border-2 border-green-500 text-green-600 font-semibold rounded-xl hover:bg-green-50 transition-all duration-200 flex items-center justify-center gap-2"
-            >
-              <Settings className="w-4 h-4" />
-              Customize
-            </button>
-          </div>
-
-          {/* Privacy Policy Link */}
-          <div className="mt-4 text-center">
-            <a
-              href="/cookie-policy"
-              className="text-sm text-green-600 hover:text-green-700 underline font-medium"
-            >
-              Learn more about our cookie policy
-            </a>
-          </div>
+          {/* Subtle Bottom Accent */}
+          <div className="h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600" />
         </div>
       </div>
 
       <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         @keyframes slide-up {
           from {
-            transform: translateY(100%);
+            transform: translate(-50%, 20px);
             opacity: 0;
           }
           to {
-            transform: translateY(0);
+            transform: translate(-50%, 0);
             opacity: 1;
           }
         }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
         .animate-slide-up {
-          animation: slide-up 0.5s ease-out;
+          animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
       `}</style>
-    </div>
+    </>
   );
 };
 
