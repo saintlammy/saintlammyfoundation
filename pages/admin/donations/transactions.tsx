@@ -16,7 +16,10 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  ArrowUpRight
+  ArrowUpRight,
+  Trash2,
+  Check,
+  X
 } from 'lucide-react';
 
 interface Transaction {
@@ -39,6 +42,11 @@ const DonationTransactions: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
   const [dateRange, setDateRange] = useState('all');
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{ id: string; amount: number; currency: string } | null>(null);
+  const [confirmNotes, setConfirmNotes] = useState('');
+  const [confirming, setConfirming] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     completed: 0,
@@ -93,6 +101,77 @@ const DonationTransactions: React.FC = () => {
       console.error('Error loading transactions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteDonation = async (donationId: string) => {
+    try {
+      setDeleting(donationId);
+
+      const response = await fetch(`/api/admin/donations?donationId=${donationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Failed to delete donation');
+        return;
+      }
+
+      // Success - reload transactions
+      alert('Donation deleted successfully');
+      setDeleteConfirm(null);
+      await loadTransactions();
+
+    } catch (error) {
+      console.error('Error deleting donation:', error);
+      alert('Failed to delete donation. Please try again.');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleManualConfirm = async () => {
+    if (!confirmModal) return;
+
+    try {
+      setConfirming(true);
+
+      const response = await fetch('/api/admin/donations', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify({
+          donationId: confirmModal.id,
+          status: 'completed',
+          notes: confirmNotes || 'Manually confirmed by admin'
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Failed to confirm donation');
+        return;
+      }
+
+      // Success - close modal and reload
+      alert('Donation manually confirmed successfully');
+      setConfirmModal(null);
+      setConfirmNotes('');
+      await loadTransactions();
+
+    } catch (error) {
+      console.error('Error confirming donation:', error);
+      alert('Failed to confirm donation. Please try again.');
+    } finally {
+      setConfirming(false);
     }
   };
 
@@ -325,13 +404,64 @@ const DonationTransactions: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-2">
-                            <button className="text-accent-500 hover:text-accent-600 dark:text-accent-400 dark:hover:text-accent-300">
+                            <button
+                              className="text-accent-500 hover:text-accent-600 dark:text-accent-400 dark:hover:text-accent-300"
+                              title="View Details"
+                            >
                               <Eye className="w-4 h-4" />
                             </button>
                             {transaction.txHash && (
-                              <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white">
+                              <button
+                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                title="View on Blockchain"
+                              >
                                 <ExternalLink className="w-4 h-4" />
                               </button>
+                            )}
+                            {transaction.status === 'pending' && (
+                              <button
+                                onClick={() => setConfirmModal({
+                                  id: transaction.id,
+                                  amount: transaction.amount,
+                                  currency: transaction.currency
+                                })}
+                                className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300"
+                                title="Manually Confirm Donation"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                              </button>
+                            )}
+                            {(transaction.status === 'pending' || transaction.status === 'failed') && (
+                              <>
+                                {deleteConfirm === transaction.id ? (
+                                  <div className="flex items-center space-x-1">
+                                    <button
+                                      onClick={() => handleDeleteDonation(transaction.id)}
+                                      disabled={deleting === transaction.id}
+                                      className="px-2 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded disabled:opacity-50"
+                                      title="Confirm Delete"
+                                    >
+                                      {deleting === transaction.id ? 'Deleting...' : 'Confirm'}
+                                    </button>
+                                    <button
+                                      onClick={() => setDeleteConfirm(null)}
+                                      disabled={deleting === transaction.id}
+                                      className="px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded disabled:opacity-50"
+                                      title="Cancel"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => setDeleteConfirm(transaction.id)}
+                                    className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                                    title="Delete (Pending/Failed only)"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </>
                             )}
                           </div>
                         </td>
@@ -343,6 +473,93 @@ const DonationTransactions: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Manual Confirmation Modal */}
+        {confirmModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Manually Confirm Donation
+                </h3>
+                <button
+                  onClick={() => {
+                    setConfirmModal(null);
+                    setConfirmNotes('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                  <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-2">
+                    ⚠️ You are about to manually confirm this donation without blockchain verification.
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    This should only be done if you have verified the payment through other means (e.g., bank confirmation, email receipt, etc.)
+                  </p>
+                </div>
+
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Donation Amount</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {confirmModal.amount} {confirmModal.currency}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Confirmation Notes <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={confirmNotes}
+                    onChange={(e) => setConfirmNotes(e.target.value)}
+                    placeholder="e.g., Verified via bank statement, Email confirmation received, etc."
+                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    rows={4}
+                    required
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Provide details on how you verified this donation
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-3 pt-4">
+                  <button
+                    onClick={handleManualConfirm}
+                    disabled={confirming || !confirmNotes.trim()}
+                    className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  >
+                    {confirming ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Confirming...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Confirm Donation
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setConfirmModal(null);
+                      setConfirmNotes('');
+                    }}
+                    disabled={confirming}
+                    className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium disabled:opacity-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </AdminLayout>
     </>
   );

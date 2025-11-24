@@ -22,6 +22,7 @@ export interface CryptoDonationData {
   message?: string;
   source?: string;
   category?: 'orphan' | 'widow' | 'home' | 'general';
+  campaignId?: string;
 }
 
 export interface PayPalDonationData {
@@ -206,6 +207,7 @@ class DonationService {
         frequency: 'one-time',
         payment_method: 'crypto',
         status: 'pending',
+        campaign_id: donationData.campaignId || null,
         notes: JSON.stringify({
           network: donationData.network,
           cryptoAmount: donationData.cryptoAmount,
@@ -264,9 +266,9 @@ class DonationService {
         amount: donationData.amount,
         currency: donationData.currency,
         frequency: frequency as 'one-time' | 'monthly' | 'weekly' | 'yearly',
-        payment_method: 'card', // PayPal is treated as card payment in our schema
+        payment_method: 'paypal', // PayPal payment method
         status: 'completed', // PayPal donations are immediately completed
-        tx_reference: donationData.paymentId || donationData.subscriptionId,
+        transaction_id: donationData.paymentId || donationData.subscriptionId,
         processed_at: donationData.timestamp || new Date().toISOString(),
         notes: JSON.stringify({
           paymentMethod: 'paypal',
@@ -358,7 +360,7 @@ class DonationService {
         status: donation.status as 'pending' | 'completed' | 'failed' | 'refunded',
         confirmations: 0, // This would be fetched from blockchain in real implementation
         requiredConfirmations,
-        txHash: donation.tx_hash || undefined,
+        txHash: donation.transaction_id || undefined,
         confirmedAt: donation.processed_at || undefined,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
         amount: donation.amount,
@@ -381,7 +383,7 @@ class DonationService {
     try {
       const updateData: DonationUpdate = {
         status,
-        tx_hash: txHash || null,
+        transaction_id: txHash || null,
         processed_at: status === 'completed' ? new Date().toISOString() : null,
       };
 

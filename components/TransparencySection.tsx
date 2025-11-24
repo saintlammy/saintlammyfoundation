@@ -54,23 +54,23 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
 
   const certifications: Certification[] = [
     {
-      name: 'CAC Registration',
+      name: 'CAC Registration No: 9015713',
       issuer: 'Corporate Affairs Commission',
-      year: '2022',
+      year: '2025',
       icon: Shield,
       verified: true
     },
     {
-      name: 'Nonprofit Status',
-      issuer: 'Federal Ministry of Humanitarian Affairs',
-      year: '2022',
+      name: 'Tax ID: 33715150-0001',
+      issuer: 'Federal Inland Revenue Service',
+      year: '2025',
       icon: Award,
       verified: true
     },
     {
-      name: 'Financial Transparency',
-      issuer: 'GuideStar Nigeria',
-      year: '2024',
+      name: 'Legal Entity: Saintlammy Community Care Initiative',
+      issuer: 'Incorporated November 2025',
+      year: '2025',
       icon: Eye,
       verified: true
     }

@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     } else if (req.method === 'PUT') {
       // Update donation status
-      const { donationId, status, txHash } = req.body;
+      const { donationId, status, txHash, notes } = req.body;
 
       if (!donationId || !status) {
         return res.status(400).json({
@@ -65,10 +65,72 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
+      // If notes provided (manual confirmation), update them
+      if (notes && status === 'completed') {
+        await donationService.updateDonationNotes(donationId, {
+          manualConfirmation: true,
+          confirmationNote: notes,
+          confirmedAt: new Date().toISOString(),
+          confirmedBy: 'admin' // TODO: Get actual admin user ID from auth
+        });
+      }
+
       return res.status(200).json({
         success: true,
         message: 'Donation status updated successfully'
       });
+
+    } else if (req.method === 'DELETE') {
+      // Delete donation (for pending donations that can't be verified)
+      const { donationId } = req.query;
+
+      if (!donationId || typeof donationId !== 'string') {
+        return res.status(400).json({
+          error: 'Missing required parameter: donationId'
+        });
+      }
+
+      try {
+        // Get donation details first to check if it's safe to delete
+        const donation = await donationService.getDonationById(donationId);
+
+        if (!donation) {
+          return res.status(404).json({
+            error: 'Donation not found'
+          });
+        }
+
+        // Only allow deletion of pending or failed donations
+        if (donation.status === 'completed') {
+          return res.status(403).json({
+            error: 'Cannot delete completed donations. Only pending or failed donations can be removed.',
+            donation: {
+              id: donation.id,
+              status: donation.status,
+              amount: donation.amount
+            }
+          });
+        }
+
+        // Delete the donation
+        await donationService.deleteDonation(donationId);
+
+        return res.status(200).json({
+          success: true,
+          message: 'Donation deleted successfully',
+          deletedDonation: {
+            id: donation.id,
+            amount: donation.amount,
+            status: donation.status
+          }
+        });
+      } catch (deleteError) {
+        console.error('Error deleting donation:', deleteError);
+        return res.status(500).json({
+          error: 'Failed to delete donation',
+          message: deleteError instanceof Error ? deleteError.message : 'Unknown error'
+        });
+      }
 
     } else if (req.method === 'POST') {
       // Test database connection

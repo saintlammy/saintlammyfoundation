@@ -158,17 +158,16 @@ export interface Database {
         Row: {
           id: string;
           donor_id: string | null;
-          category: 'orphan' | 'widow' | 'home' | 'general';
+          category: string;
           amount: number;
           currency: string;
-          frequency: 'one-time' | 'monthly' | 'weekly' | 'yearly';
-          payment_method: 'crypto' | 'naira' | 'bank_transfer' | 'card';
-          status: 'pending' | 'completed' | 'failed' | 'refunded';
-          tx_hash: string | null;
-          tx_reference: string | null;
-          beneficiary_id: string | null;
-          beneficiary_type: string | null;
-          notes: string | null;
+          frequency: string;
+          payment_method: string;
+          status: string;
+          transaction_id: string | null;
+          campaign_id: string | null;
+          notes: any | null; // JSONB
+          source: string | null;
           processed_at: string | null;
           created_at: string;
           updated_at: string;
@@ -176,17 +175,16 @@ export interface Database {
         Insert: {
           id?: string;
           donor_id?: string | null;
-          category: 'orphan' | 'widow' | 'home' | 'general';
+          category?: string;
           amount: number;
           currency?: string;
-          frequency?: 'one-time' | 'monthly' | 'weekly' | 'yearly';
-          payment_method: 'crypto' | 'naira' | 'bank_transfer' | 'card';
-          status?: 'pending' | 'completed' | 'failed' | 'refunded';
-          tx_hash?: string | null;
-          tx_reference?: string | null;
-          beneficiary_id?: string | null;
-          beneficiary_type?: string | null;
-          notes?: string | null;
+          frequency?: string;
+          payment_method?: string;
+          status?: string;
+          transaction_id?: string | null;
+          campaign_id?: string | null;
+          notes?: any | null; // JSONB
+          source?: string | null;
           processed_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -194,17 +192,16 @@ export interface Database {
         Update: {
           id?: string;
           donor_id?: string | null;
-          category?: 'orphan' | 'widow' | 'home' | 'general';
+          category?: string;
           amount?: number;
           currency?: string;
-          frequency?: 'one-time' | 'monthly' | 'weekly' | 'yearly';
-          payment_method?: 'crypto' | 'naira' | 'bank_transfer' | 'card';
-          status?: 'pending' | 'completed' | 'failed' | 'refunded';
-          tx_hash?: string | null;
-          tx_reference?: string | null;
-          beneficiary_id?: string | null;
-          beneficiary_type?: string | null;
-          notes?: string | null;
+          frequency?: string;
+          payment_method?: string;
+          status?: string;
+          transaction_id?: string | null;
+          campaign_id?: string | null;
+          notes?: any | null; // JSONB
+          source?: string | null;
           processed_at?: string | null;
           created_at?: string;
           updated_at?: string;

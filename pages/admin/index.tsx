@@ -103,11 +103,21 @@ const AdminDashboard: React.FC = () => {
   const statsCards = [
     {
       title: 'Total Donations',
-      value: stats ? `₦${stats.totalDonations.toLocaleString()}` : '₦0',
+      value: stats ? `$${stats.totalDonations.toLocaleString()}` : '$0',
+      subtitle: stats?.completedCount ? `${stats.completedCount} completed` : undefined,
       change: '+0%',
       trend: 'up',
       icon: Heart,
       color: 'bg-gradient-to-r from-pink-500 to-rose-500'
+    },
+    {
+      title: 'Pending Donations',
+      value: stats ? `$${stats.pendingDonations?.toLocaleString() || '0'}` : '$0',
+      subtitle: stats?.pendingCount ? `${stats.pendingCount} awaiting verification` : undefined,
+      change: '+0%',
+      trend: 'up',
+      icon: DollarSign,
+      color: 'bg-gradient-to-r from-orange-500 to-amber-500'
     },
     {
       title: 'Active Donors',
@@ -118,16 +128,8 @@ const AdminDashboard: React.FC = () => {
       color: 'bg-gradient-to-r from-blue-500 to-blue-600'
     },
     {
-      title: 'Crypto Wallets',
-      value: stats ? stats.cryptoWallets.toString() : '6',
-      change: '+0%',
-      trend: 'up',
-      icon: Wallet,
-      color: 'bg-gradient-to-r from-yellow-500 to-orange-500'
-    },
-    {
       title: 'Monthly Revenue',
-      value: stats ? `₦${stats.monthlyDonations.toLocaleString()}` : '₦0',
+      value: stats ? `$${stats.monthlyDonations.toLocaleString()}` : '$0',
       change: '+0%',
       trend: 'up',
       icon: TrendingUp,
@@ -181,22 +183,27 @@ const AdminDashboard: React.FC = () => {
             {statsCards.map((stat, index) => (
               <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="flex-1">
                     <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
-                    <div className="flex items-center mt-2">
-                      {stat.trend === 'up' ? (
-                        <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4 text-red-400 mr-1" />
-                      )}
-                      <span className={`text-sm font-medium ${
-                        stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {stat.change}
-                      </span>
-                      <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">vs last month</span>
-                    </div>
+                    {(stat as any).subtitle && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{(stat as any).subtitle}</p>
+                    )}
+                    {!(stat as any).subtitle && (
+                      <div className="flex items-center mt-2">
+                        {stat.trend === 'up' ? (
+                          <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
+                        ) : (
+                          <ArrowDownRight className="w-4 h-4 text-red-400 mr-1" />
+                        )}
+                        <span className={`text-sm font-medium ${
+                          stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {stat.change}
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">vs last month</span>
+                      </div>
+                    )}
                   </div>
                   <div className={`w-12 h-12 rounded-lg ${stat.color} flex items-center justify-center`}>
                     <stat.icon className="w-6 h-6 text-white" />
@@ -286,41 +293,60 @@ const AdminDashboard: React.FC = () => {
             <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
-                <a href="/admin/analytics" className="text-accent-400 text-sm hover:text-accent-300 transition-colors">
+                <a href="/admin/donations/transactions" className="text-accent-400 text-sm hover:text-accent-300 transition-colors">
                   View all
                 </a>
               </div>
               <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      activity.type === 'donation' ? 'bg-green-500/20 text-green-400' :
-                      activity.type === 'volunteer' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-purple-500/20 text-purple-400'
-                    }`}>
-                      {activity.type === 'donation' ? <Heart className="w-5 h-5" /> :
-                       activity.type === 'volunteer' ? <Users className="w-5 h-5" /> :
-                       <Users className="w-5 h-5" />}
+                {recentActivities.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">No recent activity</p>
+                ) : (
+                  recentActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        activity.type === 'donation' ?
+                          ((activity as any).status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400') :
+                        activity.type === 'volunteer' ? 'bg-blue-500/20 text-blue-400' :
+                        'bg-purple-500/20 text-purple-400'
+                      }`}>
+                        {activity.type === 'donation' ? <Heart className="w-5 h-5" /> :
+                         activity.type === 'volunteer' ? <Users className="w-5 h-5" /> :
+                         <Users className="w-5 h-5" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-gray-900 dark:text-white font-medium">
+                          {activity.user}
+                          {activity.type === 'donation' && (
+                            <>
+                              <span className={(activity as any).status === 'completed' ? 'text-green-400 ml-2' : 'text-orange-400 ml-2'}>
+                                donated ${activity.amount?.toLocaleString()}
+                              </span>
+                              {(activity as any).status === 'pending' && (
+                                <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                                  Pending
+                                </span>
+                              )}
+                              {(activity as any).status === 'completed' && (
+                                <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+                                  Completed
+                                </span>
+                              )}
+                            </>
+                          )}
+                          {activity.type === 'volunteer' && (
+                            <span className="text-blue-400 ml-2">volunteered for {(activity as any).program}</span>
+                          )}
+                          {activity.type === 'user' && (
+                            <span className="text-purple-400 ml-2">{(activity as any).action}</span>
+                          )}
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm">
+                          {activity.method && `via ${activity.method} • `}{activity.time}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {activity.user}
-                        {activity.type === 'donation' && (
-                          <span className="text-green-400 ml-2">donated ₦{activity.amount?.toLocaleString()}</span>
-                        )}
-                        {activity.type === 'volunteer' && (
-                          <span className="text-blue-400 ml-2">volunteered for {activity.program}</span>
-                        )}
-                        {activity.type === 'user' && (
-                          <span className="text-purple-400 ml-2">{activity.action}</span>
-                        )}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        {activity.method && `via ${activity.method} • `}{activity.time}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 

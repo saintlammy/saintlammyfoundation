@@ -33,10 +33,11 @@ const About: React.FC = () => {
   ];
 
   const milestones = [
-    { year: '2021', event: 'Saintlammy Foundation officially registered with CAC', icon: Award },
-    { year: '2022', event: 'First orphanage adoption program launched', icon: Heart },
-    { year: '2023', event: 'Reached 500+ widows and 300+ orphans supported', icon: Users },
-    { year: '2024', event: 'Expanded to crypto donations and digital transparency', icon: Globe }
+    { year: '2021', event: 'Foundation established with community outreach programs', icon: Heart },
+    { year: '2022', event: 'First orphanage adoption program launched', icon: Users },
+    { year: '2023', event: 'Reached 500+ widows and 300+ orphans supported', icon: Target },
+    { year: '2024', event: 'Expanded to crypto donations and digital transparency', icon: Globe },
+    { year: '2025', event: 'Officially incorporated as Saintlammy Community Care Initiative (CAC: 9015713)', icon: Award }
   ];
 
   const values = [
@@ -140,6 +141,9 @@ const About: React.FC = () => {
               </p>
               <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
                 What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
+                In November 2025, we achieved a significant milestone: official incorporation as <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span> with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.
               </p>
               <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed">
                 Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.

@@ -94,30 +94,34 @@ export const generateStructuredData = {
     "@context": "https://schema.org",
     "@type": "NGO",
     "name": "Saintlammy Foundation",
+    "legalName": "Saintlammy Community Care Initiative",
     "alternateName": "Saintlammy Community Care Initiative",
     "url": "https://saintlammyfoundation.org",
     "logo": "https://saintlammyfoundation.org/logo.png",
     "description": "A Nigerian charitable foundation empowering widows, orphans, and vulnerable communities through love, structure, and action.",
-    "foundingDate": "2022",
-    "founders": [
-      {
-        "@type": "Person",
-        "name": "Saintlammy"
-      }
-    ],
+    "foundingDate": "2021",
+    "incorporationDate": "2025-11-21",
+    "taxID": "33715150-0001",
+    "identifier": {
+      "@type": "PropertyValue",
+      "propertyID": "CAC Registration Number",
+      "value": "9015713"
+    },
     "areaServed": {
       "@type": "Country",
       "name": "Nigeria"
     },
+    "nonprofitStatus": "Nonprofit501c3",
     "mission": "Building a future where no widow is forgotten, no orphan left behind, and no vulnerable home stands alone.",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+234-123-456-7890",
+      "telephone": "+234-XXX-XXX-XXXX",
       "contactType": "customer service",
       "email": "info@saintlammyfoundation.org"
     },
     "address": {
       "@type": "PostalAddress",
+      "addressLocality": "Lagos",
       "addressCountry": "Nigeria"
     },
     "sameAs": [

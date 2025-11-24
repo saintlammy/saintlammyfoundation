@@ -47,11 +47,20 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({ ch
     const hasConsented = hasUserConsented();
     const consent = getCookieConsent();
 
+    // Debug logging
+    console.log('[CookieConsent] Checking consent on mount:', {
+      hasConsented,
+      consent,
+      localStorage: typeof window !== 'undefined' ? localStorage.getItem('saintlammy_cookie_consent') : null
+    });
+
     if (hasConsented && consent) {
+      console.log('[CookieConsent] User has consented, hiding banner');
       setConsentData(consent);
       setPreferences(consent.preferences);
       setShowBanner(false);
     } else {
+      console.log('[CookieConsent] No consent found, will show banner after delay');
       // Show banner after a short delay for better UX
       setTimeout(() => {
         setShowBanner(true);
@@ -60,6 +69,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({ ch
   }, []);
 
   const acceptAll = () => {
+    console.log('[CookieConsent] Accept All clicked');
     const allAcceptedPreferences = {
       necessary: true,
       analytics: true,
@@ -74,6 +84,8 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({ ch
 
     // Then get the saved consent data
     const consent = getCookieConsent();
+    console.log('[CookieConsent] Consent saved:', consent);
+    console.log('[CookieConsent] localStorage after save:', localStorage.getItem('saintlammy_cookie_consent'));
     setConsentData(consent);
 
     setShowBanner(false);

@@ -97,7 +97,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 <div className="h-8 w-auto rounded-lg overflow-hidden flex items-center">
                   <img
                     src="/images/logo/logo-icon.svg"
-                    alt="Saintlammy Foundation"
+                    alt="Saintlammy Community Care Initiative"
                     className="h-full w-auto object-contain dark:invert"
                   />
                 </div>
@@ -110,6 +110,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 across Nigeria through<br />
                 compassionate care and education.
               </p>
+
+              <div className="space-y-2 mb-6 text-xs text-gray-500 dark:text-gray-400">
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">Registered as:</span> Saintlammy Community Care Initiative</p>
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">CAC Reg No:</span> 9015713</p>
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">Tax ID:</span> 33715150-0001</p>
+              </div>
 
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
@@ -265,20 +271,22 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       <div className="bg-gray-300 dark:bg-gray-900 py-6 border-t border-gray-300 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-6 text-sm text-gray-700 dark:text-gray-400">
-              <span>© 2024 Saintlammy Foundation. All rights reserved.</span>
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-700 dark:text-gray-400">
+              <span>© 2025 Saintlammy Community Care Initiative. All rights reserved.</span>
               <span className="hidden md:inline">•</span>
-              <span className="hidden md:inline">CAC Registration Number: XXXXX</span>
+              <span className="hidden md:inline">CAC Reg: 9015713</span>
+              <span className="hidden md:inline">•</span>
+              <span className="hidden md:inline">Tax ID: 33715150-0001</span>
             </div>
 
-            <div className="flex items-center space-x-4 text-sm text-gray-700 dark:text-gray-400">
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 text-sm text-gray-700 dark:text-gray-400">
               <div className="flex items-center space-x-2">
                 <Globe className="w-4 h-4" />
                 <span>Nigeria</span>
               </div>
-              <span>•</span>
-              <span>Tax-exempt nonprofit organization</span>
-              <span>•</span>
+              <span className="hidden md:inline">•</span>
+              <span>Registered Nonprofit</span>
+              <span className="hidden md:inline">•</span>
               <button
                 onClick={openSettings}
                 className="flex items-center space-x-1 hover:text-green-600 transition-colors"
