@@ -36,9 +36,9 @@ const Hero: React.FC<HeroProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         <div className="animate-slide-up">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-900/20 dark:bg-white/10 backdrop-blur-md border border-gray-900/30 dark:border-white/20 text-sm font-medium text-gray-900 dark:text-white mb-8 shadow-sm">
-            <span className="w-2 h-2 bg-accent-400 rounded-full mr-3 animate-pulse"></span>
-            CAC Registered: Saintlammy Community Care Initiative
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-900/20 dark:bg-white/10 backdrop-blur-md border border-gray-900/30 dark:border-white/20 text-xs sm:text-sm font-medium text-gray-900 dark:text-white mb-6 sm:mb-8 shadow-sm max-w-full">
+            <span className="w-2 h-2 bg-accent-400 rounded-full mr-2 sm:mr-3 animate-pulse flex-shrink-0"></span>
+            <span className="truncate sm:whitespace-normal">CAC Registered: Saintlammy Community Care Initiative</span>
           </div>
 
           {/* Main Heading */}
