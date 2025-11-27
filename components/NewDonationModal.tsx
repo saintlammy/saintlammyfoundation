@@ -214,9 +214,13 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
     setIsProcessing(true);
     try {
+      // Pass donor information along with transaction hash
+      // This ensures name and email are captured even if not provided initially
       const result = await paymentService.submitCryptoTransaction(
         cryptoPaymentData.paymentId,
-        transactionHash
+        transactionHash,
+        donorName || undefined,
+        donorEmail || undefined
       );
 
       if (result.success) {

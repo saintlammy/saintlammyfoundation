@@ -461,7 +461,7 @@ Important:
     }
   } else if (req.method === 'PUT') {
     // Update donation with transaction hash
-    const { donationId, txHash } = req.body;
+    const { donationId, txHash, donorName, donorEmail } = req.body;
 
     if (!donationId || !txHash) {
       return res.status(400).json({
@@ -474,6 +474,12 @@ Important:
       const donation = await donationService.getDonationById(donationId);
       if (!donation) {
         return res.status(404).json({ error: 'Donation not found' });
+      }
+
+      // Update donor information if provided
+      if (donorName || donorEmail) {
+        console.log('Updating donor information:', { donationId, donorName, donorEmail });
+        await donationService.updateDonationDonorInfo(donationId, donorName, donorEmail);
       }
 
       // Update donation with transaction hash and set to pending verification

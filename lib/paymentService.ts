@@ -165,13 +165,26 @@ class PaymentService {
   /**
    * Submit transaction hash for crypto donation
    */
-  async submitCryptoTransaction(donationId: string, txHash: string): Promise<PaymentResult> {
+  async submitCryptoTransaction(
+    donationId: string,
+    txHash: string,
+    donorName?: string,
+    donorEmail?: string
+  ): Promise<PaymentResult> {
     try {
-      console.log('Submitting crypto transaction:', { donationId, txHash, url: `${this.baseUrl}/api/payments/crypto` });
+      console.log('Submitting crypto transaction:', {
+        donationId,
+        txHash,
+        donorName,
+        donorEmail,
+        url: `${this.baseUrl}/api/payments/crypto`
+      });
 
       const response = await axios.put(`${this.baseUrl}/api/payments/crypto`, {
         donationId,
-        txHash
+        txHash,
+        donorName,
+        donorEmail
       });
 
       console.log('Crypto transaction response:', response.data);

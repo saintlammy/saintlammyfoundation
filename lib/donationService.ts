@@ -474,6 +474,77 @@ class DonationService {
   }
 
   /**
+   * Update donation donor information (name and email)
+   */
+  async updateDonationDonorInfo(
+    donationId: string,
+    donorName?: string,
+    donorEmail?: string
+  ): Promise<boolean> {
+    try {
+      // Get current donation to find donor_id
+      const client = getTypedSupabaseClient();
+      const { data: donation, error: fetchError } = await (client as any)
+        .from('donations')
+        .select('donor_id, donor_name, donor_email')
+        .eq('id', donationId)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching donation for donor update:', fetchError);
+        return false;
+      }
+
+      // Update donation donor fields if provided
+      const donationUpdateData: any = {};
+      if (donorName && donorName !== donation.donor_name) {
+        donationUpdateData.donor_name = donorName;
+      }
+      if (donorEmail && donorEmail !== donation.donor_email) {
+        donationUpdateData.donor_email = donorEmail;
+      }
+
+      // Only update if there are changes
+      if (Object.keys(donationUpdateData).length > 0) {
+        const { error: updateError } = await (client as any)
+          .from('donations')
+          .update(donationUpdateData)
+          .eq('id', donationId);
+
+        if (updateError) {
+          console.error('Error updating donation donor info:', updateError);
+          return false;
+        }
+      }
+
+      // If donor exists and email/name provided, update donor record too
+      if (donation.donor_id && (donorName || donorEmail)) {
+        const donorUpdateData: any = {};
+        if (donorName) donorUpdateData.name = donorName;
+        if (donorEmail) {
+          // Encrypt email before storing
+          const { encrypted, hash } = await this.encryptEmail(donorEmail);
+          donorUpdateData.email_encrypted = encrypted;
+          donorUpdateData.email_hash = hash;
+        }
+
+        if (Object.keys(donorUpdateData).length > 0) {
+          await (client as any)
+            .from('donors')
+            .update(donorUpdateData)
+            .eq('id', donation.donor_id);
+        }
+      }
+
+      console.log('Updated donor info for donation:', donationId, { donorName, donorEmail });
+      return true;
+    } catch (error) {
+      console.error('Error in updateDonationDonorInfo:', error);
+      return false;
+    }
+  }
+
+  /**
    * Update donor's total donated amount
    */
   private async updateDonorTotalDonated(donationId: string): Promise<void> {
