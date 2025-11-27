@@ -19,7 +19,8 @@ import {
   ArrowUpRight,
   Trash2,
   Check,
-  X
+  X,
+  Printer
 } from 'lucide-react';
 
 interface Transaction {
@@ -221,6 +222,220 @@ const DonationTransactions: React.FC = () => {
     }
 
     return null;
+  };
+
+  const handleExportPDF = (transaction: Transaction) => {
+    // Create a printable HTML document
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups to download PDF');
+      return;
+    }
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Transaction Receipt - ${transaction.id}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              padding: 40px;
+              background: #f5f5f5;
+            }
+            .receipt {
+              background: white;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 40px;
+              box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+              border-radius: 12px;
+            }
+            .header {
+              text-align: center;
+              padding-bottom: 30px;
+              border-bottom: 3px solid #10b981;
+              margin-bottom: 30px;
+            }
+            .logo {
+              width: 120px;
+              height: 120px;
+              margin: 0 auto 20px;
+              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-center;
+              color: white;
+              font-size: 48px;
+              font-weight: bold;
+            }
+            h1 {
+              color: #1f2937;
+              font-size: 28px;
+              margin-bottom: 5px;
+            }
+            .subtitle {
+              color: #6b7280;
+              font-size: 14px;
+            }
+            .status-badge {
+              display: inline-block;
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+              margin-top: 15px;
+            }
+            .status-completed { background: #d1fae5; color: #065f46; }
+            .status-pending { background: #fef3c7; color: #92400e; }
+            .status-failed { background: #fee2e2; color: #991b1b; }
+            .amount-section {
+              text-align: center;
+              padding: 30px;
+              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+              border-radius: 12px;
+              margin: 30px 0;
+              color: white;
+            }
+            .amount-label {
+              font-size: 14px;
+              opacity: 0.9;
+              margin-bottom: 8px;
+            }
+            .amount-value {
+              font-size: 42px;
+              font-weight: bold;
+            }
+            .details-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              margin: 30px 0;
+            }
+            .detail-item {
+              padding: 15px;
+              background: #f9fafb;
+              border-radius: 8px;
+            }
+            .detail-label {
+              font-size: 12px;
+              color: #6b7280;
+              margin-bottom: 5px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .detail-value {
+              font-size: 16px;
+              color: #1f2937;
+              font-weight: 500;
+            }
+            .hash-section {
+              margin: 30px 0;
+              padding: 20px;
+              background: #f3f4f6;
+              border-radius: 8px;
+              border-left: 4px solid #10b981;
+            }
+            .hash-label {
+              font-size: 12px;
+              color: #6b7280;
+              margin-bottom: 8px;
+              text-transform: uppercase;
+            }
+            .hash-value {
+              font-family: 'Courier New', monospace;
+              font-size: 11px;
+              color: #1f2937;
+              word-break: break-all;
+            }
+            .footer {
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 1px solid #e5e7eb;
+              text-align: center;
+              color: #9ca3af;
+              font-size: 12px;
+            }
+            @media print {
+              body { background: white; padding: 0; }
+              .receipt { box-shadow: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <div class="header">
+              <div class="logo">SF</div>
+              <h1>Saintlammy Foundation</h1>
+              <p class="subtitle">Transaction Receipt</p>
+              <span class="status-badge status-${transaction.status}">
+                ${transaction.status.toUpperCase()}
+              </span>
+            </div>
+
+            <div class="amount-section">
+              <div class="amount-label">Donation Amount</div>
+              <div class="amount-value">${transaction.amount.toLocaleString()} ${transaction.currency}</div>
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-label">Transaction ID</div>
+                <div class="detail-value">#${transaction.id}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Date & Time</div>
+                <div class="detail-value">${new Date(transaction.createdAt).toLocaleString()}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Donor Name</div>
+                <div class="detail-value">${transaction.donorName}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Email</div>
+                <div class="detail-value">${transaction.donorEmail}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Payment Method</div>
+                <div class="detail-value">${transaction.paymentMethod}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Category</div>
+                <div class="detail-value">${transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}</div>
+              </div>
+            </div>
+
+            ${transaction.txHash ? `
+              <div class="hash-section">
+                <div class="hash-label">Blockchain Transaction Hash</div>
+                <div class="hash-value">${transaction.txHash}</div>
+              </div>
+            ` : ''}
+
+            <div class="footer">
+              <p>This is an official receipt from Saintlammy Foundation</p>
+              <p style="margin-top: 5px;">Generated on ${new Date().toLocaleString()}</p>
+              <p style="margin-top: 10px;">www.saintlammyfoundation.org | hello@saintlammyfoundation.org</p>
+            </div>
+          </div>
+          <script>
+            window.onload = () => {
+              setTimeout(() => {
+                window.print();
+                // Close after print dialog
+                setTimeout(() => window.close(), 500);
+              }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
   };
 
   const filteredTransactions = transactions.filter(transaction => {
@@ -719,26 +934,35 @@ const DonationTransactions: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  {selectedTransaction.status === 'pending' && (
+                <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center space-x-3">
                     <button
-                      onClick={() => {
-                        setSelectedTransaction(null);
-                        setConfirmModal({
-                          id: selectedTransaction.id,
-                          amount: selectedTransaction.amount,
-                          currency: selectedTransaction.currency
-                        });
-                      }}
-                      className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                      onClick={() => handleExportPDF(selectedTransaction)}
+                      className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                     >
-                      <CheckCircle className="w-4 h-4" />
-                      Manually Confirm
+                      <Download className="w-4 h-4" />
+                      Export as PDF
                     </button>
-                  )}
+                    {selectedTransaction.status === 'pending' && (
+                      <button
+                        onClick={() => {
+                          setSelectedTransaction(null);
+                          setConfirmModal({
+                            id: selectedTransaction.id,
+                            amount: selectedTransaction.amount,
+                            currency: selectedTransaction.currency
+                          });
+                        }}
+                        className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        Confirm
+                      </button>
+                    )}
+                  </div>
                   <button
                     onClick={() => setSelectedTransaction(null)}
-                    className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+                    className="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
                   >
                     Close
                   </button>
