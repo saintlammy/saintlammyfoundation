@@ -47,6 +47,7 @@ const DonationTransactions: React.FC = () => {
   const [confirmModal, setConfirmModal] = useState<{ id: string; amount: number; currency: string } | null>(null);
   const [confirmNotes, setConfirmNotes] = useState('');
   const [confirming, setConfirming] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [stats, setStats] = useState({
     total: 0,
     completed: 0,
@@ -200,6 +201,26 @@ const DonationTransactions: React.FC = () => {
       default:
         return `${baseClasses} bg-gray-500/20 text-gray-400`;
     }
+  };
+
+  const getBlockchainExplorerUrl = (txHash: string, currency: string): string | null => {
+    const lowerCurrency = currency.toLowerCase();
+
+    if (lowerCurrency.includes('btc') || lowerCurrency === 'bitcoin') {
+      return `https://blockstream.info/tx/${txHash}`;
+    } else if (lowerCurrency.includes('eth') || lowerCurrency === 'ethereum') {
+      return `https://etherscan.io/tx/${txHash}`;
+    } else if (lowerCurrency.includes('xrp') || lowerCurrency === 'ripple') {
+      return `https://xrpscan.com/tx/${txHash}`;
+    } else if (lowerCurrency.includes('sol') || lowerCurrency === 'solana') {
+      return `https://explorer.solana.com/tx/${txHash}`;
+    } else if (lowerCurrency.includes('bnb') || lowerCurrency.includes('bsc')) {
+      return `https://bscscan.com/tx/${txHash}`;
+    } else if (lowerCurrency.includes('trx') || lowerCurrency === 'tron') {
+      return `https://tronscan.org/#/transaction/${txHash}`;
+    }
+
+    return null;
   };
 
   const filteredTransactions = transactions.filter(transaction => {
@@ -362,7 +383,11 @@ const DonationTransactions: React.FC = () => {
                     </tr>
                   ) : (
                     filteredTransactions.map((transaction) => (
-                      <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr
+                        key={transaction.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
+                        onClick={() => setSelectedTransaction(transaction)}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {getStatusIcon(transaction.status)}
@@ -405,6 +430,10 @@ const DonationTransactions: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex items-center space-x-2">
                             <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedTransaction(transaction);
+                              }}
                               className="text-accent-500 hover:text-accent-600 dark:text-accent-400 dark:hover:text-accent-300"
                               title="View Details"
                             >
@@ -412,6 +441,11 @@ const DonationTransactions: React.FC = () => {
                             </button>
                             {transaction.txHash && (
                               <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const explorerUrl = getBlockchainExplorerUrl(transaction.txHash!, transaction.currency);
+                                  if (explorerUrl) window.open(explorerUrl, '_blank');
+                                }}
                                 className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
                                 title="View on Blockchain"
                               >
@@ -420,11 +454,14 @@ const DonationTransactions: React.FC = () => {
                             )}
                             {transaction.status === 'pending' && (
                               <button
-                                onClick={() => setConfirmModal({
-                                  id: transaction.id,
-                                  amount: transaction.amount,
-                                  currency: transaction.currency
-                                })}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setConfirmModal({
+                                    id: transaction.id,
+                                    amount: transaction.amount,
+                                    currency: transaction.currency
+                                  });
+                                }}
                                 className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300"
                                 title="Manually Confirm Donation"
                               >
@@ -434,9 +471,12 @@ const DonationTransactions: React.FC = () => {
                             {(transaction.status === 'pending' || transaction.status === 'failed') && (
                               <>
                                 {deleteConfirm === transaction.id ? (
-                                  <div className="flex items-center space-x-1">
+                                  <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
                                     <button
-                                      onClick={() => handleDeleteDonation(transaction.id)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteDonation(transaction.id);
+                                      }}
                                       disabled={deleting === transaction.id}
                                       className="px-2 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded disabled:opacity-50"
                                       title="Confirm Delete"
@@ -444,7 +484,10 @@ const DonationTransactions: React.FC = () => {
                                       {deleting === transaction.id ? 'Deleting...' : 'Confirm'}
                                     </button>
                                     <button
-                                      onClick={() => setDeleteConfirm(null)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteConfirm(null);
+                                      }}
                                       disabled={deleting === transaction.id}
                                       className="px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded disabled:opacity-50"
                                       title="Cancel"
@@ -454,7 +497,10 @@ const DonationTransactions: React.FC = () => {
                                   </div>
                                 ) : (
                                   <button
-                                    onClick={() => setDeleteConfirm(transaction.id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirm(transaction.id);
+                                    }}
                                     className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
                                     title="Delete (Pending/Failed only)"
                                   >
@@ -554,6 +600,147 @@ const DonationTransactions: React.FC = () => {
                     className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium disabled:opacity-50 transition-colors"
                   >
                     Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Transaction Detail Modal */}
+        {selectedTransaction && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Transaction Details
+                </h3>
+                <button
+                  onClick={() => setSelectedTransaction(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Transaction ID and Status */}
+                <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Transaction ID</p>
+                    <p className="text-lg font-mono text-gray-900 dark:text-white">
+                      #{selectedTransaction.id}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {getStatusIcon(selectedTransaction.status)}
+                    <span className={getStatusBadge(selectedTransaction.status)}>
+                      {selectedTransaction.status.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Amount */}
+                <div className="bg-gradient-to-br from-accent-500/10 to-accent-600/10 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Amount</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {selectedTransaction.amount.toLocaleString()} {selectedTransaction.currency}
+                  </p>
+                </div>
+
+                {/* Donor Information */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Donor Name</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
+                      {selectedTransaction.donorName}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Email</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white break-all">
+                      {selectedTransaction.donorEmail}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Payment Details */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Payment Method</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">
+                      {selectedTransaction.paymentMethod}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Category</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white capitalize">
+                      {selectedTransaction.category}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Transaction Hash */}
+                {selectedTransaction.txHash && (
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Transaction Hash</p>
+                      <button
+                        onClick={() => {
+                          const explorerUrl = getBlockchainExplorerUrl(selectedTransaction.txHash!, selectedTransaction.currency);
+                          if (explorerUrl) window.open(explorerUrl, '_blank');
+                        }}
+                        className="text-accent-500 hover:text-accent-600 dark:text-accent-400 dark:hover:text-accent-300 flex items-center space-x-1 text-sm"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>View on Blockchain</span>
+                      </button>
+                    </div>
+                    <p className="text-sm font-mono text-gray-900 dark:text-white break-all">
+                      {selectedTransaction.txHash}
+                    </p>
+                  </div>
+                )}
+
+                {/* Timestamp */}
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Transaction Date</p>
+                  <p className="text-base font-medium text-gray-900 dark:text-white">
+                    {new Date(selectedTransaction.createdAt).toLocaleString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    })}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  {selectedTransaction.status === 'pending' && (
+                    <button
+                      onClick={() => {
+                        setSelectedTransaction(null);
+                        setConfirmModal({
+                          id: selectedTransaction.id,
+                          amount: selectedTransaction.amount,
+                          currency: selectedTransaction.currency
+                        });
+                      }}
+                      className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Manually Confirm
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedTransaction(null)}
+                    className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Close
                   </button>
                 </div>
               </div>
