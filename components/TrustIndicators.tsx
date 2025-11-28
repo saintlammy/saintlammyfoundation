@@ -20,7 +20,7 @@ const TrustIndicators: React.FC = () => {
             {
               icon: Shield,
               title: 'Registered',
-              description: 'Registered No: 9015713',
+              description: 'RC: 9015713',
               detail: 'Saintlammy Community Care Initiative - Officially registered November 2025'
             },
             {

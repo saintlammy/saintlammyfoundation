@@ -112,8 +112,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
               </p>
 
               <div className="space-y-2 mb-6 text-xs text-gray-500 dark:text-gray-400">
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">Registered as:</span> Saintlammy Community Care Initiative</p>
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">Registered No:</span> 9015713</p>
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">RC:</span> 9015713</p>
               </div>
 
               <div className="space-y-3">
@@ -273,7 +272,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-700 dark:text-gray-400">
               <span>© 2025 Saintlammy Community Care Initiative. All rights reserved.</span>
               <span className="hidden md:inline">•</span>
-              <span className="hidden md:inline">Registered No: 9015713</span>
+              <span className="hidden md:inline">RC: 9015713</span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 text-sm text-gray-700 dark:text-gray-400">

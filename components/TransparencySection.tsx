@@ -54,7 +54,7 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
 
   const certifications: Certification[] = [
     {
-      name: 'Registered No: 9015713',
+      name: 'RC: 9015713',
       issuer: 'Corporate Affairs Commission',
       year: '2025',
       icon: Shield,
