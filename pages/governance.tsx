@@ -333,18 +333,18 @@ const GovernancePage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
                       <div>
                         <p className="font-medium text-gray-900 dark:text-gray-200 mb-2">Regulatory Compliance:</p>
-                        <ul className="space-y-1 text-gray-600 dark:text-gray-400">
-                          <li>✓ Corporate Affairs Commission (CAC) registered</li>
-                          <li>✓ Federal Inland Revenue Service (FIRS) tax compliant</li>
-                          <li>✓ Nigerian NGO regulatory framework adherence</li>
+                        <ul className="space-y-1 text-gray-600 dark:text-gray-400 list-disc list-inside">
+                          <li>Corporate Affairs Commission (CAC) registered</li>
+                          <li>Federal Inland Revenue Service (FIRS) tax compliant</li>
+                          <li>Nigerian NGO regulatory framework adherence</li>
                         </ul>
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-gray-200 mb-2">Operational Standards:</p>
-                        <ul className="space-y-1 text-gray-600 dark:text-gray-400">
-                          <li>✓ Financial transparency and reporting</li>
-                          <li>✓ Donor protection and privacy policies</li>
-                          <li>✓ Child safeguarding and protection measures</li>
+                        <ul className="space-y-1 text-gray-600 dark:text-gray-400 list-disc list-inside">
+                          <li>Financial transparency and reporting</li>
+                          <li>Donor protection and privacy policies</li>
+                          <li>Child safeguarding and protection measures</li>
                         </ul>
                       </div>
                     </div>
