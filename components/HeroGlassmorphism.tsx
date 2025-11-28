@@ -60,8 +60,10 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 text-center tracking-tight text-gray-900 dark:text-white font-display leading-tight">
-              {title}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 text-center tracking-tight font-display leading-tight">
+              <span className="bg-gradient-to-r from-accent-600 via-purple-600 to-accent-500 dark:from-accent-400 dark:via-purple-400 dark:to-accent-300 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                {title}
+              </span>
             </h1>
 
             {/* Subtitle */}
@@ -69,28 +71,24 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
               {subtitle}
             </p>
 
-            {/* Feature Pills - Compact Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-12 max-w-5xl mx-auto">
+            {/* Feature Pills - Old Capsule Design */}
+            <div className="flex flex-wrap justify-center gap-4 text-sm mb-12">
               {[
-                { icon: Heart, label: 'Orphan Care', color: 'from-red-500 to-pink-500' },
-                { icon: Users, label: 'Widows', color: 'from-purple-500 to-indigo-500' },
-                { icon: GraduationCap, label: 'Education', color: 'from-blue-500 to-cyan-500' },
-                { icon: TrendingUp, label: 'Growth', color: 'from-green-500 to-emerald-500' },
-                { icon: Handshake, label: 'Partners', color: 'from-orange-500 to-amber-500' },
-                { icon: MapPin, label: 'Nigeria', color: 'from-rose-500 to-red-500' }
+                { icon: Heart, label: 'Orphan Care' },
+                { icon: Users, label: 'Widows' },
+                { icon: GraduationCap, label: 'Education' },
+                { icon: TrendingUp, label: 'Growth' },
+                { icon: Handshake, label: 'Partners' },
+                { icon: MapPin, label: 'Nigeria' }
               ].map((feature, index) => (
-                <div
+                <span
                   key={index}
-                  className="flex flex-col items-center justify-center px-3 py-4 bg-gray-50/70 dark:bg-white/10 backdrop-blur-md rounded-2xl border border-gray-200/50 dark:border-white/20 hover:bg-gray-100/80 dark:hover:bg-white/15 transition-all duration-300 hover:scale-105 shadow-lg"
-                  style={{animationDelay: `${index * 0.05}s`}}
+                  className="flex items-center px-4 py-2 bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-full text-gray-900 dark:text-white/90 border border-gray-300/50 dark:border-white/20 font-medium text-sm hover:bg-white/50 dark:hover:bg-white/20 transition-all shadow-sm"
+                  style={{animationDelay: `${index * 0.1}s`}}
                 >
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-2 shadow-lg`}>
-                    <feature.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-xs font-semibold text-gray-900 dark:text-white text-center">
-                    {feature.label}
-                  </span>
-                </div>
+                  <feature.icon className="w-4 h-4 mr-2" />
+                  <span className="font-sans">{feature.label}</span>
+                </span>
               ))}
             </div>
 
@@ -141,7 +139,7 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-gray-400/40 dark:border-white/40 rounded-full flex justify-center backdrop-blur-sm">
           <div className="w-1 h-3 bg-gray-600/80 dark:bg-white/80 rounded-full mt-2"></div>
         </div>
