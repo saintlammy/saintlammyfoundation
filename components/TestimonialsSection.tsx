@@ -6,20 +6,20 @@ const TestimonialsSection: React.FC = () => {
   const testimonials = [
     {
       id: 1,
-      name: 'Chidinma',
+      name: 'Chidinma Okafor',
       role: 'Monthly Donor',
       location: 'Lagos, Nigeria',
       image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      quote: 'I chose to adopt a home through Saintlammy because of their transparency and heart. I see where my support is going.',
+      quote: 'Saintlammy Foundation\'s transparency and dedication to supporting widows touched my heart. I see exactly where my support is making a difference.',
       donation: 'Monthly Donor'
     },
     {
       id: 2,
-      name: 'Ibrahim',
-      role: 'Orphanage Director',
+      name: 'Ibrahim Yusuf',
+      role: 'Community Leader',
       location: 'Abuja, Nigeria',
       image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      quote: 'Saintlammy\'s timely interventions helped us feed and clothe 28 children when funds ran dry.',
+      quote: 'Saintlammy Foundation\'s timely interventions helped our community provide food and essential supplies to 28 vulnerable children and their families when resources ran dry.',
       donation: 'Partner Organization'
     },
     {
@@ -28,7 +28,7 @@ const TestimonialsSection: React.FC = () => {
       role: 'Partner Organization',
       location: 'Nigeria',
       image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      quote: 'We trust Saintlammy Foundation because they deliver real impact where it\'s most needed.',
+      quote: 'We trust Saintlammy Foundation because they deliver real impact where it\'s most needed, empowering widows and supporting vulnerable families across Nigeria.',
       donation: 'Strategic Partner'
     }
   ];
