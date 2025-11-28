@@ -111,10 +111,6 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                 compassionate care and education.
               </p>
 
-              <div className="space-y-2 mb-6 text-xs text-gray-500 dark:text-gray-400">
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">RC:</span> 9015713</p>
-              </div>
-
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-accent-400" />
