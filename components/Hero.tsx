@@ -33,7 +33,7 @@ const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center py-20 md:py-0">
         <div className="animate-slide-up">
           {/* Badge - Different text for mobile vs desktop */}
           <div className="flex justify-center mb-6 sm:mb-8">
