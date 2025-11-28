@@ -236,8 +236,8 @@ const HomeContent: React.FC<HomeProps> = ({ stats }) => {
           </div>
         </section>
 
-        {/* Beneficiary Showcase */}
-        <BeneficiaryShowcase />
+        {/* Beneficiary Showcase - Hidden until real documentation available */}
+        {/* <BeneficiaryShowcase /> */}
 
         {/* Impact Stats */}
         {stats && (
