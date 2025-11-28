@@ -30,12 +30,6 @@ const TransparencyPage: React.FC = () => {
       type: 'PDF'
     },
     {
-      title: 'Tax Identification Document',
-      description: 'Federal Republic of Nigeria Tax ID: 33715150-0001',
-      date: 'November 2025',
-      type: 'PDF'
-    },
-    {
       title: 'Annual Financial Report 2024',
       description: 'Comprehensive financial statements and program outcomes',
       date: 'Coming Soon',

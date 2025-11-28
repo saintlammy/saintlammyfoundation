@@ -19,8 +19,8 @@ const TrustIndicators: React.FC = () => {
           {[
             {
               icon: Shield,
-              title: 'CAC Registered',
-              description: 'Reg No: 9015713 | Tax ID: 33715150-0001',
+              title: 'Registered',
+              description: 'Registered No: 9015713',
               detail: 'Saintlammy Community Care Initiative - Officially registered November 2025'
             },
             {

@@ -54,17 +54,10 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
 
   const certifications: Certification[] = [
     {
-      name: 'CAC Registration No: 9015713',
+      name: 'Registered No: 9015713',
       issuer: 'Corporate Affairs Commission',
       year: '2025',
       icon: Shield,
-      verified: true
-    },
-    {
-      name: 'Tax ID: 33715150-0001',
-      issuer: 'Federal Inland Revenue Service',
-      year: '2025',
-      icon: Award,
       verified: true
     },
     {

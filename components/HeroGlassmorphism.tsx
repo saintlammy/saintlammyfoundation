@@ -46,18 +46,7 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl blur-xl opacity-40 dark:opacity-50"></div>
             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-600 rounded-2xl blur-xl opacity-30 dark:opacity-40"></div>
 
-            {/* CAC Badge */}
-            <div className="mb-8 flex justify-center">
-              <div className="inline-flex items-center px-5 py-2.5 rounded-full bg-accent-500/10 dark:bg-white/10 backdrop-blur-md border border-accent-500/30 dark:border-white/20 shadow-lg">
-                <Sparkles className="w-4 h-4 text-accent-600 dark:text-accent-300 mr-2 animate-pulse" />
-                <span className="text-sm font-semibold text-accent-700 dark:text-white hidden sm:inline">
-                  CAC Registered: Saintlammy Community Care Initiative
-                </span>
-                <span className="text-sm font-semibold text-accent-700 dark:text-white sm:hidden">
-                  CAC Registered
-                </span>
-              </div>
-            </div>
+            {/* Registration Badge - Removed as per client request */}
 
             {/* Main Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 text-center tracking-tight font-display leading-tight">
