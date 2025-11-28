@@ -249,7 +249,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
             <ThemeToggle variant="navigation" size="sm" />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-400 hover:text-white hover:bg-white/10 inline-flex items-center justify-center p-2 rounded-md transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 inline-flex items-center justify-center p-2 rounded-md transition-colors"
             >
               {isOpen ? (
                 <X className="h-6 w-6" />
@@ -262,8 +262,8 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
       </div>
 
       {/* Mobile menu */}
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-black/95 backdrop-blur-xl`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 border-t border-white/10">
+      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200/20 dark:border-white/10">
           {navLinks.map((link) => {
             const isActive = link.href ? router.pathname === link.href : false;
             const isMegaMenuActive = link.megaMenuOptions?.some(option => router.pathname === option.href);
@@ -272,7 +272,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
               return (
                 <div key={link.label} className="space-y-1">
                   <div className={`relative block px-3 py-2 text-base font-medium ${
-                    isMegaMenuActive ? 'text-white' : 'text-gray-300'
+                    isMegaMenuActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'
                   }`}>
                     {link.label}
                     {/* Mobile gradient underline */}
@@ -291,15 +291,15 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                           href={option.href}
                           onClick={() => setIsOpen(false)}
                           className={`flex items-center px-3 py-2 text-sm font-medium transition-colors group rounded-lg ${
-                            isOptionActive ? 'text-white bg-accent-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10'
+                            isOptionActive ? 'text-gray-900 dark:text-white bg-accent-500/20' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10'
                           }`}
                         >
                           <IconComponent className="w-4 h-4 mr-3" />
                           <div>
-                            <div className={isOptionActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}>
+                            <div className={isOptionActive ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'}>
                               {option.label}
                             </div>
-                            <div className="text-xs text-gray-500 group-hover:text-gray-400">
+                            <div className="text-xs text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400">
                               {option.description}
                             </div>
                           </div>
@@ -317,7 +317,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={`relative block px-3 py-2 text-base font-medium transition-colors group ${
-                  isActive ? 'text-white' : 'text-gray-300 hover:text-white'
+                  isActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 {link.label}
