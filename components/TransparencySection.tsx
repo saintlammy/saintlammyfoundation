@@ -23,28 +23,28 @@ interface Certification {
 const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '' }) => {
   const fundAllocations: FundAllocation[] = [
     {
-      category: '🥫 Direct Beneficiary Support',
+      category: 'Direct Beneficiary Support',
       percentage: 39.3,
       amount: '₦3,026,250 (~$2,175)',
       color: 'bg-accent-500',
       description: 'Food supplies, widow support, orphan care, open medical outreach'
     },
     {
-      category: '🚚 Program Logistics',
+      category: 'Program Logistics',
       percentage: 3.6,
       amount: '₦280,000 (~$201)',
       color: 'bg-blue-500',
       description: 'Transportation, delivery costs, on-ground operations'
     },
     {
-      category: '🧾 Administration & Branding',
+      category: 'Administration & Branding',
       percentage: 1.8,
       amount: '₦138,000 (~$99)',
       color: 'bg-green-500',
       description: 'Printing, banners, branding, basic platform operations'
     },
     {
-      category: '🛡 Emergency + Strategic Reserve',
+      category: 'Emergency + Strategic Reserve',
       percentage: 55.3,
       amount: '₦4,249,826 (~$3,045)',
       color: 'bg-yellow-500',
