@@ -43,9 +43,9 @@ const TrustIndicators: React.FC = () => {
             },
             {
               icon: Award,
-              title: '2+ Years Service',
-              description: 'Consistent delivery and community trust',
-              detail: 'Proven track record of impact and reliability'
+              title: '6 Months Service',
+              description: 'Consistent delivery and community trust since July 2024',
+              detail: 'Building a proven track record of impact and reliability'
             },
             {
               icon: DollarSign,

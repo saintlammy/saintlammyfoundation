@@ -179,7 +179,7 @@ const SponsorPage: React.FC = () => {
                   { label: 'Lives Sponsored', value: '350+', icon: Heart },
                   { label: 'Active Sponsors', value: '280+', icon: Users },
                   { label: 'Success Stories', value: '150+', icon: Star },
-                  { label: 'Years of Impact', value: '2+', icon: Clock }
+                  { label: 'Months of Impact', value: '6+', icon: Clock }
                 ].map((stat, index) => (
                   <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 text-center">
                     <stat.icon className="w-8 h-8 text-accent-400 mx-auto mb-3" />

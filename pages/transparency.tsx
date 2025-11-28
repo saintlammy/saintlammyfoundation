@@ -153,7 +153,7 @@ const TransparencyPage: React.FC = () => {
 
                   <div className="mt-8 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
                     <p className="text-green-400 text-sm font-medium">
-                      ✓ Total: ₦7,694,076 (~$5,520) • 39.3% direct aid + 55.3% strategic reserve for Q4 expansion
+                      Total: ₦7,694,076 (~$5,520) • 39.3% direct aid + 55.3% strategic reserve for Q4 expansion
                     </p>
                   </div>
                 </div>
