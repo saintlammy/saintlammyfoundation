@@ -303,7 +303,7 @@ const PartnershipTeamContent: React.FC<PartnershipTeamProps> = ({ teamMembers, p
                         value={formData.phone}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
-                        placeholder="+234 XXX XXX XXXX"
+                        placeholder="+234 706 307 6704"
                       />
                     </div>
 
@@ -437,7 +437,7 @@ const PartnershipTeamContent: React.FC<PartnershipTeamProps> = ({ teamMembers, p
                     Call Us
                   </h3>
                   <p className="text-gray-300 mb-4">
-                    +234 XXX XXX XXXX
+                    +234 706 307 6704
                   </p>
                   <p className="text-gray-400 text-sm">
                     Mon-Fri, 9 AM - 5 PM WAT

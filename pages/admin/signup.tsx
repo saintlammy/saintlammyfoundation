@@ -282,7 +282,7 @@ const AdminSignup: React.FC = () => {
                     className={`w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
                       errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
-                    placeholder="+234 XXX XXX XXXX"
+                    placeholder="+234 706 307 6704"
                   />
                 </div>
                 {errors.phone && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.phone}</p>}

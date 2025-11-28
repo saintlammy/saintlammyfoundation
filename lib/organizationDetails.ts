@@ -18,7 +18,7 @@ export const ORGANIZATION_DETAILS = {
 
   // Contact Information
   email: 'info@saintlammyfoundation.org',
-  phone: '+234 XXX XXX XXXX',
+  phone: '+234 706 307 6704',
   address: 'Lagos, Nigeria',
 
   // Website & Social

@@ -50,7 +50,7 @@ const Contact: React.FC = () => {
     {
       icon: Phone,
       title: 'Call Us',
-      details: '+234 XXX XXX XXXX',
+      details: '+234 706 307 6704',
       description: 'Available Monday to Friday, 9AM - 5PM WAT',
       link: 'tel:+234XXXXXXXXX'
     },

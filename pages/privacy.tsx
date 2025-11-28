@@ -181,7 +181,7 @@ const PrivacyPage: React.FC = () => {
                   <div className="space-y-2">
                     <p><strong>Email:</strong> privacy@saintlammyfoundation.org</p>
                     <p><strong>Address:</strong> Saintlammy Foundation, Lagos, Nigeria</p>
-                    <p><strong>Phone:</strong> +234 XXX XXX XXXX</p>
+                    <p><strong>Phone:</strong> +234 706 307 6704</p>
                   </div>
                   <p className="mt-4">We will respond to your inquiry within 30 days.</p>
                 </div>

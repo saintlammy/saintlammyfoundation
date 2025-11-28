@@ -343,7 +343,7 @@ const Partner: React.FC = () => {
                         </div>
                         <div>
                           <p className="text-sm text-gray-400">Phone</p>
-                          <p className="text-white">+234 XXX XXX XXXX</p>
+                          <p className="text-white">+234 706 307 6704</p>
                         </div>
                       </div>
 
