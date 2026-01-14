@@ -211,8 +211,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const { data, error } = await (supabase
-      .from('campaigns')
-      .update(updateData) as any)
+      .from('campaigns') as any)
+      .update(updateData)
       .eq('id', id)
       .select();
 
