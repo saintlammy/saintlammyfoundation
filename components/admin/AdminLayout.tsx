@@ -117,6 +117,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         { id: 'content-gallery', label: 'Gallery', icon: Image, href: '/admin/content/gallery' },
         { id: 'content-programs', label: 'Programs', icon: Heart, href: '/admin/content/programs' },
         { id: 'content-outreaches', label: 'Outreaches', icon: Calendar, href: '/admin/content/outreaches' },
+        { id: 'content-outreach-reports', label: 'Outreach Reports', icon: FileText, href: '/admin/content/outreach-reports' },
         { id: 'content-testimonials', label: 'Testimonials', icon: MessageSquare, href: '/admin/content/testimonials' }
       ]
     },
