@@ -10,6 +10,14 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // SECURITY: Check if supabase is available
+  if (!supabase) {
+    return res.status(500).json({
+      success: false,
+      error: 'Database not configured'
+    });
+  }
+
   try {
     const { timeRange = '30' } = req.query;
     const days = parseInt(timeRange as string) || 30;

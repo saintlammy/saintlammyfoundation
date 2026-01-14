@@ -2,10 +2,26 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { NewsletterFormSchema } from '@/lib/schemas';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { getTypedSupabaseClient } from '@/lib/supabase';
+import { rateLimitMiddleware } from '@/lib/rateLimit';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // SECURITY: Apply rate limiting to prevent spam signups
+  const rateLimit = rateLimitMiddleware(req, 'NEWSLETTER');
+
+  Object.entries(rateLimit.headers).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      error: 'Too many requests',
+      message: 'Please wait before subscribing again',
+      retryAfter: new Date(rateLimit.resetAt).toISOString()
+    });
   }
 
   try {

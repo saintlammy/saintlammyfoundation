@@ -239,14 +239,15 @@ export class BlockchainVerificationService {
           );
         } catch (rpcError) {
           console.error('RPC fallback failed:', rpcError);
-          // Return basic validation without API - assume valid for manual verification
+          // SECURITY FIX: Don't accept unverified transactions as valid
+          // Return invalid status - requires manual admin verification
           return {
-            isValid: true, // Assume valid if we can't verify - will be manually reviewed
-            confirmations: config.confirmationsRequired,
+            isValid: false, // CHANGED: Reject if we can't verify
+            confirmations: 0,
             amount: expectedAmount,
             toAddress: expectedToAddress,
             fromAddress: 'unknown',
-            error: undefined // No error - just not verified automatically
+            error: 'Unable to verify transaction automatically. API key required or blockchain temporarily unavailable. Admin manual verification needed.'
           };
         }
       }
@@ -394,15 +395,15 @@ export class BlockchainVerificationService {
       };
     } catch (error) {
       console.error(`${network} verification error:`, error);
-      // If verification fails, assume valid for manual review
-      // This prevents blocking legitimate donations due to API issues
+      // SECURITY FIX: Don't accept unverified transactions as valid
+      // Return invalid status - requires manual admin verification
       return {
-        isValid: true, // Assume valid - will be manually reviewed
-        confirmations: config.confirmationsRequired,
+        isValid: false, // CHANGED: Reject if verification fails
+        confirmations: 0,
         amount: expectedAmount,
         toAddress: expectedToAddress,
         fromAddress: 'unknown',
-        error: undefined // Don't show error to user - mark for manual review
+        error: `Transaction verification failed: ${error instanceof Error ? error.message : 'Unknown error'}. Admin manual verification required.`
       };
     }
   }

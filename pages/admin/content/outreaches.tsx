@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ContentEditor from '@/components/admin/ContentEditor';
-import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart } from 'lucide-react';
+import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart, FileText, ExternalLink } from 'lucide-react';
 // ContentService import removed - using direct mock data
 
 interface Outreach {
@@ -504,13 +505,24 @@ const OutreachesManagement: React.FC = () => {
                                 setShowEditor(true);
                               }}
                               className="text-blue-400 hover:text-blue-300 transition-colors"
+                              title="Edit Outreach"
                             >
                               <Edit className="w-4 h-4" />
                             </button>
                             {outreach.status === 'published' && (
-                              <button className="text-green-400 hover:text-green-300 transition-colors">
-                                <Eye className="w-4 h-4" />
-                              </button>
+                              <>
+                                <Link
+                                  href={`/outreach/${outreach.id}`}
+                                  target="_blank"
+                                  className="text-accent-400 hover:text-accent-300 transition-colors"
+                                  title="View Full Report"
+                                >
+                                  <FileText className="w-4 h-4" />
+                                </Link>
+                                <button className="text-green-400 hover:text-green-300 transition-colors" title="Preview">
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                              </>
                             )}
                           </div>
                         </td>

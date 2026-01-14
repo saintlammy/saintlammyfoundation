@@ -149,10 +149,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .from('content_pages')
         .select('*', { count: 'exact', head: true });
 
-      // Apply pagination and ordering
+      // Apply pagination and ordering - FIX: Handle query params as string | string[]
+      const offsetNum = parseInt(Array.isArray(offset) ? offset[0] : offset || '0');
+      const limitNum = parseInt(Array.isArray(limit) ? limit[0] : limit || '10');
+
       const { data: contentItems, error } = await query
         .order('created_at', { ascending: false })
-        .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1);
+        .range(offsetNum, offsetNum + limitNum - 1);
 
       if (error) {
         console.error('Error fetching content:', error);
@@ -177,8 +180,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         success: true,
         data: transformedData,
         total: count || 0,
-        limit: parseInt(limit),
-        offset: parseInt(offset)
+        limit: limitNum,
+        offset: offsetNum
       });
 
     } else if (req.method === 'POST') {

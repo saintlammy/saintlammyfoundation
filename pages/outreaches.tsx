@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
 
 const Outreaches: React.FC = () => {
@@ -301,10 +302,13 @@ const Outreaches: React.FC = () => {
                       ))}
                     </div>
 
-                    <button className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group">
+                    <Link
+                      href={`/outreach/${outreach.id}`}
+                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group"
+                    >
                       View Full Report
                       <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}

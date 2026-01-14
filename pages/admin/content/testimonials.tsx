@@ -116,6 +116,36 @@ const TestimonialsManagement: React.FC = () => {
     setStats(stats);
   };
 
+  // Function aliases for inline usage
+  const addTestimonial = async () => {
+    await handleSaveTestimonial(newTestimonial);
+    setNewTestimonial({ name: '', role: '', content: '', rating: 5 });
+  };
+
+  const updateTestimonial = async (id: string, updates: Partial<Testimonial>) => {
+    try {
+      const response = await fetch(`/api/testimonials?id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const updatedTestimonials = testimonials.map(t =>
+          t.id === id ? { ...t, ...updates, updated_at: new Date().toISOString() } : t
+        );
+        setTestimonials(updatedTestimonials);
+        updateStats(updatedTestimonials);
+      }
+    } catch (error) {
+      console.error('Error updating testimonial:', error);
+    }
+  };
+
+  const deleteTestimonial = async (id: string) => {
+    await handleDeleteTestimonial(id);
+  };
+
   const handleSaveTestimonial = async (testimonialData: any) => {
     try {
       if (selectedTestimonial) {

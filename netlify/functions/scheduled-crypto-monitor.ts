@@ -46,25 +46,27 @@ const handler = schedule('*/5 * * * *', async (event) => {
         const network = donation.cryptocurrency_network || 'bitcoin';
         const walletAddress = getWalletForNetwork(network);
         const expectedAmount = donation.amount;
-        const createdAt = new Date(donation.created_at);
+        const txHash = donation.transaction_hash || '';
+        const currency = donation.currency || 'BTC';
 
         console.log(`Checking donation ${donation.id} on ${network}...`);
 
-        // Verify transaction on blockchain
+        // Verify transaction on blockchain - FIX: Added missing txHash and currency parameters
         const verification = await blockchainVerification.verifyTransaction(
+          txHash,
           network,
-          walletAddress,
           expectedAmount,
-          createdAt
+          walletAddress,
+          currency
         );
 
-        if (verification.verified) {
+        if (verification.isValid) {  // FIX: Changed from 'verified' to 'isValid'
           // Update donation status to completed
           await (client as any)
             .from('donations')
             .update({
               status: 'completed',
-              transaction_hash: verification.transactionHash,
+              transaction_hash: txHash,  // FIX: Use txHash variable
               confirmed_at: new Date().toISOString(),
               blockchain_confirmations: verification.confirmations
             })
