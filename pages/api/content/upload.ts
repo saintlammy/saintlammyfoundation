@@ -103,12 +103,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Try to save to database, but don't fail if table doesn't exist
-    const { data: savedFile } = await client
-      .from('uploaded_files')
+    const { data: savedFile, error: dbError } = await (client
+      .from('uploaded_files') as any)
       .insert([fileMetadata] as any)
       .select()
-      .single()
-      .catch(() => ({ data: null, error: null }));
+      .single();
+
+    // Database error is non-fatal per the comment "don't fail if table doesn't exist"
+    if (dbError) {
+      console.log('Database save failed (non-fatal):', dbError);
+    }
 
     return res.status(200).json({
       success: true,
