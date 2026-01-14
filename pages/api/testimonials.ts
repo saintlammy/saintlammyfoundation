@@ -19,8 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
+
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
@@ -49,7 +50,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as any).map((item: any) => ({
       id: item.id,
       name: item.testimonial_details?.author_name || 'Anonymous',
       role: item.testimonial_details?.author_role || 'Beneficiary',
@@ -66,7 +67,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(transformedData);
   } catch (error) {
     console.error('API error:', error);
-    res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockTestimonials((limit as any) ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -100,7 +101,7 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .insert([newTestimonial])
+      .insert([newTestimonial] as any)
       .select()
       .single();
 
@@ -147,7 +148,7 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .update(updateData)
+      .update(updateData as any)
       .eq('id', id)
       .eq('type', 'testimonial')
       .select()

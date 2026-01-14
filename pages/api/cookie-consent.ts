@@ -70,7 +70,7 @@ export default async function handler(
           referrer: referrer,
           consent_date: new Date().toISOString(),
         },
-      ])
+      ] as any)
       .select()
       .single();
 
@@ -90,7 +90,7 @@ export default async function handler(
       success: true,
       message: 'Cookie consent logged successfully',
       logged: true,
-      id: data.id,
+      id: (data as any).id,
     });
   } catch (error) {
     console.error('Cookie consent API error:', error);

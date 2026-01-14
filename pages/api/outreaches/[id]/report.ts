@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data: outreach, error } = await supabase
       .from('content')
       .select('*')
-      .eq('id', id)
+      .eq('id', id as any)
       .eq('type', 'outreach')
       .single();
 

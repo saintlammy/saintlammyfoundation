@@ -19,9 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getNews(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
 
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
@@ -52,7 +52,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as any).map((item: any) => ({
       id: item.id,
       title: item.title,
       excerpt: item.excerpt,
@@ -67,7 +67,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     console.error('API error:', error);
     // Fallback to mock data on any error
-    res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockNews((limit as any) ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -140,7 +140,7 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .insert([newNews])
+      .insert([newNews] as any)
       .select()
       .single();
 
@@ -187,9 +187,9 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content')
-      .update(updateData)
+      .update(updateData) as any)
       .eq('id', id)
       .eq('type', 'news')
       .select()

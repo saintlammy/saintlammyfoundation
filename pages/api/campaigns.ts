@@ -179,7 +179,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { data, error } = await supabase
       .from('campaigns')
-      .insert([campaignData])
+      .insert([campaignData] as any)
       .select();
 
     if (error) {
@@ -210,9 +210,9 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('campaigns')
-      .update(updateData)
+      .update(updateData) as any)
       .eq('id', id)
       .select();
 

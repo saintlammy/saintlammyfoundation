@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `)
         .eq('content_id', content_id)
         .order('version', { ascending: false })
-        .limit(parseInt(limit));
+        .limit(parseInt(limit as any));
 
       if (error) {
         console.error('Error fetching revisions:', error);
@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Transform data to include mock author info
-      const transformedRevisions = revisions.map(revision => ({
+      const transformedRevisions = (revisions as any).map((revision: any) => ({
         ...revision,
         author: {
           name: 'Admin User', // In production, fetch from users table
@@ -96,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .limit(1)
         .single();
 
-      const nextVersion = (latestRevision?.version || 0) + 1;
+      const nextVersion = ((latestRevision as any)?.version || 0) + 1;
 
       const revisionData = {
         content_id,
@@ -112,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { data: newRevision, error } = await client
         .from('content_revisions')
-        .insert([revisionData])
+        .insert([revisionData] as any)
         .select()
         .single();
 
@@ -128,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(201).json({
         success: true,
         data: {
-          ...newRevision,
+          ...(newRevision as any),
           author: {
             name: 'Admin User',
             email: 'admin@saintlammyfoundation.org'
@@ -164,15 +164,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Update the main content with the revision data
-      const { data: updatedContent, error: updateError } = await client
+      const { data: updatedContent, error: updateError } = await (client
         .from('content_pages')
         .update({
-          title: revision.title,
-          content: revision.content,
-          excerpt: revision.excerpt,
-          metadata: revision.metadata,
+          title: (revision as any).title,
+          content: (revision as any).content,
+          excerpt: (revision as any).excerpt,
+          metadata: (revision as any).metadata,
           updated_at: new Date().toISOString()
-        })
+        }) as any)
         .eq('id', content_id)
         .select()
         .single();
@@ -195,21 +195,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .limit(1)
         .single();
 
-      const nextVersion = (latestRevision?.version || 0) + 1;
+      const nextVersion = ((latestRevision as any)?.version || 0) + 1;
 
       await client
         .from('content_revisions')
         .insert([{
           content_id,
-          title: revision.title,
-          content: revision.content,
-          excerpt: revision.excerpt,
-          metadata: revision.metadata,
+          title: (revision as any).title,
+          content: (revision as any).content,
+          excerpt: (revision as any).excerpt,
+          metadata: (revision as any).metadata,
           version: nextVersion,
           change_summary: `Restored from revision ${revision_id}`,
           author_id: null,
           created_at: new Date().toISOString()
-        }]);
+        }] as any);
 
       return res.status(200).json({
         success: true,

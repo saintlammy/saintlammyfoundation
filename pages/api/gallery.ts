@@ -19,9 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getGallery(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
 
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
@@ -52,7 +52,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as any).map((item: any) => ({
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
@@ -66,7 +66,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     console.error('API error:', error);
     // Fallback to mock data on any error
-    res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockGallery((limit as any) ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -160,7 +160,7 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .insert([newGalleryItem])
+      .insert([newGalleryItem] as any)
       .select()
       .single();
 
@@ -207,9 +207,9 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content')
-      .update(updateData)
+      .update(updateData) as any)
       .eq('id', id)
       .eq('type', 'gallery')
       .select()

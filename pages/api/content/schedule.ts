@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .lte('publish_date', new Date().toISOString());
       }
 
-      const { data: scheduledContent, error } = await query.limit(parseInt(limit));
+      const { data: scheduledContent, error } = await query.limit(parseInt(limit as any));
 
       if (error) {
         console.error('Error fetching scheduled content:', error);
@@ -81,13 +81,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Update content status to scheduled
-      const { data: updatedContent, error } = await client
+      const { data: updatedContent, error } = await (client
         .from('content_pages')
         .update({
           status: 'scheduled',
           publish_date: scheduleDate.toISOString(),
           updated_at: new Date().toISOString()
-        })
+        }) as any)
         .eq('id', content_id)
         .select()
         .single();
@@ -126,12 +126,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const now = new Date().toISOString();
-      let query = client
+      let query = (client
         .from('content_pages')
         .update({
           status: 'published',
           updated_at: now
-        })
+        }) as any)
         .in('id', content_ids)
         .eq('status', 'scheduled');
 
@@ -170,13 +170,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Update status back to draft and clear publish_date
-      const { data: updatedContent, error } = await client
+      const { data: updatedContent, error } = await (client
         .from('content_pages')
         .update({
           status: 'draft',
           publish_date: null,
           updated_at: new Date().toISOString()
-        })
+        }) as any)
         .eq('id', content_id)
         .eq('status', 'scheduled')
         .select()
@@ -244,13 +244,13 @@ export async function publishScheduledContent() {
     }
 
     // Publish the content
-    const contentIds = contentToPublish.map(item => item.id);
-    const { data: publishedContent, error: publishError } = await client
+    const contentIds = (contentToPublish as any).map((item: any) => item.id);
+    const { data: publishedContent, error: publishError } = await (client
       .from('content_pages')
       .update({
         status: 'published',
         updated_at: now
-      })
+      }) as any)
       .in('id', contentIds)
       .select();
 

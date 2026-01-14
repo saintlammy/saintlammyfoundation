@@ -167,7 +167,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Transform data to include mock author info for now
-      const transformedData = contentItems.map(item => ({
+      const transformedData = (contentItems as any).map((item: any) => ({
         ...item,
         views: Math.floor(Math.random() * 1000), // Mock views for now
         author: {
@@ -223,7 +223,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { data: newContent, error } = await client
         .from('content_pages')
-        .insert([dbData])
+        .insert([dbData] as any)
         .select()
         .single();
 
@@ -239,7 +239,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(201).json({
         success: true,
         data: {
-          ...newContent,
+          ...(newContent as any),
           author: {
             name: 'Admin User',
             email: 'admin@saintlammyfoundation.org'
@@ -304,9 +304,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       sanitizedData.updated_at = new Date().toISOString();
 
-      const { data: updatedContent, error } = await client
+      const { data: updatedContent, error } = await (client
         .from('content_pages')
-        .update(sanitizedData)
+        .update(sanitizedData) as any)
         .eq('id', id)
         .select()
         .single();
@@ -330,7 +330,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({
         success: true,
         data: {
-          ...updatedContent,
+          ...(updatedContent as any),
           author: {
             name: 'Admin User',
             email: 'admin@saintlammyfoundation.org'

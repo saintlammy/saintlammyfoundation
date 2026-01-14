@@ -19,9 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getStories(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
 
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
@@ -52,7 +52,7 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as any).map((item: any) => ({
       id: item.id,
       name: item.story_details?.beneficiary_name || 'Anonymous',
       age: item.story_details?.beneficiary_age,
@@ -69,7 +69,7 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     console.error('API error:', error);
     // Fallback to mock data on any error
-    res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockStories((limit as any) ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -148,7 +148,7 @@ async function createStory(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .insert([newStory])
+      .insert([newStory] as any)
       .select()
       .single();
 
@@ -197,7 +197,7 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .update(updateData)
+      .update(updateData as any)
       .eq('id', id)
       .eq('type', 'story')
       .select()

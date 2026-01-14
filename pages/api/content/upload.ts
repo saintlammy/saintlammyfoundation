@@ -105,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Try to save to database, but don't fail if table doesn't exist
     const { data: savedFile } = await client
       .from('uploaded_files')
-      .insert([fileMetadata])
+      .insert([fileMetadata] as any)
       .select()
       .single()
       .catch(() => ({ data: null, error: null }));
@@ -113,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({
       success: true,
       data: {
-        id: savedFile?.id || `file-${Date.now()}`,
+        id: (savedFile as any)?.id || `file-${Date.now()}`,
         filename: secureFilename,
         originalName: filename,
         url: publicUrl,

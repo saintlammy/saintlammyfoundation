@@ -19,8 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
+
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockOutreaches(limit ? parseInt(limit as string) : undefined));
@@ -49,7 +50,7 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as any).map((item: any) => ({
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
@@ -65,7 +66,7 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(transformedData);
   } catch (error) {
     console.error('API error:', error);
-    res.status(200).json(getMockOutreaches(limit ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockOutreaches((limit as any) ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -99,7 +100,7 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await supabase
       .from('content')
-      .insert([newOutreach])
+      .insert([newOutreach] as any)
       .select()
       .single();
 
@@ -144,9 +145,9 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content')
-      .update(updateData)
+      .update(updateData) as any)
       .eq('id', id)
       .eq('type', 'outreach')
       .select()
