@@ -27,7 +27,7 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(getMockOutreaches(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = supabase
+    let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'outreach')
@@ -98,7 +98,7 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content') as any)
       .insert([newOutreach] as any)
       .select()
@@ -184,7 +184,7 @@ async function deleteOutreach(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase
       .from('content') as any)
       .delete()
       .eq('id', id)

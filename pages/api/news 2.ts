@@ -19,16 +19,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getNews(req: NextApiRequest, res: NextApiResponse) {
-  const { status = 'published', limit } = req.query;
 
   try {
+    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = (supabase
-      .from('content') as any)
+    let query = supabase
+      .from('content')
       .select('*')
       .eq('type', 'news')
       .eq('status', status)
@@ -52,7 +52,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = (data as any).map((item: any) => ({
+    const transformedData = data.map(item => ({
       id: item.id,
       title: item.title,
       excerpt: item.excerpt,
@@ -67,7 +67,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     console.error('API error:', error);
     // Fallback to mock data on any error
-    res.status(200).json(getMockNews((limit as any) ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -138,9 +138,9 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
-      .insert([newNews] as any)
+    const { data, error } = await supabase
+      .from('content')
+      .insert([newNews])
       .select()
       .single();
 
@@ -187,8 +187,8 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
+    const { data, error } = await supabase
+      .from('content')
       .update(updateData)
       .eq('id', id)
       .eq('type', 'news')
@@ -227,8 +227,8 @@ async function deleteNews(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await (supabase
-      .from('content') as any)
+    const { error } = await supabase
+      .from('content')
       .delete()
       .eq('id', id)
       .eq('type', 'news');

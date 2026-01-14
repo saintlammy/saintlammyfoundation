@@ -27,7 +27,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = supabase
+    let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'gallery')
@@ -158,7 +158,7 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content') as any)
       .insert([newGalleryItem] as any)
       .select()
@@ -247,7 +247,7 @@ async function deleteGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase
       .from('content') as any)
       .delete()
       .eq('id', id)

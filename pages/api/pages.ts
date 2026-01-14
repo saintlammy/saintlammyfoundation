@@ -27,7 +27,7 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = supabase
+    let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'page')
@@ -100,7 +100,7 @@ async function createPage(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content') as any)
       .insert([newPage] as any)
       .select()
@@ -186,7 +186,7 @@ async function deletePage(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase
       .from('content') as any)
       .delete()
       .eq('id', id)

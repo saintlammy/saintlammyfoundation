@@ -19,16 +19,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
-  const { status = 'published', limit } = req.query;
-
   try {
+    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = (supabase
-      .from('content') as any)
+    let query = supabase
+      .from('content')
       .select('*')
       .eq('type', 'testimonial')
       .eq('status', status)
@@ -50,7 +49,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = (data as any).map((item: any) => ({
+    const transformedData = data.map(item => ({
       id: item.id,
       name: item.testimonial_details?.author_name || 'Anonymous',
       role: item.testimonial_details?.author_role || 'Beneficiary',
@@ -67,7 +66,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(transformedData);
   } catch (error) {
     console.error('API error:', error);
-    res.status(200).json(getMockTestimonials((limit as any) ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
   }
 }
 
@@ -99,9 +98,9 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
-      .insert([newTestimonial] as any)
+    const { data, error } = await supabase
+      .from('content')
+      .insert([newTestimonial])
       .select()
       .single();
 
@@ -146,9 +145,9 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
-      .update(updateData as any)
+    const { data, error } = await supabase
+      .from('content')
+      .update(updateData)
       .eq('id', id)
       .eq('type', 'testimonial')
       .select()
@@ -185,8 +184,8 @@ async function deleteTestimonial(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await (supabase
-      .from('content') as any)
+    const { error } = await supabase
+      .from('content')
       .delete()
       .eq('id', id)
       .eq('type', 'testimonial');

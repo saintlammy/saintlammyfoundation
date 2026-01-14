@@ -27,7 +27,7 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(getMockPrograms(limit ? parseInt(limit as string) : undefined));
     }
 
-    let query = supabase
+    let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'program')
@@ -97,7 +97,7 @@ async function createProgram(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content') as any)
       .insert([newProgram] as any)
       .select()
@@ -144,7 +144,7 @@ async function updateProgram(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
@@ -183,7 +183,7 @@ async function deleteProgram(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase
       .from('content') as any)
       .delete()
       .eq('id', id)
