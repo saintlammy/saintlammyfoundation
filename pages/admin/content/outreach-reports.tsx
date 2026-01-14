@@ -149,6 +149,29 @@ const OutreachReportsManagement: React.FC = () => {
     await loadOutreachReport(outreach.id);
   };
 
+  const handleDeleteReport = async (outreachId: string, outreachTitle: string) => {
+    if (!confirm(`Are you sure you want to delete the report for "${outreachTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/outreaches/${outreachId}/report`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('Outreach report deleted successfully!');
+        loadOutreaches();
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete report');
+      }
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      alert(`Failed to delete report: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   const handleSaveReport = async () => {
     if (!reportData || !selectedOutreach) return;
 
@@ -554,6 +577,13 @@ const OutreachReportsManagement: React.FC = () => {
                             >
                               <Eye className="w-4 h-4" />
                             </Link>
+                            <button
+                              onClick={() => handleDeleteReport(outreach.id, outreach.title)}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete Report"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>

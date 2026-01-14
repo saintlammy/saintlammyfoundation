@@ -31,8 +31,12 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
       .from('content') as any)
       .select('*')
       .eq('type', 'outreach')
-      .eq('status', status)
       .order('publish_date', { ascending: false});
+
+    // Only filter by status if it's not 'all'
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -250,7 +254,7 @@ function getMockOutreaches(limit?: number) {
       location: 'Ikeja, Lagos',
       date: '2024-10-01T00:00:00Z',
       beneficiaries: 450,
-      status: 'published',
+      status: 'completed',
       created_at: '2024-09-01T00:00:00Z',
       updated_at: '2024-10-01T00:00:00Z'
     },
@@ -262,7 +266,7 @@ function getMockOutreaches(limit?: number) {
       location: 'Multiple Locations',
       date: '2024-09-12T00:00:00Z',
       beneficiaries: 320,
-      status: 'published',
+      status: 'completed',
       created_at: '2024-08-01T00:00:00Z',
       updated_at: '2024-09-12T00:00:00Z'
     },
@@ -274,7 +278,7 @@ function getMockOutreaches(limit?: number) {
       location: 'Rural Kogi State',
       date: '2024-08-20T00:00:00Z',
       beneficiaries: 600,
-      status: 'published',
+      status: 'completed',
       created_at: '2024-07-01T00:00:00Z',
       updated_at: '2024-08-20T00:00:00Z'
     }
