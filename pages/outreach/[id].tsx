@@ -127,17 +127,17 @@ const OutreachReportPage: React.FC = () => {
   };
 
   const getMockOutreachReport = (outreachId: string): OutreachReport => {
-    return {
-      id: outreachId,
-      title: 'Independence Day Medical Outreach 2024',
-      date: 'October 1, 2024',
-      location: 'Ikeja, Lagos State',
-      status: 'completed',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      description: 'Our flagship medical outreach program providing free healthcare services, medical check-ups, medications, and health education to underserved communities in Ikeja, Lagos.',
-
-      targetBeneficiaries: 400,
-      actualBeneficiaries: 487,
+    const reports: Record<string, OutreachReport> = {
+      '4': {
+        id: '4',
+        title: 'Independence Day Medical Outreach 2024',
+        date: 'October 1, 2024',
+        location: 'Ikeja, Lagos State',
+        status: 'completed',
+        image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+        description: 'Our flagship medical outreach program providing free healthcare services, medical check-ups, medications, and health education to underserved communities in Ikeja, Lagos.',
+        targetBeneficiaries: 400,
+        actualBeneficiaries: 487,
       beneficiaryCategories: [
         { category: 'Children (0-12)', count: 145 },
         { category: 'Teenagers (13-17)', count: 68 },
@@ -238,14 +238,230 @@ const OutreachReportPage: React.FC = () => {
         }
       ],
 
-      reportDocument: '/reports/independence-day-medical-outreach-2024.pdf',
-
-      socialMedia: [
-        { platform: 'Facebook', reach: 12500, engagement: 1850 },
-        { platform: 'Instagram', reach: 8300, engagement: 2100 },
-        { platform: 'Twitter', reach: 5600, engagement: 980 }
-      ]
+        reportDocument: '/reports/independence-day-medical-outreach-2024.pdf',
+        socialMedia: [
+          { platform: 'Facebook', reach: 12500, engagement: 1850 },
+          { platform: 'Instagram', reach: 8300, engagement: 2100 },
+          { platform: 'Twitter', reach: 5600, engagement: 980 }
+        ]
+      },
+      '5': {
+        id: '5',
+        title: 'Back-to-School Support 2024',
+        date: 'September 12, 2024',
+        location: 'Multiple Locations, Nigeria',
+        status: 'completed',
+        image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+        description: 'Annual back-to-school program providing school supplies, uniforms, and educational materials to children from vulnerable families across Nigeria.',
+        targetBeneficiaries: 300,
+        actualBeneficiaries: 320,
+        beneficiaryCategories: [
+          { category: 'Primary School (6-11)', count: 180 },
+          { category: 'Secondary School (12-17)', count: 140 }
+        ],
+        impact: [
+          { title: 'School Bags Distributed', value: 320, description: 'Quality backpacks with supplies' },
+          { title: 'Uniforms Provided', value: 150, description: 'Complete school uniforms' },
+          { title: 'Exercise Books', value: 1280, description: '4 books per child' },
+          { title: 'Writing Materials', value: 960, description: 'Pens, pencils, erasers' },
+          { title: 'Schools Supported', value: 8, description: 'Across 8 different schools' },
+          { title: 'Scholarship Awards', value: 12, description: 'Full year scholarships' }
+        ],
+        budget: {
+          planned: 1800000,
+          actual: 1750000,
+          breakdown: [
+            { category: 'School Supplies', amount: 840000, percentage: 48 },
+            { category: 'Uniforms', amount: 525000, percentage: 30 },
+            { category: 'Scholarships', amount: 245000, percentage: 14 },
+            { category: 'Logistics & Distribution', amount: 105000, percentage: 6 },
+            { category: 'Admin & Marketing', amount: 35000, percentage: 2 }
+          ]
+        },
+        volunteers: {
+          registered: 28,
+          participated: 25,
+          hours: 150
+        },
+        activities: [
+          { title: 'Beneficiary Registration', description: 'Student and family registration process', completed: true },
+          { title: 'Needs Assessment', description: 'Individual student needs evaluation', completed: true },
+          { title: 'School Bag Packing', description: 'Packing supplies into backpacks', completed: true },
+          { title: 'Uniform Sizing & Distribution', description: 'Fitting and distribution of uniforms', completed: true },
+          { title: 'Book Distribution', description: 'Exercise books and textbooks', completed: true },
+          { title: 'Scholarship Selection', description: 'Merit-based scholarship awards', completed: true },
+          { title: 'Parent Orientation', description: 'Educational support session for parents', completed: true },
+          { title: 'School Partnership Meetings', description: 'Coordination with school administrators', completed: true }
+        ],
+        gallery: [
+          'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800',
+          'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
+          'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+          'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800',
+          'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800',
+          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800'
+        ],
+        testimonials: [
+          {
+            name: 'Mrs. Blessing Eze',
+            role: 'Parent',
+            message: 'My three children received everything they needed for school. I was struggling to buy these items. Thank you Saintlammy Foundation!',
+            image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'
+          },
+          {
+            name: 'Mr. Tunde Bakare',
+            role: 'School Principal',
+            message: 'This program has helped reduce absenteeism significantly. Children now come to school properly equipped and motivated to learn.',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+          },
+          {
+            name: 'Chioma Nwankwo',
+            role: 'Scholarship Recipient',
+            message: 'Receiving this scholarship means I can continue my education. I promise to work hard and make everyone proud!',
+            image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400'
+          }
+        ],
+        futurePlans: [
+          'Expand to reach 500 children in 2025',
+          'Add computer training program for secondary school students',
+          'Establish mentorship program pairing students with professionals',
+          'Create annual scholarship fund for university education',
+          'Partner with more schools across Nigeria'
+        ],
+        partners: [
+          {
+            name: 'Nigerian Educational Trust',
+            contribution: 'Scholarship funding support'
+          },
+          {
+            name: 'Stationery Suppliers Association',
+            contribution: 'Discounted school supplies'
+          },
+          {
+            name: 'Local School Boards',
+            contribution: 'Beneficiary identification and coordination'
+          }
+        ],
+        reportDocument: '/reports/back-to-school-support-2024.pdf',
+        socialMedia: [
+          { platform: 'Facebook', reach: 8200, engagement: 1340 },
+          { platform: 'Instagram', reach: 6700, engagement: 1520 },
+          { platform: 'Twitter', reach: 3400, engagement: 580 }
+        ]
+      },
+      '6': {
+        id: '6',
+        title: 'Clean Water Initiative 2024',
+        date: 'August 20, 2024',
+        location: 'Rural Kogi State, Nigeria',
+        status: 'completed',
+        image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+        description: 'Community water access project installing water pumps and distributing purification tablets to provide clean drinking water to rural communities in Kogi State.',
+        targetBeneficiaries: 550,
+        actualBeneficiaries: 600,
+        beneficiaryCategories: [
+          { category: 'Households', count: 120 },
+          { category: 'School Children', count: 200 },
+          { category: 'Community Members', count: 280 }
+        ],
+        impact: [
+          { title: 'Water Pumps Installed', value: 3, description: 'Solar-powered borehole pumps' },
+          { title: 'People with Clean Water Access', value: 600, description: 'Sustained water access' },
+          { title: 'Purification Tablets', value: 1200, description: 'Monthly supply distributed' },
+          { title: 'Water Storage Tanks', value: 6, description: '1000L community tanks' },
+          { title: 'Hygiene Training Sessions', value: 8, description: 'Water safety education' },
+          { title: 'Households Connected', value: 120, description: 'Families with access' }
+        ],
+        budget: {
+          planned: 3500000,
+          actual: 3420000,
+          breakdown: [
+            { category: 'Borehole Drilling & Pumps', amount: 2052000, percentage: 60 },
+            { category: 'Water Tanks & Storage', amount: 684000, percentage: 20 },
+            { category: 'Purification Tablets', amount: 342000, percentage: 10 },
+            { category: 'Training & Education', amount: 205200, percentage: 6 },
+            { category: 'Maintenance Fund', amount: 136800, percentage: 4 }
+          ]
+        },
+        volunteers: {
+          registered: 18,
+          participated: 15,
+          hours: 240
+        },
+        activities: [
+          { title: 'Site Survey & Assessment', description: 'Geological survey for borehole locations', completed: true },
+          { title: 'Community Consultation', description: 'Meetings with community leaders', completed: true },
+          { title: 'Borehole Drilling', description: 'Professional drilling operations', completed: true },
+          { title: 'Pump Installation', description: 'Solar-powered pump setup', completed: true },
+          { title: 'Storage Tank Placement', description: 'Installation of water storage tanks', completed: true },
+          { title: 'Water Quality Testing', description: 'Laboratory testing for safety', completed: true },
+          { title: 'Hygiene Training', description: 'Water safety and hygiene education', completed: true },
+          { title: 'Maintenance Committee Formation', description: 'Local sustainability team', completed: true },
+          { title: 'Tablet Distribution', description: 'Purification tablets to households', completed: true }
+        ],
+        gallery: [
+          'https://images.unsplash.com/photo-1541840031508-326b77c9a17e?w=800',
+          'https://images.unsplash.com/photo-1594398901394-4e34939a4fd0?w=800',
+          'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800',
+          'https://images.unsplash.com/photo-1600711940033-c2e8d6cc2341?w=800',
+          'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800',
+          'https://images.unsplash.com/photo-1541840031508-326b77c9a17e?w=800'
+        ],
+        testimonials: [
+          {
+            name: 'Chief Idris Yakubu',
+            role: 'Village Head',
+            message: 'For many years our people walked 5 kilometers for water. Now we have clean water in our community. This has changed our lives!',
+            image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400'
+          },
+          {
+            name: 'Fatima Abdullahi',
+            role: 'Community Member',
+            message: 'My children used to get sick from bad water. Since the new pumps, our health has improved. God bless this foundation.',
+            image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400'
+          },
+          {
+            name: 'Engr. David Ojo',
+            role: 'Project Engineer',
+            message: 'Working on this project was fulfilling. The solar pumps are sustainable and the community is trained to maintain them.',
+            image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400'
+          }
+        ],
+        futurePlans: [
+          'Install 5 more water pumps in neighboring communities',
+          'Establish water testing laboratory in Kogi State',
+          'Train local technicians for pump maintenance',
+          'Launch rainwater harvesting program',
+          'Create WASH (Water, Sanitation, Hygiene) education curriculum for schools'
+        ],
+        partners: [
+          {
+            name: 'WaterAid Nigeria',
+            contribution: 'Technical expertise and training'
+          },
+          {
+            name: 'Kogi State Water Board',
+            contribution: 'Permits and logistical support'
+          },
+          {
+            name: 'Solar Energy Foundation',
+            contribution: 'Solar panel donations'
+          },
+          {
+            name: 'Local Community Leaders',
+            contribution: 'Land allocation and community mobilization'
+          }
+        ],
+        reportDocument: '/reports/clean-water-initiative-2024.pdf',
+        socialMedia: [
+          { platform: 'Facebook', reach: 15600, engagement: 2340 },
+          { platform: 'Instagram', reach: 9200, engagement: 1890 },
+          { platform: 'Twitter', reach: 6100, engagement: 1120 }
+        ]
+      }
     };
+
+    return reports[outreachId] || reports['4'];
   };
 
   const handleShare = () => {
