@@ -52,9 +52,17 @@ export default async function handler(
     const ipAddress = getClientIp(req);
     const userAgent = req.headers['user-agent'] || null;
 
-    // Log to database
-    const { data, error } = await supabase
-      .from('cookie_consent_logs')
+    // Log to database if supabase is available
+    if (!supabase) {
+      return res.status(200).json({
+        success: true,
+        message: 'Consent recorded locally',
+        logged: false,
+      });
+    }
+
+    const { data, error } = await (supabase
+      .from('cookie_consent_logs') as any)
       .insert([
         {
           session_id: sessionId,
@@ -70,7 +78,7 @@ export default async function handler(
           referrer: referrer,
           consent_date: new Date().toISOString(),
         },
-      ])
+      ] as any)
       .select()
       .single();
 
@@ -90,7 +98,7 @@ export default async function handler(
       success: true,
       message: 'Cookie consent logged successfully',
       logged: true,
-      id: data.id,
+      id: (data as any)?.id,
     });
   } catch (error) {
     console.error('Cookie consent API error:', error);
