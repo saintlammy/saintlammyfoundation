@@ -142,24 +142,27 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
   const statLabel = featuredCampaign.stat_label || `${featuredCampaign.category || 'People'} Need`;
   const urgencyMessage = featuredCampaign.urgency_message || 'Time is running out';
 
-  const mapCampaignCategoryToDonationCategory = (campaignCategory?: string): 'orphan' | 'widow' | 'home' | 'general' => {
+  const mapCampaignCategoryToDonationCategory = (campaignCategory?: string): 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' => {
     // Map campaign categories to valid donation categories
-    const categoryMap: Record<string, 'orphan' | 'widow' | 'home' | 'general'> = {
+    const categoryMap: Record<string, 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure'> = {
       'widows': 'widow',
       'widow': 'widow',
       'orphans': 'orphan',
       'orphan': 'orphan',
-      'medical': 'general',
-      'education': 'general',
-      'empowerment': 'general',
-      'emergency': 'general',
-      'healthcare': 'general',
-      'infrastructure': 'general'
+      'home': 'family',
+      'family': 'family',
+      'medical': 'healthcare',
+      'education': 'education',
+      'empowerment': 'empowerment',
+      'emergency': 'emergency',
+      'healthcare': 'healthcare',
+      'infrastructure': 'infrastructure',
+      'outreach': 'outreach'
     };
 
     return campaignCategory && categoryMap[campaignCategory.toLowerCase()]
       ? categoryMap[campaignCategory.toLowerCase()]
-      : 'general';
+      : 'emergency';
   };
 
   const handleDonateToCampaign = () => {
