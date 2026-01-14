@@ -2,7 +2,108 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient } from '@/lib/supabase';
 
 // In-memory storage for mock reports (fallback when no database)
-const mockReports: Record<string, any> = {};
+// Pre-populated with default report data
+const mockReports: Record<string, any> = {
+  '4': {
+    id: '4',
+    title: 'Independence Day Medical Outreach 2024',
+    date: '2024-10-01',
+    location: 'Ikeja, Lagos State',
+    status: 'completed',
+    image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    description: 'Our flagship medical outreach program providing free healthcare services, medical check-ups, medications, and health education to underserved communities in Ikeja, Lagos.',
+    targetBeneficiaries: 400,
+    actualBeneficiaries: 487,
+    beneficiaryCategories: [
+      { category: 'Children (0-12)', count: 145 },
+      { category: 'Teenagers (13-17)', count: 68 },
+      { category: 'Adults (18-60)', count: 189 },
+      { category: 'Elderly (60+)', count: 85 }
+    ],
+    impact: [
+      { title: 'Medical Consultations', value: 487, description: 'Free consultations provided' },
+      { title: 'Medications Distributed', value: 234, description: 'Essential medications given' },
+      { title: 'Health Screenings', value: 312, description: 'Blood pressure, diabetes, malaria tests' },
+      { title: 'Specialist Referrals', value: 56, description: 'Referred to partner hospitals' },
+      { title: 'Eyeglasses Provided', value: 42, description: 'Free prescription glasses' },
+      { title: 'Dental Check-ups', value: 89, description: 'Free dental examinations' }
+    ],
+    budget: {
+      planned: 2500000,
+      actual: 2340000,
+      breakdown: [
+        { category: 'Medical Supplies', amount: 980000, percentage: 42 },
+        { category: 'Medications', amount: 750000, percentage: 32 },
+        { category: 'Personnel/Volunteers', amount: 350000, percentage: 15 },
+        { category: 'Logistics & Transport', amount: 160000, percentage: 7 },
+        { category: 'Marketing & Outreach', amount: 100000, percentage: 4 }
+      ]
+    },
+    volunteers: {
+      registered: 45,
+      participated: 38,
+      hours: 304
+    },
+    activities: [
+      { title: 'Registration & Triage', description: 'Patient registration and initial screening', completed: true },
+      { title: 'General Medical Consultation', description: 'Consultations with general practitioners', completed: true },
+      { title: 'Blood Pressure & Diabetes Screening', description: 'Free health screenings for all attendees', completed: true },
+      { title: 'Malaria Testing', description: 'Rapid diagnostic tests for malaria', completed: true },
+      { title: 'Medication Distribution', description: 'Free essential medications dispensing', completed: true },
+      { title: 'Dental Check-ups', description: 'Basic dental examinations', completed: true },
+      { title: 'Eye Care Services', description: 'Vision tests and eyeglasses distribution', completed: true },
+      { title: 'Health Education Sessions', description: 'Community health awareness talks', completed: true },
+      { title: 'Nutritional Counseling', description: 'Dietary advice and nutrition support', completed: true },
+      { title: 'Follow-up Referrals', description: 'Specialist hospital referrals for critical cases', completed: true }
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
+      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800',
+      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800',
+      'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800',
+      'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800'
+    ],
+    testimonials: [
+      {
+        name: 'Mrs. Folake Adeyemi',
+        role: 'Beneficiary',
+        message: 'I received free medication for my diabetes and blood pressure. The doctors were very professional and caring. God bless Saintlammy Foundation!',
+        image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?w=400'
+      },
+      {
+        name: 'Mr. Chukwudi Okonkwo',
+        role: 'Volunteer Doctor',
+        message: 'It was a privilege to serve alongside such dedicated volunteers. The organization and impact were truly remarkable.',
+        image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400'
+      },
+      {
+        name: 'Miss Aisha Mohammed',
+        role: 'Community Leader',
+        message: 'This outreach brought hope to our community. Many people who cannot afford healthcare received much-needed medical attention.',
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'
+      }
+    ],
+    futurePlans: [
+      'Expand medical outreach to 3 more communities in Q1 2025',
+      'Partner with additional hospitals for specialist referrals',
+      'Establish mobile clinic for hard-to-reach rural areas',
+      'Launch follow-up program to track patient outcomes',
+      'Create health education video series in local languages'
+    ],
+    partners: [
+      { name: 'Lagos State Ministry of Health', contribution: 'Medical personnel and supplies support' },
+      { name: 'Reddington Hospital', contribution: 'Specialist referral partnership' },
+      { name: 'PharmAccess Foundation', contribution: 'Medication donations' }
+    ],
+    reportDocument: '/reports/independence-day-medical-outreach-2024.pdf',
+    socialMedia: [
+      { platform: 'Facebook', reach: 12500, engagement: 1850 },
+      { platform: 'Instagram', reach: 8300, engagement: 2100 },
+      { platform: 'Twitter', reach: 5600, engagement: 980 }
+    ]
+  }
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
