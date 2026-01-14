@@ -172,7 +172,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           excerpt: (revision as any).excerpt,
           metadata: (revision as any).metadata,
           updated_at: new Date().toISOString()
-        }) as any)
+        })
         .eq('id', content_id)
         .select()
         .single();

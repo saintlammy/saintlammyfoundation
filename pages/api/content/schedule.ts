@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           status: 'scheduled',
           publish_date: scheduleDate.toISOString(),
           updated_at: new Date().toISOString()
-        }) as any)
+        })
         .eq('id', content_id)
         .select()
         .single();
@@ -131,7 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .update({
           status: 'published',
           updated_at: now
-        }) as any)
+        })
         .in('id', content_ids)
         .eq('status', 'scheduled');
 
@@ -176,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           status: 'draft',
           publish_date: null,
           updated_at: new Date().toISOString()
-        }) as any)
+        })
         .eq('id', content_id)
         .eq('status', 'scheduled')
         .select()
@@ -250,7 +250,7 @@ export async function publishScheduledContent() {
       .update({
         status: 'published',
         updated_at: now
-      }) as any)
+      })
       .in('id', contentIds)
       .select();
 
