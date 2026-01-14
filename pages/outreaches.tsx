@@ -1,11 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
 
 const Outreaches: React.FC = () => {
-  const upcomingOutreaches = [
+  const [pastOutreaches, setPastOutreaches] = useState<any[]>([]);
+  const [upcomingOutreaches, setUpcomingOutreaches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadOutreaches();
+  }, []);
+
+  const loadOutreaches = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/outreaches?status=all');
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Separate into past and upcoming
+        const past = data.filter((o: any) => o.status === 'completed');
+        const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
+
+        setPastOutreaches(past);
+        setUpcomingOutreaches(upcoming.length > 0 ? upcoming : getDefaultUpcomingOutreaches());
+      } else {
+        // Use defaults if API fails
+        setPastOutreaches(getDefaultPastOutreaches());
+        setUpcomingOutreaches(getDefaultUpcomingOutreaches());
+      }
+    } catch (error) {
+      console.error('Error loading outreaches:', error);
+      setPastOutreaches(getDefaultPastOutreaches());
+      setUpcomingOutreaches(getDefaultUpcomingOutreaches());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDefaultUpcomingOutreaches = () => [
     {
       id: 1,
       title: 'Christmas Feeding Program',
@@ -44,7 +80,7 @@ const Outreaches: React.FC = () => {
     }
   ];
 
-  const pastOutreaches = [
+  const getDefaultPastOutreaches = () => [
     {
       id: 4,
       title: 'Independence Day Medical Outreach',
@@ -292,15 +328,17 @@ const Outreaches: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-1 mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">Impact Highlights:</h4>
-                      {outreach.impact.map((item, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-xs text-gray-600 dark:text-gray-300">{item}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {outreach.impact && outreach.impact.length > 0 && (
+                      <div className="space-y-1 mb-4">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white">Impact Highlights:</h4>
+                        {outreach.impact.map((item: any, index: number) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-xs text-gray-600 dark:text-gray-300">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <Link
                       href={`/outreach/${outreach.id}`}
