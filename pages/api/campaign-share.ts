@@ -66,7 +66,7 @@ export default async function handler(
     // Log share event to database
     const { data: logData, error: logError } = await supabase
       .from('campaign_share_logs')
-      .insert([shareEvent]);
+      .insert([shareEvent] as any);
 
     if (logError) {
       console.error('Error logging share event:', logError);
@@ -89,10 +89,10 @@ export default async function handler(
       });
     }
 
-    const currentCount = campaign?.share_count || 0;
+    const currentCount = (campaign as any)?.share_count || 0;
     const { error: updateError } = await supabase
       .from('campaigns')
-      .update({ share_count: currentCount + 1 })
+      .update({ share_count: currentCount + 1 } as any)
       .eq('id', campaignId);
 
     if (updateError) {
