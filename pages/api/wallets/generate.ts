@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         address: staticWallet.address,
         privateKey: '***HIDDEN***', // Don't expose private keys
         seedPhrase: '***HIDDEN***', // Don't expose seed phrases
-        destinationTag: staticWallet.destinationTag,
+        destinationTag: (staticWallet as any).destinationTag,
         derivationPath: staticWallet.derivationPath,
         label: label.trim()
       }
