@@ -8,7 +8,7 @@ import {
   Download, Share2, TrendingUp, Award, CheckCircle, DollarSign,
   Camera, FileText, BarChart3, MessageSquare
 } from 'lucide-react';
-import { useDonation } from '@/contexts/DonationContext';
+import { useDonationModal } from '@/components/DonationModalProvider';
 
 interface OutreachReport {
   id: string;
@@ -94,7 +94,7 @@ interface OutreachReport {
 const OutreachReportPage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { openDonationModal } = useDonation();
+  const { openDonationModal } = useDonationModal();
 
   const [outreach, setOutreach] = useState<OutreachReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -382,7 +382,7 @@ const OutreachReportPage: React.FC = () => {
               </button>
 
               <button
-                onClick={() => openDonationModal({ category: 'outreach', suggested_amount: 25000 })}
+                onClick={() => openDonationModal({ source: 'outreach-report', category: 'outreach', suggestedAmount: 25000 })}
                 className="inline-flex items-center px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors ml-auto"
               >
                 <Heart className="w-5 h-5 mr-2" />
@@ -742,7 +742,7 @@ const OutreachReportPage: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <button
-                onClick={() => openDonationModal({ category: 'outreach', suggested_amount: 25000 })}
+                onClick={() => openDonationModal({ source: 'outreach-report', category: 'outreach', suggestedAmount: 25000 })}
                 className="px-8 py-4 bg-white text-accent-600 rounded-lg font-bold hover:bg-gray-100 transition-colors text-lg"
               >
                 Make a Donation

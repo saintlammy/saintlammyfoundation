@@ -18,6 +18,9 @@ interface Campaign {
   impact_details: Record<string, string>;
   image_url?: string;
   category?: string;
+  beneficiary_count?: number;
+  stat_label?: string;
+  urgency_message?: string;
 }
 
 interface CampaignPageProps {

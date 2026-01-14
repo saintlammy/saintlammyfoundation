@@ -3,7 +3,7 @@ import NewDonationModal from './NewDonationModal';
 
 export interface DonationContext {
   source: string; // Source tracking for analytics - can be any page/component identifier
-  category?: 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure';
+  category?: 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' | 'general';
   amount?: number;
   suggestedAmount?: number;
   title?: string;

@@ -425,7 +425,7 @@ const SponsorPage: React.FC = () => {
       <SponsorModal
         isOpen={isSponsorModalOpen}
         onClose={() => setIsSponsorModalOpen(false)}
-        beneficiary={selectedBeneficiary}
+        beneficiary={selectedBeneficiary as any}
       />
     </>
   );
