@@ -53,7 +53,7 @@ async function ensureUniqueSlug(client: any, slug: string, excludeId?: string): 
   let counter = 1;
 
   while (true) {
-    const query = client
+    const query = (client
       .from('content_pages') as any)
       .select('id')
       .eq('slug', uniqueSlug);
@@ -101,7 +101,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         date_to
       } = req.query;
 
-      let query = client
+      let query = (client
         .from('content_pages') as any)
         .select(`
           id,
@@ -145,7 +145,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Get total count for pagination
-      const { count } = await client
+      const { count } = await (client
         .from('content_pages') as any)
         .select('*', { count: 'exact', head: true });
 
@@ -221,7 +221,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         updated_at: new Date().toISOString()
       };
 
-      const { data: newContent, error } = await client
+      const { data: newContent, error } = await (client
         .from('content_pages') as any)
         .insert([dbData] as any)
         .select()
@@ -350,7 +350,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
-      const { error } = await client
+      const { error } = await (client
         .from('content_pages') as any)
         .delete()
         .eq('id', id);
