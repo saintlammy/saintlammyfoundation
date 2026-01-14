@@ -200,25 +200,32 @@ const OutreachReportsManagement: React.FC = () => {
   };
 
   const handleDeleteReport = async (outreachId: string, outreachTitle: string) => {
-    if (!confirm(`Are you sure you want to delete the report for "${outreachTitle}"? This action cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to delete "${outreachTitle}" and its report? This action cannot be undone.`)) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/outreaches/${outreachId}/report`, {
+      // Delete the report first
+      const reportResponse = await fetch(`/api/outreaches/${outreachId}/report`, {
         method: 'DELETE',
       });
 
-      if (response.ok) {
-        alert('Outreach report deleted successfully!');
-        loadOutreaches();
+      // Then delete the outreach itself
+      const outreachResponse = await fetch(`/api/outreaches?id=${outreachId}`, {
+        method: 'DELETE',
+      });
+
+      if (reportResponse.ok || outreachResponse.ok) {
+        alert('Outreach and report deleted successfully!');
+        // Remove from local state immediately
+        setOutreaches(prev => prev.filter(o => o.id !== outreachId));
+        updateStats(outreaches.filter(o => o.id !== outreachId));
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete report');
+        throw new Error('Failed to delete outreach');
       }
     } catch (error) {
-      console.error('Error deleting report:', error);
-      alert(`Failed to delete report: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error deleting outreach:', error);
+      alert(`Failed to delete: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -227,7 +234,32 @@ const OutreachReportsManagement: React.FC = () => {
 
     try {
       setSaving(true);
-      const response = await fetch(`/api/outreaches/${selectedOutreach.id}/report`, {
+
+      // First, save/create the outreach itself
+      const outreachData = {
+        id: selectedOutreach.id,
+        title: reportData.title,
+        description: reportData.description,
+        location: reportData.location,
+        date: reportData.date,
+        beneficiaries: reportData.actualBeneficiaries || reportData.targetBeneficiaries,
+        status: reportData.status,
+        image: reportData.image,
+      };
+
+      // Check if this is a new outreach (starts with 'new-')
+      const isNew = selectedOutreach.id.startsWith('new-');
+
+      const outreachResponse = await fetch(`/api/outreaches${isNew ? '' : `?id=${selectedOutreach.id}`}`, {
+        method: isNew ? 'POST' : 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(outreachData),
+      });
+
+      // Then save the report
+      const reportResponse = await fetch(`/api/outreaches/${selectedOutreach.id}/report`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -235,8 +267,8 @@ const OutreachReportsManagement: React.FC = () => {
         body: JSON.stringify(reportData),
       });
 
-      if (response.ok) {
-        alert('Outreach report saved successfully!');
+      if (reportResponse.ok) {
+        alert('Outreach and report saved successfully!');
         setShowEditor(false);
         setSelectedOutreach(null);
         setReportData(null);

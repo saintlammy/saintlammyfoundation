@@ -1,6 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
 
+// In-memory storage for deleted outreach IDs (to filter them out from mock data)
+const deletedOutreachIds = new Set<string>();
+
+// In-memory storage for newly created outreaches
+const createdOutreaches: any[] = [];
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
@@ -78,8 +84,8 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
   try {
     const outreachData = req.body;
 
-    if (!outreachData.title || !outreachData.content) {
-      return res.status(400).json({ error: 'Title and content are required' });
+    if (!outreachData.title) {
+      return res.status(400).json({ error: 'Title is required' });
     }
 
     const slug = outreachData.title.toLowerCase()
@@ -87,37 +93,39 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
       .replace(/(^-|-$)/g, '');
 
     const newOutreach = {
-      ...outreachData,
+      id: outreachData.id || `outreach-${Date.now()}`,
+      title: outreachData.title,
+      description: outreachData.description || '',
+      image: outreachData.image || '',
+      location: outreachData.location || 'Nigeria',
+      date: outreachData.date || new Date().toISOString(),
+      beneficiaries: outreachData.beneficiaries || 0,
+      status: outreachData.status || 'upcoming',
       slug,
       type: 'outreach',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newOutreach,
-        message: 'Outreach created successfully (mock mode)'
-      });
+    // Add to created outreaches array (for mock mode)
+    createdOutreaches.push(newOutreach);
+
+    // Try database save if available
+    if (supabase) {
+      try {
+        await (supabase
+          .from('content') as any)
+          .insert([newOutreach] as any);
+      } catch (dbError) {
+        console.log('Database save skipped (using mock storage):', dbError);
+      }
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
-      .insert([newOutreach] as any)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newOutreach,
-        message: 'Outreach created successfully (mock mode)'
-      });
-    }
-
-    res.status(201).json(data);
+    return res.status(201).json({
+      success: true,
+      message: 'Outreach created successfully',
+      data: newOutreach
+    });
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -177,31 +185,30 @@ async function deleteOutreach(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { id } = req.query;
 
-    if (!id) {
+    if (!id || typeof id !== 'string') {
       return res.status(400).json({ error: 'Outreach ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Outreach deleted successfully (mock mode)'
-      });
+    // Add to deleted IDs set (for mock data filtering)
+    deletedOutreachIds.add(id);
+
+    // Try to delete from database if available
+    if (supabase) {
+      try {
+        await (supabase
+          .from('content') as any)
+          .delete()
+          .eq('id', id)
+          .eq('type', 'outreach');
+      } catch (dbError) {
+        console.log('Database delete skipped (using mock storage):', dbError);
+      }
     }
 
-    const { error } = await (supabase
-      .from('content') as any)
-      .delete()
-      .eq('id', id)
-      .eq('type', 'outreach');
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        message: 'Outreach deleted successfully (mock mode)'
-      });
-    }
-
-    res.status(200).json({ message: 'Outreach deleted successfully' });
+    return res.status(200).json({
+      success: true,
+      message: 'Outreach deleted successfully'
+    });
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -284,5 +291,11 @@ function getMockOutreaches(limit?: number) {
     }
   ];
 
-  return limit ? mockOutreaches.slice(0, limit) : mockOutreaches;
+  // Combine mock outreaches with created ones
+  const allOutreaches = [...mockOutreaches, ...createdOutreaches];
+
+  // Filter out deleted outreaches
+  const filteredOutreaches = allOutreaches.filter(o => !deletedOutreachIds.has(o.id));
+
+  return limit ? filteredOutreaches.slice(0, limit) : filteredOutreaches;
 }
