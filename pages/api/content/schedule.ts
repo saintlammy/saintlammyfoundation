@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // GET - Fetch scheduled content
       const { status = 'scheduled', limit = '50' } = req.query;
 
-      (let query = client
+      let query = (client
         .from('content_pages') as any)
         .select(`
           id,
