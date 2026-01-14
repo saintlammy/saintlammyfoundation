@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // GET - Fetch scheduled content
       const { status = 'scheduled', limit = '50' } = req.query;
 
-      let query = client
+      (let query = client
         .from('content_pages') as any)
         .select(`
           id,
@@ -228,7 +228,7 @@ export async function publishScheduledContent() {
     const now = new Date().toISOString();
 
     // Find content that should be published
-    const { data: contentToPublish, error: fetchError } = await client
+    const { data: contentToPublish, error: fetchError } = await (client
       .from('content_pages') as any)
       .select('id, title')
       .eq('status', 'scheduled')
