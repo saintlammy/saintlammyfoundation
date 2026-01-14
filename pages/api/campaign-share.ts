@@ -91,8 +91,8 @@ export default async function handler(
 
     const currentCount = (campaign as any)?.share_count || 0;
     const { error: updateError } = await (supabase
-      .from('campaigns')
-      .update({ share_count: currentCount + 1 }) as any)
+      .from('campaigns') as any)
+      .update({ share_count: currentCount + 1 })
       .eq('id', campaignId);
 
     if (updateError) {

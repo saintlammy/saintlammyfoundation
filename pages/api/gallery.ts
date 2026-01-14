@@ -28,7 +28,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'gallery')
       .eq('status', status)
@@ -159,7 +159,7 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newGalleryItem] as any)
       .select()
       .single();
@@ -208,8 +208,8 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await (supabase
-      .from('content')
-      .update(updateData) as any)
+      .from('content') as any)
+      .update(updateData)
       .eq('id', id)
       .eq('type', 'gallery')
       .select()
@@ -248,7 +248,7 @@ async function deleteGalleryItem(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'gallery');

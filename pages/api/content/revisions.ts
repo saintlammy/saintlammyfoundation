@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { data: revisions, error } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .select(`
           id,
           version,
@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Get the current highest version number
       const { data: latestRevision } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .select('version')
         .eq('content_id', content_id)
         .order('version', { ascending: false })
@@ -111,7 +111,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
 
       const { data: newRevision, error } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .insert([revisionData] as any)
         .select()
         .single();
@@ -150,7 +150,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Get the revision to restore
       const { data: revision, error: revisionError } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .select('title, content, excerpt, metadata')
         .eq('id', revision_id)
         .eq('content_id', content_id)
@@ -165,7 +165,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Update the main content with the revision data
       const { data: updatedContent, error: updateError } = await (client
-        .from('content_pages')
+        .from('content_pages') as any)
         .update({
           title: (revision as any).title,
           content: (revision as any).content,
@@ -188,7 +188,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Create a new revision marking this as a restore
       const { data: latestRevision } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .select('version')
         .eq('content_id', content_id)
         .order('version', { ascending: false })
@@ -198,7 +198,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const nextVersion = ((latestRevision as any)?.version || 0) + 1;
 
       await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .insert([{
           content_id,
           title: (revision as any).title,
@@ -229,7 +229,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { error } = await client
-        .from('content_revisions')
+        .from('content_revisions') as any)
         .delete()
         .eq('id', revision_id);
 

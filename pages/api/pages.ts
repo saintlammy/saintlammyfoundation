@@ -28,7 +28,7 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'page')
       .eq('status', status)
@@ -101,7 +101,7 @@ async function createPage(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newPage] as any)
       .select()
       .single();
@@ -148,8 +148,8 @@ async function updatePage(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await (supabase
-      .from('content')
-      .update(updateData) as any)
+      .from('content') as any)
+      .update(updateData)
       .eq('id', id)
       .eq('type', 'page')
       .select()
@@ -187,7 +187,7 @@ async function deletePage(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'page');

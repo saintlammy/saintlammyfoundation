@@ -54,7 +54,7 @@ async function ensureUniqueSlug(client: any, slug: string, excludeId?: string): 
 
   while (true) {
     const query = client
-      .from('content_pages')
+      .from('content_pages') as any)
       .select('id')
       .eq('slug', uniqueSlug);
 
@@ -102,7 +102,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } = req.query;
 
       let query = client
-        .from('content_pages')
+        .from('content_pages') as any)
         .select(`
           id,
           title,
@@ -146,7 +146,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Get total count for pagination
       const { count } = await client
-        .from('content_pages')
+        .from('content_pages') as any)
         .select('*', { count: 'exact', head: true });
 
       // Apply pagination and ordering - FIX: Handle query params as string | string[]
@@ -222,7 +222,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
 
       const { data: newContent, error } = await client
-        .from('content_pages')
+        .from('content_pages') as any)
         .insert([dbData] as any)
         .select()
         .single();
@@ -305,8 +305,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       sanitizedData.updated_at = new Date().toISOString();
 
       const { data: updatedContent, error } = await (client
-        .from('content_pages')
-        .update(sanitizedData) as any)
+        .from('content_pages') as any)
+        .update(sanitizedData)
         .eq('id', id)
         .select()
         .single();
@@ -351,7 +351,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { error } = await client
-        .from('content_pages')
+        .from('content_pages') as any)
         .delete()
         .eq('id', id);
 

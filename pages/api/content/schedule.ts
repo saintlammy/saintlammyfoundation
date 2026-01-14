@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { status = 'scheduled', limit = '50' } = req.query;
 
       let query = client
-        .from('content_pages')
+        .from('content_pages') as any)
         .select(`
           id,
           title,
@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Update content status to scheduled
       const { data: updatedContent, error } = await (client
-        .from('content_pages')
+        .from('content_pages') as any)
         .update({
           status: 'scheduled',
           publish_date: scheduleDate.toISOString(),
@@ -127,7 +127,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const now = new Date().toISOString();
       let query = (client
-        .from('content_pages')
+        .from('content_pages') as any)
         .update({
           status: 'published',
           updated_at: now
@@ -171,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Update status back to draft and clear publish_date
       const { data: updatedContent, error } = await (client
-        .from('content_pages')
+        .from('content_pages') as any)
         .update({
           status: 'draft',
           publish_date: null,
@@ -229,7 +229,7 @@ export async function publishScheduledContent() {
 
     // Find content that should be published
     const { data: contentToPublish, error: fetchError } = await client
-      .from('content_pages')
+      .from('content_pages') as any)
       .select('id, title')
       .eq('status', 'scheduled')
       .lte('publish_date', now);
@@ -246,7 +246,7 @@ export async function publishScheduledContent() {
     // Publish the content
     const contentIds = (contentToPublish as any).map((item: any) => item.id);
     const { data: publishedContent, error: publishError } = await (client
-      .from('content_pages')
+      .from('content_pages') as any)
       .update({
         status: 'published',
         updated_at: now

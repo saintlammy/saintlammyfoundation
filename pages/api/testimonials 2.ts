@@ -28,7 +28,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'testimonial')
       .eq('status', status)
@@ -100,7 +100,7 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newTestimonial] as any)
       .select()
       .single();
@@ -147,7 +147,7 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
       .eq('type', 'testimonial')
@@ -186,7 +186,7 @@ async function deleteTestimonial(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'testimonial');

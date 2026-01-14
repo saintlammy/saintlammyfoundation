@@ -28,7 +28,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'news')
       .eq('status', status)
@@ -139,7 +139,7 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newNews] as any)
       .select()
       .single();
@@ -188,8 +188,8 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await (supabase
-      .from('content')
-      .update(updateData) as any)
+      .from('content') as any)
+      .update(updateData)
       .eq('id', id)
       .eq('type', 'news')
       .select()
@@ -228,7 +228,7 @@ async function deleteNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'news');

@@ -28,7 +28,7 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'program')
       .eq('status', status)
@@ -98,7 +98,7 @@ async function createProgram(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newProgram] as any)
       .select()
       .single();
@@ -145,7 +145,7 @@ async function updateProgram(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
       .eq('type', 'program')
@@ -184,7 +184,7 @@ async function deleteProgram(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'program');

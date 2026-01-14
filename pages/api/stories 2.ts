@@ -28,7 +28,7 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let query = supabase
-      .from('content')
+      .from('content') as any)
       .select('*')
       .eq('type', 'story')
       .eq('status', status)
@@ -147,7 +147,7 @@ async function createStory(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .insert([newStory] as any)
       .select()
       .single();
@@ -196,7 +196,7 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { data, error } = await supabase
-      .from('content')
+      .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
       .eq('type', 'story')
@@ -236,7 +236,7 @@ async function deleteStory(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const { error } = await supabase
-      .from('content')
+      .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'story');
