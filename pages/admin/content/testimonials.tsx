@@ -477,7 +477,7 @@ const TestimonialsManagement: React.FC = () => {
                             </button>
                             <select
                               value={testimonial.status}
-                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value })}
+                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value as 'pending' | 'approved' | 'rejected' })}
                               className="bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded text-gray-900 dark:text-white text-xs px-2 py-1"
                             >
                               <option value="pending">Pending</option>

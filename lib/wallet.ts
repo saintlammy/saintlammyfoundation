@@ -62,65 +62,68 @@ export class WalletManager {
   }
 
   // Generate Solana address
+  // NOTE: This feature is currently disabled - using static wallet addresses instead
   generateSolanaAddress(): WalletAddress {
-    const keypair = Keypair.generate();
-    const walletAddress: WalletAddress = {
-      id: `sol-${Date.now()}`,
-      currency: 'SOL',
-      network: 'sol',
-      address: keypair.publicKey.toString(),
-      privateKey: Buffer.from(keypair.secretKey).toString('hex'),
-      createdAt: new Date(),
-      isActive: true
-    };
-
-    this.wallets.set(walletAddress.id, walletAddress);
-    return walletAddress;
+    throw new Error('Dynamic wallet generation is disabled. Use static wallet addresses from environment variables.');
+    // const { Keypair } = require('@solana/web3.js');
+    // const keypair = Keypair.generate();
+    // const walletAddress: WalletAddress = {
+    //   id: `sol-${Date.now()}`,
+    //   currency: 'SOL',
+    //   network: 'sol',
+    //   address: keypair.publicKey.toString(),
+    //   privateKey: Buffer.from(keypair.secretKey).toString('hex'),
+    //   createdAt: new Date(),
+    //   isActive: true
+    // };
+    // this.wallets.set(walletAddress.id, walletAddress);
+    // return walletAddress;
   }
 
   // Generate Tron address
+  // NOTE: This feature is currently disabled - using static wallet addresses instead
   generateTronAddress(): WalletAddress {
-    const tronWeb = new (TronWeb as any)({
-      fullHost: 'https://api.trongrid.io'
-    });
-
-    const account = tronWeb.utils.accounts.generateAccount();
-    const walletAddress: WalletAddress = {
-      id: `tron-${Date.now()}`,
-      currency: 'TRX',
-      network: 'trc20',
-      address: account.address.base58,
-      privateKey: account.privateKey,
-      createdAt: new Date(),
-      isActive: true
-    };
-
-    this.wallets.set(walletAddress.id, walletAddress);
-    return walletAddress;
+    throw new Error('Dynamic wallet generation is disabled. Use static wallet addresses from environment variables.');
+    // const TronWeb = require('tronweb');
+    // const tronWeb = new TronWeb({
+    //   fullHost: 'https://api.trongrid.io'
+    // });
+    // const account = tronWeb.utils.accounts.generateAccount();
+    // const walletAddress: WalletAddress = {
+    //   id: `tron-${Date.now()}`,
+    //   currency: 'TRX',
+    //   network: 'trc20',
+    //   address: account.address.base58,
+    //   privateKey: account.privateKey,
+    //   createdAt: new Date(),
+    //   isActive: true
+    // };
+    // this.wallets.set(walletAddress.id, walletAddress);
+    // return walletAddress;
   }
 
   // Generate XRP address
+  // NOTE: This feature is currently disabled - using static wallet addresses instead
   async generateXRPAddress(): Promise<WalletAddress> {
-    const client = new Client('wss://xrplcluster.com');
-    await client.connect();
-
-    const wallet = (client as any).wallet.generate();
-    const memo = Math.floor(Math.random() * 999999999).toString();
-
-    const walletAddress: WalletAddress = {
-      id: `xrp-${Date.now()}`,
-      currency: 'XRP',
-      network: 'xrpl',
-      address: wallet.classicAddress,
-      privateKey: wallet.seed,
-      memo: `Tag: ${memo}`,
-      createdAt: new Date(),
-      isActive: true
-    };
-
-    await client.disconnect();
-    this.wallets.set(walletAddress.id, walletAddress);
-    return walletAddress;
+    throw new Error('Dynamic wallet generation is disabled. Use static wallet addresses from environment variables.');
+    // const { Client } = require('xrpl');
+    // const client = new Client('wss://xrplcluster.com');
+    // await client.connect();
+    // const wallet = (client as any).wallet.generate();
+    // const memo = Math.floor(Math.random() * 999999999).toString();
+    // const walletAddress: WalletAddress = {
+    //   id: `xrp-${Date.now()}`,
+    //   currency: 'XRP',
+    //   network: 'xrpl',
+    //   address: wallet.classicAddress,
+    //   privateKey: wallet.seed,
+    //   memo: `Tag: ${memo}`,
+    //   createdAt: new Date(),
+    //   isActive: true
+    // };
+    // await client.disconnect();
+    // this.wallets.set(walletAddress.id, walletAddress);
+    // return walletAddress;
   }
 
   // Generate address for specific currency and network

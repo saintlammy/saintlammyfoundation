@@ -372,7 +372,7 @@ const Analytics: React.FC = () => {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Conversion Funnel</h3>
               <div className="space-y-4">
-                {conversionFunnel.map((step, index) => (
+                {conversionFunnel.map((step: { step: string; count: number; percentage: number }, index: number) => (
                   <div key={index} className="relative">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-gray-900 dark:text-white text-sm">{step.step}</span>
@@ -407,7 +407,7 @@ const Analytics: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {topPages.map((page, index) => (
+                  {topPages.map((page: { page: string; views: number; uniqueVisitors: number; avgTimeOnPage: string; conversionRate: string }, index: number) => (
                     <tr key={index} className="hover:bg-gray-50 dark:bg-gray-700/20">
                       <td className="px-6 py-4">
                         <span className="text-gray-900 dark:text-white font-mono">{page.page}</span>

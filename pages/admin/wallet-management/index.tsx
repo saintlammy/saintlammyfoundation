@@ -348,8 +348,8 @@ const AdminWalletManagement: React.FC = () => {
         destinationTag: network === 'xrp' ? (process.env.NEXT_PUBLIC_XRP_DESTINATION_TAG || '12345678') : undefined,
         privateKey: getPrivateKeyForNetwork(network),
         seedPhrase: getSeedPhraseForNetwork(network),
-        tokens: data.balances.map(token => ({
-          symbol: token.symbol as any,
+        tokens: data.balances.map((token: any) => ({
+          symbol: token.symbol,
           name: token.name,
           balance: token.balance,
           usdValue: token.usdValue,
@@ -828,7 +828,7 @@ const AdminWalletManagement: React.FC = () => {
           return {
             ...wallet,
             tokens: wallet.tokens.map(token => {
-              const liveToken = liveData.balances.find(b => b.symbol === token.symbol);
+              const liveToken = liveData.balances.find((b: any) => b.symbol === token.symbol);
               return liveToken ? {
                 ...token,
                 balance: (typeof liveToken.balance === 'number' && !isNaN(liveToken.balance)) ? liveToken.balance : token.balance,

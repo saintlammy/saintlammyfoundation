@@ -53,6 +53,7 @@ interface PaymentMethodData {
   amount: number;
   percentage: number;
   color: string;
+  [key: string]: string | number; // Index signature for Recharts compatibility
 }
 
 interface TopDonor {

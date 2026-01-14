@@ -65,26 +65,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const donationData = donations || [];
 
     // Separate completed and pending donations
-    const completedDonations = donationData.filter(d => d.status === 'completed');
-    const pendingDonations = donationData.filter(d => d.status === 'pending');
+    const completedDonations = donationData.filter((d: any) => d.status === 'completed');
+    const pendingDonations = donationData.filter((d: any) => d.status === 'pending');
 
     const totalDonations = completedDonations
-      .reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
 
     const pendingAmount = pendingDonations
-      .reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
 
     // Get current month donations (completed only for stats)
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     const monthlyDonations = completedDonations
-      .filter(d => {
+      .filter((d: any) => {
         if (!d.created_at) return false;
         const donationDate = new Date(d.created_at);
         return donationDate.getMonth() === currentMonth &&
                donationDate.getFullYear() === currentYear;
       })
-      .reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
 
     // Get donation trends for last 6 months (completed only)
     const donationTrends = [];
@@ -93,15 +93,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       date.setMonth(date.getMonth() - i);
       const month = date.toLocaleString('default', { month: 'short' });
 
-      const monthDonations = completedDonations.filter(d => {
+      const monthDonations = completedDonations.filter((d: any) => {
         if (!d.created_at) return false;
         const donationDate = new Date(d.created_at);
         return donationDate.getMonth() === date.getMonth() &&
                donationDate.getFullYear() === date.getFullYear();
       });
 
-      const amount = monthDonations.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
-      const donors = new Set(monthDonations.map(d => d.donor_id)).size;
+      const amount = monthDonations.reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
+      const donors = new Set(monthDonations.map((d: any) => d.donor_id)).size;
 
       donationTrends.push({
         month,
@@ -112,13 +112,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Calculate donation method breakdown (completed only)
     const methodBreakdown = completedDonations
-      .reduce((acc, d) => {
+      .reduce((acc: Record<string, number>, d: any) => {
         const method = d.payment_method || 'unknown';
         acc[method] = (acc[method] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
 
-    const totalCompletedDonations = Object.values(methodBreakdown).reduce((sum, count) => sum + count, 0);
+    const totalCompletedDonations = Object.values(methodBreakdown).reduce((sum: number, count: number) => sum + count, 0);
 
     const donationMethods = [
       {
@@ -145,10 +145,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Get recent activities (last 5 - including both completed and pending)
     const recentDonations = donationData
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
 
-    const recentActivities = recentDonations.map((donation, index) => ({
+    const recentActivities = recentDonations.map((donation: any, index: number) => ({
       id: index + 1,
       type: 'donation',
       user: 'Anonymous Donor',

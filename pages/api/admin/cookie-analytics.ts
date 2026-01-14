@@ -44,14 +44,15 @@ export default async function handler(
     }
 
     // Calculate aggregated statistics
-    const totalConsents = totalLogs?.length || 0;
-    const acceptAllCount = totalLogs?.filter(log => log.consent_action === 'accept_all').length || 0;
-    const rejectAllCount = totalLogs?.filter(log => log.consent_action === 'reject_all').length || 0;
-    const customizeCount = totalLogs?.filter(log => log.consent_action === 'customize').length || 0;
+    const logs = (totalLogs as any[]) || [];
+    const totalConsents = logs.length;
+    const acceptAllCount = logs.filter((log: any) => log.consent_action === 'accept_all').length;
+    const rejectAllCount = logs.filter((log: any) => log.consent_action === 'reject_all').length;
+    const customizeCount = logs.filter((log: any) => log.consent_action === 'customize').length;
 
-    const analyticsOptedIn = totalLogs?.filter(log => log.analytics === true).length || 0;
-    const marketingOptedIn = totalLogs?.filter(log => log.marketing === true).length || 0;
-    const preferencesOptedIn = totalLogs?.filter(log => log.preferences === true).length || 0;
+    const analyticsOptedIn = logs.filter((log: any) => log.analytics === true).length;
+    const marketingOptedIn = logs.filter((log: any) => log.marketing === true).length;
+    const preferencesOptedIn = logs.filter((log: any) => log.preferences === true).length;
 
     const acceptanceRate = totalConsents > 0
       ? ((acceptAllCount / totalConsents) * 100).toFixed(2)
@@ -65,7 +66,7 @@ export default async function handler(
       .not('country_code', 'is', null);
 
     // Process geo data
-    const geoDistribution = geoStats?.reduce((acc, log) => {
+    const geoDistribution = ((geoStats as any[]) || []).reduce((acc: Record<string, any>, log: any) => {
       const country = log.country_code || 'Unknown';
       if (!acc[country]) {
         acc[country] = {
@@ -80,7 +81,7 @@ export default async function handler(
       if (log.consent_action === 'reject_all') acc[country].rejects++;
       if (log.consent_action === 'customize') acc[country].customizes++;
       return acc;
-    }, {} as Record<string, any>) || {};
+    }, {} as Record<string, any>);
 
     // Get recent consents for activity feed
     const { data: recentConsents, error: recentError } = await supabase

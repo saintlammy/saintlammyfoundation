@@ -33,7 +33,7 @@ interface PartnershipApplication {
   organizationName: string;
   contactName: string;
   email: string;
-  phone: string;
+  phone?: string;
   organizationType: 'corporation' | 'ngo' | 'government' | 'foundation' | 'individual' | 'other';
   partnershipType: 'corporate-csr' | 'program-collaboration' | 'funding' | 'resource-sharing' | 'volunteer' | 'other';
   message: string;
@@ -54,7 +54,7 @@ interface TeamMember {
   experience: string;
   focus: string[];
   email: string;
-  phone: string;
+  phone?: string;
   status: 'active' | 'inactive';
   avatar?: string;
 }

@@ -56,6 +56,7 @@ interface DeviceData {
   visitors: number;
   percentage: number;
   color: string;
+  [key: string]: string | number; // Index signature for Recharts compatibility
 }
 
 interface TopPage {
