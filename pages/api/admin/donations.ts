@@ -68,10 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // If notes provided (manual confirmation), update them
       if (notes && status === 'completed') {
         await donationService.updateDonationNotes(donationId, {
-          manualConfirmation: true,
-          confirmationNote: notes,
-          confirmedAt: new Date().toISOString(),
-          confirmedBy: 'admin' // TODO: Get actual admin user ID from auth
+          confirmations: 1,
+          error: `Manual confirmation: ${notes}. Confirmed at ${new Date().toISOString()} by admin.`
         });
       }
 

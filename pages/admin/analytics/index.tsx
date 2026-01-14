@@ -413,16 +413,16 @@ const Analytics: React.FC = () => {
                         <span className="text-gray-900 dark:text-white font-mono">{page.page}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-gray-300">{page.visits.toLocaleString()}</span>
+                        <span className="text-gray-300">{page.views.toLocaleString()}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-gray-300">{page.conversions}%</span>
+                        <span className="text-gray-300">{page.conversionRate}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="w-24 h-2 bg-gray-50 dark:bg-gray-700 rounded-full">
                           <div
                             className="h-2 bg-accent-500 rounded-full"
-                            style={{ width: `${(page.conversions / 10) * 100}%` }}
+                            style={{ width: page.conversionRate }}
                           />
                         </div>
                       </td>

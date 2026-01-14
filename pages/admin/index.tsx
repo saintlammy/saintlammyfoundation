@@ -301,7 +301,7 @@ const AdminDashboard: React.FC = () => {
                 {recentActivities.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">No recent activity</p>
                 ) : (
-                  recentActivities.map((activity: { id: string; type: string; title: string; description: string; time: string; status?: string }) => (
+                  recentActivities.map((activity: { id: string; type: string; title: string; description: string; time: string; status?: string; user?: string; amount?: number; method?: string }) => (
                     <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         activity.type === 'donation' ?

@@ -118,7 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return acc;
       }, {} as Record<string, number>);
 
-    const totalCompletedDonations = Object.values(methodBreakdown).reduce((sum: number, count: number) => sum + count, 0);
+    const totalCompletedDonations: number = Object.values(methodBreakdown).reduce((sum: number, count: number) => sum + count, 0);
 
     const donationMethods = [
       {
