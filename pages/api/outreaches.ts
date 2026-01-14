@@ -208,39 +208,75 @@ function getMockOutreaches(limit?: number) {
   const mockOutreaches = [
     {
       id: '1',
-      title: 'Lagos Community Healthcare Drive',
-      description: 'Free health screening and medical consultations for underserved communities in Lagos.',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      location: 'Lagos, Nigeria',
-      date: '2024-02-15T00:00:00Z',
-      beneficiaries: 200,
-      status: 'published',
-      created_at: '2024-01-15T00:00:00Z',
-      updated_at: '2024-01-15T00:00:00Z'
+      title: 'Christmas Feeding Program',
+      description: 'Annual Christmas feeding program for 500+ families in Mushin area. Hot meals, gift packages, and medical check-ups.',
+      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Mushin Community Center, Lagos',
+      date: '2024-12-22T00:00:00Z',
+      beneficiaries: 500,
+      status: 'upcoming',
+      created_at: '2024-11-01T00:00:00Z',
+      updated_at: '2024-11-01T00:00:00Z'
     },
     {
       id: '2',
-      title: 'Back-to-School Supply Distribution',
-      description: 'Distribution of school supplies, uniforms, and educational materials to orphaned children.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      location: 'Abuja, Nigeria',
-      date: '2024-01-20T00:00:00Z',
-      beneficiaries: 150,
-      status: 'published',
-      created_at: '2024-01-10T00:00:00Z',
-      updated_at: '2024-01-10T00:00:00Z'
+      title: 'Educational Materials Distribution',
+      description: 'Distribution of school bags, books, uniforms, and educational materials to 200 children across 5 orphanages.',
+      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Hope Children Home, Abuja',
+      date: '2025-01-15T00:00:00Z',
+      beneficiaries: 200,
+      status: 'upcoming',
+      created_at: '2024-11-15T00:00:00Z',
+      updated_at: '2024-11-15T00:00:00Z'
     },
     {
       id: '3',
-      title: 'Widow Skills Training Workshop',
-      description: 'Skills acquisition workshop teaching tailoring, baking, and small business management to widows.',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      location: 'Ibadan, Nigeria',
-      date: '2024-01-10T00:00:00Z',
-      beneficiaries: 50,
+      title: 'Widow Empowerment Workshop',
+      description: 'Skills training workshop for widows including tailoring, soap making, and small business management.',
+      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Community Hall, Port Harcourt',
+      date: '2025-02-08T00:00:00Z',
+      beneficiaries: 75,
+      status: 'upcoming',
+      created_at: '2024-12-01T00:00:00Z',
+      updated_at: '2024-12-01T00:00:00Z'
+    },
+    {
+      id: '4',
+      title: 'Independence Day Medical Outreach',
+      description: 'Free medical check-ups, medications, and health education for underserved communities.',
+      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Ikeja, Lagos',
+      date: '2024-10-01T00:00:00Z',
+      beneficiaries: 450,
       status: 'published',
-      created_at: '2024-01-05T00:00:00Z',
-      updated_at: '2024-01-05T00:00:00Z'
+      created_at: '2024-09-01T00:00:00Z',
+      updated_at: '2024-10-01T00:00:00Z'
+    },
+    {
+      id: '5',
+      title: 'Back-to-School Support',
+      description: 'School supplies and uniforms distribution for children from vulnerable families.',
+      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Multiple Locations',
+      date: '2024-09-12T00:00:00Z',
+      beneficiaries: 320,
+      status: 'published',
+      created_at: '2024-08-01T00:00:00Z',
+      updated_at: '2024-09-12T00:00:00Z'
+    },
+    {
+      id: '6',
+      title: 'Clean Water Initiative',
+      description: 'Installation of water pumps and distribution of water purification tablets.',
+      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      location: 'Rural Kogi State',
+      date: '2024-08-20T00:00:00Z',
+      beneficiaries: 600,
+      status: 'published',
+      created_at: '2024-07-01T00:00:00Z',
+      updated_at: '2024-08-20T00:00:00Z'
     }
   ];
 
