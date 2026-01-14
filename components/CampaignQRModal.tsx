@@ -33,7 +33,8 @@ const CampaignQRModal: React.FC<CampaignQRModalProps> = ({
     try {
       const campaignUrl = `${window.location.origin}/#urgent-campaign?utm_source=${utmSource}&utm_medium=qr_code&utm_campaign=${encodeURIComponent(campaignId)}&utm_content=${encodeURIComponent(campaignTitle)}`;
 
-      await QRCode.toCanvas(canvasRef.current, campaignUrl, {
+      // Use QRCode.toDataURL to generate data URL, then draw to canvas
+      const dataUrl = await QRCode.toDataURL(campaignUrl, {
         width: 400,
         margin: 2,
         color: {
@@ -41,6 +42,19 @@ const CampaignQRModal: React.FC<CampaignQRModalProps> = ({
           light: '#FFFFFF',
         },
       });
+
+      // Draw the QR code image to canvas
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = 400;
+          canvas.height = 400;
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = dataUrl;
+      }
 
       setQrGenerated(true);
 
