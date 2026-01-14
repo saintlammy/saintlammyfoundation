@@ -10,7 +10,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { action, contentType, data } = req.body;
 
-    const results = {
+    const results: {
+      action: string;
+      contentType: string;
+      timestamp: string;
+      results: Record<string, any>;
+    } = {
       action,
       contentType,
       timestamp: new Date().toISOString(),
@@ -43,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } catch (error) {
         results.results.create = {
           success: false,
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         };
       }
     }
@@ -62,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } catch (error) {
         results.results.read = {
           success: false,
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         };
       }
     }
@@ -70,6 +75,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json(results);
   } catch (error) {
     console.error('Test error:', error);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
