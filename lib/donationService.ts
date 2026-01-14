@@ -57,6 +57,8 @@ export interface DonationStatus {
   expiresAt?: string;
   amount: number;
   currency: string;
+  notes?: string | Record<string, any>;
+  campaign_id?: string;
 }
 
 class DonationService {
@@ -424,6 +426,7 @@ class DonationService {
       fromAddress?: string;
       toAddress?: string;
       error?: string;
+      requiresManualReview?: boolean;
     }
   ): Promise<boolean> {
     try {

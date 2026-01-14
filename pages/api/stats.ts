@@ -53,19 +53,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('*', { count: 'exact', head: true });
 
     // Calculate total donations
-    const totalDonations = donations?.reduce((sum, d) => {
+    const totalDonations = (donations as any)?.reduce((sum: number, d: any) => {
       return sum + (parseFloat(String(d.amount)) || 0);
     }, 0) || 0;
 
     // Calculate monthly revenue (current month)
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
-    const monthlyRevenue = donations?.filter(d => {
+    const monthlyRevenue = (donations as any)?.filter((d: any) => {
       if (!d.created_at) return false;
       const donationDate = new Date(d.created_at);
       return donationDate.getMonth() === currentMonth &&
              donationDate.getFullYear() === currentYear;
-    }).reduce((sum, d) => sum + (parseFloat(String(d.amount)) || 0), 0) || 0;
+    }).reduce((sum: number, d: any) => sum + (parseFloat(String(d.amount)) || 0), 0) || 0;
 
     // If we have real data, use it; otherwise use fallback
     const hasRealData = donations && donations.length > 0;
