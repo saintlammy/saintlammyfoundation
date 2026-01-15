@@ -64,6 +64,8 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -112,6 +114,78 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
       title,
       slug: prev.slug || generateSlug(title)
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      // Compress image
+      const compressedBase64 = await compressImage(file);
+      setFormData(prev => ({ ...prev, featured_image: compressedBase64 }));
+
+      alert('✅ Image uploaded and compressed successfully!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const compressImage = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new globalThis.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+
+          // Calculate new dimensions (max 1200px width, maintain aspect ratio)
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 1200;
+
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression (0.7 = 70% quality)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          const sizeInMB = (compressedBase64.length * 0.75) / (1024 * 1024);
+          console.log(`Compressed image: ${sizeInMB.toFixed(2)}MB`);
+
+          resolve(compressedBase64);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleSubmit = async (status?: 'draft' | 'published') => {
@@ -265,9 +339,30 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
                     placeholder="Image URL"
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
-                  <button className="flex items-center space-x-2 w-full px-3 py-2 bg-gray-600 hover:bg-gray-500 text-gray-300 rounded-lg transition-colors">
-                    <Upload className="w-4 h-4" />
-                    <span>Upload Image</span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="flex items-center justify-center space-x-2 w-full px-3 py-2 bg-gray-600 hover:bg-gray-500 text-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <Loader className="w-4 h-4 animate-spin" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4" />
+                        <span>Upload Image</span>
+                      </>
+                    )}
                   </button>
                 </div>
                 {formData.featured_image && (
