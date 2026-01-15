@@ -138,52 +138,66 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 async function getOutreachReport(client: any, id: string, res: NextApiResponse) {
   try {
-    // Check mock storage first
-    if (mockReports[id]) {
-      return res.status(200).json(mockReports[id]);
+    // Try database FIRST if available
+    if (client) {
+      try {
+        const { data, error } = await (client
+          .from('outreach_reports') as any)
+          .select('*')
+          .eq('outreach_id', id)
+          .single();
+
+        if (error) {
+          // Only log if it's NOT a "not found" error
+          if (error.code !== 'PGRST116') {
+            console.error('Database error:', error);
+          }
+          // If table doesn't exist, fall through to mock storage
+          if (error.code === '42P01') {
+            console.log('⚠️  Table does not exist, using mock storage');
+          }
+        }
+
+        if (data) {
+          // Parse JSON fields from database
+          const parsedData = {
+            id: data.outreach_id,
+            title: data.title,
+            date: data.date,
+            location: data.location,
+            status: data.status,
+            image: data.image,
+            description: data.description,
+            targetBeneficiaries: data.target_beneficiaries,
+            actualBeneficiaries: data.actual_beneficiaries,
+            beneficiaryCategories: typeof data.beneficiary_categories === 'string'
+              ? JSON.parse(data.beneficiary_categories)
+              : data.beneficiary_categories || [],
+            impact: typeof data.impact === 'string' ? JSON.parse(data.impact) : data.impact || [],
+            budget: typeof data.budget === 'string' ? JSON.parse(data.budget) : data.budget || {},
+            volunteers: typeof data.volunteers === 'string' ? JSON.parse(data.volunteers) : data.volunteers || {},
+            activities: typeof data.activities === 'string' ? JSON.parse(data.activities) : data.activities || [],
+            gallery: typeof data.gallery === 'string' ? JSON.parse(data.gallery) : data.gallery || [],
+            testimonials: typeof data.testimonials === 'string' ? JSON.parse(data.testimonials) : data.testimonials || [],
+            futurePlans: typeof data.future_plans === 'string' ? JSON.parse(data.future_plans) : data.future_plans || [],
+            partners: typeof data.partners === 'string' ? JSON.parse(data.partners) : data.partners || [],
+            reportDocument: data.report_document,
+            socialMedia: typeof data.social_media === 'string' ? JSON.parse(data.social_media) : data.social_media || [],
+          };
+
+          console.log(`✅ Loaded report ${id} from DATABASE`);
+          return res.status(200).json(parsedData);
+        }
+      } catch (dbError) {
+        console.error('Database connection error:', dbError);
+        // Fall through to mock storage
+      }
     }
 
-    // Try to get from database if available
-    if (client) {
-      const { data, error } = await (client
-        .from('outreach_reports') as any)
-        .select('*')
-        .eq('outreach_id', id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Database error:', error);
-      }
-
-      if (data) {
-        // Parse JSON fields
-        const parsedData = {
-          id: data.outreach_id,
-          title: data.title,
-          date: data.date,
-          location: data.location,
-          status: data.status,
-          image: data.image,
-          description: data.description,
-          targetBeneficiaries: data.target_beneficiaries,
-          actualBeneficiaries: data.actual_beneficiaries,
-          beneficiaryCategories: typeof data.beneficiary_categories === 'string'
-            ? JSON.parse(data.beneficiary_categories)
-            : data.beneficiary_categories || [],
-          impact: typeof data.impact === 'string' ? JSON.parse(data.impact) : data.impact || [],
-          budget: typeof data.budget === 'string' ? JSON.parse(data.budget) : data.budget || {},
-          volunteers: typeof data.volunteers === 'string' ? JSON.parse(data.volunteers) : data.volunteers || {},
-          activities: typeof data.activities === 'string' ? JSON.parse(data.activities) : data.activities || [],
-          gallery: typeof data.gallery === 'string' ? JSON.parse(data.gallery) : data.gallery || [],
-          testimonials: typeof data.testimonials === 'string' ? JSON.parse(data.testimonials) : data.testimonials || [],
-          futurePlans: typeof data.future_plans === 'string' ? JSON.parse(data.future_plans) : data.future_plans || [],
-          partners: typeof data.partners === 'string' ? JSON.parse(data.partners) : data.partners || [],
-          reportDocument: data.report_document,
-          socialMedia: typeof data.social_media === 'string' ? JSON.parse(data.social_media) : data.social_media || [],
-        };
-
-        return res.status(200).json(parsedData);
-      }
+    // Fallback to mock storage only if database didn't return data
+    if (mockReports[id]) {
+      console.log(`⚠️  Loaded report ${id} from MOCK STORAGE (temporary)`);
+      return res.status(200).json(mockReports[id]);
     }
 
     return res.status(404).json({ error: 'Outreach report not found' });
@@ -196,15 +210,9 @@ async function getOutreachReport(client: any, id: string, res: NextApiResponse) 
 async function saveOutreachReport(client: any, id: string, req: NextApiRequest, res: NextApiResponse) {
   try {
     const reportData = req.body;
+    let savedToDatabase = false;
 
-    // Always save to mock storage (for session persistence)
-    mockReports[id] = {
-      ...reportData,
-      id: id,
-      updated_at: new Date().toISOString()
-    };
-
-    // Try database save if available
+    // Try database save FIRST if available
     if (client) {
       try {
         const dbData = {
@@ -231,34 +239,64 @@ async function saveOutreachReport(client: any, id: string, req: NextApiRequest, 
           updated_at: new Date().toISOString()
         };
 
-        const { data: existing } = await (client
+        const { data: existing, error: selectError } = await (client
           .from('outreach_reports') as any)
           .select('id')
           .eq('outreach_id', id)
           .single();
 
+        if (selectError && selectError.code !== 'PGRST116') {
+          // Table might not exist
+          if (selectError.code === '42P01') {
+            console.log('⚠️  Table does not exist. Please run database schema setup.');
+            throw new Error('Database table not found');
+          }
+        }
+
         if (existing) {
-          await (client
+          const { error: updateError } = await (client
             .from('outreach_reports') as any)
             .update(dbData)
             .eq('outreach_id', id);
+
+          if (updateError) throw updateError;
+          console.log(`✅ Updated report ${id} in DATABASE`);
         } else {
-          await (client
+          const { error: insertError } = await (client
             .from('outreach_reports') as any)
             .insert([{
               ...dbData,
               created_at: new Date().toISOString()
             }] as any);
+
+          if (insertError) throw insertError;
+          console.log(`✅ Created report ${id} in DATABASE`);
         }
+
+        savedToDatabase = true;
       } catch (dbError) {
-        console.log('Database save skipped (using mock storage):', dbError);
+        console.error('Database save failed:', dbError);
+        console.log('⚠️  Falling back to mock storage (data will NOT persist)');
       }
+    }
+
+    // Only save to mock storage if database failed OR doesn't exist
+    if (!savedToDatabase) {
+      mockReports[id] = {
+        ...reportData,
+        id: id,
+        updated_at: new Date().toISOString()
+      };
+      console.log(`⚠️  Saved report ${id} to MOCK STORAGE (temporary - will be lost on restart)`);
     }
 
     return res.status(200).json({
       success: true,
-      message: 'Outreach report saved successfully',
-      data: mockReports[id]
+      message: savedToDatabase
+        ? 'Outreach report saved to database successfully'
+        : 'Outreach report saved temporarily (database not available)',
+      data: reportData,
+      persistent: savedToDatabase
     });
   } catch (error) {
     console.error('Error saving outreach report:', error);
