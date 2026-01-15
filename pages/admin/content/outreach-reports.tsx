@@ -310,6 +310,47 @@ const OutreachReportsManagement: React.FC = () => {
     setReportData({ ...reportData, [field]: value });
   };
 
+  const compressImage = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+
+          // Calculate new dimensions (max 1200px width, maintain aspect ratio)
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 1200;
+
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression (0.7 = 70% quality)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          // Check size (base64 string length ~= file size in bytes * 1.37)
+          const sizeInMB = (compressedBase64.length * 0.75) / (1024 * 1024);
+          console.log(`Compressed image: ${sizeInMB.toFixed(2)}MB`);
+
+          resolve(compressedBase64);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleImageUpload = async (file: File, field: 'image' | 'gallery') => {
     if (!file) return;
 
@@ -319,9 +360,9 @@ const OutreachReportsManagement: React.FC = () => {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
+    // Validate file size (max 10MB original)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
       return;
     }
 
@@ -337,7 +378,7 @@ const OutreachReportsManagement: React.FC = () => {
           const convertedBlob = await heic2any({
             blob: file,
             toType: 'image/jpeg',
-            quality: 0.9
+            quality: 0.8
           });
 
           // heic2any might return an array of blobs
@@ -355,23 +396,19 @@ const OutreachReportsManagement: React.FC = () => {
         }
       }
 
-      // Convert to base64 for temporary preview (in production, upload to cloud storage)
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
+      // Compress image to reduce payload size
+      const compressedBase64 = await compressImage(fileToProcess);
 
-        if (field === 'image') {
-          updateReportField('image', base64String);
-        } else if (field === 'gallery') {
-          setReportData({
-            ...reportData!,
-            gallery: [...reportData!.gallery, base64String]
-          });
-        }
+      if (field === 'image') {
+        updateReportField('image', compressedBase64);
+      } else if (field === 'gallery') {
+        setReportData({
+          ...reportData!,
+          gallery: [...reportData!.gallery, compressedBase64]
+        });
+      }
 
-        alert('Image uploaded successfully! (Note: In production, this will be uploaded to cloud storage)');
-      };
-      reader.readAsDataURL(fileToProcess);
+      alert('✅ Image uploaded and compressed successfully!');
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
@@ -524,8 +561,8 @@ const OutreachReportsManagement: React.FC = () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
       return;
     }
 
@@ -541,7 +578,7 @@ const OutreachReportsManagement: React.FC = () => {
           const convertedBlob = await heic2any({
             blob: file,
             toType: 'image/jpeg',
-            quality: 0.9
+            quality: 0.8
           });
 
           const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
@@ -558,12 +595,10 @@ const OutreachReportsManagement: React.FC = () => {
         }
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        updateTestimonial(index, 'image', base64String);
-      };
-      reader.readAsDataURL(fileToProcess);
+      // Compress image
+      const compressedBase64 = await compressImage(fileToProcess);
+      updateTestimonial(index, 'image', compressedBase64);
+      alert('✅ Image uploaded and compressed successfully!');
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');

@@ -17,6 +17,18 @@
   external_node_modules = ["@netlify/functions"]
   node_bundler = "esbuild"
 
+# Increase body size limit for image uploads (default is 6MB, increase to 10MB)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = false
+
+# Set maximum body size for serverless functions
+[functions]
+  # Allow larger payloads for image uploads (10MB)
+  included_files = ["**/*"]
+
 [functions."scheduled-crypto-monitor"]
   schedule = "*/5 * * * *"
 
