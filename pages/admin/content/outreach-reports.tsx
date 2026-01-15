@@ -45,6 +45,7 @@ const OutreachReportsManagement: React.FC = () => {
   const [reportData, setReportData] = useState<OutreachReport | null>(null);
   const [activeSection, setActiveSection] = useState<string>('basic');
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     withReports: 0,
@@ -289,6 +290,49 @@ const OutreachReportsManagement: React.FC = () => {
     setReportData({ ...reportData, [field]: value });
   };
 
+  const handleImageUpload = async (file: File, field: 'image' | 'gallery') => {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      // Convert to base64 for temporary preview (in production, upload to cloud storage)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+
+        if (field === 'image') {
+          updateReportField('image', base64String);
+        } else if (field === 'gallery') {
+          setReportData({
+            ...reportData!,
+            gallery: [...reportData!.gallery, base64String]
+          });
+        }
+
+        alert('Image uploaded successfully! (Note: In production, this will be uploaded to cloud storage)');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   // Array manipulation helpers
   const addBeneficiaryCategory = () => {
     if (!reportData) return;
@@ -399,6 +443,43 @@ const OutreachReportsManagement: React.FC = () => {
         ...reportData,
         gallery: [...reportData.gallery, imageUrl]
       });
+    }
+  };
+
+  const handleGalleryFileUpload = (file: File) => {
+    if (file) {
+      handleImageUpload(file, 'gallery');
+    }
+  };
+
+  const handleTestimonialImageUpload = async (file: File, index: number) => {
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        updateTestimonial(index, 'image', base64String);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -785,13 +866,54 @@ const OutreachReportsManagement: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Cover Image URL</label>
-                        <input
-                          type="text"
-                          value={reportData.image}
-                          onChange={(e) => updateReportField('image', e.target.value)}
-                          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                        />
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Cover Image</label>
+
+                        {/* Image Preview */}
+                        {reportData.image && (
+                          <div className="mb-3 relative group">
+                            <img
+                              src={reportData.image}
+                              alt="Cover preview"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-600"
+                            />
+                            <button
+                              onClick={() => updateReportField('image', '')}
+                              className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Upload Button */}
+                        <div className="flex gap-2 mb-2">
+                          <label className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg cursor-pointer font-medium transition-colors">
+                            <Upload className="w-4 h-4" />
+                            {uploadingImage ? 'Uploading...' : 'Upload Image'}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(file, 'image');
+                              }}
+                              className="hidden"
+                              disabled={uploadingImage}
+                            />
+                          </label>
+                        </div>
+
+                        {/* URL Input (Alternative) */}
+                        <div>
+                          <label className="block text-xs text-gray-400 mb-1">Or enter image URL:</label>
+                          <input
+                            type="text"
+                            value={reportData.image}
+                            onChange={(e) => updateReportField('image', e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                          />
+                        </div>
                       </div>
 
                       <div>
@@ -1111,32 +1233,55 @@ const OutreachReportsManagement: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-xl font-bold text-white">Photo Gallery</h3>
-                        <button
-                          onClick={addGalleryImage}
-                          className="flex items-center gap-2 px-3 py-1 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Image
-                        </button>
+                        <div className="flex gap-2">
+                          <label className="flex items-center gap-2 px-3 py-1 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm cursor-pointer font-medium transition-colors">
+                            <Upload className="w-4 h-4" />
+                            Upload Image
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleGalleryFileUpload(file);
+                              }}
+                              className="hidden"
+                              disabled={uploadingImage}
+                            />
+                          </label>
+                          <button
+                            onClick={addGalleryImage}
+                            className="flex items-center gap-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Add URL
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-4">
-                        {reportData.gallery.map((imageUrl, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={imageUrl}
-                              alt={`Gallery ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg"
-                            />
-                            <button
-                              onClick={() => removeGalleryImage(index)}
-                              className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                      {reportData.gallery.length === 0 ? (
+                        <div className="text-center py-12 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600">
+                          <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                          <p className="text-gray-400">No images yet. Upload or add URLs to build your gallery.</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-4">
+                          {reportData.gallery.map((imageUrl, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={imageUrl}
+                                alt={`Gallery ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border border-gray-600"
+                              />
+                              <button
+                                onClick={() => removeGalleryImage(index)}
+                                className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1187,13 +1332,49 @@ const OutreachReportsManagement: React.FC = () => {
                                 rows={3}
                                 className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                               />
-                              <input
-                                type="text"
-                                value={testimonial.image || ''}
-                                onChange={(e) => updateTestimonial(index, 'image', e.target.value)}
-                                placeholder="Image URL (optional)"
-                                className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                              />
+
+                              {/* Profile Image */}
+                              <div>
+                                <label className="block text-xs text-gray-400 mb-1">Profile Image</label>
+                                {testimonial.image && (
+                                  <div className="mb-2 relative inline-block">
+                                    <img
+                                      src={testimonial.image}
+                                      alt={testimonial.name}
+                                      className="w-16 h-16 rounded-full object-cover border border-gray-500"
+                                    />
+                                    <button
+                                      onClick={() => updateTestimonial(index, 'image', '')}
+                                      className="absolute -top-1 -right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                )}
+                                <div className="flex gap-2">
+                                  <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg cursor-pointer text-sm font-medium transition-colors">
+                                    <Upload className="w-3 h-3" />
+                                    Upload
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleTestimonialImageUpload(file, index);
+                                      }}
+                                      className="hidden"
+                                      disabled={uploadingImage}
+                                    />
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={testimonial.image || ''}
+                                    onChange={(e) => updateTestimonial(index, 'image', e.target.value)}
+                                    placeholder="Or enter URL"
+                                    className="flex-1 px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white text-sm focus:ring-2 focus:ring-accent-500"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
                         ))}
