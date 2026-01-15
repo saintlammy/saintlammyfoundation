@@ -113,6 +113,13 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
     // Use admin client if available (bypasses RLS), otherwise try regular client
     const dbClient = supabaseAdmin || supabase;
 
+    console.log('📝 Attempting to save outreach:', {
+      hasAdminClient: !!supabaseAdmin,
+      hasRegularClient: !!supabase,
+      usingClient: supabaseAdmin ? 'ADMIN' : 'ANON',
+      outreachId: newOutreach.id
+    });
+
     // Try database save FIRST if available
     if (dbClient) {
       try {
@@ -121,22 +128,36 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
           .insert([newOutreach] as any);
 
         if (error) {
-          console.error('Database insert failed:', error);
+          console.error('❌ Database insert failed:', {
+            error: error,
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint
+          });
           throw error;
         }
 
         savedToDatabase = true;
         console.log(`✅ Created outreach ${newOutreach.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
-      } catch (dbError) {
-        console.error('Database save failed:', dbError);
+      } catch (dbError: any) {
+        console.error('❌ Database save exception:', {
+          message: dbError?.message,
+          stack: dbError?.stack,
+          error: dbError
+        });
       }
+    } else {
+      console.error('❌ No database client available!');
     }
 
     // If database save failed, return error (NO MORE MOCK STORAGE)
     if (!savedToDatabase) {
       return res.status(500).json({
         error: 'Database save failed',
-        message: 'Could not save outreach to database. Please check database configuration.'
+        message: 'Could not save outreach to database. Please check database configuration.',
+        hasAdminClient: !!supabaseAdmin,
+        hasRegularClient: !!supabase
       });
     }
 
