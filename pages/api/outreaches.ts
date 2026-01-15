@@ -95,36 +95,57 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
     const newOutreach = {
       id: outreachData.id || `outreach-${Date.now()}`,
       title: outreachData.title,
-      description: outreachData.description || '',
-      image: outreachData.image || '',
-      location: outreachData.location || 'Nigeria',
-      date: outreachData.date || new Date().toISOString(),
-      beneficiaries: outreachData.beneficiaries || 0,
+      excerpt: outreachData.description || '',
+      content: outreachData.description || '',
+      featured_image: outreachData.image || '',
+      outreach_details: {
+        location: outreachData.location || 'Nigeria',
+        event_date: outreachData.date || new Date().toISOString(),
+        beneficiaries_count: outreachData.beneficiaries || 0
+      },
       status: outreachData.status || 'upcoming',
       slug,
       type: 'outreach',
+      publish_date: outreachData.date || new Date().toISOString(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    // Add to created outreaches array (for mock mode)
-    createdOutreaches.push(newOutreach);
+    let savedToDatabase = false;
 
-    // Try database save if available
+    // Try database save FIRST if available
     if (supabase) {
       try {
-        await (supabase
+        const { error } = await (supabase
           .from('content') as any)
           .insert([newOutreach] as any);
+
+        if (error) {
+          console.error('Database insert failed:', error);
+          throw error;
+        }
+
+        savedToDatabase = true;
+        console.log(`✅ Created outreach ${newOutreach.id} in DATABASE`);
       } catch (dbError) {
-        console.log('Database save skipped (using mock storage):', dbError);
+        console.error('Database save failed:', dbError);
+        console.log('⚠️ Falling back to mock storage (data will NOT persist)');
       }
+    }
+
+    // Only save to mock storage if database failed
+    if (!savedToDatabase) {
+      createdOutreaches.push(newOutreach);
+      console.log(`⚠️ Saved outreach ${newOutreach.id} to MOCK STORAGE (temporary)`);
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Outreach created successfully',
-      data: newOutreach
+      message: savedToDatabase
+        ? 'Outreach created in database successfully'
+        : 'Outreach created temporarily (database not available)',
+      data: newOutreach,
+      persistent: savedToDatabase
     });
   } catch (error) {
     console.error('API error:', error);
@@ -141,40 +162,80 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Outreach ID is required' });
     }
 
+    // Transform data to match content table structure
+    const dbUpdateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
     if (updateData.title) {
-      updateData.slug = updateData.title.toLowerCase()
+      dbUpdateData.title = updateData.title;
+      dbUpdateData.slug = updateData.title.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
     }
 
-    updateData.updated_at = new Date().toISOString();
-
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Outreach updated successfully (mock mode)'
-      });
+    if (updateData.description) {
+      dbUpdateData.excerpt = updateData.description;
+      dbUpdateData.content = updateData.description;
     }
 
-    const { data, error } = await (supabase
-      .from('content') as any)
-      .update(updateData)
-      .eq('id', id)
-      .eq('type', 'outreach')
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Outreach updated successfully (mock mode)'
-      });
+    if (updateData.image) {
+      dbUpdateData.featured_image = updateData.image;
     }
 
-    res.status(200).json(data);
+    if (updateData.status) {
+      dbUpdateData.status = updateData.status;
+    }
+
+    if (updateData.date) {
+      dbUpdateData.publish_date = updateData.date;
+    }
+
+    // Update outreach_details JSONB field
+    if (updateData.location || updateData.beneficiaries || updateData.date) {
+      dbUpdateData.outreach_details = {
+        location: updateData.location,
+        event_date: updateData.date,
+        beneficiaries_count: updateData.beneficiaries
+      };
+    }
+
+    let savedToDatabase = false;
+
+    if (supabase) {
+      try {
+        const { data, error } = await (supabase
+          .from('content') as any)
+          .update(dbUpdateData)
+          .eq('id', id)
+          .eq('type', 'outreach')
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Database update failed:', error);
+          throw error;
+        }
+
+        savedToDatabase = true;
+        console.log(`✅ Updated outreach ${id} in DATABASE`);
+
+        return res.status(200).json({
+          ...data,
+          persistent: true
+        });
+      } catch (dbError) {
+        console.error('Database update error:', dbError);
+        console.log('⚠️ Update not persisted (database error)');
+      }
+    }
+
+    return res.status(200).json({
+      id,
+      ...updateData,
+      message: 'Outreach updated temporarily (database not available)',
+      persistent: false
+    });
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ error: 'Internal server error' });
