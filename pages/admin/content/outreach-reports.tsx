@@ -46,6 +46,7 @@ const OutreachReportsManagement: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('basic');
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(1550); // NGN to USD rate
   const [stats, setStats] = useState({
     total: 0,
     withReports: 0,
@@ -1008,33 +1009,77 @@ const OutreachReportsManagement: React.FC = () => {
 
                   {/* Budget Section */}
                   {activeSection === 'budget' && (
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-bold text-white mb-4">Budget Information</h3>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Planned Budget (₦)</label>
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-white">Budget Information</h3>
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm text-gray-400">Exchange Rate (₦ to $):</label>
                           <input
                             type="number"
-                            value={reportData.budget.planned}
-                            onChange={(e) => updateReportField('budget', { ...reportData.budget, planned: parseInt(e.target.value) })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Actual Budget (₦)</label>
-                          <input
-                            type="number"
-                            value={reportData.budget.actual}
-                            onChange={(e) => updateReportField('budget', { ...reportData.budget, actual: parseInt(e.target.value) })}
-                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                            value={exchangeRate}
+                            onChange={(e) => setExchangeRate(parseFloat(e.target.value) || 1550)}
+                            className="w-24 px-3 py-1 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-accent-500"
+                            placeholder="1550"
                           />
                         </div>
                       </div>
 
+                      {/* NGN Budgets */}
+                      <div className="space-y-4">
+                        <h4 className="text-lg font-semibold text-white">Nigerian Naira (₦)</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Planned Budget (₦)</label>
+                            <input
+                              type="number"
+                              value={reportData.budget.planned}
+                              onChange={(e) => updateReportField('budget', { ...reportData.budget, planned: parseInt(e.target.value) })}
+                              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                            />
+                            <p className="text-xs text-gray-400 mt-1">
+                              ≈ ${(reportData.budget.planned / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                            </p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Actual Budget (₦)</label>
+                            <input
+                              type="number"
+                              value={reportData.budget.actual}
+                              onChange={(e) => updateReportField('budget', { ...reportData.budget, actual: parseInt(e.target.value) })}
+                              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                            />
+                            <p className="text-xs text-gray-400 mt-1">
+                              ≈ ${(reportData.budget.actual / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* USD Summary Card */}
+                      <div className="bg-accent-500/10 border border-accent-500/20 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-accent-400 mb-3">USD Equivalent Summary</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-xs text-gray-400">Planned Budget</p>
+                            <p className="text-lg font-bold text-white">
+                              ${(reportData.budget.planned / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400">Actual Budget</p>
+                            <p className="text-lg font-bold text-white">
+                              ${(reportData.budget.actual / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Using exchange rate: 1 USD = ₦{exchangeRate.toLocaleString()}
+                        </p>
+                      </div>
+
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <label className="block text-sm font-medium text-gray-300">Budget Breakdown</label>
+                          <label className="block text-sm font-medium text-gray-300">Budget Breakdown (NGN)</label>
                           <button
                             onClick={addBudgetItem}
                             className="flex items-center gap-2 px-3 py-1 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm"
@@ -1043,39 +1088,66 @@ const OutreachReportsManagement: React.FC = () => {
                             Add Item
                           </button>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           {reportData.budget.breakdown.map((item, index) => (
-                            <div key={index} className="flex gap-2">
-                              <input
-                                type="text"
-                                value={item.category}
-                                onChange={(e) => updateBudgetItem(index, 'category', e.target.value)}
-                                placeholder="Category"
-                                className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                              />
-                              <input
-                                type="number"
-                                value={item.amount}
-                                onChange={(e) => updateBudgetItem(index, 'amount', parseInt(e.target.value))}
-                                placeholder="Amount"
-                                className="w-32 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                              />
-                              <input
-                                type="number"
-                                value={item.percentage}
-                                onChange={(e) => updateBudgetItem(index, 'percentage', parseInt(e.target.value))}
-                                placeholder="%"
-                                className="w-20 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                              />
-                              <button
-                                onClick={() => removeBudgetItem(index)}
-                                className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                            <div key={index} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                              <div className="flex gap-2 mb-2">
+                                <input
+                                  type="text"
+                                  value={item.category}
+                                  onChange={(e) => updateBudgetItem(index, 'category', e.target.value)}
+                                  placeholder="Category (e.g., Medical Supplies)"
+                                  className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                                />
+                                <input
+                                  type="number"
+                                  value={item.amount}
+                                  onChange={(e) => updateBudgetItem(index, 'amount', parseInt(e.target.value))}
+                                  placeholder="Amount (₦)"
+                                  className="w-36 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                                />
+                                <input
+                                  type="number"
+                                  value={item.percentage}
+                                  onChange={(e) => updateBudgetItem(index, 'percentage', parseInt(e.target.value))}
+                                  placeholder="%"
+                                  className="w-20 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                                />
+                                <button
+                                  onClick={() => removeBudgetItem(index)}
+                                  className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              {item.amount > 0 && (
+                                <div className="flex items-center justify-between px-2">
+                                  <span className="text-xs text-gray-400">USD Equivalent:</span>
+                                  <span className="text-xs font-semibold text-accent-400">
+                                    ${(item.amount / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
+
+                        {/* Total Breakdown Summary */}
+                        {reportData.budget.breakdown.length > 0 && (
+                          <div className="mt-4 p-3 bg-gray-700 rounded-lg border border-gray-600">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-gray-300">Total Breakdown:</span>
+                              <div className="text-right">
+                                <p className="text-sm font-bold text-white">
+                                  ₦{reportData.budget.breakdown.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
+                                </p>
+                                <p className="text-xs text-accent-400">
+                                  ${(reportData.budget.breakdown.reduce((sum, item) => sum + item.amount, 0) / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
