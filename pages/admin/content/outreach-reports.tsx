@@ -295,7 +295,7 @@ const OutreachReportsManagement: React.FC = () => {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.heic')) {
       alert('Please select an image file');
       return;
     }
@@ -308,6 +308,33 @@ const OutreachReportsManagement: React.FC = () => {
 
     try {
       setUploadingImage(true);
+
+      let fileToProcess = file;
+
+      // Convert HEIC to JPEG if needed
+      if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic' || file.type === 'image/heif') {
+        try {
+          const heic2any = (await import('heic2any')).default;
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.9
+          });
+
+          // heic2any might return an array of blobs
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          fileToProcess = new File([blob], file.name.replace(/\.heic$/i, '.jpg'), {
+            type: 'image/jpeg'
+          });
+
+          console.log('✅ Converted HEIC to JPEG');
+        } catch (conversionError) {
+          console.error('HEIC conversion failed:', conversionError);
+          alert('Failed to convert HEIC image. Please try a JPG or PNG instead.');
+          setUploadingImage(false);
+          return;
+        }
+      }
 
       // Convert to base64 for temporary preview (in production, upload to cloud storage)
       const reader = new FileReader();
@@ -325,7 +352,7 @@ const OutreachReportsManagement: React.FC = () => {
 
         alert('Image uploaded successfully! (Note: In production, this will be uploaded to cloud storage)');
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(fileToProcess);
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
@@ -457,7 +484,7 @@ const OutreachReportsManagement: React.FC = () => {
     if (!file) return;
 
     // Validate file
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.heic')) {
       alert('Please select an image file');
       return;
     }
@@ -470,12 +497,38 @@ const OutreachReportsManagement: React.FC = () => {
     try {
       setUploadingImage(true);
 
+      let fileToProcess = file;
+
+      // Convert HEIC to JPEG if needed
+      if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic' || file.type === 'image/heif') {
+        try {
+          const heic2any = (await import('heic2any')).default;
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.9
+          });
+
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          fileToProcess = new File([blob], file.name.replace(/\.heic$/i, '.jpg'), {
+            type: 'image/jpeg'
+          });
+
+          console.log('✅ Converted HEIC to JPEG');
+        } catch (conversionError) {
+          console.error('HEIC conversion failed:', conversionError);
+          alert('Failed to convert HEIC image. Please try a JPG or PNG instead.');
+          setUploadingImage(false);
+          return;
+        }
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         updateTestimonial(index, 'image', base64String);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(fileToProcess);
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
