@@ -214,6 +214,9 @@ async function saveOutreachReport(client: any, id: string, req: NextApiRequest, 
     const reportData = req.body;
     let savedToDatabase = false;
 
+    console.log('📝 Attempting to save report for outreach:', id);
+    console.log('Report data fields:', Object.keys(reportData));
+
     // Try database save FIRST if available
     if (client) {
       try {
@@ -240,6 +243,8 @@ async function saveOutreachReport(client: any, id: string, req: NextApiRequest, 
           social_media: JSON.stringify(reportData.socialMedia || []),
           updated_at: new Date().toISOString()
         };
+
+        console.log('DB data prepared, checking for existing report...');
 
         const { data: existing, error: selectError } = await (client
           .from('outreach_reports') as any)
@@ -276,35 +281,42 @@ async function saveOutreachReport(client: any, id: string, req: NextApiRequest, 
         }
 
         savedToDatabase = true;
-      } catch (dbError) {
-        console.error('Database save failed:', dbError);
-        console.log('⚠️  Falling back to mock storage (data will NOT persist)');
+      } catch (dbError: any) {
+        console.error('❌ Database save failed:', {
+          error: dbError,
+          message: dbError?.message,
+          code: dbError?.code,
+          details: dbError?.details,
+          hint: dbError?.hint
+        });
       }
+    } else {
+      console.error('❌ No database client available for report save!');
     }
 
-    // Only save to mock storage if database failed OR doesn't exist
+    // If database save failed, return error (NO MORE MOCK STORAGE)
     if (!savedToDatabase) {
-      mockReports[id] = {
-        ...reportData,
-        id: id,
-        updated_at: new Date().toISOString()
-      };
-      console.log(`⚠️  Saved report ${id} to MOCK STORAGE (temporary - will be lost on restart)`);
+      return res.status(500).json({
+        error: 'Database save failed',
+        message: 'Could not save report to database. Please check database configuration.'
+      });
     }
 
     return res.status(200).json({
       success: true,
-      message: savedToDatabase
-        ? 'Outreach report saved to database successfully'
-        : 'Outreach report saved temporarily (database not available)',
+      message: 'Report saved to database successfully',
       data: reportData,
-      persistent: savedToDatabase
+      persistent: true
     });
-  } catch (error) {
-    console.error('Error saving outreach report:', error);
+  } catch (error: any) {
+    console.error('❌ Report save exception:', {
+      error: error,
+      message: error?.message,
+      stack: error?.stack
+    });
     return res.status(500).json({
       error: 'Failed to save outreach report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error?.message || 'Unknown error'
     });
   }
 }
