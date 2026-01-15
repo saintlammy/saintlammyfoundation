@@ -423,6 +423,22 @@ const OutreachReportsManagement: React.FC = () => {
     if (!reportData) return;
     const updated = [...reportData.budget.breakdown];
     updated[index] = { ...updated[index], [field]: value };
+
+    // Auto-calculate percentages when amount changes
+    if (field === 'amount' && reportData.budget.planned > 0) {
+      const totalBreakdown = updated.reduce((sum, item) => sum + (item.amount || 0), 0);
+
+      // Calculate percentage for each item based on total breakdown (not planned budget)
+      updated.forEach((item, i) => {
+        if (totalBreakdown > 0) {
+          updated[i] = {
+            ...item,
+            percentage: Math.round((item.amount / totalBreakdown) * 100)
+          };
+        }
+      });
+    }
+
     setReportData({
       ...reportData,
       budget: { ...reportData.budget, breakdown: updated }
@@ -1131,7 +1147,7 @@ const OutreachReportsManagement: React.FC = () => {
                       </div>
 
                       <div>
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center justify-between mb-2">
                           <label className="block text-sm font-medium text-gray-300">Budget Breakdown (NGN)</label>
                           <button
                             onClick={addBudgetItem}
@@ -1141,6 +1157,9 @@ const OutreachReportsManagement: React.FC = () => {
                             Add Item
                           </button>
                         </div>
+                        <p className="text-xs text-gray-400 mb-3">
+                          💡 Percentages are auto-calculated based on amounts entered
+                        </p>
                         <div className="space-y-3">
                           {reportData.budget.breakdown.map((item, index) => (
                             <div key={index} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600">
@@ -1155,20 +1174,27 @@ const OutreachReportsManagement: React.FC = () => {
                                 <input
                                   type="number"
                                   value={item.amount}
-                                  onChange={(e) => updateBudgetItem(index, 'amount', parseInt(e.target.value))}
+                                  onChange={(e) => updateBudgetItem(index, 'amount', parseInt(e.target.value) || 0)}
                                   placeholder="Amount (₦)"
                                   className="w-36 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                                 />
-                                <input
-                                  type="number"
-                                  value={item.percentage}
-                                  onChange={(e) => updateBudgetItem(index, 'percentage', parseInt(e.target.value))}
-                                  placeholder="%"
-                                  className="w-20 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                                />
+                                <div className="relative w-20">
+                                  <input
+                                    type="number"
+                                    value={item.percentage}
+                                    readOnly
+                                    placeholder="%"
+                                    className="w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-lg text-white cursor-not-allowed"
+                                    title="Auto-calculated based on amount"
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
+                                    %
+                                  </span>
+                                </div>
                                 <button
                                   onClick={() => removeBudgetItem(index)}
                                   className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                                  title="Remove item"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
