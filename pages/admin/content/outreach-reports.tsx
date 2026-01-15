@@ -480,19 +480,27 @@ const OutreachReportsManagement: React.FC = () => {
     const updated = [...reportData.budget.breakdown];
     updated[index] = { ...updated[index], [field]: value };
 
-    // Auto-calculate percentages when amount changes
-    if (field === 'amount' && reportData.budget.planned > 0) {
-      const totalBreakdown = updated.reduce((sum, item) => sum + (item.amount || 0), 0);
+    // Auto-calculate percentages when amount changes (only if all amounts are numeric)
+    if (field === 'amount') {
+      const allNumeric = updated.every(item => typeof item.amount === 'number' || !isNaN(Number(item.amount)));
 
-      // Calculate percentage for each item based on total breakdown (not planned budget)
-      updated.forEach((item, i) => {
+      if (allNumeric) {
+        const totalBreakdown = updated.reduce((sum, item) => {
+          const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount as string) || 0;
+          return sum + amount;
+        }, 0);
+
+        // Calculate percentage for each item based on total breakdown
         if (totalBreakdown > 0) {
-          updated[i] = {
-            ...item,
-            percentage: Math.round((item.amount / totalBreakdown) * 100)
-          };
+          updated.forEach((item, i) => {
+            const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount as string) || 0;
+            updated[i] = {
+              ...item,
+              percentage: Math.round((amount / totalBreakdown) * 100)
+            };
+          });
         }
-      });
+      }
     }
 
     setReportData({
@@ -1072,18 +1080,20 @@ const OutreachReportsManagement: React.FC = () => {
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">Target Beneficiaries</label>
                           <input
-                            type="number"
-                            value={reportData.targetBeneficiaries}
-                            onChange={(e) => updateReportField('targetBeneficiaries', parseInt(e.target.value))}
+                            type="text"
+                            value={reportData.targetBeneficiaries || ''}
+                            onChange={(e) => updateReportField('targetBeneficiaries', e.target.value)}
+                            placeholder="e.g., 500 or 500-600 people"
                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                           />
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">Actual Beneficiaries</label>
                           <input
-                            type="number"
-                            value={reportData.actualBeneficiaries}
-                            onChange={(e) => updateReportField('actualBeneficiaries', parseInt(e.target.value))}
+                            type="text"
+                            value={reportData.actualBeneficiaries || ''}
+                            onChange={(e) => updateReportField('actualBeneficiaries', e.target.value)}
+                            placeholder="e.g., 487 or approximately 500 people"
                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                           />
                         </div>
@@ -1111,10 +1121,10 @@ const OutreachReportsManagement: React.FC = () => {
                                 className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                               />
                               <input
-                                type="number"
-                                value={cat.count}
-                                onChange={(e) => updateBeneficiaryCategory(index, 'count', parseInt(e.target.value))}
-                                placeholder="Count"
+                                type="text"
+                                value={cat.count || ''}
+                                onChange={(e) => updateBeneficiaryCategory(index, 'count', e.target.value)}
+                                placeholder="e.g., 145 or 140+"
                                 className="w-32 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                               />
                               <button
@@ -1154,25 +1164,31 @@ const OutreachReportsManagement: React.FC = () => {
                           <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">Planned Budget (₦)</label>
                             <input
-                              type="number"
-                              value={reportData.budget.planned}
-                              onChange={(e) => updateReportField('budget', { ...reportData.budget, planned: parseInt(e.target.value) })}
+                              type="text"
+                              value={reportData.budget.planned || ''}
+                              onChange={(e) => updateReportField('budget', { ...reportData.budget, planned: e.target.value })}
+                              placeholder="e.g., 2500000 or 2.5M"
                               className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                             />
                             <p className="text-xs text-gray-400 mt-1">
-                              ≈ ${(reportData.budget.planned / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                              {typeof reportData.budget.planned === 'number'
+                                ? `≈ $${(reportData.budget.planned / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`
+                                : 'Enter numeric value for USD conversion'}
                             </p>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">Actual Budget (₦)</label>
                             <input
-                              type="number"
-                              value={reportData.budget.actual}
-                              onChange={(e) => updateReportField('budget', { ...reportData.budget, actual: parseInt(e.target.value) })}
+                              type="text"
+                              value={reportData.budget.actual || ''}
+                              onChange={(e) => updateReportField('budget', { ...reportData.budget, actual: e.target.value })}
+                              placeholder="e.g., 2340000 or 2.34M"
                               className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                             />
                             <p className="text-xs text-gray-400 mt-1">
-                              ≈ ${(reportData.budget.actual / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                              {typeof reportData.budget.actual === 'number'
+                                ? `≈ $${(reportData.budget.actual / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`
+                                : 'Enter numeric value for USD conversion'}
                             </p>
                           </div>
                         </div>
@@ -1226,10 +1242,10 @@ const OutreachReportsManagement: React.FC = () => {
                                   className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                                 />
                                 <input
-                                  type="number"
-                                  value={item.amount}
-                                  onChange={(e) => updateBudgetItem(index, 'amount', parseInt(e.target.value) || 0)}
-                                  placeholder="Amount (₦)"
+                                  type="text"
+                                  value={item.amount || ''}
+                                  onChange={(e) => updateBudgetItem(index, 'amount', e.target.value)}
+                                  placeholder="e.g., 980000 or 1M"
                                   className="w-36 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                                 />
                                 <div className="relative w-20">
@@ -1294,27 +1310,30 @@ const OutreachReportsManagement: React.FC = () => {
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">Registered</label>
                           <input
-                            type="number"
-                            value={reportData.volunteers.registered}
-                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, registered: parseInt(e.target.value) })}
+                            type="text"
+                            value={reportData.volunteers.registered || ''}
+                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, registered: e.target.value })}
+                            placeholder="e.g., 45 or 40-50"
                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                           />
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">Participated</label>
                           <input
-                            type="number"
-                            value={reportData.volunteers.participated}
-                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, participated: parseInt(e.target.value) })}
+                            type="text"
+                            value={reportData.volunteers.participated || ''}
+                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, participated: e.target.value })}
+                            placeholder="e.g., 38 or ~40"
                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                           />
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">Total Hours</label>
                           <input
-                            type="number"
-                            value={reportData.volunteers.hours}
-                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, hours: parseInt(e.target.value) })}
+                            type="text"
+                            value={reportData.volunteers.hours || ''}
+                            onChange={(e) => updateReportField('volunteers', { ...reportData.volunteers, hours: e.target.value })}
+                            placeholder="e.g., 304 or 300+"
                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                           />
                         </div>
