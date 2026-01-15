@@ -77,6 +77,9 @@ const CurrencySettings: React.FC = () => {
   const [editValue, setEditValue] = useState<string>('');
   const [saving, setSaving] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState('USD');
+  const [converterAmount, setConverterAmount] = useState(1000);
+  const [converterFrom, setConverterFrom] = useState('NGN');
+  const [converterTo, setConverterTo] = useState('USD');
 
   const handleEditRate = (currencyCode: string, currentRate: number) => {
     setEditingCurrency(currencyCode);
@@ -369,16 +372,16 @@ const CurrencySettings: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Amount</label>
                 <input
                   type="number"
-                  defaultValue="1000"
-                  id="convert-amount"
+                  value={converterAmount}
+                  onChange={(e) => setConverterAmount(parseFloat(e.target.value) || 0)}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">From</label>
                 <select
-                  id="convert-from"
-                  defaultValue="NGN"
+                  value={converterFrom}
+                  onChange={(e) => setConverterFrom(e.target.value)}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   {currencies.filter(c => c.isActive).map(currency => (
@@ -391,8 +394,8 @@ const CurrencySettings: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">To</label>
                 <select
-                  id="convert-to"
-                  defaultValue="USD"
+                  value={converterTo}
+                  onChange={(e) => setConverterTo(e.target.value)}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   {currencies.filter(c => c.isActive).map(currency => (
@@ -406,13 +409,7 @@ const CurrencySettings: React.FC = () => {
             <div className="mt-6 p-4 bg-accent-500/10 border border-accent-500/20 rounded-lg">
               <p className="text-sm text-gray-400 mb-1">Converted Amount:</p>
               <p className="text-2xl font-bold text-white">
-                {(() => {
-                  const amount = parseFloat((document.getElementById('convert-amount') as HTMLInputElement)?.value || '1000');
-                  const from = (document.getElementById('convert-from') as HTMLSelectElement)?.value || 'NGN';
-                  const to = (document.getElementById('convert-to') as HTMLSelectElement)?.value || 'USD';
-                  const converted = convertAmount(amount, from, to);
-                  return formatCurrency(converted, to);
-                })()}
+                {formatCurrency(convertAmount(converterAmount, converterFrom, converterTo), converterTo)}
               </p>
             </div>
           </div>
