@@ -252,6 +252,8 @@ const OutreachReportsManagement: React.FC = () => {
       // Check if this is a new outreach (starts with 'new-')
       const isNew = selectedOutreach.id.startsWith('new-');
 
+      console.log('Saving outreach:', isNew ? 'CREATE' : 'UPDATE', selectedOutreach.id);
+
       const outreachResponse = await fetch(`/api/outreaches${isNew ? '' : `?id=${selectedOutreach.id}`}`, {
         method: isNew ? 'POST' : 'PUT',
         headers: {
@@ -260,7 +262,18 @@ const OutreachReportsManagement: React.FC = () => {
         body: JSON.stringify(outreachData),
       });
 
+      if (!outreachResponse.ok) {
+        const outreachError = await outreachResponse.json();
+        console.error('Outreach save failed:', outreachError);
+        throw new Error(`Failed to save outreach: ${outreachError.message || outreachError.error || 'Unknown error'}`);
+      }
+
+      const outreachResult = await outreachResponse.json();
+      console.log('Outreach saved:', outreachResult);
+
       // Then save the report
+      console.log('Saving report for:', selectedOutreach.id);
+
       const reportResponse = await fetch(`/api/outreaches/${selectedOutreach.id}/report`, {
         method: 'PUT',
         headers: {
@@ -269,18 +282,24 @@ const OutreachReportsManagement: React.FC = () => {
         body: JSON.stringify(reportData),
       });
 
-      if (reportResponse.ok) {
-        alert('Outreach and report saved successfully!');
-        setShowEditor(false);
-        setSelectedOutreach(null);
-        setReportData(null);
-        loadOutreaches();
-      } else {
-        throw new Error('Failed to save report');
+      if (!reportResponse.ok) {
+        const reportError = await reportResponse.json();
+        console.error('Report save failed:', reportError);
+        throw new Error(`Failed to save report: ${reportError.message || reportError.error || 'Unknown error'}`);
       }
+
+      const reportResult = await reportResponse.json();
+      console.log('Report saved:', reportResult);
+
+      alert('✅ Outreach and report saved successfully to database!');
+      setShowEditor(false);
+      setSelectedOutreach(null);
+      setReportData(null);
+      loadOutreaches();
     } catch (error) {
-      console.error('Error saving report:', error);
-      alert('Failed to save report. Please try again.');
+      console.error('Save error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`❌ Failed to save: ${errorMessage}\n\nCheck browser console for details.`);
     } finally {
       setSaving(false);
     }
