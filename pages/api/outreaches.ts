@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -110,10 +110,13 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
 
     let savedToDatabase = false;
 
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
     // Try database save FIRST if available
-    if (supabase) {
+    if (dbClient) {
       try {
-        const { error } = await (supabase
+        const { error } = await (dbClient
           .from('content') as any)
           .insert([newOutreach] as any);
 
@@ -123,10 +126,9 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
         }
 
         savedToDatabase = true;
-        console.log(`✅ Created outreach ${newOutreach.id} in DATABASE`);
+        console.log(`✅ Created outreach ${newOutreach.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
       } catch (dbError) {
         console.error('Database save failed:', dbError);
-        console.log('⚠️ Falling back to mock storage (data will NOT persist)');
       }
     }
 
@@ -201,9 +203,12 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
 
     let savedToDatabase = false;
 
-    if (supabase) {
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (dbClient) {
       try {
-        const { data, error } = await (supabase
+        const { data, error } = await (dbClient
           .from('content') as any)
           .update(dbUpdateData)
           .eq('id', id)
@@ -217,7 +222,7 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
         }
 
         savedToDatabase = true;
-        console.log(`✅ Updated outreach ${id} in DATABASE`);
+        console.log(`✅ Updated outreach ${id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
 
         return res.status(200).json({
           ...data,
@@ -249,12 +254,15 @@ async function deleteOutreach(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Outreach ID is required' });
     }
 
-    if (!supabase) {
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
       return res.status(500).json({ error: 'Database not configured' });
     }
 
     // Delete from database
-    const { error } = await (supabase
+    const { error } = await (dbClient
       .from('content') as any)
       .delete()
       .eq('id', id)
@@ -265,7 +273,7 @@ async function deleteOutreach(req: NextApiRequest, res: NextApiResponse) {
       return res.status(500).json({ error: 'Failed to delete outreach', details: error.message });
     }
 
-    console.log(`✅ Deleted outreach ${id} from DATABASE`);
+    console.log(`✅ Deleted outreach ${id} from DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
 
     return res.status(200).json({
       success: true,

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { getTypedSupabaseClient, supabaseAdmin } from '@/lib/supabase';
 
 // In-memory storage for mock reports (fallback when no database)
 // Pre-populated with default report data
@@ -113,7 +113,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid outreach ID' });
   }
 
+  // Use admin client for write operations, regular client for reads
   const client = getTypedSupabaseClient();
+  const adminClient = supabaseAdmin || client;
 
   try {
     switch (method) {
@@ -121,9 +123,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return await getOutreachReport(client, id, res);
       case 'POST':
       case 'PUT':
-        return await saveOutreachReport(client, id, req, res);
+        return await saveOutreachReport(adminClient, id, req, res);
       case 'DELETE':
-        return await deleteOutreachReport(client, id, res);
+        return await deleteOutreachReport(adminClient, id, res);
       default:
         return res.status(405).json({ error: 'Method not allowed' });
     }

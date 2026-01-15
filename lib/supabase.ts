@@ -3,6 +3,7 @@ import { Database } from '@/types/database';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Check if we have valid Supabase configuration
 const isValidSupabaseConfig =
@@ -49,6 +50,32 @@ export const supabase = supabaseClient;
 
 // Flag to check if Supabase is available
 export const isSupabaseAvailable = !!supabase;
+
+// Create admin client with service role key for server-side operations
+// This bypasses RLS policies and should only be used in API routes
+let supabaseAdminClient: ReturnType<typeof createClient<Database>> | null = null;
+
+if (supabaseServiceRoleKey && supabaseUrl) {
+  try {
+    supabaseAdminClient = createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+    if (isDevelopmentMode) {
+      console.log('✅ Supabase admin client created with service role key');
+    }
+  } catch (error) {
+    console.warn('❌ Failed to create Supabase admin client:', error);
+    supabaseAdminClient = null;
+  }
+}
+
+// Export admin client for server-side use only (API routes)
+// This client bypasses RLS and has full database access
+export const supabaseAdmin = supabaseAdminClient;
+export const isSupabaseAdminAvailable = !!supabaseAdmin;
 
 // Helper function to handle Supabase errors
 export const handleSupabaseError = (error: any): string => {
