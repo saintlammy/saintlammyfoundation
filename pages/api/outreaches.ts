@@ -98,7 +98,8 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
       outreach_details: {
         location: outreachData.location || 'Nigeria',
         event_date: outreachData.date || new Date().toISOString(),
-        beneficiaries_count: outreachData.beneficiaries || 0
+        // Accept both text and numeric values for beneficiaries
+        beneficiaries_count: outreachData.beneficiaries || ''
       },
       status: outreachData.status || 'upcoming',
       slug,
