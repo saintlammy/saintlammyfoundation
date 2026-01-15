@@ -16,8 +16,6 @@
 [functions]
   external_node_modules = ["@netlify/functions"]
   node_bundler = "esbuild"
-  # Allow larger payloads for image uploads (10MB)
-  included_files = ["**/*"]
 
 [functions."scheduled-crypto-monitor"]
   schedule = "*/5 * * * *"
