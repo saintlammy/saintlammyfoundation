@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationBell from '@/components/NotificationBell';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
+import AutoLogoutModal from '@/components/AutoLogoutModal';
 import {
   BarChart3,
   Users,
@@ -50,6 +52,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['dashboard']);
   const router = useRouter();
   const { user, signOut, isAdmin, isModerator } = useAuth();
+
+  // Auto-logout after 60 minutes of inactivity
+  const { showLogoutModal, logoutReason, closeModal } = useAutoLogout({
+    timeoutMinutes: 60,
+    onLogout: (reason) => {
+      console.log(`User logged out due to: ${reason}`);
+    }
+  });
 
   const handleSignOut = async () => {
     try {
@@ -395,6 +405,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      {/* Auto Logout Modal */}
+      <AutoLogoutModal
+        isOpen={showLogoutModal}
+        reason={logoutReason}
+        onClose={closeModal}
+      />
     </div>
     </ProtectedRoute>
   );
