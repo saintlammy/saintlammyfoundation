@@ -8,6 +8,7 @@ const Outreaches: React.FC = () => {
   const [pastOutreaches, setPastOutreaches] = useState<any[]>([]);
   const [upcomingOutreaches, setUpcomingOutreaches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     loadOutreaches();
@@ -25,17 +26,28 @@ const Outreaches: React.FC = () => {
         const past = data.filter((o: any) => o.status === 'completed');
         const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
 
-        setPastOutreaches(past);
-        setUpcomingOutreaches(upcoming.length > 0 ? upcoming : getDefaultUpcomingOutreaches());
+        // Only use database data if we got real outreaches
+        if (data && data.length > 0) {
+          setPastOutreaches(past.length > 0 ? past : getDefaultPastOutreaches());
+          setUpcomingOutreaches(upcoming.length > 0 ? upcoming : getDefaultUpcomingOutreaches());
+          setFetchError(null);
+        } else {
+          // Empty database - use examples and show notification
+          setPastOutreaches(getDefaultPastOutreaches());
+          setUpcomingOutreaches(getDefaultUpcomingOutreaches());
+          setFetchError('Using example outreaches. Check back later for real community outreach programs.');
+        }
       } else {
-        // Use defaults if API fails
+        // API error - use defaults and show notification
         setPastOutreaches(getDefaultPastOutreaches());
         setUpcomingOutreaches(getDefaultUpcomingOutreaches());
+        setFetchError('Using example outreaches. Check back later for real community outreach programs.');
       }
     } catch (error) {
       console.error('Error loading outreaches:', error);
       setPastOutreaches(getDefaultPastOutreaches());
       setUpcomingOutreaches(getDefaultUpcomingOutreaches());
+      setFetchError('Using example outreaches. Check back later for real community outreach programs.');
     } finally {
       setLoading(false);
     }
@@ -146,6 +158,18 @@ const Outreaches: React.FC = () => {
         <title>Outreaches - Saintlammy Foundation</title>
         <meta name="description" content="Join Saintlammy Foundation's community outreaches. Medical care, educational support, feeding programs, and skills training across Nigeria." />
       </Head>
+
+        {/* Notification Banner */}
+        {fetchError && (
+          <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
+            <div className="max-w-7xl mx-auto px-6">
+              <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
+                {fetchError}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
