@@ -4,10 +4,52 @@
  * This script adds example/demo programs to the database that admins can edit or delete.
  * Run this once to populate the database with initial content.
  *
- * Usage: npx ts-node scripts/seed-example-programs.ts
+ * Usage: npx tsx scripts/seed-example-programs.ts
  */
 
-import { supabaseAdmin } from '../lib/supabase';
+// Use CommonJS require for Node.js script
+const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
+
+// Manually load .env.local since dotenv is not installed
+const envPath = path.join(__dirname, '..', '.env.local');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^([^=:#]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      const value = match[2].trim().replace(/^["']|["']$/g, '');
+      process.env[key] = value;
+    }
+  });
+  console.log('✅ Loaded environment variables from .env.local');
+} else {
+  console.log('⚠️  .env.local not found, using existing environment variables');
+}
+
+// Initialize Supabase admin client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('\n❌ Missing environment variables:');
+  console.error('   NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✓' : '✗');
+  console.error('   SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✓' : '✗');
+  console.error('\n💡 Make sure .env.local exists with these variables');
+  console.error('💡 Or export them in your shell before running this script');
+  process.exit(1);
+}
+
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
+
+console.log('✅ Supabase admin client initialized');
 
 const examplePrograms = [
   {
