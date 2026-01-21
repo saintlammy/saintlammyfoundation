@@ -325,35 +325,15 @@ const Programs: React.FC = () => {
             </div>
 
             {/* Loading State */}
-            {loading && (
+            {loading ? (
               <div className="flex justify-center items-center py-16">
                 <Loader className="w-8 h-8 animate-spin text-accent-500" />
                 <span className="ml-3 text-gray-600 dark:text-gray-400">Loading programs...</span>
               </div>
-            )}
-
-            {/* Error State */}
-            {error && !loading && (
-              <div className="text-center py-16">
-                <p className="text-red-500 mb-4">{error}</p>
-                <p className="text-gray-600 dark:text-gray-400">Showing example programs below.</p>
-              </div>
-            )}
-
-            {/* Empty State */}
-            {!loading && !error && programs.length === 0 && (
-              <div className="text-center py-16">
-                <Heart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Programs Available</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Check back soon for our upcoming programs, or view our example programs below.
-                </p>
-              </div>
-            )}
-
-            {/* Programs List - Show database programs if available, otherwise show fallback */}
-            <div className="space-y-16">
-              {(programs.length > 0 ? programs : getFallbackPrograms()).map((program, index) => (
+            ) : (
+              /* Programs List - Show database programs if available, otherwise show fallback */
+              <div className="space-y-16">
+                {(programs.length > 0 ? programs : getFallbackPrograms()).map((program, index) => (
                 <div key={program.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className={`md:flex ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                     <div className="md:w-1/2 relative h-64 md:h-80">
@@ -441,7 +421,8 @@ const Programs: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
