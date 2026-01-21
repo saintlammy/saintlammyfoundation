@@ -54,7 +54,7 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles: initialArticles, categori
         // Only update if we got real data from database
         if (data && data.length > 0) {
           setArticles(data);
-          const newCategories = Array.from(new Set(data.map((article: NewsArticle) => article.category)));
+          const newCategories = Array.from(new Set(data.map((article: NewsArticle) => article.category))) as string[];
           setCategories(newCategories);
           setFetchError(null);
         }
@@ -415,7 +415,7 @@ export const getStaticProps: GetStaticProps<NewsPageProps> = async () => {
       const data = await response.json();
 
       if (data && data.length > 0) {
-        const categories = Array.from(new Set(data.map((article: NewsArticle) => article.category)));
+        const categories = Array.from(new Set(data.map((article: NewsArticle) => article.category))) as string[];
 
         return {
           props: {

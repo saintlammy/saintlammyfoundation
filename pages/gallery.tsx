@@ -144,14 +144,7 @@ const GalleryPage = () => {
             category: 'Infrastructure',
             date: 'August 2024'
           }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGallery();
-  }, []);
+        ];
 
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
