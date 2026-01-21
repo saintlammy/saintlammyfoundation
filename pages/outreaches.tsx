@@ -29,25 +29,25 @@ const Outreaches: React.FC = () => {
         // Only use database data if we got real outreaches
         if (data && data.length > 0) {
           setPastOutreaches(past.length > 0 ? past : getDefaultPastOutreaches());
-          setUpcomingOutreaches(upcoming.length > 0 ? upcoming : getDefaultUpcomingOutreaches());
+          setUpcomingOutreaches(upcoming); // Only show real upcoming outreaches
           setFetchError(null);
         } else {
-          // Empty database - use examples and show notification
+          // Empty database - show only past examples, no upcoming
           setPastOutreaches(getDefaultPastOutreaches());
-          setUpcomingOutreaches(getDefaultUpcomingOutreaches());
-          setFetchError('Using example outreaches. Check back later for real community outreach programs.');
+          setUpcomingOutreaches([]);
+          setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
         }
       } else {
-        // API error - use defaults and show notification
+        // API error - show only past examples
         setPastOutreaches(getDefaultPastOutreaches());
-        setUpcomingOutreaches(getDefaultUpcomingOutreaches());
-        setFetchError('Using example outreaches. Check back later for real community outreach programs.');
+        setUpcomingOutreaches([]);
+        setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
       }
     } catch (error) {
       console.error('Error loading outreaches:', error);
       setPastOutreaches(getDefaultPastOutreaches());
-      setUpcomingOutreaches(getDefaultUpcomingOutreaches());
-      setFetchError('Using example outreaches. Check back later for real community outreach programs.');
+      setUpcomingOutreaches([]);
+      setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
     } finally {
       setLoading(false);
     }
@@ -279,23 +279,18 @@ const Outreaches: React.FC = () => {
                       </div>
 
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <a
+                        <Link
                           href="/volunteer"
                           className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
                           Register to Volunteer
-                        </a>
-                        <a
-                          href="#outreach-details"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const element = e.currentTarget.closest('.bg-white, .bg-gray-800\\/50');
-                            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }}
+                        </Link>
+                        <Link
+                          href={`/contact?subject=Outreach: ${encodeURIComponent(outreach.title)}`}
                           className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
-                          Learn More
-                        </a>
+                          Contact for Details
+                        </Link>
                       </div>
 
                       {outreach.volunteersNeeded && (
@@ -388,18 +383,18 @@ const Outreaches: React.FC = () => {
               Be part of the change. Volunteer with us and help bring hope and healing to communities across Nigeria.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <a
+              <Link
                 href="/volunteer"
                 className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans text-center inline-block"
               >
                 Volunteer With Us
-              </a>
-              <a
-                href="/news"
+              </Link>
+              <Link
+                href="/contact"
                 className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
               >
-                Subscribe to Updates
-              </a>
+                Contact Us
+              </Link>
             </div>
           </div>
         </section>
