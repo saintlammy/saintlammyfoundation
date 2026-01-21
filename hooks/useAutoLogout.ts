@@ -28,8 +28,10 @@ export const useAutoLogout = (options: UseAutoLogoutOptions = {}) => {
 
   const handleAutoLogout = async () => {
     try {
-      // Sign out from Supabase
-      await supabase.auth.signOut();
+      // Sign out from Supabase if available
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
 
       // Set logout reason and show modal
       setLogoutReason(`You have been automatically logged out due to ${timeoutMinutes} minutes of inactivity. This is a security measure to protect your account.`);
