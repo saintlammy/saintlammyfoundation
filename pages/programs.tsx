@@ -17,33 +17,53 @@ interface Program {
   updated_at: string;
 }
 
+interface ProgramStats {
+  totalBeneficiaries: string;
+  activePrograms: string;
+  monthlyBudget: string;
+  successRate: string;
+}
+
 const Programs: React.FC = () => {
   const { openDonationModal } = useDonationModal();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [stats, setStats] = useState<ProgramStats | null>(null);
 
   useEffect(() => {
-    const fetchPrograms = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/programs?status=published');
 
-        if (!response.ok) {
+        // Fetch programs
+        const programsResponse = await fetch('/api/programs?status=published');
+        if (!programsResponse.ok) {
           throw new Error('Failed to fetch programs');
         }
+        const programsData = await programsResponse.json();
 
-        const data = await response.json();
-
-        if (data && data.length > 0) {
-          setPrograms(data);
+        if (programsData && programsData.length > 0) {
+          setPrograms(programsData);
           setFetchError(null);
         } else {
-          // Empty database - show notification
           setPrograms([]);
           setFetchError('Using example programs. No programs have been added to the database yet.');
         }
+
+        // Fetch stats
+        try {
+          const statsResponse = await fetch('/api/programs/stats');
+          if (statsResponse.ok) {
+            const statsData = await statsResponse.json();
+            setStats(statsData);
+          }
+        } catch (statsErr) {
+          console.error('Error fetching stats:', statsErr);
+          // Stats fetch failed, will use fallback
+        }
+
         setError(null);
       } catch (err) {
         console.error('Error fetching programs:', err);
@@ -55,7 +75,7 @@ const Programs: React.FC = () => {
       }
     };
 
-    fetchPrograms();
+    fetchData();
   }, []);
 
   // Helper function to get icon for a program category
@@ -205,11 +225,21 @@ const Programs: React.FC = () => {
     }
   ];
 
+  // Fallback stats if API fails
+  const fallbackStats = {
+    totalBeneficiaries: '2,450+',
+    activePrograms: '8',
+    monthlyBudget: '₦1.43M',
+    successRate: '87%'
+  };
+
+  const currentStats = stats || fallbackStats;
+
   const programStats = [
-    { label: 'Total Beneficiaries', value: '2,450+', icon: Users },
-    { label: 'Active Programs', value: '8', icon: Target },
-    { label: 'Monthly Budget', value: '₦1.43M', icon: DollarSign },
-    { label: 'Success Rate', value: '87%', icon: TrendingUp }
+    { label: 'Total Beneficiaries', value: currentStats.totalBeneficiaries, icon: Users },
+    { label: 'Active Programs', value: currentStats.activePrograms, icon: Target },
+    { label: 'Monthly Budget', value: currentStats.monthlyBudget, icon: DollarSign },
+    { label: 'Success Rate', value: currentStats.successRate, icon: TrendingUp }
   ];
 
   return (
