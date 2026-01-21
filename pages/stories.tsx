@@ -29,6 +29,36 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Fetch fresh data from API on client-side
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/stories?status=published');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch stories');
+        }
+
+        const data = await response.json();
+
+        // Only update if we got real data from database
+        if (data && data.length > 0) {
+          setStories(data);
+          setFetchError(null);
+        }
+      } catch (err) {
+        console.error('Error fetching stories:', err);
+        setFetchError('Using example stories. Check back later for real impact stories.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStories();
+  }, []);
 
   useEffect(() => {
     // Filter stories based on category and search term
@@ -76,6 +106,17 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
         <meta name="description" content="Read inspiring impact stories from beneficiaries of Saintlammy Foundation. Real people, real impact across Nigeria." />
         <meta name="keywords" content="success stories, testimonials, impact, Nigeria, charity, foundation" />
       </Head>
+
+      {/* Notification Banner */}
+      {fetchError && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
+          <div className="max-w-7xl mx-auto px-6">
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
+              {fetchError}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-black dark:to-gray-900">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,7 +6,7 @@ import { GetStaticProps } from 'next';
 import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
-import { Calendar, ArrowRight, Heart, Users, Award, Search, Filter, Tag } from 'lucide-react';
+import { Calendar, ArrowRight, Heart, Users, Award, Search, Filter, Tag, Loader } from 'lucide-react';
 
 interface NewsArticle {
   id: string;
@@ -27,12 +27,47 @@ interface NewsPageProps {
   categories: string[];
 }
 
-const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
+const NewsPage: React.FC<NewsPageProps> = ({ articles: initialArticles, categories: initialCategories }) => {
   const { openDonationModal } = useDonationModal();
+  const [articles, setArticles] = useState<NewsArticle[]>(initialArticles);
+  const [categories, setCategories] = useState<string[]>(initialCategories);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const articlesPerPage = 9;
+
+  // Fetch fresh data from API on client-side
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/news?status=published');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch news');
+        }
+
+        const data = await response.json();
+
+        // Only update if we got real data from database
+        if (data && data.length > 0) {
+          setArticles(data);
+          const newCategories = Array.from(new Set(data.map((article: NewsArticle) => article.category)));
+          setCategories(newCategories);
+          setFetchError(null);
+        }
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setFetchError('Using example news articles. Check back later for real updates.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -96,6 +131,17 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
         <meta name="keywords" content="charity news, Nigeria nonprofit updates, orphan support news, widow empowerment stories, community outreach" />
         <link rel="canonical" href="https://www.saintlammyfoundation.org/news" />
       </Head>
+
+      {/* Notification Banner */}
+      {fetchError && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3 mt-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
+              {fetchError}
+            </p>
+          </div>
+        </div>
+      )}
 
       <ErrorBoundary>
           <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
@@ -361,7 +407,30 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles, categories }) => {
 
 
 export const getStaticProps: GetStaticProps<NewsPageProps> = async () => {
-  // In a real app, fetch from your CMS or database
+  try {
+    // Try to fetch from API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/news?status=published`);
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        const categories = Array.from(new Set(data.map((article: NewsArticle) => article.category)));
+
+        return {
+          props: {
+            articles: data,
+            categories
+          },
+          revalidate: 3600
+        };
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching news from API:', error);
+  }
+
+  // Fallback to example articles
   const articles: NewsArticle[] = [
     {
       id: 'december-medical-outreach-2024',
