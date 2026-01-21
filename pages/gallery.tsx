@@ -22,31 +22,56 @@ const GalleryPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const response = await fetch('/api/gallery');
+        setLoading(true);
+        const response = await fetch('/api/gallery?status=published');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch gallery');
+        }
+
         const data = await response.json();
 
-        // Transform gallery data to match expected interface
-        const transformedData = data.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          image: item.image,
-          icon: item.icon,
-          category: item.category,
-          date: item.date || new Date().toLocaleDateString()
-        }));
+        // If we got real data from database, use it
+        if (data && data.length > 0) {
+          // Transform gallery data to match expected interface
+          const transformedData = data.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            image: item.image,
+            icon: item.icon,
+            category: item.category,
+            date: item.date || new Date().toLocaleDateString()
+          }));
 
-        setGalleryItems(transformedData);
+          setGalleryItems(transformedData);
+          setFetchError(null);
+        } else {
+          // Database is empty, use fallback
+          setFetchError('Using example gallery items. Check back later for real projects.');
+          setGalleryItems(getFallbackGallery());
+        }
       } catch (error) {
         console.error('Error fetching gallery:', error);
+        setFetchError('Using example gallery items. Check back later for real projects.');
         // Fallback to comprehensive mock data
-        setGalleryItems([
+        setGalleryItems(getFallbackGallery());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
+  }, []);
+
+  const getFallbackGallery = (): GalleryItem[] => [
           {
             id: '1',
             title: 'Back-to-School Initiative 2024',
@@ -169,6 +194,17 @@ const GalleryPage: React.FC = () => {
         title: 'Support Our Mission',
         description: 'Your donation helps us transform lives across Nigeria'
       })} />
+
+      {/* Notification Banner */}
+      {fetchError && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3 mt-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
+              {fetchError}
+            </p>
+          </div>
+        </div>
+      )}
 
       <ErrorBoundary>
         <main className="min-h-screen bg-gray-900 pt-16">

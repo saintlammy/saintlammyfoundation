@@ -1,9 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
 
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  rating?: number;
+  image?: string;
+  program?: string;
+  date?: string;
+}
+
 const TestimonialsSection: React.FC = () => {
-  const testimonials = [
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/testimonials?status=published&limit=3');
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+            // Transform database testimonials to component format
+            const transformed = data.map((t: Testimonial) => ({
+              id: t.id,
+              name: t.name,
+              role: t.role || 'Beneficiary',
+              location: t.program || 'Nigeria',
+              image: t.image || 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+              quote: t.content,
+              donation: t.program || 'Supporter'
+            }));
+
+            setTestimonials(transformed);
+            return;
+          }
+        }
+
+        // Fallback to example testimonials
+        setTestimonials(getFallbackTestimonials());
+      } catch (error) {
+        console.error('Error fetching testimonials:', error);
+        setTestimonials(getFallbackTestimonials());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  const getFallbackTestimonials = () => [
     {
       id: 1,
       name: 'Chidinma Okafor',
