@@ -18,7 +18,7 @@ interface GalleryItem {
   date: string;
 }
 
-const GalleryPage: React.FC = () => {
+const GalleryPage = () => {
   const { openDonationModal } = useDonationModal();
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
