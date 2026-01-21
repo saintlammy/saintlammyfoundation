@@ -26,104 +26,35 @@ const Outreaches: React.FC = () => {
         const past = data.filter((o: any) => o.status === 'completed');
         const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
 
-        // Only use database data if we got real outreaches
-        if (data && data.length > 0) {
-          setPastOutreaches(past.length > 0 ? past : getDefaultPastOutreaches());
-          setUpcomingOutreaches(upcoming); // Only show real upcoming outreaches
-          setFetchError(null);
+        // Use database data
+        setPastOutreaches(past);
+        setUpcomingOutreaches(upcoming);
+
+        // Show notification if database is empty
+        if (data.length === 0) {
+          setFetchError('No outreaches available. Please add outreaches from the admin dashboard or run the seeding script.');
         } else {
-          // Empty database - show only past examples, no upcoming
-          setPastOutreaches(getDefaultPastOutreaches());
-          setUpcomingOutreaches([]);
-          setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
+          setFetchError(null);
         }
       } else {
-        // API error - show only past examples
-        setPastOutreaches(getDefaultPastOutreaches());
+        // API error
+        setPastOutreaches([]);
         setUpcomingOutreaches([]);
-        setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
+        setFetchError('Unable to connect to database. Please check your connection and try again.');
       }
     } catch (error) {
       console.error('Error loading outreaches:', error);
-      setPastOutreaches(getDefaultPastOutreaches());
+      setPastOutreaches([]);
       setUpcomingOutreaches([]);
-      setFetchError('Using example past outreaches. No upcoming outreaches scheduled yet.');
+      setFetchError('Unable to connect to database. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const getDefaultUpcomingOutreaches = () => [
-    {
-      id: 1,
-      title: 'Christmas Feeding Program',
-      date: 'December 22, 2024',
-      time: '10:00 AM - 4:00 PM',
-      location: 'Mushin Community Center, Lagos',
-      description: 'Annual Christmas feeding program for 500+ families in Mushin area. Hot meals, gift packages, and medical check-ups.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      targetBeneficiaries: 500,
-      volunteersNeeded: 25,
-      status: 'Registration Open'
-    },
-    {
-      id: 2,
-      title: 'Educational Materials Distribution',
-      date: 'January 15, 2025',
-      time: '9:00 AM - 2:00 PM',
-      location: 'Hope Children Home, Abuja',
-      description: 'Distribution of school bags, books, uniforms, and educational materials to 200 children across 5 orphanages.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      targetBeneficiaries: 200,
-      volunteersNeeded: 15,
-      status: 'Planning Phase'
-    },
-    {
-      id: 3,
-      title: 'Widow Empowerment Workshop',
-      date: 'February 8, 2025',
-      time: '11:00 AM - 5:00 PM',
-      location: 'Community Hall, Port Harcourt',
-      description: 'Skills training workshop for widows including tailoring, soap making, and small business management.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      targetBeneficiaries: 75,
-      volunteersNeeded: 12,
-      status: 'Registration Soon'
-    }
-  ];
-
-  const getDefaultPastOutreaches = () => [
-    {
-      id: 4,
-      title: 'Independence Day Medical Outreach',
-      date: 'October 1, 2024',
-      location: 'Ikeja, Lagos',
-      beneficiaries: 450,
-      description: 'Free medical check-ups, medications, and health education for underserved communities.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      impact: ['450 people received medical care', '200 medications distributed', '50 referrals to specialists']
-    },
-    {
-      id: 5,
-      title: 'Back-to-School Support',
-      date: 'September 12, 2024',
-      location: 'Multiple Locations',
-      beneficiaries: 320,
-      description: 'School supplies and uniforms distribution for children from vulnerable families.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      impact: ['320 children received school supplies', '150 uniforms distributed', '8 schools supported']
-    },
-    {
-      id: 6,
-      title: 'Clean Water Initiative',
-      date: 'August 20, 2024',
-      location: 'Rural Kogi State',
-      beneficiaries: 600,
-      description: 'Installation of water pumps and distribution of water purification tablets.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      impact: ['3 water pumps installed', '600 people gained access to clean water', '1200 purification tablets distributed']
-    }
-  ];
+  // NOTE: No more hardcoded fallback outreaches!
+  // All outreaches now come from the database.
+  // Run: npx tsx scripts/seed-example-outreaches.ts to populate initial data
 
   const outreachCategories = [
     {
