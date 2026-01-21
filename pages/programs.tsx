@@ -1,13 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award } from 'lucide-react';
+import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award, Loader } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+
+interface Program {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  targetAudience?: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
 
 const Programs: React.FC = () => {
   const { openDonationModal } = useDonationModal();
-  const mainPrograms = [
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/programs?status=published');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch programs');
+        }
+
+        const data = await response.json();
+        setPrograms(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching programs:', err);
+        setError('Failed to load programs. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  // Helper function to get icon for a program category
+  const getIconForCategory = (category: string) => {
+    const cat = category?.toLowerCase() || '';
+    if (cat.includes('education') || cat.includes('orphan')) return Heart;
+    if (cat.includes('empowerment') || cat.includes('widow')) return Users;
+    if (cat.includes('health')) return Heart;
+    return GraduationCap;
+  };
+
+  // Helper to check if program is from database (simplified structure)
+  const isDatabaseProgram = (prog: any) => !prog.features;
+
+  // Fallback hardcoded programs for display purposes only
+  const fallbackPrograms = [
     {
       id: 1,
       title: 'Orphan Adoption Program',
@@ -206,8 +259,36 @@ const Programs: React.FC = () => {
               </p>
             </div>
 
+            {/* Loading State */}
+            {loading && (
+              <div className="flex justify-center items-center py-16">
+                <Loader className="w-8 h-8 animate-spin text-accent-500" />
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading programs...</span>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && !loading && (
+              <div className="text-center py-16">
+                <p className="text-red-500 mb-4">{error}</p>
+                <p className="text-gray-600 dark:text-gray-400">Showing example programs below.</p>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!loading && !error && programs.length === 0 && (
+              <div className="text-center py-16">
+                <Heart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Programs Available</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Check back soon for our upcoming programs, or view our example programs below.
+                </p>
+              </div>
+            )}
+
+            {/* Programs List - Show database programs if available, otherwise show fallback */}
             <div className="space-y-16">
-              {mainPrograms.map((program, index) => (
+              {(programs.length > 0 ? programs : fallbackPrograms).map((program, index) => (
                 <div key={program.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className={`md:flex ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                     <div className="md:w-1/2 relative h-64 md:h-80">
@@ -227,34 +308,48 @@ const Programs: React.FC = () => {
                     <div className="md:w-1/2 p-8 md:p-12">
                       <div className="flex items-center mb-4">
                         <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mr-4">
-                          <program.icon className="w-6 h-6 text-accent-400" />
+                          {(() => {
+                            const Icon = (program as any).icon || getIconForCategory((program as any).category || '');
+                            return <Icon className="w-6 h-6 text-accent-400" />;
+                          })()}
                         </div>
                         <div>
                           <h3 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">{program.title}</h3>
-                          <p className="text-accent-400 text-sm font-medium">{program.beneficiaries} Beneficiaries</p>
+                          {(program as any).beneficiaries && (
+                            <p className="text-accent-400 text-sm font-medium">{(program as any).beneficiaries} Beneficiaries</p>
+                          )}
+                          {(program as any).targetAudience && !isDatabaseProgram(program) === false && (
+                            <p className="text-accent-400 text-sm font-medium">For: {(program as any).targetAudience}</p>
+                          )}
                         </div>
                       </div>
 
                       <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{program.description}</p>
 
-                      <div className="space-y-2 mb-6">
-                        <h4 className="text-gray-900 dark:text-white font-semibold text-sm mb-3">Program Features:</h4>
-                        {program.features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-start gap-2">
-                            <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
-                            <span className="text-gray-600 dark:text-gray-300 text-sm">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Show features only for fallback programs */}
+                      {(program as any).features && (
+                        <div className="space-y-2 mb-6">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm mb-3">Program Features:</h4>
+                          {(program as any).features.map((feature: string, featureIndex: number) => (
+                            <div key={featureIndex} className="flex items-start gap-2">
+                              <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-gray-600 dark:text-gray-300 text-sm">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        {Object.entries(program.impact).map(([key, value]) => (
-                          <div key={key} className="text-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                            <div className="text-accent-400 font-semibold text-sm">{value}</div>
-                            <div className="text-gray-500 dark:text-gray-400 text-xs">{key}</div>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Show impact stats only for fallback programs */}
+                      {(program as any).impact && (
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                          {Object.entries((program as any).impact).map(([key, value]) => (
+                            <div key={key} className="text-center p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                              <div className="text-accent-400 font-semibold text-sm">{value as string}</div>
+                              <div className="text-gray-500 dark:text-gray-400 text-xs">{key}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="flex flex-col sm:flex-row gap-4">
                         <button

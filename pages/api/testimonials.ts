@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,17 +22,21 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-
     if (!supabase) {
-      return res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
+      console.error('⚠️ Supabase not configured');
+      return res.status(200).json([]);
     }
 
     let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'testimonial')
-      .eq('status', status)
       .order('publish_date', { ascending: false });
+
+    // Only filter by status if it's not 'all'
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -41,12 +45,14 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
+      console.error('❌ Database query failed:', error);
+      return res.status(500).json({ error: 'Failed to fetch testimonials', details: error.message });
     }
 
+    // Return empty array if no data (DO NOT return mock data)
     if (!data || data.length === 0) {
-      return res.status(200).json(getMockTestimonials(limit ? parseInt(limit as string) : undefined));
+      console.log('📭 No testimonials found in database');
+      return res.status(200).json([]);
     }
 
     // Transform data to match component interface
@@ -66,8 +72,8 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(transformedData);
   } catch (error) {
-    console.error('API error:', error);
-    res.status(200).json(getMockTestimonials((limit as any) ? parseInt(limit as string) : undefined));
+    console.error('❌ API error:', error);
+    return res.status(500).json({ error: 'Failed to fetch testimonials', message: (error as any)?.message });
   }
 }
 
@@ -84,40 +90,48 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
       .replace(/(^-|-$)/g, '');
 
     const newTestimonial = {
+      id: testimonialData.id || `testimonial-${Date.now()}`,
       ...testimonialData,
       slug,
       type: 'testimonial',
+      status: testimonialData.status || 'draft',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newTestimonial,
-        message: 'Testimonial created successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      console.error('❌ No database client available!');
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not save testimonial to database.'
       });
     }
 
-    const { data, error } = await (supabase
+    console.log('📝 Creating testimonial:', newTestimonial.id);
+
+    const { data, error } = await (dbClient
       .from('content') as any)
       .insert([newTestimonial] as any)
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newTestimonial,
-        message: 'Testimonial created successfully (mock mode)'
+      console.error('❌ Database insert failed:', error);
+      return res.status(500).json({
+        error: 'Database save failed',
+        message: error.message,
+        code: error.code
       });
     }
 
+    console.log(`✅ Created testimonial ${newTestimonial.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(201).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -138,15 +152,17 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Testimonial updated successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not update testimonial.'
       });
     }
 
-    const { data, error } = await (supabase
+    const { data, error } = await (dbClient
       .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
@@ -155,18 +171,18 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Testimonial updated successfully (mock mode)'
+      console.error('❌ Database update failed:', error);
+      return res.status(500).json({
+        error: 'Database update failed',
+        message: error.message
       });
     }
 
+    console.log(`✅ Updated testimonial ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(200).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -178,75 +194,33 @@ async function deleteTestimonial(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Testimonial ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Testimonial deleted successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured'
       });
     }
 
-    const { error } = await (supabase
+    const { error } = await (dbClient
       .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'testimonial');
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        message: 'Testimonial deleted successfully (mock mode)'
+      console.error('❌ Delete failed:', error);
+      return res.status(500).json({
+        error: 'Failed to delete testimonial',
+        message: error.message
       });
     }
 
-    res.status(200).json({ message: 'Testimonial deleted successfully' });
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.log(`✅ Deleted testimonial ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
+    res.status(200).json({ success: true, message: 'Testimonial deleted successfully' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
-}
-
-function getMockTestimonials(limit?: number) {
-  const mockTestimonials = [
-    {
-      id: '1',
-      name: 'Mrs. Grace Okoro',
-      role: 'Program Beneficiary',
-      content: 'The widow empowerment program transformed my life. I learned tailoring skills and received a micro-loan to start my business. Now I can support my three children independently.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      program: 'Widow Empowerment',
-      date: '2024-01-20T00:00:00Z',
-      status: 'published',
-      created_at: '2024-01-15T00:00:00Z',
-      updated_at: '2024-01-15T00:00:00Z'
-    },
-    {
-      id: '2',
-      name: 'David Adebayo',
-      role: 'Former Beneficiary',
-      content: 'Through the orphan support program, I was able to complete my education. Today, I am a university graduate and working as a software engineer. Forever grateful!',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      program: 'Orphan Support',
-      date: '2024-01-15T00:00:00Z',
-      status: 'published',
-      created_at: '2024-01-10T00:00:00Z',
-      updated_at: '2024-01-10T00:00:00Z'
-    },
-    {
-      id: '3',
-      name: 'Chief Emmanuel Okafor',
-      role: 'Community Leader',
-      content: 'Saintlammy Foundation has been a blessing to our community. Their healthcare outreach programs have saved many lives and brought hope to our people.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      program: 'Healthcare Outreach',
-      date: '2024-01-10T00:00:00Z',
-      status: 'published',
-      created_at: '2024-01-05T00:00:00Z',
-      updated_at: '2024-01-05T00:00:00Z'
-    }
-  ];
-
-  return limit ? mockTestimonials.slice(0, limit) : mockTestimonials;
 }

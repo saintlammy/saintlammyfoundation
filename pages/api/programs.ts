@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,17 +22,21 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-
     if (!supabase) {
-      return res.status(200).json(getMockPrograms(limit ? parseInt(limit as string) : undefined));
+      console.error('⚠️ Supabase not configured');
+      return res.status(200).json([]);
     }
 
     let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'program')
-      .eq('status', status)
       .order('publish_date', { ascending: false });
+
+    // Only filter by status if it's not 'all'
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -41,12 +45,14 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json(getMockPrograms(limit ? parseInt(limit as string) : undefined));
+      console.error('❌ Database query failed:', error);
+      return res.status(500).json({ error: 'Failed to fetch programs', details: error.message });
     }
 
+    // Return empty array if no data (DO NOT return mock data)
     if (!data || data.length === 0) {
-      return res.status(200).json(getMockPrograms(limit ? parseInt(limit as string) : undefined));
+      console.log('📭 No programs found in database');
+      return res.status(200).json([]);
     }
 
     // Transform data to match component interface
@@ -64,8 +70,8 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(transformedData);
   } catch (error) {
-    console.error('API error:', error);
-    res.status(200).json(getMockPrograms((limit as any) ? parseInt(limit as string) : undefined));
+    console.error('❌ API error:', error);
+    return res.status(500).json({ error: 'Failed to fetch programs', message: (error as any)?.message });
   }
 }
 
@@ -82,40 +88,48 @@ async function createProgram(req: NextApiRequest, res: NextApiResponse) {
       .replace(/(^-|-$)/g, '');
 
     const newProgram = {
+      id: programData.id || `program-${Date.now()}`,
       ...programData,
       slug,
       type: 'program',
+      status: programData.status || 'draft',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newProgram,
-        message: 'Program created successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      console.error('❌ No database client available!');
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not save program to database.'
       });
     }
 
-    const { data, error } = await (supabase
+    console.log('📝 Creating program:', newProgram.id);
+
+    const { data, error } = await (dbClient
       .from('content') as any)
       .insert([newProgram] as any)
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newProgram,
-        message: 'Program created successfully (mock mode)'
+      console.error('❌ Database insert failed:', error);
+      return res.status(500).json({
+        error: 'Database save failed',
+        message: error.message,
+        code: error.code
       });
     }
 
+    console.log(`✅ Created program ${newProgram.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(201).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -136,15 +150,17 @@ async function updateProgram(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Program updated successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not update program.'
       });
     }
 
-    const { data, error } = await (supabase
+    const { data, error} = await (dbClient
       .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
@@ -153,18 +169,18 @@ async function updateProgram(req: NextApiRequest, res: NextApiResponse) {
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Program updated successfully (mock mode)'
+      console.error('❌ Database update failed:', error);
+      return res.status(500).json({
+        error: 'Database update failed',
+        message: error.message
       });
     }
 
+    console.log(`✅ Updated program ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(200).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -176,69 +192,33 @@ async function deleteProgram(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Program ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Program deleted successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured'
       });
     }
 
-    const { error } = await (supabase
+    const { error } = await (dbClient
       .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'program');
 
     if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        message: 'Program deleted successfully (mock mode)'
+      console.error('❌ Delete failed:', error);
+      return res.status(500).json({
+        error: 'Failed to delete program',
+        message: error.message
       });
     }
 
-    res.status(200).json({ message: 'Program deleted successfully' });
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.log(`✅ Deleted program ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
+    res.status(200).json({ success: true, message: 'Program deleted successfully' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
-}
-
-function getMockPrograms(limit?: number) {
-  const mockPrograms = [
-    {
-      id: '1',
-      title: 'Orphan Support Program',
-      description: 'Comprehensive support for orphaned children including education, healthcare, and emotional support.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      category: 'education',
-      targetAudience: 'Orphaned Children',
-      status: 'published',
-      created_at: '2024-01-15T00:00:00Z',
-      updated_at: '2024-01-15T00:00:00Z'
-    },
-    {
-      id: '2',
-      title: 'Widow Empowerment Initiative',
-      description: 'Skills training and micro-finance program to help widows achieve financial independence.',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      category: 'empowerment',
-      targetAudience: 'Widows',
-      status: 'published',
-      created_at: '2024-01-10T00:00:00Z',
-      updated_at: '2024-01-10T00:00:00Z'
-    },
-    {
-      id: '3',
-      title: 'Community Healthcare Outreach',
-      description: 'Mobile healthcare services bringing medical care to underserved communities.',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      category: 'healthcare',
-      targetAudience: 'Rural Communities',
-      status: 'published',
-      created_at: '2024-01-05T00:00:00Z',
-      updated_at: '2024-01-05T00:00:00Z'
-    }
-  ];
-
-  return limit ? mockPrograms.slice(0, limit) : mockPrograms;
 }

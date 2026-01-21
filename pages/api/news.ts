@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,17 +22,21 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-
     if (!supabase) {
-      return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
+      console.error('⚠️ Supabase not configured');
+      return res.status(200).json([]);
     }
 
     let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'news')
-      .eq('status', status)
       .order('publish_date', { ascending: false });
+
+    // Only filter by status if it's not 'all'
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -41,14 +45,14 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Fallback to mock data if Supabase fails
-      return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
+      console.error('❌ Database query failed:', error);
+      return res.status(500).json({ error: 'Failed to fetch news', details: error.message });
     }
 
+    // Return empty array if no data (DO NOT return mock data)
     if (!data || data.length === 0) {
-      // Return mock data if no data in database
-      return res.status(200).json(getMockNews(limit ? parseInt(limit as string) : undefined));
+      console.log('📭 No news found in database');
+      return res.status(200).json([]);
     }
 
     // Transform data to match component interface
@@ -65,99 +69,66 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(transformedData);
   } catch (error) {
-    console.error('API error:', error);
-    // Fallback to mock data on any error
-    res.status(200).json(getMockNews((limit as any) ? parseInt(limit as string) : undefined));
+    console.error('❌ API error:', error);
+    return res.status(500).json({ error: 'Failed to fetch news', message: (error as any)?.message });
   }
-}
-
-function getMockNews(limit?: number) {
-  const mockNews = [
-    {
-      id: '1',
-      title: 'Successful Back-to-School Initiative Reaches 500 Children',
-      excerpt: 'Our comprehensive back-to-school program has successfully provided school supplies, uniforms, and educational support to over 500 children across Lagos and Abuja.',
-      date: '2024-01-15',
-      category: 'outreach',
-      image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=500&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      readTime: '4 min read',
-      slug: 'december-medical-outreach-2024'
-    },
-    {
-      id: '2',
-      title: 'Partnership with Local Healthcare Centers Expands Medical Outreach',
-      excerpt: 'New partnerships with three major healthcare centers in Ibadan have enabled us to provide free medical consultations and treatments to over 1,000 beneficiaries.',
-      date: '2024-01-10',
-      category: 'partnership',
-      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      readTime: '3 min read',
-      slug: 'school-partnership-expansion-2024'
-    },
-    {
-      id: '3',
-      title: 'Widow Empowerment Program Celebrates First Graduation Class',
-      excerpt: 'Twenty-five widows have successfully completed our skills acquisition program, with 90% now running their own sustainable businesses.',
-      date: '2024-01-05',
-      category: 'achievement',
-      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-      readTime: '5 min read',
-      slug: 'widow-empowerment-success-2024'
-    }
-  ];
-
-  return limit ? mockNews.slice(0, limit) : mockNews;
 }
 
 async function createNews(req: NextApiRequest, res: NextApiResponse) {
   try {
     const newsData = req.body;
 
-    // Validate required fields
     if (!newsData.title || !newsData.content) {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    // Generate slug from title
     const slug = newsData.title.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
     const newNews = {
+      id: newsData.id || `news-${Date.now()}`,
       ...newsData,
       slug,
       type: 'news',
+      status: newsData.status || 'draft',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newNews,
-        message: 'News created successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      console.error('❌ No database client available!');
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not save news to database.'
       });
     }
 
-    const { data, error } = await (supabase
+    console.log('📝 Creating news:', newNews.id);
+
+    const { data, error } = await (dbClient
       .from('content') as any)
       .insert([newNews] as any)
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newNews,
-        message: 'News created successfully (mock mode)'
+      console.error('❌ Database insert failed:', error);
+      return res.status(500).json({
+        error: 'Database save failed',
+        message: error.message,
+        code: error.code
       });
     }
 
+    console.log(`✅ Created news ${newNews.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(201).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -170,7 +141,6 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'News ID is required' });
     }
 
-    // Update slug if title changed
     if (updateData.title) {
       updateData.slug = updateData.title.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -179,36 +149,37 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'News updated successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not update news.'
       });
     }
 
-    const { data, error } = await (supabase
+    const { data, error } = await (dbClient
       .from('content') as any)
-      .update(updateData)
+      .update(updateData as any)
       .eq('id', id)
       .eq('type', 'news')
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'News updated successfully (mock mode)'
+      console.error('❌ Database update failed:', error);
+      return res.status(500).json({
+        error: 'Database update failed',
+        message: error.message
       });
     }
 
+    console.log(`✅ Updated news ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(200).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -220,30 +191,33 @@ async function deleteNews(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'News ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'News deleted successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured'
       });
     }
 
-    const { error } = await (supabase
+    const { error } = await (dbClient
       .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'news');
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        message: 'News deleted successfully (mock mode)'
+      console.error('❌ Delete failed:', error);
+      return res.status(500).json({
+        error: 'Failed to delete news',
+        message: error.message
       });
     }
 
-    res.status(200).json({ message: 'News deleted successfully' });
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.log(`✅ Deleted news ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
+    res.status(200).json({ success: true, message: 'News deleted successfully' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,17 +22,21 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-
     if (!supabase) {
-      return res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
+      console.error('⚠️ Supabase not configured');
+      return res.status(200).json([]);
     }
 
     let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'story')
-      .eq('status', status)
       .order('publish_date', { ascending: false });
+
+    // Only filter by status if it's not 'all'
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -41,14 +45,14 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Fallback to mock data if Supabase fails
-      return res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
+      console.error('❌ Database query failed:', error);
+      return res.status(500).json({ error: 'Failed to fetch stories', details: error.message });
     }
 
+    // Return empty array if no data (DO NOT return mock data)
     if (!data || data.length === 0) {
-      // Return mock data if no data in database
-      return res.status(200).json(getMockStories(limit ? parseInt(limit as string) : undefined));
+      console.log('📭 No stories found in database');
+      return res.status(200).json([]);
     }
 
     // Transform data to match component interface
@@ -67,105 +71,66 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json(transformedData);
   } catch (error) {
-    console.error('API error:', error);
-    // Fallback to mock data on any error
-    res.status(200).json(getMockStories((limit as any) ? parseInt(limit as string) : undefined));
+    console.error('❌ API error:', error);
+    return res.status(500).json({ error: 'Failed to fetch stories', message: (error as any)?.message });
   }
-}
-
-function getMockStories(limit?: number) {
-  const mockStories = [
-    {
-      id: '1',
-      name: 'Amara N.',
-      age: 29,
-      location: 'Lagos, Nigeria',
-      story: 'Amara lost her husband in a car accident when she was 28, leaving her to care for their two young children alone. Through our widow support program, she has received monthly stipends, emotional counseling, and vocational training.',
-      quote: "Saintlammy Foundation gave me hope when I thought my world had ended. Now I'm running my own business and my children are thriving. I'm not just surviving - I'm building a future.",
-      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      category: 'widow',
-      impact: 'Established successful retail business supporting her family independently',
-      dateHelped: 'January 2025'
-    },
-    {
-      id: '2',
-      name: 'Mrs. Folake O.',
-      age: 34,
-      location: 'Ibadan, Nigeria',
-      story: 'After losing her husband, Folake struggled to feed her three children. Our widow empowerment program provided monthly stipends and helped her start a small tailoring business.',
-      quote: "Saintlammy Foundation didn't just give me money - they gave me hope and the tools to build a better future for my children. My tailoring business now supports my family independently.",
-      image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      category: 'widow',
-      impact: 'Achieved financial independence and expanded business to employ 3 others',
-      dateHelped: 'March 2025'
-    },
-    {
-      id: '3',
-      name: 'Emmanuel A.',
-      age: 16,
-      location: 'Abuja, Nigeria',
-      story: 'Emmanuel was living on the streets when our outreach team found him. Through our comprehensive support program, he was enrolled in school and provided with safe housing.',
-      quote: "I never thought I'd see the inside of a classroom again. Now I'm preparing for university and want to become an engineer to help build better communities.",
-      image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-      category: 'orphan',
-      impact: 'Completed secondary education with honors and received university scholarship',
-      dateHelped: 'September 2025'
-    }
-  ];
-
-  return limit ? mockStories.slice(0, limit) : mockStories;
 }
 
 async function createStory(req: NextApiRequest, res: NextApiResponse) {
   try {
     const storyData = req.body;
 
-    // Validate required fields
     if (!storyData.title || !storyData.content) {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    // Generate slug from title
     const slug = storyData.title.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
     const newStory = {
+      id: storyData.id || `story-${Date.now()}`,
       ...storyData,
       slug,
       type: 'story',
+      status: storyData.status || 'draft',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newStory,
-        message: 'Story created successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      console.error('❌ No database client available!');
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not save story to database.'
       });
     }
 
-    const { data, error } = await (supabase
+    console.log('📝 Creating story:', newStory.id);
+
+    const { data, error } = await (dbClient
       .from('content') as any)
       .insert([newStory] as any)
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newStory,
-        message: 'Story created successfully (mock mode)'
+      console.error('❌ Database insert failed:', error);
+      return res.status(500).json({
+        error: 'Database save failed',
+        message: error.message,
+        code: error.code
       });
     }
 
+    console.log(`✅ Created story ${newStory.id} in DATABASE using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(201).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -178,7 +143,6 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Story ID is required' });
     }
 
-    // Update slug if title changed
     if (updateData.title) {
       updateData.slug = updateData.title.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -187,15 +151,17 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Story updated successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not update story.'
       });
     }
 
-    const { data, error } = await (supabase
+    const { data, error } = await (dbClient
       .from('content') as any)
       .update(updateData as any)
       .eq('id', id)
@@ -204,19 +170,18 @@ async function updateStory(req: NextApiRequest, res: NextApiResponse) {
       .single();
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Story updated successfully (mock mode)'
+      console.error('❌ Database update failed:', error);
+      return res.status(500).json({
+        error: 'Database update failed',
+        message: error.message
       });
     }
 
+    console.log(`✅ Updated story ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
     res.status(200).json(data);
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
 
@@ -228,30 +193,33 @@ async function deleteStory(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Story ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Story deleted successfully (mock mode)'
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured'
       });
     }
 
-    const { error } = await (supabase
+    const { error } = await (dbClient
       .from('content') as any)
       .delete()
       .eq('id', id)
       .eq('type', 'story');
 
     if (error) {
-      console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        message: 'Story deleted successfully (mock mode)'
+      console.error('❌ Delete failed:', error);
+      return res.status(500).json({
+        error: 'Failed to delete story',
+        message: error.message
       });
     }
 
-    res.status(200).json({ message: 'Story deleted successfully' });
-  } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.log(`✅ Deleted story ${id} using ${supabaseAdmin ? 'ADMIN' : 'ANON'} client`);
+    res.status(200).json({ success: true, message: 'Story deleted successfully' });
+  } catch (error: any) {
+    console.error('❌ API error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error?.message });
   }
 }
