@@ -44,12 +44,13 @@ const Programs: React.FC = () => {
         }
         const programsData = await programsResponse.json();
 
-        if (programsData && programsData.length > 0) {
-          setPrograms(programsData);
-          setFetchError(null);
+        setPrograms(programsData);
+
+        // Check if we have no programs at all
+        if (!programsData || programsData.length === 0) {
+          setFetchError('No programs available. Please add programs from the admin dashboard or run the seeding script.');
         } else {
-          setPrograms([]);
-          setFetchError('Using example programs. No programs have been added to the database yet.');
+          setFetchError(null);
         }
 
         // Fetch stats
@@ -68,7 +69,7 @@ const Programs: React.FC = () => {
       } catch (err) {
         console.error('Error fetching programs:', err);
         setPrograms([]);
-        setFetchError('Using example programs. Unable to connect to database.');
+        setFetchError('Unable to connect to database. Please check your connection and try again.');
         setError('Failed to load programs. Please try again later.');
       } finally {
         setLoading(false);
@@ -87,116 +88,9 @@ const Programs: React.FC = () => {
     return GraduationCap;
   };
 
-  // Helper to check if program is from database (simplified structure)
-  const isDatabaseProgram = (prog: any) => !prog.features;
-
-  // Fallback hardcoded programs for display purposes only
-  const getFallbackPrograms = () => [
-    {
-      id: 'example-1',
-      title: 'Orphan Adoption Program',
-      description: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support.',
-      image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
-      icon: Heart,
-      category: 'Child Welfare',
-      status: 'published',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      beneficiaries: 300,
-      monthlyBudget: 450000,
-      features: [
-        'Educational scholarships and school supplies',
-        'Medical care and health insurance',
-        'Psychological counseling and mentorship',
-        'Skills training and career guidance',
-        'Housing support in partner orphanages'
-      ],
-      impact: {
-        'Children Supported': '300+',
-        'Educational Success Rate': '85%',
-        'Health Outcomes': '95% improved',
-        'Monthly Budget': '₦450,000'
-      }
-    },
-    {
-      id: 'example-2',
-      title: 'Widow Empowerment Initiative',
-      description: 'Economic empowerment program helping widows become financially independent through skills training and micro-business support.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: Users,
-      category: 'Economic Empowerment',
-      status: 'published',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      beneficiaries: 500,
-      monthlyBudget: 320000,
-      features: [
-        'Tailoring and fashion design training',
-        'Soap making and cosmetics production',
-        'Small business management courses',
-        'Micro-loan access and financial literacy',
-        'Market linkage and sales support'
-      ],
-      impact: {
-        'Widows Empowered': '500+',
-        'Businesses Started': '180',
-        'Income Increase': '65% average',
-        'Monthly Budget': '₦320,000'
-      }
-    },
-    {
-      id: 'example-3',
-      title: 'Educational Excellence Program',
-      description: 'Scholarship program and educational support for children from vulnerable families to ensure quality education access.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: GraduationCap,
-      category: 'Education',
-      status: 'published',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      beneficiaries: 450,
-      monthlyBudget: 280000,
-      features: [
-        'Full and partial scholarships',
-        'School supplies and uniforms',
-        'Computer literacy training',
-        'After-school tutoring programs',
-        'University placement support'
-      ],
-      impact: {
-        'Students Supported': '450+',
-        'Graduation Rate': '92%',
-        'University Admissions': '78%',
-        'Monthly Budget': '₦280,000'
-      }
-    },
-    {
-      id: 'example-4',
-      title: 'Healthcare Access Program',
-      description: 'Providing healthcare services and medical support to underserved communities through mobile clinics and health education.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      icon: Heart,
-      category: 'Healthcare',
-      status: 'published',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      beneficiaries: 1200,
-      monthlyBudget: 380000,
-      features: [
-        'Mobile medical clinics',
-        'Free medications and treatments',
-        'Health education and prevention',
-        'Maternal and child health services',
-        'Mental health support and counseling'
-      ],
-      impact: {
-        'Patients Treated': '1,200+',
-        'Medical Consultations': '3,500+',
-        'Lives Saved': '25+',
-        'Monthly Budget': '₦380,000'
-      }
-    }
-  ];
+  // NOTE: No more hardcoded fallback programs!
+  // All programs now come from the database.
+  // Run: npx ts-node scripts/seed-example-programs.ts to populate initial data
 
   const supportPrograms = [
     {
@@ -330,10 +224,10 @@ const Programs: React.FC = () => {
                 <Loader className="w-8 h-8 animate-spin text-accent-500" />
                 <span className="ml-3 text-gray-600 dark:text-gray-400">Loading programs...</span>
               </div>
-            ) : (
-              /* Programs List - Show database programs if available, otherwise show fallback */
+            ) : programs.length > 0 ? (
+              /* Programs List - All programs from database */
               <div className="space-y-16">
-                {(programs.length > 0 ? programs : getFallbackPrograms()).map((program, index) => (
+                {programs.map((program, index) => (
                 <div key={program.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className={`md:flex ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                     <div className="md:w-1/2 relative h-64 md:h-80">
@@ -363,8 +257,8 @@ const Programs: React.FC = () => {
                           {(program as any).beneficiaries && (
                             <p className="text-accent-400 text-sm font-medium">{(program as any).beneficiaries} Beneficiaries</p>
                           )}
-                          {(program as any).targetAudience && isDatabaseProgram(program) && (
-                            <p className="text-accent-400 text-sm font-medium">For: {(program as any).targetAudience}</p>
+                          {program.targetAudience && (
+                            <p className="text-accent-400 text-sm font-medium">For: {program.targetAudience}</p>
                           )}
                         </div>
                       </div>
@@ -421,6 +315,19 @@ const Programs: React.FC = () => {
                   </div>
                 </div>
               ))}
+              </div>
+            ) : (
+              /* Empty State - No programs in database */
+              <div className="text-center py-16">
+                <Heart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Programs Yet</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  No programs have been added to the database.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">
+                  Run <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">npx ts-node scripts/seed-example-programs.ts</code> to add example programs,<br />
+                  or add programs from the admin dashboard.
+                </p>
               </div>
             )}
           </div>
