@@ -22,6 +22,7 @@ const Programs: React.FC = () => {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -34,10 +35,20 @@ const Programs: React.FC = () => {
         }
 
         const data = await response.json();
-        setPrograms(data);
+
+        if (data && data.length > 0) {
+          setPrograms(data);
+          setFetchError(null);
+        } else {
+          // Empty database - show notification
+          setPrograms([]);
+          setFetchError('Using example programs. No programs have been added to the database yet.');
+        }
         setError(null);
       } catch (err) {
         console.error('Error fetching programs:', err);
+        setPrograms([]);
+        setFetchError('Using example programs. Unable to connect to database.');
         setError('Failed to load programs. Please try again later.');
       } finally {
         setLoading(false);
@@ -60,14 +71,17 @@ const Programs: React.FC = () => {
   const isDatabaseProgram = (prog: any) => !prog.features;
 
   // Fallback hardcoded programs for display purposes only
-  const fallbackPrograms = [
+  const getFallbackPrograms = () => [
     {
-      id: 1,
+      id: 'example-1',
       title: 'Orphan Adoption Program',
       description: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support.',
       image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
       icon: Heart,
       category: 'Child Welfare',
+      status: 'published',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       beneficiaries: 300,
       monthlyBudget: 450000,
       features: [
@@ -85,12 +99,15 @@ const Programs: React.FC = () => {
       }
     },
     {
-      id: 2,
+      id: 'example-2',
       title: 'Widow Empowerment Initiative',
       description: 'Economic empowerment program helping widows become financially independent through skills training and micro-business support.',
       image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       icon: Users,
       category: 'Economic Empowerment',
+      status: 'published',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       beneficiaries: 500,
       monthlyBudget: 320000,
       features: [
@@ -108,12 +125,15 @@ const Programs: React.FC = () => {
       }
     },
     {
-      id: 3,
+      id: 'example-3',
       title: 'Educational Excellence Program',
       description: 'Scholarship program and educational support for children from vulnerable families to ensure quality education access.',
       image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       icon: GraduationCap,
       category: 'Education',
+      status: 'published',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       beneficiaries: 450,
       monthlyBudget: 280000,
       features: [
@@ -131,12 +151,15 @@ const Programs: React.FC = () => {
       }
     },
     {
-      id: 4,
+      id: 'example-4',
       title: 'Healthcare Access Program',
       description: 'Providing healthcare services and medical support to underserved communities through mobile clinics and health education.',
       image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       icon: Heart,
       category: 'Healthcare',
+      status: 'published',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       beneficiaries: 1200,
       monthlyBudget: 380000,
       features: [
@@ -195,6 +218,18 @@ const Programs: React.FC = () => {
         <title>Programs - Saintlammy Foundation</title>
         <meta name="description" content="Explore Saintlammy Foundation's comprehensive programs supporting orphans, widows, education, and healthcare across Nigeria." />
       </Head>
+
+        {/* Notification Banner */}
+        {fetchError && (
+          <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
+            <div className="max-w-7xl mx-auto px-6">
+              <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
+                {fetchError}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
@@ -288,7 +323,7 @@ const Programs: React.FC = () => {
 
             {/* Programs List - Show database programs if available, otherwise show fallback */}
             <div className="space-y-16">
-              {(programs.length > 0 ? programs : fallbackPrograms).map((program, index) => (
+              {(programs.length > 0 ? programs : getFallbackPrograms()).map((program, index) => (
                 <div key={program.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className={`md:flex ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                     <div className="md:w-1/2 relative h-64 md:h-80">
@@ -318,7 +353,7 @@ const Programs: React.FC = () => {
                           {(program as any).beneficiaries && (
                             <p className="text-accent-400 text-sm font-medium">{(program as any).beneficiaries} Beneficiaries</p>
                           )}
-                          {(program as any).targetAudience && !isDatabaseProgram(program) === false && (
+                          {(program as any).targetAudience && isDatabaseProgram(program) && (
                             <p className="text-accent-400 text-sm font-medium">For: {(program as any).targetAudience}</p>
                           )}
                         </div>
@@ -366,15 +401,10 @@ const Programs: React.FC = () => {
                           Support This Program
                         </button>
                         <Link
-                          href={
-                            program.id === 1 ? '/programs/orphan-adoption' :
-                            program.id === 2 ? '/programs/widow-empowerment' :
-                            program.id === 3 ? '/programs/educational-excellence' :
-                            program.id === 4 ? '/programs/healthcare-access' : '#'
-                          }
+                          href={`/contact?subject=Program Inquiry: ${encodeURIComponent(program.title)}`}
                           className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
-                          Learn More
+                          Contact for Details
                         </Link>
                       </div>
                     </div>
@@ -485,12 +515,12 @@ const Programs: React.FC = () => {
               >
                 Donate Now
               </button>
-              <a
+              <Link
                 href="/partner"
                 className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
               >
                 Become a Partner
-              </a>
+              </Link>
             </div>
           </div>
         </section>
