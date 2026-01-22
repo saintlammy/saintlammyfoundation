@@ -289,14 +289,11 @@ export const getCanonicalUrl = (path: string = ""): string => {
 
 // Helper to generate Open Graph image URL
 export const getOGImageUrl = (title?: string): string => {
-  // Use high-quality fallback image for social media previews
-  // TODO: Create custom og-image.jpg for the foundation or enable dynamic generation with @vercel/og
-  return "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=1200&h=630&fit=crop&q=80";
+  // Use foundation's OG image (same as homepage for consistency)
+  // This helps with Telegram's cache and ensures consistent previews
+  return "https://saintlammyfoundation.org/og-image.jpg";
 
-  // Future: Use foundation's custom OG image
-  // return "https://saintlammyfoundation.org/og-image.jpg";
-
-  // Or dynamic OG images with @vercel/og:
+  // Future: Dynamic OG images with @vercel/og:
   // const encodedTitle = encodeURIComponent(title || "Saintlammy Foundation");
   // return `https://saintlammyfoundation.org/api/og-image?title=${encodedTitle}`;
 };
