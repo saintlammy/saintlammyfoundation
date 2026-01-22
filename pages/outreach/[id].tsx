@@ -144,8 +144,13 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
   const { id } = router.query;
   const { openDonationModal } = useDonationModal();
 
+  // Check if initialOutreach is already a full report (has activities array) or needs conversion
+  const isFullReport = initialOutreach && Array.isArray(initialOutreach.activities);
+
   const [outreach, setOutreach] = useState<OutreachReport | null>(
-    initialOutreach ? convertBasicOutreachToReport(initialOutreach) : null
+    initialOutreach
+      ? (isFullReport ? initialOutreach : convertBasicOutreachToReport(initialOutreach))
+      : null
   );
   const [loading, setLoading] = useState(!initialOutreach);
   const [activeTab, setActiveTab] = useState<'overview' | 'impact' | 'financials' | 'gallery'>('overview');
