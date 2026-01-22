@@ -1078,6 +1078,22 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     const host = req.headers.host;
     const baseUrl = `${protocol}://${host}`;
 
+    // Try to fetch full report first (has all the detail sections)
+    console.log(`🔍 SSR: Fetching full report for ${id}`);
+    const reportResponse = await fetch(`${baseUrl}/api/outreaches/${id}/report`);
+
+    if (reportResponse.ok) {
+      const reportData = await reportResponse.json();
+      console.log(`✅ SSR: Loaded full report for ${id}`);
+      return {
+        props: {
+          initialOutreach: reportData
+        }
+      };
+    }
+
+    // Fallback to basic outreach data if no full report exists
+    console.log(`⚠️ SSR: No full report found, trying basic outreach data for ${id}`);
     const response = await fetch(`${baseUrl}/api/outreaches?status=all`);
 
     if (response.ok) {
@@ -1085,6 +1101,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
       const outreach = outreaches.find((o: any) => o.id === id);
 
       if (outreach) {
+        console.log(`✅ SSR: Loaded basic outreach for ${id}`);
         // Return outreach data for server-side meta tag rendering
         return {
           props: {
