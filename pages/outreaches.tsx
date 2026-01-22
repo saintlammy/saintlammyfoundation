@@ -170,17 +170,23 @@ const Outreaches: React.FC = () => {
               {upcomingOutreaches.map((outreach, index) => (
                 <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className="md:flex">
-                    <div className="md:w-1/3 relative h-64 md:h-auto">
-                      <Image
-                        src={outreach.image}
-                        alt={outreach.title}
-                        fill
-                        className="object-cover object-center"
-                      />
+                    <div className="md:w-1/3 relative h-64 md:h-auto bg-gray-200 dark:bg-gray-700">
+                      {outreach.image || outreach.featured_image ? (
+                        <Image
+                          src={outreach.image || outreach.featured_image}
+                          alt={outreach.title}
+                          fill
+                          className="object-cover object-center"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Heart className="w-20 h-20 text-gray-400 dark:text-gray-600" />
+                        </div>
+                      )}
                       <div className="absolute top-4 left-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium text-gray-900 dark:text-white ${
-                          outreach.status === 'Registration Open' ? 'bg-green-500' :
-                          outreach.status === 'Planning Phase' ? 'bg-yellow-500' :
+                          outreach.status === 'upcoming' ? 'bg-green-500' :
+                          outreach.status === 'ongoing' ? 'bg-yellow-500' :
                           'bg-accent-500'
                         }`}>
                           {outreach.status}
@@ -254,13 +260,19 @@ const Outreaches: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {pastOutreaches.map((outreach) => (
                 <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none group">
-                  <div className="relative h-48">
-                    <Image
-                      src={outreach.image}
-                      alt={outreach.title}
-                      fill
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    />
+                  <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
+                    {outreach.image || outreach.featured_image ? (
+                      <Image
+                        src={outreach.image || outreach.featured_image}
+                        alt={outreach.title}
+                        fill
+                        className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Heart className="w-16 h-16 text-gray-400 dark:text-gray-600" />
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-6">
