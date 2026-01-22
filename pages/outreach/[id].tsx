@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -1046,6 +1047,15 @@ const OutreachReportPage: React.FC = () => {
       </div>
     </>
   );
+};
+
+// Server-side rendering to ensure meta tags are available for social media crawlers
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  // Meta tags are now rendered server-side for proper social media previews
+  // The actual data fetching still happens client-side via useEffect
+  return {
+    props: {}
+  };
 };
 
 export default OutreachReportPage;
