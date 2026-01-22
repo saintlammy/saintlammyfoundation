@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import OutreachEditor from '@/components/admin/OutreachEditor';
-import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart, FileText, ExternalLink } from 'lucide-react';
+import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart, FileText, ExternalLink, Trash2 } from 'lucide-react';
 // ContentService import removed - using direct mock data
 
 interface Outreach {
@@ -549,6 +549,13 @@ const OutreachesManagement: React.FC = () => {
                                 </button>
                               </>
                             )}
+                            <button
+                              onClick={() => handleDeleteOutreach(outreach.id)}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete Outreach"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
