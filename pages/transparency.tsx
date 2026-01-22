@@ -58,7 +58,7 @@ const TransparencyPage: React.FC = () => {
       <ErrorBoundary>
         <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
           <section className="py-16 bg-gradient-to-br from-gray-100 via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <Breadcrumb
                 items={[{ label: 'Financial Transparency', current: true }]}
                 className="mb-8"
@@ -101,7 +101,7 @@ const TransparencyPage: React.FC = () => {
 
           {/* Fund Allocation */}
           <section className="py-20 bg-white dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   How We Use Your Donations
@@ -179,7 +179,7 @@ const TransparencyPage: React.FC = () => {
 
           {/* Impact Metrics */}
           <section className="py-20 bg-gray-100 dark:bg-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Measurable Impact
@@ -252,7 +252,7 @@ const TransparencyPage: React.FC = () => {
 
           {/* Documents & Reports */}
           <section className="py-20 bg-white dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Official Documents & Reports
@@ -299,7 +299,7 @@ const TransparencyPage: React.FC = () => {
                 </p>
                 <a
                   href="/contact"
-                  className="inline-flex items-center bg-gray-900 dark:bg-white/10 hover:bg-gray-800 dark:hover:bg-white/20 text-white border border-gray-900 dark:border-white/20 px-6 py-3 rounded-full font-medium transition-colors"
+                  className="inline-flex items-center bg-gray-900 dark:bg-white/10 hover:bg-gray-800 dark:hover:bg-white/20 text-white border border-gray-900 dark:border-white/20 px-4 sm:px-6 py-3 rounded-full font-medium transition-colors"
                 >
                   Contact Our Finance Team
                 </a>
@@ -309,7 +309,7 @@ const TransparencyPage: React.FC = () => {
 
           {/* Governance */}
           <section className="py-20 bg-gray-100 dark:bg-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Governance & Accountability
@@ -352,7 +352,7 @@ const TransparencyPage: React.FC = () => {
 
           {/* CTA */}
           <section className="py-20 bg-white dark:bg-gray-900">
-            <div className="max-w-4xl mx-auto px-6 text-center">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-display-md font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Your Trust Drives Our Transparency
               </h2>

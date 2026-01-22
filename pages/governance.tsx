@@ -111,7 +111,7 @@ const GovernancePage: React.FC = () => {
       <ErrorBoundary>
         <main className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16">
           <section className="py-16 bg-gradient-to-br from-gray-100 via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <Breadcrumb
                 items={[{ label: 'Governance', current: true }]}
                 className="mb-8"
@@ -166,7 +166,7 @@ const GovernancePage: React.FC = () => {
 
           {/* Organizational Structure */}
           <section className="py-20 bg-white dark:bg-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Organizational Structure
@@ -177,7 +177,7 @@ const GovernancePage: React.FC = () => {
                 <div className="space-y-8">
                   {/* Board Level */}
                   <div className="text-center">
-                    <div className="bg-accent-500 text-white px-6 py-3 rounded-lg inline-block font-medium">
+                    <div className="bg-accent-500 text-white px-4 sm:px-6 py-3 rounded-lg inline-block font-medium">
                       Board of Directors
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
@@ -187,7 +187,7 @@ const GovernancePage: React.FC = () => {
 
                   {/* Executive Level */}
                   <div className="text-center">
-                    <div className="bg-blue-500 text-white px-6 py-3 rounded-lg inline-block font-medium">
+                    <div className="bg-blue-500 text-white px-4 sm:px-6 py-3 rounded-lg inline-block font-medium">
                       Executive Director
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
@@ -215,7 +215,7 @@ const GovernancePage: React.FC = () => {
 
                   {/* Volunteer Level */}
                   <div className="text-center">
-                    <div className="bg-purple-500 text-white px-6 py-3 rounded-lg inline-block font-medium">
+                    <div className="bg-purple-500 text-white px-4 sm:px-6 py-3 rounded-lg inline-block font-medium">
                       Volunteers & Field Staff
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
@@ -229,7 +229,7 @@ const GovernancePage: React.FC = () => {
 
           {/* Policies & Procedures */}
           <section className="py-20 bg-gray-100 dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Policies & Procedures
@@ -259,7 +259,7 @@ const GovernancePage: React.FC = () => {
                 </p>
                 <a
                   href="/contact"
-                  className="inline-flex items-center bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium transition-colors"
+                  className="inline-flex items-center bg-accent-500 hover:bg-accent-600 text-white px-4 sm:px-6 py-3 rounded-full font-medium transition-colors"
                 >
                   Request Policy Documents
                 </a>
@@ -269,7 +269,7 @@ const GovernancePage: React.FC = () => {
 
           {/* Legal Compliance & Registration */}
           <section className="py-20 bg-white dark:bg-black">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Legal Compliance & Registration
@@ -350,7 +350,7 @@ const GovernancePage: React.FC = () => {
 
           {/* Accountability Measures */}
           <section className="py-20 bg-gray-100 dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                   Accountability Measures
@@ -403,7 +403,7 @@ const GovernancePage: React.FC = () => {
 
           {/* Contact Governance */}
           <section className="py-20 bg-white dark:bg-gray-900">
-            <div className="max-w-4xl mx-auto px-6 text-center">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-display-md font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Governance Questions?
               </h2>

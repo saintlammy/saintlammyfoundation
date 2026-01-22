@@ -69,7 +69,7 @@ const About: React.FC = () => {
 
       <main>
         {/* Hero Section */}
-        <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
+        <section className="relative py-16 sm:py-24 md:py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
               src="https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
@@ -80,19 +80,19 @@ const About: React.FC = () => {
             <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
           </div>
 
-          <div className="relative max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
               About Our Mission
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
               Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.
             </p>
           </div>
         </section>
 
         {/* Mission & Vision */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="py-12 sm:py-16 md:py-24 bg-white dark:bg-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
                 <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
@@ -124,28 +124,28 @@ const About: React.FC = () => {
         </section>
 
         {/* Our Story */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+        <section className="py-12 sm:py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
                 Our Story
               </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
                 From a vision to a movement - how Saintlammy Foundation began
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
                 Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.
               </p>
-              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
+              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
                 What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
               </p>
-              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
+              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
                 In November 2025, we achieved a significant milestone: official incorporation as <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span> with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.
               </p>
-              <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed break-words">
                 Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.
               </p>
             </div>
@@ -153,8 +153,8 @@ const About: React.FC = () => {
         </section>
 
         {/* Timeline */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-6">
+        <section className="py-12 sm:py-16 md:py-24 bg-white dark:bg-black">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Our Journey
@@ -187,7 +187,7 @@ const About: React.FC = () => {
 
         {/* Values */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Our Values
@@ -213,7 +213,7 @@ const About: React.FC = () => {
 
         {/* Testimonials Section */}
         <section id="testimonials" className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 What People Say
@@ -282,7 +282,7 @@ const About: React.FC = () => {
 
         {/* Team */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Meet Our Team
@@ -325,7 +325,7 @@ const About: React.FC = () => {
 
         {/* CTA Section */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Join Our Mission
             </h2>

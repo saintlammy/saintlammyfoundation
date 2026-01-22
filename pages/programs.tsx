@@ -145,7 +145,7 @@ const Programs: React.FC = () => {
         {/* Notification Banner */}
         {fetchError && (
           <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
                 {fetchError}
               </p>
@@ -165,7 +165,7 @@ const Programs: React.FC = () => {
             <div className="absolute inset-0 bg-black/70"></div>
           </div>
 
-          <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl md:text-6xl font-medium text-white mb-6 font-display tracking-tight">
               Our Programs
             </h1>
@@ -177,7 +177,7 @@ const Programs: React.FC = () => {
 
         {/* Program Stats */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Program Impact Overview
@@ -207,7 +207,7 @@ const Programs: React.FC = () => {
 
         {/* Main Programs */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Core Programs
@@ -299,13 +299,13 @@ const Programs: React.FC = () => {
                             title: `Support ${program.title}`,
                             description: `Help us continue our ${program.title.toLowerCase()} program that transforms lives in Nigerian communities.`
                           })}
-                          className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
+                          className="bg-accent-500 hover:bg-accent-600 text-white px-4 sm:px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
                         >
                           Support This Program
                         </button>
                         <Link
                           href={`/contact?subject=Program Inquiry: ${encodeURIComponent(program.title)}`}
-                          className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
+                          className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-4 sm:px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
                           Contact for Details
                         </Link>
@@ -334,7 +334,7 @@ const Programs: React.FC = () => {
 
         {/* Support Programs */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Support Programs
@@ -363,7 +363,7 @@ const Programs: React.FC = () => {
 
         {/* How Programs Work */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 How Our Programs Work
@@ -414,7 +414,7 @@ const Programs: React.FC = () => {
 
         {/* Call to Action */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Support Our Programs
             </h2>

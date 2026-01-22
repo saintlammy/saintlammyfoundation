@@ -112,7 +112,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
       {/* Notification Banner */}
       {fetchError && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
               {fetchError}
             </p>
@@ -123,7 +123,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-black dark:to-gray-900">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <h1 className="text-display-lg md:text-display-xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
             Impact Stories
           </h1>
@@ -135,7 +135,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
 
       {/* Filters and Search */}
       <section className="py-8 bg-gray-100 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
@@ -175,7 +175,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
 
       {/* Stories Grid */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {filteredStories.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">No stories found matching your criteria.</div>
@@ -280,7 +280,7 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
 
       {/* Call to Action */}
       <section className="py-16 bg-white dark:bg-black">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 font-display">
             Be Part of the Next Success Story
           </h2>

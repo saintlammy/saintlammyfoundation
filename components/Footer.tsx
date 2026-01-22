@@ -266,7 +266,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-700 dark:text-gray-400">
-              <span>© 2025 Saintlammy Community Care Initiative. All rights reserved.</span>
+              <span>© {new Date().getFullYear()} Saintlammy Community Care Initiative. All rights reserved.</span>
               <span className="hidden md:inline">•</span>
               <span className="hidden md:inline">RC: 9015713</span>
             </div>

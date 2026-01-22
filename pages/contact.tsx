@@ -106,7 +106,7 @@ const Contact: React.FC = () => {
 
         {/* Hero Section */}
         <section className="py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Get In Touch
             </h1>
@@ -118,7 +118,7 @@ const Contact: React.FC = () => {
 
         {/* Contact Information */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Contact Information
@@ -154,7 +154,7 @@ const Contact: React.FC = () => {
 
         {/* Contact Form */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Send Us a Message
@@ -279,7 +279,7 @@ const Contact: React.FC = () => {
 
         {/* FAQ Section */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Frequently Asked Questions
@@ -310,7 +310,7 @@ const Contact: React.FC = () => {
                   if (messageField) messageField.focus();
                   window.scrollTo({ top: document.querySelector('form')?.offsetTop || 0, behavior: 'smooth' });
                 }}
-                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
+                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-4 sm:px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
               >
                 Ask a Question
               </button>
@@ -320,7 +320,7 @@ const Contact: React.FC = () => {
 
         {/* Office Hours */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700 text-center">
               <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Clock className="w-8 h-8 text-accent-400" />

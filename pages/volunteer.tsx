@@ -192,7 +192,7 @@ const Volunteer: React.FC = () => {
             <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
           </div>
 
-          <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Volunteer With Us
             </h1>
@@ -204,7 +204,7 @@ const Volunteer: React.FC = () => {
 
         {/* Why Volunteer */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Why Volunteer With Us?
@@ -230,7 +230,7 @@ const Volunteer: React.FC = () => {
 
         {/* Volunteer Opportunities */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Volunteer Opportunities
@@ -293,7 +293,7 @@ const Volunteer: React.FC = () => {
 
         {/* Volunteer Application Form */}
         <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Volunteer Application
@@ -499,7 +499,7 @@ const Volunteer: React.FC = () => {
 
         {/* Volunteer Testimonials */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
                 Hear From Our Volunteers
