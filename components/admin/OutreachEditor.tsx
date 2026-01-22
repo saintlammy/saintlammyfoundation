@@ -529,7 +529,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                 placeholder='[{"title": "Activity Name", "description": "Description", "completed": true}]'
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Example: [{"{}title": "Registration", "description": "Patient registration", "completed": true{}}]
+                Example: [{'"title": "Registration", "description": "Patient registration", "completed": true'}]
               </p>
             </div>
 
@@ -546,7 +546,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                 placeholder='[{"title": "Metric Name", "value": 100, "description": "Description"}]'
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Example: [{"{}title": "People Reached", "value": 487, "description": "Total beneficiaries"{}}]
+                Example: [{'"title": "People Reached", "value": 487, "description": "Total beneficiaries"'}]
               </p>
             </div>
 
