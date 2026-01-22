@@ -12,6 +12,7 @@ import NotificationContainer from '@/components/NotificationContainer';
 import NotificationEventListener from '@/components/NotificationEventListener';
 import CookieConsent from '@/components/CookieConsent';
 import CookieSettings from '@/components/CookieSettings';
+import CacheBuster from '@/components/CacheBuster';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -21,8 +22,12 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
       </Head>
       <ErrorBoundary>
+        <CacheBuster />
         <ThemeProvider>
           <AuthProvider>
             <NotificationProvider>

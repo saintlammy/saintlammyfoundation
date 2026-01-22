@@ -69,9 +69,11 @@ const nextConfig = {
         ],
       },
       {
-        source: '/((?!api).*)',
+        source: '/((?!api|_next/static).*)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=60' },
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
         ],
       },
     ]
