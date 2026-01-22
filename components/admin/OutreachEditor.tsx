@@ -173,11 +173,22 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
     let futurePlans = [];
     let impact = [];
 
+    console.log('🔍 OutreachEditor: Starting save...');
+    console.log('📝 Form data:', {
+      activities: formData.activities,
+      future_plans: formData.future_plans,
+      impact: formData.impact
+    });
+
     try {
       if (formData.activities.trim()) {
         activities = JSON.parse(formData.activities);
+        console.log('✅ Parsed activities:', activities);
+      } else {
+        console.log('⚠️ Activities field is empty');
       }
     } catch (e) {
+      console.error('❌ Activities parse error:', e);
       alert('Invalid JSON format for Activities. Please check the format.');
       return;
     }
@@ -185,8 +196,12 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
     try {
       if (formData.future_plans.trim()) {
         futurePlans = JSON.parse(formData.future_plans);
+        console.log('✅ Parsed future_plans:', futurePlans);
+      } else {
+        console.log('⚠️ Future Plans field is empty');
       }
     } catch (e) {
+      console.error('❌ Future Plans parse error:', e);
       alert('Invalid JSON format for Future Plans. Please check the format.');
       return;
     }
@@ -194,8 +209,12 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
     try {
       if (formData.impact.trim()) {
         impact = JSON.parse(formData.impact);
+        console.log('✅ Parsed impact:', impact);
+      } else {
+        console.log('⚠️ Impact field is empty');
       }
     } catch (e) {
+      console.error('❌ Impact parse error:', e);
       alert('Invalid JSON format for Impact. Please check the format.');
       return;
     }
@@ -225,6 +244,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
       }
     };
 
+    console.log('📦 Final outreach data to save:', JSON.stringify(outreachData.outreach_details, null, 2));
     onSave(outreachData);
   };
 
