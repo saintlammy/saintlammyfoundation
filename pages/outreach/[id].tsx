@@ -109,21 +109,67 @@ const OutreachReportPage: React.FC = () => {
   const loadOutreachReport = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/outreaches/${id}/report`);
 
-      if (response.ok) {
-        const data = await response.json();
+      // Try to fetch detailed report first
+      const reportResponse = await fetch(`/api/outreaches/${id}/report`);
+      if (reportResponse.ok) {
+        const data = await reportResponse.json();
         setOutreach(data);
-      } else {
-        // Load mock data for demo
-        setOutreach(getMockOutreachReport(id as string));
+        return;
       }
+
+      // If detailed report not found, try to fetch basic outreach data
+      const basicResponse = await fetch(`/api/outreaches?status=all`);
+      if (basicResponse.ok) {
+        const outreaches = await basicResponse.json();
+        const basicOutreach = outreaches.find((o: any) => o.id === id);
+
+        if (basicOutreach) {
+          // Convert basic outreach data to report format
+          setOutreach(convertBasicOutreachToReport(basicOutreach));
+          return;
+        }
+      }
+
+      // Fall back to mock data if nothing else works
+      setOutreach(getMockOutreachReport(id as string));
     } catch (error) {
       console.error('Error loading outreach report:', error);
       setOutreach(getMockOutreachReport(id as string));
     } finally {
       setLoading(false);
     }
+  };
+
+  const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
+    return {
+      id: outreach.id,
+      title: outreach.title,
+      date: outreach.date || outreach.outreach_details?.event_date || 'Date TBD',
+      location: outreach.location || outreach.outreach_details?.location || 'Location TBD',
+      status: outreach.status,
+      image: outreach.image || outreach.featured_image || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      description: outreach.description || outreach.content || outreach.excerpt || 'No description available',
+      targetBeneficiaries: outreach.targetBeneficiaries || outreach.outreach_details?.expected_attendees || 0,
+      actualBeneficiaries: outreach.beneficiaries || outreach.outreach_details?.actual_attendees || outreach.targetBeneficiaries || 0,
+      beneficiaryCategories: [],
+      impact: [],
+      budget: {
+        planned: outreach.outreach_details?.budget || 0,
+        actual: outreach.outreach_details?.budget || 0,
+        breakdown: []
+      },
+      volunteers: {
+        registered: outreach.volunteersNeeded || outreach.outreach_details?.volunteers_needed || 0,
+        participated: 0,
+        hours: 0
+      },
+      activities: [],
+      gallery: outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : [],
+      testimonials: [],
+      futurePlans: [],
+      partners: []
+    };
   };
 
   const getMockOutreachReport = (outreachId: string): OutreachReport => {
