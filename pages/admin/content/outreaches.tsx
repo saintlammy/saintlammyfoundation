@@ -79,11 +79,10 @@ const OutreachesManagement: React.FC = () => {
           target_audience: 'General Public',
           expected_attendees: item.targetBeneficiaries || item.beneficiaries || 0,
           organizer: 'Saintlammy Foundation',
-          contact_info: 'info@saintlammyfoundation.org',
+          contact_info: item.outreach_details?.contact_info || 'info@saintlammyfoundation.org',
           budget: 50000,
           actual_attendees: item.beneficiaries,
           time: item.time || '',
-          contact_info: item.outreach_details?.contact_info || '',
           volunteers_needed: item.volunteersNeeded || 0
         },
         created_at: item.created_at,

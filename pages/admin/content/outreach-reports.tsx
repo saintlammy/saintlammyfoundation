@@ -1273,7 +1273,10 @@ const OutreachReportsManagement: React.FC = () => {
                                 <div className="flex items-center justify-between px-2">
                                   <span className="text-xs text-gray-400">USD Equivalent:</span>
                                   <span className="text-xs font-semibold text-accent-400">
-                                    ${(item.amount / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    ${(() => {
+                                      const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount as string) || 0;
+                                      return (amount / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                    })()}
                                   </span>
                                 </div>
                               )}
@@ -1288,10 +1291,16 @@ const OutreachReportsManagement: React.FC = () => {
                               <span className="text-sm font-medium text-gray-300">Total Breakdown:</span>
                               <div className="text-right">
                                 <p className="text-sm font-bold text-white">
-                                  ₦{reportData.budget.breakdown.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
+                                  ₦{reportData.budget.breakdown.reduce((sum, item) => {
+                                    const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount as string) || 0;
+                                    return sum + amount;
+                                  }, 0).toLocaleString()}
                                 </p>
                                 <p className="text-xs text-accent-400">
-                                  ${(reportData.budget.breakdown.reduce((sum, item) => sum + item.amount, 0) / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
+                                  ${(reportData.budget.breakdown.reduce((sum, item) => {
+                                    const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount as string) || 0;
+                                    return sum + amount;
+                                  }, 0) / exchangeRate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
                                 </p>
                               </div>
                             </div>

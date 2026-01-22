@@ -22,10 +22,16 @@ const Outreaches: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
 
-        // Debug: Log image data
+        // Debug: Log outreach data
         console.log('🔍 Outreaches loaded:', data.length);
+        console.log('📊 Status breakdown:',  data.reduce((acc: any, o: any) => {
+          acc[o.status] = (acc[o.status] || 0) + 1;
+          return acc;
+        }, {}));
+
         data.forEach((o: any) => {
           console.log(`📸 ${o.title}:`, {
+            status: o.status,
             hasImage: !!o.image,
             hasFeaturedImage: !!o.featured_image,
             imageType: o.image ? (o.image.startsWith('data:') ? 'base64' : 'URL') : 'none',
@@ -38,6 +44,8 @@ const Outreaches: React.FC = () => {
         // To make them upcoming, set status to 'upcoming' or 'ongoing' in admin
         const past = data.filter((o: any) => o.status === 'completed' || o.status === 'published');
         const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
+
+        console.log(`✅ Past outreaches: ${past.length}, Upcoming: ${upcoming.length}`);
 
         // Use database data
         setPastOutreaches(past);
@@ -276,8 +284,19 @@ const Outreaches: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {pastOutreaches.map((outreach) => (
+            {pastOutreaches.length === 0 ? (
+              <div className="text-center py-16">
+                <Heart className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400 text-lg">
+                  No past outreaches available yet.
+                </p>
+                <p className="text-gray-500 dark:text-gray-500 text-sm mt-2">
+                  Check back soon for updates on our completed programs!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {pastOutreaches.map((outreach) => (
                 <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none group">
                   <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
                     {outreach.image || outreach.featured_image ? (
@@ -341,7 +360,8 @@ const Outreaches: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
