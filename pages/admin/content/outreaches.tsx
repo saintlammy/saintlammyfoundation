@@ -61,6 +61,16 @@ const OutreachesManagement: React.FC = () => {
       const response = await fetch(`/api/outreaches?${searchParams.toString()}`);
       const data = await response.json();
 
+      console.log('🔍 Admin outreaches loaded:', data.length);
+      data.forEach((item: any) => {
+        console.log(`  - ${item.title}:`, {
+          status: item.status,
+          hasSlug: !!item.slug,
+          hasContent: !!item.content,
+          hasExcerpt: !!item.excerpt
+        });
+      });
+
       // Transform API data to match component interface
       const transformedOutreaches = data.map((item: any) => ({
         id: item.id,
