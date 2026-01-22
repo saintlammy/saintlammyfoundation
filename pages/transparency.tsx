@@ -5,6 +5,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { PieChart, BarChart3, TrendingUp, DollarSign, FileText, Download, Eye, Shield } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const TransparencyPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -45,15 +47,7 @@ const TransparencyPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Financial Transparency - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="View our financial transparency reports, fund allocation, and organizational governance. See how your donations create impact across Nigeria."
-        />
-        <meta name="keywords" content="charity transparency, financial reports, fund allocation, nonprofit governance, donation impact" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/transparency" />
-      </Head>
+      <SEOHead config={pageSEO.transparency} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

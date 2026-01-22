@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const Outreaches: React.FC = () => {
   const [pastOutreaches, setPastOutreaches] = useState<any[]>([]);
@@ -106,10 +108,7 @@ const Outreaches: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Outreaches - Saintlammy Foundation</title>
-        <meta name="description" content="Join Saintlammy Foundation's community outreaches. Medical care, educational support, feeding programs, and skills training across Nigeria." />
-      </Head>
+      <SEOHead config={pageSEO.outreaches} />
 
         {/* Notification Banner */}
         {fetchError && (

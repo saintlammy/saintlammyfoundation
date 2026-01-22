@@ -6,6 +6,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Users, Shield, Award, BookOpen, Gavel, Scale, FileText, CheckCircle } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface BoardMember {
   name: string;
@@ -98,15 +100,7 @@ const GovernancePage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Governance - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Learn about Saintlammy Foundation's governance structure, board of directors, policies, and accountability measures ensuring effective leadership."
-        />
-        <meta name="keywords" content="nonprofit governance, board of directors, organizational policies, accountability, leadership structure" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/governance" />
-      </Head>
+      <SEOHead config={pageSEO.governance} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

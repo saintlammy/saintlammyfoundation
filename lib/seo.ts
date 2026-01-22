@@ -85,6 +85,122 @@ export const pageSEO = {
     description: "Stay updated with the latest news from Saintlammy Foundation. Read about our recent outreaches, success stories, and impact in Nigerian communities.",
     url: "https://saintlammyfoundation.org/news",
     keywords: "saintlammy foundation news, Nigeria charity updates, community impact stories, outreach programs"
+  }),
+
+  stories: generateSEO({
+    title: "Success Stories - Lives Transformed",
+    description: "Read inspiring success stories from widows, orphans, and communities transformed by Saintlammy Foundation's programs across Nigeria.",
+    url: "https://saintlammyfoundation.org/stories",
+    keywords: "success stories, impact stories, testimonials, beneficiary stories, community transformation"
+  }),
+
+  gallery: generateSEO({
+    title: "Gallery - Our Impact in Pictures",
+    description: "Explore photos and stories from Saintlammy Foundation's outreach programs, community events, and impact across Nigeria.",
+    url: "https://saintlammyfoundation.org/gallery",
+    keywords: "photo gallery, outreach photos, community events, impact pictures, Nigeria charity gallery"
+  }),
+
+  outreaches: generateSEO({
+    title: "Outreach Programs - Community Impact Initiatives",
+    description: "Discover Saintlammy Foundation's outreach programs bringing hope, education, healthcare, and support to communities across Nigeria.",
+    url: "https://saintlammyfoundation.org/outreaches",
+    keywords: "outreach programs, community outreach, Nigeria charity programs, humanitarian aid, community support"
+  }),
+
+  governance: generateSEO({
+    title: "Governance - Leadership & Accountability",
+    description: "Learn about Saintlammy Foundation's governance structure, board of directors, and commitment to transparency and accountability.",
+    url: "https://saintlammyfoundation.org/governance",
+    keywords: "nonprofit governance, board of directors, leadership, organizational structure, accountability"
+  }),
+
+  transparency: generateSEO({
+    title: "Transparency - Financial Reports & Impact Data",
+    description: "View Saintlammy Foundation's financial reports, impact metrics, and commitment to transparent operations serving Nigerian communities.",
+    url: "https://saintlammyfoundation.org/transparency",
+    keywords: "transparency, financial reports, annual reports, impact metrics, nonprofit accountability"
+  }),
+
+  beneficiaries: generateSEO({
+    title: "Beneficiaries - Lives We've Touched",
+    description: "Meet the widows, orphans, and families whose lives have been transformed through Saintlammy Foundation's programs across Nigeria.",
+    url: "https://saintlammyfoundation.org/beneficiaries",
+    keywords: "beneficiaries, program recipients, impact stories, community members, lives transformed"
+  }),
+
+  partner: generateSEO({
+    title: "Partner With Us - Strategic Partnerships",
+    description: "Partner with Saintlammy Foundation to amplify impact. Explore corporate partnerships, foundation collaborations, and strategic alliances.",
+    url: "https://saintlammyfoundation.org/partner",
+    keywords: "partnership opportunities, corporate partnerships, nonprofit collaboration, strategic alliances, CSR partnerships"
+  }),
+
+  sponsor: generateSEO({
+    title: "Sponsor a Child or Family - Make a Lasting Impact",
+    description: "Sponsor a child's education or support a widow's family. Create lasting change through direct sponsorship with Saintlammy Foundation.",
+    url: "https://saintlammyfoundation.org/sponsor",
+    keywords: "child sponsorship, family sponsorship, orphan support, widow empowerment, direct giving"
+  }),
+
+  partnershipTeam: generateSEO({
+    title: "Partnership Team - Our Collaborative Network",
+    description: "Meet our partnership team and learn about Saintlammy Foundation's collaborative approach to community development across Nigeria.",
+    url: "https://saintlammyfoundation.org/partnership-team",
+    keywords: "partnership team, collaboration, nonprofit partners, community partnerships, strategic alliances"
+  }),
+
+  privacy: generateSEO({
+    title: "Privacy Policy - Data Protection & Privacy",
+    description: "Saintlammy Foundation's privacy policy detailing how we collect, use, and protect your personal information.",
+    url: "https://saintlammyfoundation.org/privacy",
+    keywords: "privacy policy, data protection, personal information, GDPR, privacy rights",
+    noindex: false
+  }),
+
+  terms: generateSEO({
+    title: "Terms of Service - Website Terms & Conditions",
+    description: "Read Saintlammy Foundation's terms of service governing the use of our website and donation platform.",
+    url: "https://saintlammyfoundation.org/terms",
+    keywords: "terms of service, terms and conditions, website terms, legal terms, user agreement",
+    noindex: false
+  }),
+
+  cookiePolicy: generateSEO({
+    title: "Cookie Policy - How We Use Cookies",
+    description: "Learn about Saintlammy Foundation's cookie policy and how we use cookies to improve your browsing experience.",
+    url: "https://saintlammyfoundation.org/cookie-policy",
+    keywords: "cookie policy, cookies, website cookies, privacy, tracking",
+    noindex: false
+  }),
+
+  // Individual Program Pages
+  orphanAdoption: generateSEO({
+    title: "Orphan Care & Adoption Support - Providing Family & Hope",
+    description: "Supporting orphans with education, healthcare, family placement, and long-term care. Building futures for vulnerable children across Nigeria.",
+    url: "https://saintlammyfoundation.org/programs/orphan-adoption",
+    keywords: "orphan care, adoption support, child welfare, orphanages, foster care, family placement Nigeria"
+  }),
+
+  widowEmpowerment: generateSEO({
+    title: "Widow Empowerment Program - Economic Independence & Support",
+    description: "Empowering widows through skills training, microfinance, business support, and community resources. Building economic independence across Nigeria.",
+    url: "https://saintlammyfoundation.org/programs/widow-empowerment",
+    keywords: "widow empowerment, skills training, microfinance, women empowerment, economic independence Nigeria"
+  }),
+
+  educationalExcellence: generateSEO({
+    title: "Educational Excellence Program - Quality Education Access",
+    description: "Providing scholarships, school supplies, tutoring, and educational resources to vulnerable children. Investing in Nigeria's future through education.",
+    url: "https://saintlammyfoundation.org/programs/educational-excellence",
+    keywords: "education programs, scholarships, school supplies, tutoring, educational access Nigeria"
+  }),
+
+  healthcareAccess: generateSEO({
+    title: "Healthcare Access Program - Medical Support & Wellness",
+    description: "Delivering healthcare services, medical camps, health education, and wellness support to underserved communities across Nigeria.",
+    url: "https://saintlammyfoundation.org/programs/healthcare-access",
+    keywords: "healthcare access, medical support, health camps, community health, medical assistance Nigeria"
   })
 };
 

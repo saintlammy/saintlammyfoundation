@@ -24,6 +24,8 @@ import {
   Target,
   Send
 } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface PartnershipTeamProps {
   teamMembers: TeamMember[];
@@ -92,13 +94,7 @@ const PartnershipTeamContent: React.FC<PartnershipTeamProps> = ({ teamMembers, p
 
   return (
     <>
-      <Head>
-        <title>Partnership Team - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Connect with our dedicated partnership team to explore collaboration opportunities with Saintlammy Foundation."
-        />
-      </Head>
+      <SEOHead config={pageSEO.partnershipTeam} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

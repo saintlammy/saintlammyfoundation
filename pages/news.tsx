@@ -7,6 +7,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Calendar, ArrowRight, Heart, Users, Award, Search, Filter, Tag, Loader } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface NewsArticle {
   id: string;

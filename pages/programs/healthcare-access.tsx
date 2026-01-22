@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, Stethoscope, Activity, Shield, MapPin, ArrowRight, CheckCircle, Star, ArrowLeft, Phone, Mail, Clock, Truck, Users, Target } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const HealthcareAccessProgram: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -191,11 +193,7 @@ const HealthcareAccessProgram: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Healthcare Access Program - Saintlammy Foundation</title>
-        <meta name="description" content="Providing healthcare services and medical support to underserved communities through mobile clinics and health education programs in Nigeria." />
-        <meta name="keywords" content="healthcare access, mobile clinic, maternal health, child health, medical support, Nigeria healthcare" />
-      </Head>
+      <SEOHead config={pageSEO.healthcareAccess} />
 
       {/* Breadcrumb */}
       <div className="bg-gray-50 dark:bg-gray-900 py-4">

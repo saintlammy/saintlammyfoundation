@@ -7,6 +7,8 @@ import SponsorModal from '@/components/SponsorModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Heart, Users, GraduationCap, Star, CheckCircle, ArrowRight, Gift, Target, Clock } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface SponsorshipTier {
   id: string;
@@ -137,15 +139,7 @@ const SponsorPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Sponsor a Life - Transform Futures | Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Sponsor an orphan, widow, or vulnerable family in Nigeria. Create lasting impact through direct sponsorship programs. Choose your sponsorship level and change a life today."
-        />
-        <meta name="keywords" content="sponsor child Nigeria, orphan sponsorship, widow support, sponsor a family, child sponsorship Africa" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/sponsor" />
-      </Head>
+      <SEOHead config={pageSEO.sponsor} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

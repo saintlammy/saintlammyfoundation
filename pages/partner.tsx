@@ -20,19 +20,15 @@ import {
   ArrowRight,
   Star
 } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const Partner: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   return (
     <>
-      <Head>
-        <title>Partner With Us - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Join Saintlammy Foundation as a partner to amplify impact for orphans, widows, and vulnerable communities across Nigeria."
-        />
-      </Head>
+      <SEOHead config={pageSEO.partner} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

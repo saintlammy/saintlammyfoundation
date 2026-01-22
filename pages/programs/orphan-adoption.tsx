@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, Users, Target, Calendar, MapPin, ArrowRight, CheckCircle, Star, ArrowLeft, Phone, Mail, Clock } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const OrphanAdoptionProgram: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -118,11 +120,7 @@ const OrphanAdoptionProgram: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Orphan Adoption Program - Saintlammy Foundation</title>
-        <meta name="description" content="Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support through Saintlammy Foundation's Orphan Adoption Program." />
-        <meta name="keywords" content="orphan adoption, child welfare, education support, healthcare for orphans, Nigeria charity" />
-      </Head>
+      <SEOHead config={pageSEO.orphanAdoption} />
 
       {/* Breadcrumb */}
       <div className="bg-gray-50 dark:bg-gray-900 py-4">

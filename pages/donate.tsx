@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin, Banknote, Globe, ChevronDown, ExternalLink } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 // Use simple SVG icons instead of heavy react-icons
 const BitcoinIcon = () => (
   <div className="w-5 h-5 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold">₿</div>

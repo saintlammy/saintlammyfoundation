@@ -7,6 +7,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Users, GraduationCap, Heart, Building, Search, Filter, Calendar, MapPin, ArrowRight } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface GalleryItem {
   id: string;

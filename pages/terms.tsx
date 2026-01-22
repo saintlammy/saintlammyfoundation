@@ -5,21 +5,15 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { FileText, Scale, AlertTriangle, Users, CreditCard, Globe } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const TermsPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   return (
     <>
-      <Head>
-        <title>Terms of Service - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Read the terms and conditions for using Saintlammy Foundation's website and services. Understand your rights and responsibilities."
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/terms" />
-      </Head>
+      <SEOHead config={pageSEO.terms} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

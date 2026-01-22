@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { GraduationCap, BookOpen, Users, Trophy, MapPin, ArrowRight, CheckCircle, Star, ArrowLeft, Phone, Mail, Clock, Award, Target } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const EducationalExcellenceProgram: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -191,11 +193,7 @@ const EducationalExcellenceProgram: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Educational Excellence Program - Saintlammy Foundation</title>
-        <meta name="description" content="Scholarship program and educational support for children from vulnerable families to ensure quality education access in Nigeria." />
-        <meta name="keywords" content="education scholarship, academic support, student sponsorship, educational excellence, Nigeria education" />
-      </Head>
+      <SEOHead config={pageSEO.educationalExcellence} />
 
       {/* Breadcrumb */}
       <div className="bg-gray-50 dark:bg-gray-900 py-4">

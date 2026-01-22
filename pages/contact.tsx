@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, User, Globe } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -100,10 +102,7 @@ const Contact: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Contact Us - Saintlammy Foundation</title>
-        <meta name="description" content="Get in touch with Saintlammy Foundation. Contact us for donations, volunteer opportunities, partnerships, or general inquiries." />
-      </Head>
+      <SEOHead config={pageSEO.contact} />
 
         {/* Hero Section */}
         <section className="py-32 bg-gray-50 dark:bg-gray-900">

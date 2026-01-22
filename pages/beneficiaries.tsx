@@ -8,6 +8,8 @@ import SponsorModal from '@/components/SponsorModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { User, MapPin, GraduationCap, Home, Heart, Search, Filter, ChevronDown } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface Beneficiary {
   id: string;
@@ -118,15 +120,7 @@ const BeneficiariesContent: React.FC<BeneficiariesPageProps> = ({
 
   return (
     <>
-      <Head>
-        <title>Our Beneficiaries - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Meet the children, widows, and families we support across Nigeria. Learn their stories and consider sponsoring a life to create lasting impact."
-        />
-        <meta name="keywords" content="sponsor child Nigeria, adopt orphan, support widow, beneficiaries, charity sponsorship" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/beneficiaries" />
-      </Head>
+      <SEOHead config={pageSEO.beneficiaries} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',

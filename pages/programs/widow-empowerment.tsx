@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Users, TrendingUp, Briefcase, DollarSign, MapPin, ArrowRight, CheckCircle, Star, ArrowLeft, Phone, Mail, Clock, Award } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const WidowEmpowermentProgram: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -160,11 +162,7 @@ const WidowEmpowermentProgram: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Widow Empowerment Initiative - Saintlammy Foundation</title>
-        <meta name="description" content="Economic empowerment program helping widows become financially independent through skills training and micro-business support in Nigeria." />
-        <meta name="keywords" content="widow empowerment, skills training, micro-business, women empowerment, economic independence, Nigeria charity" />
-      </Head>
+      <SEOHead config={pageSEO.widowEmpowerment} />
 
       {/* Breadcrumb */}
       <div className="bg-gray-50 dark:bg-gray-900 py-4">

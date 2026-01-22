@@ -4,6 +4,8 @@ import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import { Quote, Star, Calendar, MapPin, ArrowLeft, Filter, Search } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface Story {
   id: string;

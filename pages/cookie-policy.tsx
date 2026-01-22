@@ -1,6 +1,8 @@
 import React from 'react';
 import { Cookie, Shield, TrendingUp, Target, Settings, Info } from 'lucide-react';
 import { useCookieConsent } from '../contexts/CookieConsentContext';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const CookiePolicy: React.FC = () => {
   const { openSettings } = useCookieConsent();

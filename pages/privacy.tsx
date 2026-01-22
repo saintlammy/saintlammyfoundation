@@ -5,21 +5,15 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Shield, Eye, Lock, Users, Mail, Database } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 const PrivacyPage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
 
   return (
     <>
-      <Head>
-        <title>Privacy Policy - Saintlammy Foundation</title>
-        <meta
-          name="description"
-          content="Learn how Saintlammy Foundation protects your privacy and handles your personal information. Read our comprehensive privacy policy."
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://www.saintlammyfoundation.org/privacy" />
-      </Head>
+      <SEOHead config={pageSEO.privacy} />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',
