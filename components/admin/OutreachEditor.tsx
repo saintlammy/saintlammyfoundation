@@ -32,27 +32,34 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
     budget: '',
     contact_info: '',
     organizer: '',
-    volunteers_needed: ''
+    volunteers_needed: '',
+    activities: '',
+    future_plans: '',
+    impact: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (initialData) {
+      const details = initialData.outreach_details || {};
       setFormData({
         title: initialData.title || '',
         content: initialData.content || '',
         excerpt: initialData.excerpt || '',
         status: initialData.status || 'draft',
         featured_image: initialData.featured_image || '',
-        location: initialData.outreach_details?.location || '',
-        event_date: initialData.outreach_details?.event_date || '',
-        time: initialData.outreach_details?.time || '',
-        expected_attendees: initialData.outreach_details?.expected_attendees || '',
-        budget: initialData.outreach_details?.budget || '',
-        contact_info: initialData.outreach_details?.contact_info || '',
-        organizer: initialData.outreach_details?.organizer || '',
-        volunteers_needed: initialData.outreach_details?.volunteers_needed || ''
+        location: details.location || '',
+        event_date: details.event_date || '',
+        time: details.time || '',
+        expected_attendees: details.expected_attendees || '',
+        budget: details.budget || '',
+        contact_info: details.contact_info || '',
+        organizer: details.organizer || '',
+        volunteers_needed: details.volunteers_needed || '',
+        activities: details.activities ? JSON.stringify(details.activities, null, 2) : '',
+        future_plans: details.future_plans ? JSON.stringify(details.future_plans, null, 2) : '',
+        impact: details.impact ? JSON.stringify(details.impact, null, 2) : ''
       });
     }
   }, [initialData]);
@@ -161,6 +168,38 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
       return;
     }
 
+    // Parse JSON fields
+    let activities = [];
+    let futurePlans = [];
+    let impact = [];
+
+    try {
+      if (formData.activities.trim()) {
+        activities = JSON.parse(formData.activities);
+      }
+    } catch (e) {
+      alert('Invalid JSON format for Activities. Please check the format.');
+      return;
+    }
+
+    try {
+      if (formData.future_plans.trim()) {
+        futurePlans = JSON.parse(formData.future_plans);
+      }
+    } catch (e) {
+      alert('Invalid JSON format for Future Plans. Please check the format.');
+      return;
+    }
+
+    try {
+      if (formData.impact.trim()) {
+        impact = JSON.parse(formData.impact);
+      }
+    } catch (e) {
+      alert('Invalid JSON format for Impact. Please check the format.');
+      return;
+    }
+
     // Format data for API
     const outreachData = {
       id: initialData?.id,
@@ -179,7 +218,10 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
         budget: formData.budget ? parseFloat(formData.budget) : 0,
         contact_info: formData.contact_info,
         organizer: formData.organizer,
-        volunteers_needed: formData.volunteers_needed ? parseInt(formData.volunteers_needed) : 0
+        volunteers_needed: formData.volunteers_needed ? parseInt(formData.volunteers_needed) : 0,
+        activities: activities,
+        future_plans: futurePlans,
+        impact: impact
       }
     };
 
@@ -464,6 +506,65 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                 placeholder="e.g., outreach@saintlammyfoundation.org"
               />
+            </div>
+          </div>
+
+          {/* Additional Details (Optional) */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Additional Details (Optional)</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Use JSON format to add structured data for activities, impact metrics, and future plans.
+            </p>
+
+            {/* Activities */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Activities Conducted (JSON Array)
+              </label>
+              <textarea
+                value={formData.activities}
+                onChange={(e) => handleChange('activities', e.target.value)}
+                rows={6}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                placeholder='[{"title": "Activity Name", "description": "Description", "completed": true}]'
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Example: [{"{}title": "Registration", "description": "Patient registration", "completed": true{}}]
+              </p>
+            </div>
+
+            {/* Impact */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Impact Metrics (JSON Array)
+              </label>
+              <textarea
+                value={formData.impact}
+                onChange={(e) => handleChange('impact', e.target.value)}
+                rows={6}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                placeholder='[{"title": "Metric Name", "value": 100, "description": "Description"}]'
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Example: [{"{}title": "People Reached", "value": 487, "description": "Total beneficiaries"{}}]
+              </p>
+            </div>
+
+            {/* Future Plans */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Future Plans (JSON Array of Strings)
+              </label>
+              <textarea
+                value={formData.future_plans}
+                onChange={(e) => handleChange('future_plans', e.target.value)}
+                rows={4}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                placeholder='["Plan 1", "Plan 2", "Plan 3"]'
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Example: ["Expand to more communities", "Partner with hospitals"]
+              </p>
             </div>
           </div>
 

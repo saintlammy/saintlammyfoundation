@@ -96,33 +96,35 @@ interface OutreachReport {
 
 // Helper function to convert basic outreach data to report format
 const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
+  const details = outreach.outreach_details || {};
+
   return {
     id: outreach.id,
     title: outreach.title,
-    date: outreach.date || outreach.outreach_details?.event_date || 'Date TBD',
-    location: outreach.location || outreach.outreach_details?.location || 'Location TBD',
+    date: outreach.date || details.event_date || 'Date TBD',
+    location: outreach.location || details.location || 'Location TBD',
     status: outreach.status,
     image: outreach.image || outreach.featured_image || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
     description: outreach.description || outreach.content || outreach.excerpt || 'No description available',
-    targetBeneficiaries: outreach.targetBeneficiaries || outreach.outreach_details?.expected_attendees || 0,
-    actualBeneficiaries: outreach.beneficiaries || outreach.outreach_details?.actual_attendees || outreach.targetBeneficiaries || 0,
-    beneficiaryCategories: [],
-    impact: [],
+    targetBeneficiaries: outreach.targetBeneficiaries || details.expected_attendees || 0,
+    actualBeneficiaries: outreach.beneficiaries || details.actual_attendees || outreach.targetBeneficiaries || 0,
+    beneficiaryCategories: details.beneficiary_categories || [],
+    impact: details.impact || [],
     budget: {
-      planned: outreach.outreach_details?.budget || 0,
-      actual: outreach.outreach_details?.budget || 0,
-      breakdown: []
+      planned: details.budget_planned || details.budget || 0,
+      actual: details.budget_actual || details.budget || 0,
+      breakdown: details.budget_breakdown || []
     },
     volunteers: {
-      registered: outreach.volunteersNeeded || outreach.outreach_details?.volunteers_needed || 0,
-      participated: 0,
-      hours: 0
+      registered: outreach.volunteersNeeded || details.volunteers_needed || 0,
+      participated: details.volunteers_participated || 0,
+      hours: details.volunteer_hours || 0
     },
-    activities: [],
-    gallery: outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : [],
-    testimonials: [],
-    futurePlans: [],
-    partners: []
+    activities: details.activities || [],
+    gallery: details.gallery || (outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : []),
+    testimonials: details.testimonials || [],
+    futurePlans: details.future_plans || [],
+    partners: details.partners || []
   };
 };
 
