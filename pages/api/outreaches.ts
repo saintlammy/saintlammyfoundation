@@ -207,6 +207,11 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Outreach ID is required' });
     }
 
+    // Debug logging
+    console.log('🔍 UPDATE OUTREACH:', id);
+    console.log('📦 Received data:', JSON.stringify(updateData, null, 2));
+    console.log('📊 outreach_details in request:', updateData.outreach_details);
+
     // Transform data to match content table structure
     const dbUpdateData: any = {
       updated_at: new Date().toISOString()
