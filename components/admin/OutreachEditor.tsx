@@ -1,0 +1,396 @@
+import React, { useState, useEffect } from 'react';
+import { X, Calendar, MapPin, Users, DollarSign, User, Mail } from 'lucide-react';
+
+interface OutreachEditorProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  initialData?: any;
+  mode: 'create' | 'edit';
+}
+
+const OutreachEditor: React.FC<OutreachEditorProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  mode
+}) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    status: 'draft',
+    featured_image: '',
+    location: '',
+    event_date: '',
+    time: '',
+    expected_attendees: '',
+    budget: '',
+    contact_info: '',
+    organizer: '',
+    volunteers_needed: ''
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title || '',
+        content: initialData.content || '',
+        excerpt: initialData.excerpt || '',
+        status: initialData.status || 'draft',
+        featured_image: initialData.featured_image || '',
+        location: initialData.outreach_details?.location || '',
+        event_date: initialData.outreach_details?.event_date || '',
+        time: initialData.outreach_details?.time || '',
+        expected_attendees: initialData.outreach_details?.expected_attendees || '',
+        budget: initialData.outreach_details?.budget || '',
+        contact_info: initialData.outreach_details?.contact_info || '',
+        organizer: initialData.outreach_details?.organizer || '',
+        volunteers_needed: initialData.outreach_details?.volunteers_needed || ''
+      });
+    }
+  }, [initialData]);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+
+    if (!formData.content.trim()) {
+      newErrors.content = 'Description is required';
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Location is required';
+    }
+
+    if (!formData.event_date) {
+      newErrors.event_date = 'Event date is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    // Format data for API
+    const outreachData = {
+      id: initialData?.id,
+      title: formData.title,
+      content: formData.content,
+      excerpt: formData.excerpt || formData.content.substring(0, 200),
+      type: 'outreach',
+      status: formData.status,
+      featured_image: formData.featured_image,
+      publish_date: new Date().toISOString(),
+      outreach_details: {
+        location: formData.location,
+        event_date: formData.event_date,
+        time: formData.time,
+        expected_attendees: formData.expected_attendees ? parseInt(formData.expected_attendees) : 0,
+        budget: formData.budget ? parseFloat(formData.budget) : 0,
+        contact_info: formData.contact_info,
+        organizer: formData.organizer,
+        volunteers_needed: formData.volunteers_needed ? parseInt(formData.volunteers_needed) : 0
+      }
+    };
+
+    onSave(outreachData);
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            {mode === 'create' ? 'Create New Outreach' : 'Edit Outreach'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h3>
+
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Outreach Title *
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => handleChange('title', e.target.value)}
+                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+                  errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                }`}
+                placeholder="e.g., Medical Outreach - Ikeja Community"
+              />
+              {errors.title && (
+                <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Description *
+              </label>
+              <textarea
+                value={formData.content}
+                onChange={(e) => handleChange('content', e.target.value)}
+                rows={6}
+                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+                  errors.content ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                }`}
+                placeholder="Describe the outreach program in detail..."
+              />
+              {errors.content && (
+                <p className="mt-1 text-sm text-red-500">{errors.content}</p>
+              )}
+            </div>
+
+            {/* Excerpt */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Excerpt (Optional)
+              </label>
+              <textarea
+                value={formData.excerpt}
+                onChange={(e) => handleChange('excerpt', e.target.value)}
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                placeholder="Short summary for preview..."
+              />
+            </div>
+
+            {/* Featured Image */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Featured Image URL
+              </label>
+              <input
+                type="url"
+                value={formData.featured_image}
+                onChange={(e) => handleChange('featured_image', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+          </div>
+
+          {/* Event Details */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Event Details</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  Location *
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => handleChange('location', e.target.value)}
+                  className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+                    errors.location ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                  placeholder="e.g., Ikeja, Lagos"
+                />
+                {errors.location && (
+                  <p className="mt-1 text-sm text-red-500">{errors.location}</p>
+                )}
+              </div>
+
+              {/* Event Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Calendar className="w-4 h-4 inline mr-1" />
+                  Event Date *
+                </label>
+                <input
+                  type="date"
+                  value={formData.event_date}
+                  onChange={(e) => handleChange('event_date', e.target.value)}
+                  className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
+                    errors.event_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                />
+                {errors.event_date && (
+                  <p className="mt-1 text-sm text-red-500">{errors.event_date}</p>
+                )}
+              </div>
+
+              {/* Time */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Time
+                </label>
+                <input
+                  type="text"
+                  value={formData.time}
+                  onChange={(e) => handleChange('time', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  placeholder="e.g., 9:00 AM - 4:00 PM"
+                />
+              </div>
+
+              {/* Expected Attendees */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Users className="w-4 h-4 inline mr-1" />
+                  Expected Attendees
+                </label>
+                <input
+                  type="number"
+                  value={formData.expected_attendees}
+                  onChange={(e) => handleChange('expected_attendees', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  placeholder="e.g., 500"
+                  min="0"
+                />
+              </div>
+
+              {/* Budget */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <DollarSign className="w-4 h-4 inline mr-1" />
+                  Budget (₦)
+                </label>
+                <input
+                  type="number"
+                  value={formData.budget}
+                  onChange={(e) => handleChange('budget', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  placeholder="e.g., 500000"
+                  min="0"
+                  step="1000"
+                />
+              </div>
+
+              {/* Volunteers Needed */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <User className="w-4 h-4 inline mr-1" />
+                  Volunteers Needed
+                </label>
+                <input
+                  type="number"
+                  value={formData.volunteers_needed}
+                  onChange={(e) => handleChange('volunteers_needed', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  placeholder="e.g., 20"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            {/* Organizer */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Organizer
+              </label>
+              <input
+                type="text"
+                value={formData.organizer}
+                onChange={(e) => handleChange('organizer', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                placeholder="e.g., Saintlammy Foundation Team"
+              />
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <Mail className="w-4 h-4 inline mr-1" />
+                Contact Information
+              </label>
+              <input
+                type="text"
+                value={formData.contact_info}
+                onChange={(e) => handleChange('contact_info', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                placeholder="e.g., outreach@saintlammyfoundation.org"
+              />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Status
+            </label>
+            <select
+              value={formData.status}
+              onChange={(e) => handleChange('status', e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors"
+            >
+              {mode === 'create' ? 'Create Outreach' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default OutreachEditor;

@@ -60,11 +60,18 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
+      content: item.content,
+      excerpt: item.excerpt,
       image: item.featured_image,
+      featured_image: item.featured_image,
       location: item.outreach_details?.location || 'Nigeria',
       date: item.outreach_details?.event_date || item.publish_date,
-      beneficiaries: item.outreach_details?.beneficiaries_count || 0,
+      time: item.outreach_details?.time || '',
+      targetBeneficiaries: item.outreach_details?.expected_attendees || 0,
+      beneficiaries: item.outreach_details?.actual_attendees || item.outreach_details?.expected_attendees || 0,
+      volunteersNeeded: item.outreach_details?.volunteers_needed || 0,
       status: item.status,
+      outreach_details: item.outreach_details,
       created_at: item.created_at,
       updated_at: item.updated_at
     }));
@@ -92,19 +99,23 @@ async function createOutreach(req: NextApiRequest, res: NextApiResponse) {
     const newOutreach = {
       id: outreachData.id || `outreach-${Date.now()}`,
       title: outreachData.title,
-      excerpt: outreachData.description || '',
-      content: outreachData.description || '',
-      featured_image: outreachData.image || '',
-      outreach_details: {
-        location: outreachData.location || 'Nigeria',
-        event_date: outreachData.date || new Date().toISOString(),
-        // Accept both text and numeric values for beneficiaries
-        beneficiaries_count: outreachData.beneficiaries || ''
+      excerpt: outreachData.excerpt || outreachData.content?.substring(0, 200) || '',
+      content: outreachData.content || '',
+      featured_image: outreachData.featured_image || '',
+      outreach_details: outreachData.outreach_details || {
+        location: outreachData.location || '',
+        event_date: outreachData.event_date || new Date().toISOString(),
+        time: outreachData.time || '',
+        expected_attendees: outreachData.expected_attendees || 0,
+        budget: outreachData.budget || 0,
+        contact_info: outreachData.contact_info || '',
+        organizer: outreachData.organizer || '',
+        volunteers_needed: outreachData.volunteers_needed || 0
       },
-      status: outreachData.status || 'upcoming',
+      status: outreachData.status || 'draft',
       slug,
       type: 'outreach',
-      publish_date: outreachData.date || new Date().toISOString(),
+      publish_date: outreachData.publish_date || new Date().toISOString(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -215,12 +226,25 @@ async function updateOutreach(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Update outreach_details JSONB field
-    if (updateData.location || updateData.beneficiaries || updateData.date) {
-      dbUpdateData.outreach_details = {
-        location: updateData.location,
-        event_date: updateData.date,
-        beneficiaries_count: updateData.beneficiaries
-      };
+    if (updateData.outreach_details) {
+      dbUpdateData.outreach_details = updateData.outreach_details;
+    }
+
+    if (updateData.content) {
+      dbUpdateData.content = updateData.content;
+      dbUpdateData.excerpt = updateData.excerpt || updateData.content.substring(0, 200);
+    }
+
+    if (updateData.excerpt) {
+      dbUpdateData.excerpt = updateData.excerpt;
+    }
+
+    if (updateData.featured_image) {
+      dbUpdateData.featured_image = updateData.featured_image;
+    }
+
+    if (updateData.publish_date) {
+      dbUpdateData.publish_date = updateData.publish_date;
     }
 
     let savedToDatabase = false;

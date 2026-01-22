@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ContentEditor from '@/components/admin/ContentEditor';
+import OutreachEditor from '@/components/admin/OutreachEditor';
 import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart, FileText, ExternalLink } from 'lucide-react';
 // ContentService import removed - using direct mock data
 
@@ -535,11 +535,12 @@ const OutreachesManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Content Editor Modal */}
+        {/* Outreach Editor Modal */}
         {showEditor && (
-          <ContentEditor
+          <OutreachEditor
             isOpen={showEditor}
-            content={selectedOutreach}
+            initialData={selectedOutreach}
+            mode={selectedOutreach ? 'edit' : 'create'}
             onSave={handleSaveOutreach}
             onClose={() => {
               setShowEditor(false);

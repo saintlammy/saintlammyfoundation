@@ -1,0 +1,208 @@
+
+> saintlammy-foundation@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+⚠ `eslint` configuration in next.config.js is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.js options detected: 
+⚠     Unrecognized key(s) in object: 'eslint', 'swcMinify'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/saintlammy/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/saintlammy/Documents/My Personal Brand/Saintlammy Foundation/saintlammy_foundation/package-lock.json
+
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
+
+  Running TypeScript ...
+  Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+
+Source path: ./styles/globals.css
+Setting up new context...
+Finding changed files: 11.483ms
+Reading changed files: 445.651ms
+Sorting candidates: 13.811ms
+Generate rules: 176.377ms
+Build stylesheet: 3.664ms
+Potential classes:  18166
+Active contexts:  1
+JIT TOTAL: 770.172ms
+
+
+✓ Compiled successfully in 5.5s
+  Collecting page data using 11 workers ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+  Generating static pages using 11 workers (0/83) ...
+  Generating static pages using 11 workers (20/83) 
+  Generating static pages using 11 workers (41/83) 
+  Generating static pages using 11 workers (62/83) 
+Error fetching stats: Error: Failed to fetch stats
+    at E (.next/server/chunks/ssr/Documents_My Personal Brand_Saintlammy Foundation_saintlammy_foundation_2cea4152._.js:1:81452)
+Error fetching stories: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+✓ Generating static pages using 11 workers (83/83) in 3.3s
+  Finalizing page optimization ...
+
+Route (pages)                                Revalidate  Expire
+┌ ● / (3039 ms)                                      5m      1y
+├   /_app
+├ ○ /404
+├ ● /about                                           1h      1y
+├ ○ /admin
+├ ○ /admin/analytics
+├ ○ /admin/analytics/donations
+├ ○ /admin/analytics/reports
+├ ○ /admin/analytics/website
+├ ○ /admin/campaigns
+├ ○ /admin/clear-session
+├ ○ /admin/communications/messages
+├ ○ /admin/communications/newsletter
+├ ○ /admin/communications/notifications
+├ ○ /admin/confirm
+├ ○ /admin/content
+├ ○ /admin/content/gallery
+├ ○ /admin/content/news
+├ ○ /admin/content/outreach-reports
+├ ○ /admin/content/outreaches
+├ ○ /admin/content/pages
+├ ○ /admin/content/programs
+├ ○ /admin/content/stories
+├ ○ /admin/content/testimonials
+├ ○ /admin/cookie-compliance
+├ ○ /admin/debug
+├ ○ /admin/donations
+├ ○ /admin/donations/analytics
+├ ○ /admin/donations/recurring
+├ ○ /admin/donations/transactions
+├ ○ /admin/fix-session
+├ ○ /admin/login
+├ ○ /admin/notifications
+├ ○ /admin/partnerships
+├ ○ /admin/programs
+├ ○ /admin/protected-test
+├ ○ /admin/reports
+├ ○ /admin/reset-password
+├ ○ /admin/settings
+├ ○ /admin/settings/currency
+├ ○ /admin/settings/integrations
+├ ○ /admin/settings/payment
+├ ○ /admin/settings/security
+├ ○ /admin/signup
+├ ○ /admin/supabase-config-test
+├ ○ /admin/test-access
+├ ○ /admin/unauthorized
+├ ○ /admin/users
+├ ○ /admin/users/admins
+├ ○ /admin/users/donors
+├ ○ /admin/users/volunteers
+├ ○ /admin/volunteers
+├ ○ /admin/wallet-direct
+├ ○ /admin/wallet-management
+├ ○ /admin/wallet-simple
+├ ○ /admin/wallet-test
+├ ƒ /api/admin/content
+├ ƒ /api/admin/cookie-analytics
+├ ƒ /api/admin/donations
+├ ƒ /api/admin/messages
+├ ƒ /api/admin/newsletter
+├ ƒ /api/admin/recurring-donations
+├ ƒ /api/admin/stats
+├ ƒ /api/admin/testimonials
+├ ƒ /api/admin/volunteers
+├ ƒ /api/auth/debug-user
+├ ƒ /api/auth/reset-password
+├ ƒ /api/auth/test
+├ ƒ /api/auth/update-password
+├ ƒ /api/auth/validate
+├ ƒ /api/blockchain/wallet
+├ ƒ /api/campaign-share
+├ ƒ /api/campaigns
+├ ƒ /api/contact
+├ ƒ /api/content
+├ ƒ /api/content/revisions
+├ ƒ /api/content/schedule
+├ ƒ /api/content/upload
+├ ƒ /api/cookie-consent
+├ ƒ /api/debug/check-admin
+├ ƒ /api/debug/database-status
+├ ƒ /api/donations/bulk-delete
+├ ƒ /api/donations/monitor
+├ ƒ /api/gallery
+├ ƒ /api/news
+├ ƒ /api/newsletter
+├ ƒ /api/notifications
+├ ƒ /api/notifications/broadcast
+├ ƒ /api/notifications/mark-all-read
+├ ƒ /api/og-image
+├ ƒ /api/og-preview
+├ ƒ /api/outreaches
+├ ƒ /api/outreaches/[id]/report
+├ ƒ /api/pages
+├ ƒ /api/partnerships/applications
+├ ƒ /api/partnerships/team
+├ ƒ /api/payments/crypto
+├ ƒ /api/payments/paypal
+├ ƒ /api/payments/verify
+├ ƒ /api/programs
+├ ƒ /api/programs/stats
+├ ƒ /api/stats
+├ ƒ /api/stories
+├ ƒ /api/test-crud
+├ ƒ /api/test-supabase
+├ ƒ /api/test/database
+├ ƒ /api/testimonials
+├ ƒ /api/volunteer
+├ ƒ /api/wallets/generate
+├ ● /beneficiaries                                   1h      1y
+├ ● /campaign/[id]
+├ ○ /contact
+├ ○ /cookie-policy
+├ ○ /donate
+├ ○ /donation/cancelled
+├ ○ /donation/success
+├ ○ /gallery
+├ ○ /governance
+├ ● /news (3040 ms)                                  1h      1y
+├ ● /news/[slug]                                     1h      1y
+│ ├ /news/december-medical-outreach-2024
+│ ├ /news/school-partnership-expansion-2024
+│ └ /news/widow-empowerment-success-2024
+├ ○ /outreach/[id]
+├ ○ /outreaches
+├ ○ /partner
+├ ● /partnership-team                                1h      1y
+├ ○ /privacy
+├ ● /programs                                        1h      1y
+├ ○ /programs/educational-excellence
+├ ○ /programs/healthcare-access
+├ ○ /programs/orphan-adoption
+├ ○ /programs/widow-empowerment
+├ ƒ /robots.txt
+├ ƒ /sitemap.xml
+├ ○ /sponsor
+├ ● /stories (3057 ms)                               1h      1y
+├ ƒ /story/[id]
+├ ○ /terms
+├ ○ /transparency
+└ ○ /volunteer
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses getStaticProps)
+ƒ  (Dynamic)  server-rendered on demand
+

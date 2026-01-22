@@ -23,7 +23,9 @@ const Outreaches: React.FC = () => {
         const data = await response.json();
 
         // Separate into past and upcoming
-        const past = data.filter((o: any) => o.status === 'completed');
+        // Note: 'published' outreaches are shown in past section by default
+        // To make them upcoming, set status to 'upcoming' or 'ongoing' in admin
+        const past = data.filter((o: any) => o.status === 'completed' || o.status === 'published');
         const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
 
         // Use database data
