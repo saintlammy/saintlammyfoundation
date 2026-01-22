@@ -66,22 +66,25 @@ const OutreachesManagement: React.FC = () => {
         id: item.id,
         title: item.title,
         slug: item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-        content: item.description || item.content || '',
-        excerpt: item.description || '',
+        content: item.content || item.description || '',
+        excerpt: item.excerpt || item.description || '',
         status: item.status || 'published',
         type: 'outreach' as const,
         author: 'Admin',
-        publish_date: item.date || item.created_at,
-        featured_image: item.image || '',
-        outreach_details: {
+        publish_date: item.publish_date || item.date || item.created_at,
+        featured_image: item.featured_image || item.image || '',
+        outreach_details: item.outreach_details || {
           location: item.location || 'Nigeria',
           event_date: item.date || new Date().toISOString(),
           target_audience: 'General Public',
-          expected_attendees: item.beneficiaries || 100,
+          expected_attendees: item.targetBeneficiaries || item.beneficiaries || 0,
           organizer: 'Saintlammy Foundation',
           contact_info: 'info@saintlammyfoundation.org',
           budget: 50000,
-          actual_attendees: item.beneficiaries
+          actual_attendees: item.beneficiaries,
+          time: item.time || '',
+          contact_info: item.outreach_details?.contact_info || '',
+          volunteers_needed: item.volunteersNeeded || 0
         },
         created_at: item.created_at,
         updated_at: item.updated_at

@@ -55,6 +55,17 @@ async function getOutreaches(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json([]);
     }
 
+    // Debug: Log raw database data
+    console.log('📊 Raw database records:', data.length);
+    (data as any).forEach((item: any) => {
+      console.log(`  - ${item.title}:`, {
+        hasFeaturedImage: !!item.featured_image,
+        imageType: item.featured_image ? (item.featured_image.startsWith('data:') ? 'base64' : 'URL') : 'none',
+        imageLength: item.featured_image?.length || 0,
+        firstChars: item.featured_image?.substring(0, 50) || 'N/A'
+      });
+    });
+
     // Transform data to match component interface
     const transformedData = (data as any).map((item: any) => ({
       id: item.id,
