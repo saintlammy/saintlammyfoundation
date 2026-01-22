@@ -562,13 +562,21 @@ const OutreachReportPage: React.FC = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px]">
-          <Image
-            src={outreach.image}
-            alt={outreach.title}
-            fill
-            className="object-cover"
-            priority
-          />
+          {outreach.image.startsWith('data:') ? (
+            <img
+              src={outreach.image}
+              alt={outreach.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image
+              src={outreach.image}
+              alt={outreach.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
 
           <div className="absolute inset-0 flex flex-col justify-end">
@@ -976,12 +984,20 @@ const OutreachReportPage: React.FC = () => {
               <div className="grid md:grid-cols-3 gap-4">
                 {outreach.gallery.map((image, index) => (
                   <div key={index} className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer">
-                    <Image
-                      src={image}
-                      alt={`${outreach.title} - Photo ${index + 1}`}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-110"
-                    />
+                    {image.startsWith('data:') ? (
+                      <img
+                        src={image}
+                        alt={`Gallery ${index + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    ) : (
+                      <Image
+                        src={image}
+                        alt={`${outreach.title} - Photo ${index + 1}`}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-110"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                       <Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Calendar, MapPin, Users, DollarSign, User, Mail } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Calendar, MapPin, Users, DollarSign, User, Mail, Upload, Loader } from 'lucide-react';
 
 interface OutreachEditorProps {
   isOpen: boolean;
@@ -16,6 +16,9 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
   initialData,
   mode
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -75,6 +78,80 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      // Compress image
+      const compressedBase64 = await compressImage(file);
+      setFormData(prev => ({ ...prev, featured_image: compressedBase64 }));
+
+      alert('✅ Image uploaded and compressed successfully!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const compressImage = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new globalThis.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+
+          // Calculate new dimensions (max 1200px width, maintain aspect ratio)
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 1200;
+
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression (0.7 = 70% quality)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          const sizeInMB = (compressedBase64.length * 0.75) / (1024 * 1024);
+          if (sizeInMB > 5) {
+            reject(new Error('Compressed image is still too large. Please use a smaller image.'));
+          } else {
+            resolve(compressedBase64);
+          }
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -203,15 +280,52 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
             {/* Featured Image */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Featured Image URL
+                Featured Image
               </label>
-              <input
-                type="url"
-                value={formData.featured_image}
-                onChange={(e) => handleChange('featured_image', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                placeholder="https://example.com/image.jpg"
-              />
+              <div className="space-y-2">
+                <input
+                  type="url"
+                  value={formData.featured_image.startsWith('data:') ? '' : formData.featured_image}
+                  onChange={(e) => handleChange('featured_image', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  placeholder="Image URL (or upload below)"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {uploadingImage ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      <span>Upload from Device</span>
+                    </>
+                  )}
+                </button>
+                {formData.featured_image && formData.featured_image.startsWith('data:') && (
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    ✅ Image uploaded ({(formData.featured_image.length / 1024).toFixed(0)} KB)
+                  </p>
+                )}
+                {formData.featured_image && formData.featured_image.startsWith('http') && (
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                    🔗 Using external URL
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
