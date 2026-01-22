@@ -8,6 +8,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useDonationModal } from '@/components/DonationModalProvider';
 import { Calendar, Clock, User, ArrowRight, Share2, Facebook, Twitter, Linkedin, Tag, Heart } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { getCanonicalUrl } from '@/lib/seo';
 
 interface NewsArticle {
   id: string;
@@ -71,31 +73,18 @@ const NewsDetailPage: React.FC<NewsDetailProps> = ({ article, relatedArticles })
 
   return (
     <>
-      <Head>
-        <title>{article.title} - Saintlammy Foundation News</title>
-        <meta name="description" content={article.excerpt} />
-        <meta name="keywords" content={`${article.tags.join(', ')}, Saintlammy Foundation, Nigeria charity`} />
-
-        {/* Open Graph */}
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.excerpt} />
-        <meta property="og:image" content={article.image} />
-        <meta property="og:type" content="article" />
-        <meta property="article:published_time" content={article.date} />
-        <meta property="article:author" content={article.author} />
-        <meta property="article:section" content={article.category} />
-        {article.tags.map(tag => (
-          <meta key={tag} property="article:tag" content={tag} />
-        ))}
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={article.title} />
-        <meta name="twitter:description" content={article.excerpt} />
-        <meta name="twitter:image" content={article.image} />
-
-        <link rel="canonical" href={`https://www.saintlammyfoundation.org/news/${article.id}`} />
-      </Head>
+      <SEOHead
+        config={{
+          title: `${article.title} - News`,
+          description: article.excerpt,
+          image: article.image,
+          url: getCanonicalUrl(`/news/${article.id}`),
+          type: 'article',
+          author: article.author,
+          publishedTime: article.date,
+          keywords: `${article.tags.join(', ')}, Saintlammy Foundation, Nigeria charity, ${article.category}`
+        }}
+      />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'newsletter',

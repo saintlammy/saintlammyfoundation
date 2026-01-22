@@ -9,6 +9,8 @@ import {
   Camera, FileText, BarChart3, MessageSquare
 } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { getCanonicalUrl } from '@/lib/seo';
 
 interface OutreachReport {
   id: string;
@@ -554,10 +556,17 @@ const OutreachReportPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>{outreach.title} - Full Report | Saintlammy Foundation</title>
-        <meta name="description" content={outreach.description} />
-      </Head>
+      <SEOHead
+        config={{
+          title: `${outreach.title} - Outreach Report`,
+          description: outreach.description || `Learn about ${outreach.title} - an outreach program by Saintlammy Foundation impacting lives in ${outreach.location}.`,
+          image: outreach.image,
+          url: getCanonicalUrl(`/outreach/${id}`),
+          type: 'article',
+          publishedTime: outreach.date,
+          keywords: `${outreach.title}, outreach program, community impact, ${outreach.location}, Nigeria charity, Saintlammy Foundation`
+        }}
+      />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Hero Section */}

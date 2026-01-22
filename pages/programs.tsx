@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Award, Loader } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 
 interface Program {
   id: string;
@@ -138,10 +140,7 @@ const Programs: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Programs - Saintlammy Foundation</title>
-        <meta name="description" content="Explore Saintlammy Foundation's comprehensive programs supporting orphans, widows, education, and healthcare across Nigeria." />
-      </Head>
+      <SEOHead config={pageSEO.programs} />
 
         {/* Notification Banner */}
         {fetchError && (

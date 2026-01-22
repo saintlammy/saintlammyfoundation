@@ -23,7 +23,10 @@ const SEOHead: React.FC<SEOHeadProps> = ({ config, structuredData }) => {
   } = config;
 
   const canonicalUrl = canonical || getCanonicalUrl(url);
-  const ogImage = image || getOGImageUrl(title);
+
+  // Handle base64 images: use fallback for social media (base64 won't work in og:image)
+  const isBase64Image = image && image.startsWith('data:');
+  const ogImage = (image && !isBase64Image) ? image : getOGImageUrl(title);
 
   return (
     <Head>

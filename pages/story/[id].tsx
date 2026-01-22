@@ -7,6 +7,8 @@ import Breadcrumb from '@/components/Breadcrumb';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { DonationModalProvider, useDonationModal } from '@/components/DonationModalProvider';
 import { Users, GraduationCap, Heart, Building, Calendar, MapPin, Target, ArrowLeft, Share2 } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { getCanonicalUrl } from '@/lib/seo';
 
 interface StoryData {
   id: string;
@@ -111,25 +113,17 @@ const StoryContent: React.FC<StoryPageProps> = ({ story }) => {
 
   return (
     <>
-      <Head>
-        <title>{story.title} - Impact Story | Saintlammy Foundation</title>
-        <meta name="description" content={story.description} />
-        <meta name="keywords" content={`${story.category}, Nigeria charity, impact story, ${story.location}`} />
-
-        {/* Open Graph tags */}
-        <meta property="og:title" content={story.title} />
-        <meta property="og:description" content={story.description} />
-        <meta property="og:image" content={story.image} />
-        <meta property="og:type" content="article" />
-
-        {/* Twitter Card tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={story.title} />
-        <meta name="twitter:description" content={story.description} />
-        <meta name="twitter:image" content={story.image} />
-
-        <link rel="canonical" href={`https://www.saintlammyfoundation.org/story/${story.id}`} />
-      </Head>
+      <SEOHead
+        config={{
+          title: `${story.title} - Impact Story`,
+          description: story.description,
+          image: story.image,
+          url: getCanonicalUrl(`/story/${story.id}`),
+          type: 'article',
+          publishedTime: story.date,
+          keywords: `${story.category}, Nigeria charity, impact story, ${story.location}, Saintlammy Foundation`
+        }}
+      />
 
       <Navigation onDonateClick={() => openDonationModal({
         source: 'general',
