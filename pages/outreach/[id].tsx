@@ -98,6 +98,13 @@ interface OutreachReport {
 const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
   const details = outreach.outreach_details || {};
 
+  // Debug logging
+  console.log('🔍 Converting outreach:', outreach.id);
+  console.log('📊 outreach_details:', details);
+  console.log('✅ activities:', details.activities);
+  console.log('🎯 future_plans:', details.future_plans);
+  console.log('📈 impact:', details.impact);
+
   return {
     id: outreach.id,
     title: outreach.title,
