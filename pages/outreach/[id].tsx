@@ -651,29 +651,31 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         {/* Action Buttons */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex flex-wrap gap-4">
-              {outreach.reportDocument && (
-                <a
-                  href={outreach.reportDocument}
-                  download
-                  className="inline-flex items-center px-6 py-2 bg-accent-400 hover:bg-accent-500 text-white rounded-lg font-medium transition-colors"
-                >
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Full Report
-                </a>
-              )}
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                {outreach.reportDocument && (
+                  <a
+                    href={outreach.reportDocument}
+                    download
+                    className="inline-flex items-center justify-center px-6 py-2 bg-accent-400 hover:bg-accent-500 text-white rounded-lg font-medium transition-colors"
+                  >
+                    <Download className="w-5 h-5 mr-2" />
+                    Download Full Report
+                  </a>
+                )}
 
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center px-6 py-2 border border-gray-300 dark:border-gray-600 hover:border-accent-400 dark:hover:border-accent-400 text-gray-700 dark:text-gray-200 rounded-lg font-medium transition-colors"
-              >
-                <Share2 className="w-5 h-5 mr-2" />
-                Share Report
-              </button>
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center justify-center px-6 py-2 border border-gray-300 dark:border-gray-600 hover:border-accent-400 dark:hover:border-accent-400 text-gray-700 dark:text-gray-200 rounded-lg font-medium transition-colors"
+                >
+                  <Share2 className="w-5 h-5 mr-2" />
+                  Share Report
+                </button>
+              </div>
 
               <button
                 onClick={() => openDonationModal({ source: 'outreach-report', category: 'outreach', suggestedAmount: 25000 })}
-                className="inline-flex items-center px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors ml-auto"
+                className="inline-flex items-center justify-center px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors w-full sm:w-auto"
               >
                 <Heart className="w-5 h-5 mr-2" />
                 Support Future Outreaches
