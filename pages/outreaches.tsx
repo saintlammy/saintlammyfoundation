@@ -22,6 +22,17 @@ const Outreaches: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
 
+        // Debug: Log image data
+        console.log('🔍 Outreaches loaded:', data.length);
+        data.forEach((o: any) => {
+          console.log(`📸 ${o.title}:`, {
+            hasImage: !!o.image,
+            hasFeaturedImage: !!o.featured_image,
+            imageType: o.image ? (o.image.startsWith('data:') ? 'base64' : 'URL') : 'none',
+            imageLength: o.image?.length || 0
+          });
+        });
+
         // Separate into past and upcoming
         // Note: 'published' outreaches are shown in past section by default
         // To make them upcoming, set status to 'upcoming' or 'ongoing' in admin
