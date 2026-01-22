@@ -56,10 +56,23 @@ const OutreachesManagement: React.FC = () => {
 
       // Use the new Outreaches API
       const searchParams = new URLSearchParams();
-      if (statusFilter !== 'all') searchParams.set('status', statusFilter);
+      // Always pass status parameter (including 'all') to prevent API defaulting to 'published'
+      searchParams.set('status', statusFilter);
 
       const response = await fetch(`/api/outreaches?${searchParams.toString()}`);
+
+      if (!response.ok) {
+        console.error('❌ API error:', response.status, response.statusText);
+        throw new Error(`API returned ${response.status}`);
+      }
+
       const data = await response.json();
+
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        console.error('❌ API response is not an array:', data);
+        throw new Error('Invalid API response format');
+      }
 
       console.log('🔍 Admin outreaches loaded:', data.length);
       data.forEach((item: any) => {
