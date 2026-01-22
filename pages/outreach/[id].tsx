@@ -94,20 +94,59 @@ interface OutreachReport {
   }[];
 }
 
-const OutreachReportPage: React.FC = () => {
+// Helper function to convert basic outreach data to report format
+const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
+  return {
+    id: outreach.id,
+    title: outreach.title,
+    date: outreach.date || outreach.outreach_details?.event_date || 'Date TBD',
+    location: outreach.location || outreach.outreach_details?.location || 'Location TBD',
+    status: outreach.status,
+    image: outreach.image || outreach.featured_image || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    description: outreach.description || outreach.content || outreach.excerpt || 'No description available',
+    targetBeneficiaries: outreach.targetBeneficiaries || outreach.outreach_details?.expected_attendees || 0,
+    actualBeneficiaries: outreach.beneficiaries || outreach.outreach_details?.actual_attendees || outreach.targetBeneficiaries || 0,
+    beneficiaryCategories: [],
+    impact: [],
+    budget: {
+      planned: outreach.outreach_details?.budget || 0,
+      actual: outreach.outreach_details?.budget || 0,
+      breakdown: []
+    },
+    volunteers: {
+      registered: outreach.volunteersNeeded || outreach.outreach_details?.volunteers_needed || 0,
+      participated: 0,
+      hours: 0
+    },
+    activities: [],
+    gallery: outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : [],
+    testimonials: [],
+    futurePlans: [],
+    partners: []
+  };
+};
+
+interface OutreachReportPageProps {
+  initialOutreach?: any;
+}
+
+const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach }) => {
   const router = useRouter();
   const { id } = router.query;
   const { openDonationModal } = useDonationModal();
 
-  const [outreach, setOutreach] = useState<OutreachReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [outreach, setOutreach] = useState<OutreachReport | null>(
+    initialOutreach ? convertBasicOutreachToReport(initialOutreach) : null
+  );
+  const [loading, setLoading] = useState(!initialOutreach);
   const [activeTab, setActiveTab] = useState<'overview' | 'impact' | 'financials' | 'gallery'>('overview');
 
   useEffect(() => {
-    if (id) {
+    // Only fetch if we don't have initialOutreach
+    if (id && !initialOutreach) {
       loadOutreachReport();
     }
-  }, [id]);
+  }, [id, initialOutreach]);
 
   const loadOutreachReport = async () => {
     try {
@@ -142,37 +181,6 @@ const OutreachReportPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
-    return {
-      id: outreach.id,
-      title: outreach.title,
-      date: outreach.date || outreach.outreach_details?.event_date || 'Date TBD',
-      location: outreach.location || outreach.outreach_details?.location || 'Location TBD',
-      status: outreach.status,
-      image: outreach.image || outreach.featured_image || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      description: outreach.description || outreach.content || outreach.excerpt || 'No description available',
-      targetBeneficiaries: outreach.targetBeneficiaries || outreach.outreach_details?.expected_attendees || 0,
-      actualBeneficiaries: outreach.beneficiaries || outreach.outreach_details?.actual_attendees || outreach.targetBeneficiaries || 0,
-      beneficiaryCategories: [],
-      impact: [],
-      budget: {
-        planned: outreach.outreach_details?.budget || 0,
-        actual: outreach.outreach_details?.budget || 0,
-        breakdown: []
-      },
-      volunteers: {
-        registered: outreach.volunteersNeeded || outreach.outreach_details?.volunteers_needed || 0,
-        participated: 0,
-        hours: 0
-      },
-      activities: [],
-      gallery: outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : [],
-      testimonials: [],
-      futurePlans: [],
-      partners: []
-    };
   };
 
   const getMockOutreachReport = (outreachId: string): OutreachReport => {
@@ -1050,11 +1058,39 @@ const OutreachReportPage: React.FC = () => {
 };
 
 // Server-side rendering to ensure meta tags are available for social media crawlers
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  // Meta tags are now rendered server-side for proper social media previews
-  // The actual data fetching still happens client-side via useEffect
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+  const id = params?.id as string;
+
+  try {
+    // Fetch outreach data server-side for meta tags
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const host = req.headers.host;
+    const baseUrl = `${protocol}://${host}`;
+
+    const response = await fetch(`${baseUrl}/api/outreaches?status=all`);
+
+    if (response.ok) {
+      const outreaches = await response.json();
+      const outreach = outreaches.find((o: any) => o.id === id);
+
+      if (outreach) {
+        // Return outreach data for server-side meta tag rendering
+        return {
+          props: {
+            initialOutreach: outreach
+          }
+        };
+      }
+    }
+  } catch (error) {
+    console.error('SSR fetch error:', error);
+  }
+
+  // Fallback: return empty props, client will fetch data
   return {
-    props: {}
+    props: {
+      initialOutreach: null
+    }
   };
 };
 
