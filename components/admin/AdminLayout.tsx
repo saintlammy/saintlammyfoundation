@@ -6,6 +6,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import NotificationBell from '@/components/NotificationBell';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import AutoLogoutModal from '@/components/AutoLogoutModal';
+import NextImage from 'next/image';
 import {
   BarChart3,
   Users,
@@ -300,8 +301,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       )}>
         <div className="flex items-center justify-between h-16 px-4 bg-gray-900 border-b border-gray-700">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center mr-3">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3 p-1.5">
+              <NextImage
+                src="/images/logo/logo-icon.svg"
+                alt="Saintlammy Foundation"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
             </div>
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white font-display">
               Admin Panel
