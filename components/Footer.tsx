@@ -59,7 +59,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       color: 'hover:text-blue-400'
     },
     {
-      href: 'https://twitter.com/saintlammyfnd',
+      href: 'https://twitter.com/scciglobal',
       icon: Twitter,
       label: 'Twitter',
       color: 'hover:text-sky-400'
