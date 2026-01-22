@@ -612,17 +612,17 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
 
           <div className="absolute inset-0 flex flex-col justify-end">
-            <div className="max-w-7xl mx-auto px-6 pb-12 w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-8 sm:pb-12 w-full">
               <Link
                 href="/outreaches"
-                className="inline-flex items-center text-white/90 hover:text-white mb-6 transition-colors"
+                className="inline-flex items-center text-white/90 hover:text-white mb-4 sm:mb-6 transition-colors"
               >
                 <ChevronLeft className="w-5 h-5 mr-1" />
                 Back to Outreaches
               </Link>
 
-              <div className="flex items-center gap-3 mb-4">
-                <span className={`px-4 py-1 rounded-full text-sm font-medium ${
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 flex-wrap">
+                <span className={`px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium ${
                   outreach.status === 'completed'
                     ? 'bg-green-500/20 text-green-300'
                     : 'bg-blue-500/20 text-blue-300'
@@ -631,29 +631,29 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                 </span>
 
                 {outreach.status === 'completed' && calculateImpactPercentage() > 100 && (
-                  <span className="px-4 py-1 rounded-full text-sm font-medium bg-accent-500/20 text-accent-300">
+                  <span className="px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium bg-accent-500/20 text-accent-300">
                     <TrendingUp className="w-4 h-4 inline mr-1" />
                     Exceeded Target
                   </span>
                 )}
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-display">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4 font-display break-words">
                 {outreach.title}
               </h1>
 
-              <div className="flex flex-wrap gap-6 text-white/90">
+              <div className="flex flex-wrap gap-3 sm:gap-6 text-sm sm:text-base text-white/90">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>{outreach.date}</span>
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="break-words">{outreach.date}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  <span>{outreach.location}</span>
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="break-words">{outreach.location}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  <span>{outreach.actualBeneficiaries} People Reached</span>
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{outreach.actualBeneficiaries} People Reached</span>
                 </div>
               </div>
             </div>
@@ -662,7 +662,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
 
         {/* Action Buttons */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="flex flex-col sm:flex-row flex-wrap gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 {outreach.reportDocument && (
@@ -698,13 +698,13 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
 
         {/* Tabs */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex gap-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex gap-4 sm:gap-8 overflow-x-auto">
               {(['overview', 'impact', 'financials', 'gallery'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-2 border-b-2 font-medium transition-colors capitalize ${
+                  className={`py-4 px-2 border-b-2 font-medium transition-colors capitalize whitespace-nowrap flex-shrink-0 ${
                     activeTab === tab
                       ? 'border-accent-400 text-accent-400'
                       : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
@@ -718,7 +718,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         </div>
 
         {/* Content */}
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {activeTab === 'overview' && (
             <div className="space-y-12">
               {/* Description */}
@@ -822,9 +822,9 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                       <CheckCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
                         activity.completed ? 'text-green-500' : 'text-gray-400'
                       }`} />
-                      <div>
-                        <h3 className="font-medium text-gray-900 dark:text-white mb-1">{activity.title}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{activity.description}</p>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-medium text-gray-900 dark:text-white mb-1 break-words">{activity.title}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 break-words">{activity.description}</p>
                       </div>
                     </div>
                   ))}
@@ -870,8 +870,8 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                   <div className="grid md:grid-cols-3 gap-6">
                     {outreach.partners.map((partner, index) => (
                       <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                        <h3 className="font-bold text-gray-900 dark:text-white mb-2">{partner.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{partner.contribution}</p>
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-2 break-words">{partner.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 break-words">{partner.contribution}</p>
                       </div>
                     ))}
                   </div>
@@ -882,12 +882,12 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
               {outreach.futurePlans && outreach.futurePlans.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Future Plans</h2>
-                  <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-8 rounded-xl">
+                  <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 sm:p-8 rounded-xl">
                     <ul className="space-y-3">
                       {outreach.futurePlans.map((plan, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <Target className="w-5 h-5 text-accent-500 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700 dark:text-gray-200">{plan}</span>
+                          <span className="text-gray-700 dark:text-gray-200 break-words">{plan}</span>
                         </li>
                       ))}
                     </ul>
@@ -904,11 +904,11 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                 {outreach.impact.map((metric, index) => (
                   <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                     <BarChart3 className="w-8 h-8 text-accent-400 mb-3" />
-                    <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 break-words">
                       {metric.value.toLocaleString()}
                     </div>
-                    <h3 className="font-medium text-gray-900 dark:text-white mb-1">{metric.title}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{metric.description}</p>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-1 break-words">{metric.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 break-words">{metric.description}</p>
                   </div>
                 ))}
               </div>
