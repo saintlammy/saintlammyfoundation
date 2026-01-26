@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar, Share2, Copy, QrCode } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar, Share2, Copy, QrCode, Upload, Loader, Image as ImageIcon, X } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Campaign } from '@/pages/api/campaigns';
 import CampaignQRModal from '@/components/CampaignQRModal';
@@ -31,6 +31,9 @@ const CampaignsManagement: React.FC = () => {
   const [impactItems, setImpactItems] = useState<Array<{ amount: string; impact: string }>>([
     { amount: '', impact: '' }
   ]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchCampaigns();
@@ -174,6 +177,41 @@ const CampaignsManagement: React.FC = () => {
     const updated = [...impactItems];
     updated[index][field] = value;
     setImpactItems(updated);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select a valid image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    setUploadError(null);
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData({ ...formData, image_url: base64String });
+        setUploadingImage(false);
+      };
+      reader.onerror = () => {
+        setUploadError('Failed to read image file');
+        setUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setUploadError('Failed to upload image');
+      setUploadingImage(false);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -548,17 +586,86 @@ const CampaignsManagement: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Campaign Image URL
+                {/* Campaign Image Upload */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" />
+                    Campaign Image
                   </label>
-                  <input
-                    type="url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="https://example.com/image.jpg"
-                  />
+
+                  {uploadError && (
+                    <div className="bg-red-500/20 border border-red-500 text-red-400 px-3 py-2 rounded-lg text-sm">
+                      {uploadError}
+                    </div>
+                  )}
+
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingImage}
+                      className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <Loader className="w-5 h-5 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-5 h-5" />
+                          Upload Campaign Image
+                        </>
+                      )}
+                    </button>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      Supported: JPG, PNG, GIF (Max 5MB)
+                    </p>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <input
+                      type="url"
+                      value={formData.image_url?.startsWith('data:') ? '' : (formData.image_url || '')}
+                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="https://example.com/image.jpg"
+                      disabled={uploadingImage}
+                    />
+                  </div>
+
+                  {formData.image_url && (
+                    <div className="relative">
+                      <img
+                        src={formData.image_url}
+                        alt="Campaign preview"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image_url: '' })}
+                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div>

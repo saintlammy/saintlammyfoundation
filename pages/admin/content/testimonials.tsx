@@ -57,7 +57,7 @@ const TestimonialsManagement: React.FC = () => {
         content: item.content,
         rating: item.rating,
         featured_image: item.image,
-        is_featured: item.is_featured || false,
+        is_featured: false,
         status: item.status === 'published' ? 'approved' : 'pending',
         created_at: item.created_at,
         updated_at: item.updated_at
@@ -116,36 +116,6 @@ const TestimonialsManagement: React.FC = () => {
     setStats(stats);
   };
 
-  // Function aliases for inline usage
-  const addTestimonial = async () => {
-    await handleSaveTestimonial(newTestimonial);
-    setNewTestimonial({ name: '', role: '', content: '', rating: 5 });
-  };
-
-  const updateTestimonial = async (id: string, updates: Partial<Testimonial>) => {
-    try {
-      const response = await fetch(`/api/testimonials?id=${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const updatedTestimonials = testimonials.map(t =>
-          t.id === id ? { ...t, ...updates, updated_at: new Date().toISOString() } : t
-        );
-        setTestimonials(updatedTestimonials);
-        updateStats(updatedTestimonials);
-      }
-    } catch (error) {
-      console.error('Error updating testimonial:', error);
-    }
-  };
-
-  const deleteTestimonial = async (id: string) => {
-    await handleDeleteTestimonial(id);
-  };
-
   const handleSaveTestimonial = async (testimonialData: any) => {
     try {
       if (selectedTestimonial) {
@@ -155,60 +125,39 @@ const TestimonialsManagement: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            title: testimonialData.name,
-            content: testimonialData.content,
-            excerpt: testimonialData.role,
-            testimonial_details: {
-              author_name: testimonialData.name,
-              author_role: testimonialData.role,
-              rating: testimonialData.rating || 5
-            },
-            status: 'published'
-          }),
+          body: JSON.stringify(testimonialData),
         });
 
         if (response.ok) {
-          await loadTestimonials(); // Reload to get fresh data
-        } else {
-          const errorData = await response.json();
-          console.error('Update error:', errorData);
-          alert(`Failed to update testimonial: ${errorData.message || 'Unknown error'}`);
+          const updatedTestimonials = testimonials.map(t =>
+            t.id === selectedTestimonial.id ? { ...t, ...testimonialData, updated_at: new Date().toISOString() } : t
+          );
+          setTestimonials(updatedTestimonials);
+          updateStats(updatedTestimonials);
         }
       } else {
-        // Create new testimonial - format data to match API expectations
-        const payload = {
-          title: testimonialData.name,
-          content: testimonialData.content,
-          excerpt: testimonialData.role || 'Beneficiary',
-          testimonial_details: {
-            author_name: testimonialData.name,
-            author_role: testimonialData.role || 'Beneficiary',
-            rating: testimonialData.rating || 5
-          },
-          status: 'published',
-          publish_date: new Date().toISOString()
-        };
-
-        console.log('Creating testimonial with payload:', payload);
-
+        // Create new testimonial
         const response = await fetch('/api/testimonials', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(testimonialData),
         });
 
         if (response.ok) {
           const createdTestimonial = await response.json();
-          console.log('✅ Testimonial created:', createdTestimonial);
-          await loadTestimonials(); // Reload to get fresh data
-        } else {
-          const errorData = await response.json();
-          console.error('❌ Create error:', errorData);
-          alert(`Failed to create testimonial: ${errorData.message || errorData.error || 'Unknown error'}`);
-          return; // Don't close modal if there was an error
+          const newTestimonial: Testimonial = {
+            id: createdTestimonial.id || `testimonial-${Date.now()}`,
+            ...testimonialData,
+            is_featured: false,
+            status: 'pending',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          const updatedTestimonials = [newTestimonial, ...testimonials];
+          setTestimonials(updatedTestimonials);
+          updateStats(updatedTestimonials);
         }
       }
 
@@ -216,8 +165,65 @@ const TestimonialsManagement: React.FC = () => {
       setSelectedTestimonial(null);
     } catch (error) {
       console.error('Error saving testimonial:', error);
-      alert(`Failed to save testimonial: ${(error as Error).message}`);
+      alert('Failed to save testimonial. Please try again.');
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select a valid image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    setUploadError(null);
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setNewTestimonial({ ...newTestimonial, image: base64String });
+        setUploadingImage(false);
+      };
+      reader.onerror = () => {
+        setUploadError('Failed to read image file');
+        setUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setUploadError('Failed to upload image');
+      setUploadingImage(false);
+    }
+  };
+
+  const addTestimonial = async () => {
+    const testimonialData = {
+      name: newTestimonial.name,
+      role: newTestimonial.role,
+      content: newTestimonial.content,
+      rating: newTestimonial.rating,
+      image: newTestimonial.image || undefined
+    };
+
+    await handleSaveTestimonial(testimonialData);
+
+    // Reset form
+    setNewTestimonial({
+      name: '',
+      role: '',
+      content: '',
+      rating: 5,
+      image: ''
+    });
+    setUploadError(null);
   };
 
   const handleDeleteTestimonial = async (testimonialId: string) => {
@@ -238,6 +244,38 @@ const TestimonialsManagement: React.FC = () => {
     } catch (error) {
       console.error('Error deleting testimonial:', error);
       alert('Failed to delete testimonial. Please try again.');
+    }
+  };
+
+  const deleteTestimonial = (testimonialId: string) => {
+    handleDeleteTestimonial(testimonialId);
+  };
+
+  const updateTestimonial = async (testimonialId: string, updates: Partial<Testimonial>) => {
+    try {
+      const testimonial = testimonials.find(t => t.id === testimonialId);
+      if (!testimonial) return;
+
+      const updatedData = { ...testimonial, ...updates };
+
+      const response = await fetch(`/api/testimonials?id=${testimonialId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (response.ok) {
+        const updatedTestimonials = testimonials.map(t =>
+          t.id === testimonialId ? { ...t, ...updates, updated_at: new Date().toISOString() } : t
+        );
+        setTestimonials(updatedTestimonials);
+        updateStats(updatedTestimonials);
+      }
+    } catch (error) {
+      console.error('Error updating testimonial:', error);
+      alert('Failed to update testimonial. Please try again.');
     }
   };
 
@@ -498,7 +536,7 @@ const TestimonialsManagement: React.FC = () => {
                             </button>
                             <select
                               value={testimonial.status}
-                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value as 'pending' | 'approved' | 'rejected' })}
+                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value })}
                               className="bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded text-gray-900 dark:text-white text-xs px-2 py-1"
                             >
                               <option value="pending">Pending</option>
@@ -571,6 +609,88 @@ const TestimonialsManagement: React.FC = () => {
                       <option value={2}>2 Stars</option>
                       <option value={1}>1 Star</option>
                     </select>
+                  </div>
+
+                  {/* Profile Image Upload */}
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium text-gray-300 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4" />
+                      Profile Image
+                    </label>
+
+                    {uploadError && (
+                      <div className="bg-red-500/20 border border-red-500 text-red-400 px-3 py-2 rounded-lg text-sm">
+                        {uploadError}
+                      </div>
+                    )}
+
+                    <div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingImage}
+                        className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                      >
+                        {uploadingImage ? (
+                          <>
+                            <Loader className="w-5 h-5 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-5 h-5" />
+                            Upload Profile Image
+                          </>
+                        )}
+                      </button>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Supported: JPG, PNG, GIF (Max 5MB)
+                      </p>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-600"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <input
+                        type="url"
+                        value={newTestimonial.image.startsWith('data:') ? '' : newTestimonial.image}
+                        onChange={(e) => setNewTestimonial({ ...newTestimonial, image: e.target.value })}
+                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                        placeholder="https://..."
+                        disabled={uploadingImage}
+                      />
+                    </div>
+
+                    {newTestimonial.image && (
+                      <div className="relative">
+                        <img
+                          src={newTestimonial.image}
+                          alt="Preview"
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setNewTestimonial({ ...newTestimonial, image: '' })}
+                          className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div>

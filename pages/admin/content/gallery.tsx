@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ContentEditor from '@/components/admin/ContentEditor';
+import GalleryEditor from '@/components/admin/GalleryEditor';
 import { Image as ImageIcon, Users, GraduationCap, Heart, Home, Plus, Search, Edit, Eye, Calendar, Camera } from 'lucide-react';
 
 interface GalleryItem {
@@ -554,11 +554,11 @@ const GalleryManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Content Editor Modal */}
+        {/* Gallery Editor Modal */}
         {showEditor && (
-          <ContentEditor
+          <GalleryEditor
             isOpen={showEditor}
-            content={selectedGallery}
+            item={selectedGallery}
             onSave={handleSaveGallery}
             onClose={() => {
               setShowEditor(false);
