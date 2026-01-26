@@ -56,14 +56,15 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
+    // Testimonial details are stored in story_details JSONB field
     const transformedData = (data as any).map((item: any) => ({
       id: item.id,
-      name: item.testimonial_details?.author_name || 'Anonymous',
-      role: item.testimonial_details?.author_role || 'Beneficiary',
+      name: item.story_details?.author_name || item.title || 'Anonymous',
+      role: item.story_details?.author_role || item.excerpt || 'Beneficiary',
       content: item.content,
-      rating: item.testimonial_details?.rating || 5,
+      rating: item.story_details?.rating || 5,
       image: item.featured_image,
-      program: item.testimonial_details?.program || 'General',
+      program: item.story_details?.program || 'General',
       date: item.publish_date || item.created_at,
       status: item.status,
       created_at: item.created_at,
@@ -89,12 +90,19 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
+    // Build the testimonial object with only valid database columns
     const newTestimonial = {
       id: testimonialData.id || `testimonial-${Date.now()}`,
-      ...testimonialData,
-      slug,
       type: 'testimonial',
+      title: testimonialData.title,
+      slug,
+      excerpt: testimonialData.excerpt || '',
+      content: testimonialData.content,
+      featured_image: testimonialData.featured_image || null,
       status: testimonialData.status || 'draft',
+      publish_date: testimonialData.publish_date || new Date().toISOString(),
+      // Store testimonial-specific data in story_details JSONB field
+      story_details: testimonialData.testimonial_details || {},
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -123,7 +131,8 @@ async function createTestimonial(req: NextApiRequest, res: NextApiResponse) {
       return res.status(500).json({
         error: 'Database save failed',
         message: error.message,
-        code: error.code
+        code: error.code,
+        details: error.details || 'No additional details'
       });
     }
 
@@ -144,13 +153,27 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Testimonial ID is required' });
     }
 
+    // Build update object with only valid columns
+    const validUpdateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    // Map incoming fields to database columns
     if (updateData.title) {
-      updateData.slug = updateData.title.toLowerCase()
+      validUpdateData.title = updateData.title;
+      validUpdateData.slug = updateData.title.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
     }
+    if (updateData.content) validUpdateData.content = updateData.content;
+    if (updateData.excerpt !== undefined) validUpdateData.excerpt = updateData.excerpt;
+    if (updateData.status) validUpdateData.status = updateData.status;
+    if (updateData.featured_image !== undefined) validUpdateData.featured_image = updateData.featured_image;
 
-    updateData.updated_at = new Date().toISOString();
+    // Store testimonial-specific data in story_details JSONB
+    if (updateData.testimonial_details) {
+      validUpdateData.story_details = updateData.testimonial_details;
+    }
 
     // Use admin client if available (bypasses RLS), otherwise try regular client
     const dbClient = supabaseAdmin || supabase;
@@ -164,7 +187,7 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
 
     const { data, error } = await (dbClient
       .from('content') as any)
-      .update(updateData as any)
+      .update(validUpdateData as any)
       .eq('id', id)
       .eq('type', 'testimonial')
       .select()
