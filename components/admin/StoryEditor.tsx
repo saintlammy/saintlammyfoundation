@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, User, MapPin, Calendar, Quote as QuoteIcon, Target, Image as ImageIcon, Tag } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Save, User, MapPin, Calendar, Quote as QuoteIcon, Target, Image as ImageIcon, Tag, Upload, Loader } from 'lucide-react';
 
 interface StoryEditorProps {
   isOpen: boolean;
@@ -24,6 +24,8 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (story) {
@@ -54,6 +56,45 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
       });
     }
   }, [story]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    setError(null);
+
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData({ ...formData, image: base64String });
+        setUploadingImage(false);
+      };
+      reader.onerror = () => {
+        setError('Failed to read image file');
+        setUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError('Failed to upload image');
+      setUploadingImage(false);
+      console.error('Image upload error:', err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,24 +307,76 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
               Featured Image
             </h3>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Image URL
-              </label>
-              <input
-                type="url"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-                placeholder="https://..."
-              />
+            <div className="space-y-3">
+              {/* Upload Button */}
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  {uploadingImage ? (
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      Upload Image from Device
+                    </>
+                  )}
+                </button>
+                <p className="text-xs text-gray-400 mt-1">
+                  Supported: JPG, PNG, GIF (Max 5MB)
+                </p>
+              </div>
+
+              {/* Or separator */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                </div>
+              </div>
+
+              {/* Image URL Input */}
+              <div>
+                <input
+                  type="url"
+                  value={formData.image.startsWith('data:') ? '' : formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  placeholder="https://..."
+                  disabled={uploadingImage}
+                />
+              </div>
+
+              {/* Image Preview */}
               {formData.image && (
-                <div className="mt-3">
+                <div className="relative">
                   <img
                     src={formData.image}
                     alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg"
+                    className="w-full h-64 object-cover rounded-lg"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, image: '' })}
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               )}
             </div>
