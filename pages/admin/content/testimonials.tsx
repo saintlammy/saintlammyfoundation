@@ -155,39 +155,60 @@ const TestimonialsManagement: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(testimonialData),
+          body: JSON.stringify({
+            title: testimonialData.name,
+            content: testimonialData.content,
+            excerpt: testimonialData.role,
+            testimonial_details: {
+              author_name: testimonialData.name,
+              author_role: testimonialData.role,
+              rating: testimonialData.rating || 5
+            },
+            status: 'published'
+          }),
         });
 
         if (response.ok) {
-          const updatedTestimonials = testimonials.map(t =>
-            t.id === selectedTestimonial.id ? { ...t, ...testimonialData, updated_at: new Date().toISOString() } : t
-          );
-          setTestimonials(updatedTestimonials);
-          updateStats(updatedTestimonials);
+          await loadTestimonials(); // Reload to get fresh data
+        } else {
+          const errorData = await response.json();
+          console.error('Update error:', errorData);
+          alert(`Failed to update testimonial: ${errorData.message || 'Unknown error'}`);
         }
       } else {
-        // Create new testimonial
+        // Create new testimonial - format data to match API expectations
+        const payload = {
+          title: testimonialData.name,
+          content: testimonialData.content,
+          excerpt: testimonialData.role || 'Beneficiary',
+          testimonial_details: {
+            author_name: testimonialData.name,
+            author_role: testimonialData.role || 'Beneficiary',
+            rating: testimonialData.rating || 5
+          },
+          status: 'published',
+          publish_date: new Date().toISOString()
+        };
+
+        console.log('Creating testimonial with payload:', payload);
+
         const response = await fetch('/api/testimonials', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(testimonialData),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
           const createdTestimonial = await response.json();
-          const newTestimonial: Testimonial = {
-            id: createdTestimonial.id || `testimonial-${Date.now()}`,
-            ...testimonialData,
-            is_featured: false,
-            status: 'pending',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-          const updatedTestimonials = [newTestimonial, ...testimonials];
-          setTestimonials(updatedTestimonials);
-          updateStats(updatedTestimonials);
+          console.log('✅ Testimonial created:', createdTestimonial);
+          await loadTestimonials(); // Reload to get fresh data
+        } else {
+          const errorData = await response.json();
+          console.error('❌ Create error:', errorData);
+          alert(`Failed to create testimonial: ${errorData.message || errorData.error || 'Unknown error'}`);
+          return; // Don't close modal if there was an error
         }
       }
 
@@ -195,7 +216,7 @@ const TestimonialsManagement: React.FC = () => {
       setSelectedTestimonial(null);
     } catch (error) {
       console.error('Error saving testimonial:', error);
-      alert('Failed to save testimonial. Please try again.');
+      alert(`Failed to save testimonial: ${(error as Error).message}`);
     }
   };
 
