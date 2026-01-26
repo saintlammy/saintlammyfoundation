@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ContentEditor from '@/components/admin/ContentEditor';
+import StoryEditor from '@/components/admin/StoryEditor';
 import { Heart, Users, Star, Plus, Search, Edit, Eye, Calendar, Award, Quote, Trash2 } from 'lucide-react';
 
 interface Story {
@@ -532,11 +532,11 @@ const StoriesManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Content Editor Modal */}
+        {/* Story Editor Modal */}
         {showEditor && (
-          <ContentEditor
+          <StoryEditor
             isOpen={showEditor}
-            content={selectedStory}
+            story={selectedStory}
             onSave={handleSaveStory}
             onClose={() => {
               setShowEditor(false);
