@@ -67,6 +67,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
       program: item.story_details?.program || 'General',
       date: item.publish_date || item.created_at,
       status: item.status,
+      is_featured: item.story_details?.is_featured || false,
       created_at: item.created_at,
       updated_at: item.updated_at
     }));
@@ -153,6 +154,24 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Testimonial ID is required' });
     }
 
+    // Use admin client if available (bypasses RLS), otherwise try regular client
+    const dbClient = supabaseAdmin || supabase;
+
+    if (!dbClient) {
+      return res.status(500).json({
+        error: 'Database not configured',
+        message: 'Could not update testimonial.'
+      });
+    }
+
+    // First, get the current testimonial to preserve existing story_details
+    const { data: currentData } = await (dbClient
+      .from('content') as any)
+      .select('story_details')
+      .eq('id', id)
+      .eq('type', 'testimonial')
+      .single();
+
     // Build update object with only valid columns
     const validUpdateData: any = {
       updated_at: new Date().toISOString()
@@ -170,20 +189,20 @@ async function updateTestimonial(req: NextApiRequest, res: NextApiResponse) {
     if (updateData.status) validUpdateData.status = updateData.status;
     if (updateData.featured_image !== undefined) validUpdateData.featured_image = updateData.featured_image;
 
-    // Store testimonial-specific data in story_details JSONB
+    // Handle story_details updates (merge with existing data)
+    const currentStoryDetails = currentData?.story_details || {};
+    const updatedStoryDetails = { ...currentStoryDetails };
+
     if (updateData.testimonial_details) {
-      validUpdateData.story_details = updateData.testimonial_details;
+      Object.assign(updatedStoryDetails, updateData.testimonial_details);
     }
 
-    // Use admin client if available (bypasses RLS), otherwise try regular client
-    const dbClient = supabaseAdmin || supabase;
-
-    if (!dbClient) {
-      return res.status(500).json({
-        error: 'Database not configured',
-        message: 'Could not update testimonial.'
-      });
+    // Handle is_featured separately
+    if (updateData.is_featured !== undefined) {
+      updatedStoryDetails.is_featured = updateData.is_featured;
     }
+
+    validUpdateData.story_details = updatedStoryDetails;
 
     const { data, error } = await (dbClient
       .from('content') as any)
