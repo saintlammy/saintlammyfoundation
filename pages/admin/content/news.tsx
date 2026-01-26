@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ContentEditor from '@/components/admin/ContentEditor';
+import NewsEditor from '@/components/admin/NewsEditor';
 import { Newspaper, Heart, Users, Award, Plus, Search, Edit, Eye, Calendar, Clock } from 'lucide-react';
 
 interface NewsItem {
@@ -517,11 +517,11 @@ const NewsManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Content Editor Modal */}
+        {/* News Editor Modal */}
         {showEditor && (
-          <ContentEditor
+          <NewsEditor
             isOpen={showEditor}
-            content={selectedNews}
+            news={selectedNews}
             onSave={handleSaveNews}
             onClose={() => {
               setShowEditor(false);
