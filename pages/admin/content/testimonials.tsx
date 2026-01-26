@@ -57,7 +57,7 @@ const TestimonialsManagement: React.FC = () => {
         content: item.content,
         rating: item.rating,
         featured_image: item.image,
-        is_featured: false,
+        is_featured: item.is_featured || false,
         status: item.status === 'published' ? 'approved' : 'pending',
         created_at: item.created_at,
         updated_at: item.updated_at
