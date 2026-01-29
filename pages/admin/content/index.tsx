@@ -20,6 +20,7 @@ import {
   ChevronDown,
   Loader
 } from 'lucide-react';
+import { truncateForCard } from '@/lib/textUtils';
 
 const AdminContent: React.FC = () => {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
@@ -476,7 +477,7 @@ const AdminContent: React.FC = () => {
                           <div className="min-w-0 flex-1">
                             <p className="text-gray-900 dark:text-white font-medium truncate">{item.title}</p>
                             {item.excerpt && (
-                              <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 line-clamp-2">{item.excerpt}</p>
+                              <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{truncateForCard(item.excerpt, 2)}</p>
                             )}
                             <p className="text-gray-500 text-xs mt-1">/{item.slug}</p>
                           </div>

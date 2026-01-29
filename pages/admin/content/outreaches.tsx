@@ -4,6 +4,7 @@ import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import OutreachEditor from '@/components/admin/OutreachEditor';
 import { MapPin, Users, Calendar, Plus, Search, Edit, Eye, Clock, Target, Heart, FileText, ExternalLink, Trash2 } from 'lucide-react';
+import { truncateForCard } from '@/lib/textUtils';
 // ContentService import removed - using direct mock data
 
 interface Outreach {
@@ -483,7 +484,7 @@ const OutreachesManagement: React.FC = () => {
                                 </span>
                               )}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{outreach.excerpt}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">{truncateForCard(outreach.excerpt, 2)}</div>
                             <div className="text-xs text-gray-500 mt-1">
                               Organizer: {outreach.outreach_details?.organizer || 'Not specified'}
                             </div>
