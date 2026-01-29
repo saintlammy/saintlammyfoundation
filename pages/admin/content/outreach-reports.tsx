@@ -232,8 +232,16 @@ const OutreachReportsManagement: React.FC = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to upload PDF');
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (jsonError) {
+          // If JSON parsing fails, it means server returned HTML error page
+          const htmlText = await response.text();
+          console.error('Server returned HTML instead of JSON:', htmlText.substring(0, 500));
+          throw new Error(`Server error (${response.status}): PDF upload not supported on this hosting platform. Please use manual URL entry or contact administrator.`);
+        }
+        throw new Error(errorData.error || errorData.message || 'Failed to upload PDF');
       }
 
       const data = await response.json();

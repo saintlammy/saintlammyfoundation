@@ -24,6 +24,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // Check if upload directory exists and is writable
+    try {
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      }
+      // Test write permissions
+      const testFile = path.join(UPLOAD_DIR, '.test');
+      fs.writeFileSync(testFile, 'test');
+      fs.unlinkSync(testFile);
+    } catch (dirError) {
+      console.error('Upload directory error:', dirError);
+      return res.status(500).json({
+        error: 'Server configuration error: Upload directory not accessible',
+        details: dirError instanceof Error ? dirError.message : 'Unknown error'
+      });
+    }
+
     const form = formidable({
       uploadDir: UPLOAD_DIR,
       keepExtensions: true,
@@ -33,7 +50,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    const [fields, files] = await form.parse(req);
+    let fields, files;
+    try {
+      [fields, files] = await form.parse(req);
+    } catch (parseError) {
+      console.error('Form parse error:', parseError);
+      return res.status(400).json({
+        error: 'Failed to parse upload',
+        details: parseError instanceof Error ? parseError.message : 'Unknown error'
+      });
+    }
 
     const file = Array.isArray(files.file) ? files.file[0] : files.file;
 
@@ -73,6 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (error) {
     console.error('PDF upload error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
 
     if (error instanceof Error) {
       if (error.message.includes('maxFileSize')) {
@@ -83,6 +110,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({
       error: 'Failed to upload PDF',
       message: error instanceof Error ? error.message : 'Unknown error',
+      stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : null) : undefined,
+      note: 'If running on Vercel, file uploads may not work due to read-only filesystem. Consider using cloud storage (Cloudinary, AWS S3, etc.)'
     });
   }
 }
+
+/**
+ * IMPORTANT: File uploads to /public directory won't work on Vercel or similar platforms
+ * because the filesystem is read-only. For production, consider:
+ *
+ * 1. Cloudinary (recommended for PDFs and images)
+ * 2. AWS S3
+ * 3. Google Cloud Storage
+ * 4. Vercel Blob Storage
+ *
+ * This implementation works for local development only.
+ */
