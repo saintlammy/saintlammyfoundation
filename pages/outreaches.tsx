@@ -126,9 +126,9 @@ const Outreaches: React.FC = () => {
     }
   ];
 
-  // Use API data if available, otherwise use fallback
-  const displayUpcoming = upcomingOutreaches.length > 0 ? upcomingOutreaches : (loading ? [] : fallbackUpcoming);
-  const displayPast = pastOutreaches.length > 0 ? pastOutreaches : (loading ? [] : fallbackPast);
+  // Use only API data - no automatic fallback to mock data
+  const displayUpcoming = upcomingOutreaches;
+  const displayPast = pastOutreaches;
 
   const outreachCategories = [
     {
