@@ -697,14 +697,14 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         </div>
 
         {/* Tabs */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex gap-4 sm:gap-8 overflow-x-auto">
               {(['overview', 'impact', 'financials', 'gallery'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-2 border-b-2 font-medium transition-colors capitalize whitespace-nowrap flex-shrink-0 ${
+                  className={`py-4 px-2 border-b-2 font-medium transition-colors capitalize whitespace-nowrap flex-shrink-0 cursor-pointer ${
                     activeTab === tab
                       ? 'border-accent-400 text-accent-400'
                       : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
