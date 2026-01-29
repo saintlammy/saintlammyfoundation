@@ -6,7 +6,7 @@ import {
   FileText, Plus, Search, Edit, Eye, Trash2, Save, X,
   MapPin, Calendar, Users, DollarSign, TrendingUp, Award,
   Image as ImageIcon, MessageSquare, Target, Clock, CheckCircle,
-  Heart, Upload, AlertCircle, ChevronRight
+  Heart, Upload, AlertCircle, ChevronRight, Loader
 } from 'lucide-react';
 
 interface OutreachReport {
@@ -46,6 +46,8 @@ const OutreachReportsManagement: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('basic');
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingPDF, setUploadingPDF] = useState(false);
+  const [pdfUploadError, setPdfUploadError] = useState<string | null>(null);
   const [exchangeRate, setExchangeRate] = useState(1550); // NGN to USD rate
   const [stats, setStats] = useState({
     total: 0,
@@ -199,6 +201,55 @@ const OutreachReportsManagement: React.FC = () => {
     setSelectedOutreach(outreach);
     setShowEditor(true);
     await loadOutreachReport(outreach.id);
+  };
+
+  const handlePDFUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      setPdfUploadError('Please select a PDF file');
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setPdfUploadError('PDF file size must be less than 10MB');
+      return;
+    }
+
+    setUploadingPDF(true);
+    setPdfUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload/pdf', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to upload PDF');
+      }
+
+      const data = await response.json();
+
+      // Update report data with PDF URL
+      if (reportData) {
+        setReportData({ ...reportData, reportDocument: data.url });
+      }
+
+      setPdfUploadError(null);
+    } catch (error) {
+      console.error('PDF upload error:', error);
+      setPdfUploadError(error instanceof Error ? error.message : 'Failed to upload PDF');
+    } finally {
+      setUploadingPDF(false);
+    }
   };
 
   const handleDeleteReport = async (outreachId: string, outreachTitle: string) => {
@@ -1059,14 +1110,80 @@ const OutreachReportsManagement: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Report Document URL</label>
-                        <input
-                          type="text"
-                          value={reportData.reportDocument || ''}
-                          onChange={(e) => updateReportField('reportDocument', e.target.value)}
-                          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
-                          placeholder="/reports/outreach-report.pdf"
-                        />
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Report Document (PDF)</label>
+
+                        {pdfUploadError && (
+                          <div className="mb-3 bg-red-500/20 border border-red-500 text-red-400 px-3 py-2 rounded-lg text-sm">
+                            {pdfUploadError}
+                          </div>
+                        )}
+
+                        <div className="space-y-3">
+                          {/* Upload Button */}
+                          <div>
+                            <input
+                              type="file"
+                              accept="application/pdf"
+                              onChange={handlePDFUpload}
+                              className="hidden"
+                              id="pdf-upload"
+                            />
+                            <label
+                              htmlFor="pdf-upload"
+                              className={`flex items-center justify-center gap-2 w-full px-4 py-3 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors cursor-pointer ${uploadingPDF ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              {uploadingPDF ? (
+                                <>
+                                  <Loader className="w-5 h-5 animate-spin" />
+                                  Uploading PDF...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="w-5 h-5" />
+                                  Upload PDF Report
+                                </>
+                              )}
+                            </label>
+                            <p className="text-xs text-gray-400 mt-1">Maximum file size: 10MB</p>
+                          </div>
+
+                          {/* Current PDF or Manual URL */}
+                          {reportData.reportDocument && (
+                            <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-3">
+                              <p className="text-sm text-gray-300 mb-2">Current PDF:</p>
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={reportData.reportDocument}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 text-accent-400 hover:text-accent-300 text-sm truncate"
+                                >
+                                  {reportData.reportDocument}
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => updateReportField('reportDocument', '')}
+                                  className="text-red-400 hover:text-red-300 text-sm"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Manual URL Input (optional) */}
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">Or enter URL manually:</label>
+                            <input
+                              type="text"
+                              value={reportData.reportDocument || ''}
+                              onChange={(e) => updateReportField('reportDocument', e.target.value)}
+                              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-accent-500"
+                              placeholder="https://... or /uploads/reports/..."
+                              disabled={uploadingPDF}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

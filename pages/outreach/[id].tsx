@@ -65,6 +65,9 @@ interface OutreachReport {
   // Gallery
   gallery: string[];
 
+  // Report Document
+  reportDocument?: string;
+
   // Testimonials
   testimonials: {
     name: string;
@@ -82,9 +85,6 @@ interface OutreachReport {
     logo?: string;
     contribution: string;
   }[];
-
-  // Report Document
-  reportDocument?: string;
 
   // Social Media
   socialMedia?: {
@@ -129,6 +129,7 @@ const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
     },
     activities: details.activities || [],
     gallery: details.gallery || (outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : []),
+    reportDocument: details.report_document || outreach.report_document,
     testimonials: details.testimonials || [],
     futurePlans: details.future_plans || [],
     partners: details.partners || []
