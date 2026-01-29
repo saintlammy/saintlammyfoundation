@@ -188,11 +188,10 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         }
       }
 
-      // Fall back to mock data if nothing else works
-      setOutreach(getMockOutreachReport(id as string));
+      // No data found - show error state instead of mock data
+      console.warn('No outreach report found for ID:', id);
     } catch (error) {
       console.error('Error loading outreach report:', error);
-      setOutreach(getMockOutreachReport(id as string));
     } finally {
       setLoading(false);
     }

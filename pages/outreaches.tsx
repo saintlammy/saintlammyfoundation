@@ -1,12 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
 
+interface Outreach {
+  id: string;
+  title: string;
+  date: string;
+  time?: string;
+  location: string;
+  description: string;
+  image?: string;
+  targetBeneficiaries?: number;
+  beneficiaries?: number;
+  volunteersNeeded?: number;
+  status: string;
+  impact?: string[];
+}
+
 const Outreaches: React.FC = () => {
-  const upcomingOutreaches = [
+  const [upcomingOutreaches, setUpcomingOutreaches] = useState<Outreach[]>([]);
+  const [pastOutreaches, setPastOutreaches] = useState<Outreach[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadOutreaches();
+  }, []);
+
+  const loadOutreaches = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/outreaches?status=all');
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Separate upcoming and past outreaches
+        const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
+        const past = data.filter((o: any) => o.status === 'completed');
+
+        setUpcomingOutreaches(upcoming);
+        setPastOutreaches(past);
+      }
+    } catch (error) {
+      console.error('Error loading outreaches:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback data for when no outreaches in database
+  const fallbackUpcoming: Outreach[] = [
     {
-      id: 1,
+      id: '1',
       title: 'Christmas Feeding Program',
       date: 'December 22, 2024',
       time: '10:00 AM - 4:00 PM',
@@ -18,7 +65,7 @@ const Outreaches: React.FC = () => {
       status: 'Registration Open'
     },
     {
-      id: 2,
+      id: '2',
       title: 'Educational Materials Distribution',
       date: 'January 15, 2025',
       time: '9:00 AM - 2:00 PM',
@@ -30,7 +77,7 @@ const Outreaches: React.FC = () => {
       status: 'Planning Phase'
     },
     {
-      id: 3,
+      id: '3',
       title: 'Widow Empowerment Workshop',
       date: 'February 8, 2025',
       time: '11:00 AM - 5:00 PM',
@@ -43,38 +90,45 @@ const Outreaches: React.FC = () => {
     }
   ];
 
-  const pastOutreaches = [
+  const fallbackPast: Outreach[] = [
     {
-      id: 4,
+      id: '4',
       title: 'Independence Day Medical Outreach',
       date: 'October 1, 2024',
       location: 'Ikeja, Lagos',
       beneficiaries: 450,
       description: 'Free medical check-ups, medications, and health education for underserved communities.',
       image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      status: 'completed',
       impact: ['450 people received medical care', '200 medications distributed', '50 referrals to specialists']
     },
     {
-      id: 5,
+      id: '5',
       title: 'Back-to-School Support',
       date: 'September 12, 2024',
       location: 'Multiple Locations',
       beneficiaries: 320,
       description: 'School supplies and uniforms distribution for children from vulnerable families.',
       image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      status: 'completed',
       impact: ['320 children received school supplies', '150 uniforms distributed', '8 schools supported']
     },
     {
-      id: 6,
+      id: '6',
       title: 'Clean Water Initiative',
       date: 'August 20, 2024',
       location: 'Rural Kogi State',
       beneficiaries: 600,
       description: 'Installation of water pumps and distribution of water purification tablets.',
       image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      status: 'completed',
       impact: ['3 water pumps installed', '600 people gained access to clean water', '1200 purification tablets distributed']
     }
   ];
+
+  // Use API data if available, otherwise use fallback
+  const displayUpcoming = upcomingOutreaches.length > 0 ? upcomingOutreaches : (loading ? [] : fallbackUpcoming);
+  const displayPast = pastOutreaches.length > 0 ? pastOutreaches : (loading ? [] : fallbackPast);
 
   const outreachCategories = [
     {
@@ -173,12 +227,21 @@ const Outreaches: React.FC = () => {
             </div>
 
             <div className="space-y-8">
-              {upcomingOutreaches.map((outreach, index) => (
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400">Loading outreaches...</p>
+                </div>
+              ) : displayUpcoming.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400">No upcoming outreaches at this time.</p>
+                </div>
+              ) : (
+                displayUpcoming.map((outreach, index) => (
                 <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
                   <div className="md:flex">
                     <div className="md:w-1/3 relative h-64 md:h-auto">
                       <Image
-                        src={outreach.image}
+                        src={outreach.image || '/images/placeholder-outreach.jpg'}
                         alt={outreach.title}
                         fill
                         className="object-cover object-center"
@@ -224,17 +287,12 @@ const Outreaches: React.FC = () => {
                         >
                           Register to Volunteer
                         </a>
-                        <a
-                          href="#outreach-details"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const element = e.currentTarget.closest('.bg-white, .bg-gray-800\\/50');
-                            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }}
+                        <Link
+                          href={`/outreach/${outreach.id}`}
                           className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
                         >
                           Learn More
-                        </a>
+                        </Link>
                       </div>
 
                       {outreach.volunteersNeeded && (
@@ -245,7 +303,7 @@ const Outreaches: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              )))}
             </div>
           </div>
         </section>
@@ -263,11 +321,20 @@ const Outreaches: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {pastOutreaches.map((outreach) => (
+              {loading ? (
+                <div className="col-span-3 text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400">Loading past outreaches...</p>
+                </div>
+              ) : displayPast.length === 0 ? (
+                <div className="col-span-3 text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400">No past outreaches to display.</p>
+                </div>
+              ) : (
+                displayPast.map((outreach) => (
                 <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none group">
                   <div className="relative h-48">
                     <Image
-                      src={outreach.image}
+                      src={outreach.image || '/images/placeholder-outreach.jpg'}
                       alt={outreach.title}
                       fill
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
@@ -293,7 +360,7 @@ const Outreaches: React.FC = () => {
 
                     <div className="space-y-1 mb-4">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white">Impact Highlights:</h4>
-                      {outreach.impact.map((item, index) => (
+                      {outreach.impact?.map((item, index) => (
                         <div key={index} className="flex items-start gap-2">
                           <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
                           <span className="text-xs text-gray-600 dark:text-gray-300">{item}</span>
@@ -301,13 +368,16 @@ const Outreaches: React.FC = () => {
                       ))}
                     </div>
 
-                    <button className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group">
+                    <Link
+                      href={`/outreach/${outreach.id}`}
+                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group"
+                    >
                       View Full Report
                       <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
-              ))}
+              )))}
             </div>
           </div>
         </section>
