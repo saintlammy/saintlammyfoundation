@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ComponentProps } from '@/types';
 import { Quote, Star } from 'lucide-react';
 import { useDonationModal } from './DonationModalProvider';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface SuccessStory {
   id: string;
@@ -133,12 +134,12 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
                 </div>
 
                 <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
-                  {story.story}
+                  {truncateForCard(story.story, 3)}
                 </p>
 
                 <blockquote className="border-l-4 border-accent-500 pl-4 mb-4">
                   <p className="text-accent-600 dark:text-accent-100 text-sm italic font-medium leading-relaxed">
-                    "{story.quote}"
+                    "{truncateForCard(story.quote, 2)}"
                   </p>
                 </blockquote>
 

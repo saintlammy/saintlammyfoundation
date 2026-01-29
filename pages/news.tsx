@@ -9,6 +9,7 @@ import { useDonationModal } from '@/components/DonationModalProvider';
 import { Calendar, ArrowRight, Heart, Users, Award, Search, Filter, Tag, Loader } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface NewsArticle {
   id: string;
@@ -194,7 +195,7 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles: initialArticles, categori
                         {featuredArticle.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 mb-6 font-light leading-relaxed">
-                        {featuredArticle.excerpt}
+                        {truncateForCard(featuredArticle.excerpt, 3)}
                       </p>
                       <Link
                         href={`/news/${featuredArticle.id}`}
@@ -298,8 +299,8 @@ const NewsPage: React.FC<NewsPageProps> = ({ articles: initialArticles, categori
                           {article.title}
                         </h3>
 
-                        <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light line-clamp-3">
-                          {article.excerpt}
+                        <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
+                          {truncateForCard(article.excerpt, 3)}
                         </p>
 
                         <div className="flex items-center justify-between">

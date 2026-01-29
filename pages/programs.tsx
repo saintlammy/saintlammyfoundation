@@ -6,6 +6,7 @@ import { GraduationCap, Heart, Home, Users, Target, DollarSign, TrendingUp, Awar
 import { useDonationModal } from '@/components/DonationModalProvider';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface Program {
   id: string;
@@ -262,7 +263,7 @@ const Programs: React.FC = () => {
                         </div>
                       </div>
 
-                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{program.description}</p>
+                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{truncateForCard(program.description, 3)}</p>
 
                       {/* Show features only for fallback programs */}
                       {(program as any).features && (

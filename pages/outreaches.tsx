@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface Outreach {
   id: string;
@@ -259,7 +260,7 @@ const Outreaches: React.FC = () => {
 
                     <div className="md:w-2/3 p-8">
                       <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{outreach.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{outreach.description}</p>
+                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{truncateForCard(outreach.description, 3)}</p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
@@ -349,7 +350,7 @@ const Outreaches: React.FC = () => {
                     </div>
 
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">{outreach.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">{outreach.description}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">{truncateForCard(outreach.description, 3)}</p>
 
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center justify-between text-sm">

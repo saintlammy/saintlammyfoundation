@@ -6,6 +6,7 @@ import { Quote, Star, Calendar, MapPin, ArrowLeft, Filter, Search } from 'lucide
 import { useDonationModal } from '@/components/DonationModalProvider';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface Story {
   id: string;
@@ -246,12 +247,12 @@ const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
                     </div>
 
                     <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
-                      {story.story.length > 150 ? `${story.story.substring(0, 150)}...` : story.story}
+                      {truncateForCard(story.story, 3)}
                     </p>
 
                     <blockquote className="border-l-4 border-accent-500 pl-4 mb-4">
                       <p className="text-accent-600 dark:text-accent-100 text-sm italic font-medium leading-relaxed">
-                        "{story.quote.length > 100 ? `${story.quote.substring(0, 100)}...` : story.quote}"
+                        "{truncateForCard(story.quote, 2)}"
                       </p>
                     </blockquote>
 
