@@ -18,6 +18,12 @@ interface CryptoDonationRequest {
   source?: string;
   category?: string;
   campaignId?: string; // Link donation to campaign
+  // Transaction details (optional - if donor already sent payment)
+  txHash?: string;
+  senderAddress?: string;
+  blockHeight?: number;
+  timestamp?: string;
+  networkFee?: number;
 }
 
 interface CryptoRates {
@@ -429,7 +435,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const paymentURI = generatePaymentURI(sanitizedData.currency, network, walletAddress, cryptoAmount, 'Saintlammy Foundation Donation', memo);
       const qrCode = await QRCode.toDataURL(paymentURI);
 
-      // Store donation attempt
+      // Store donation attempt with transaction details if provided
       const donationId = await storeCryptoDonation({
         ...sanitizedData,
         network,
@@ -437,7 +443,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         cryptoPrice,
         walletAddress,
         memo,
+        txHash: sanitizedData.txHash,
+        senderAddress: sanitizedData.senderAddress,
+        blockHeight: sanitizedData.blockHeight,
+        timestamp: sanitizedData.timestamp,
+        networkFee: sanitizedData.networkFee,
       });
+
+      // If transaction hash was provided upfront, verify immediately
+      if (sanitizedData.txHash) {
+        console.log('Transaction hash provided upfront, initiating verification:', sanitizedData.txHash);
+
+        try {
+          const verificationResult = await verifyTransaction(
+            sanitizedData.txHash,
+            sanitizedData.currency,
+            cryptoAmount,
+            walletAddress,
+            network
+          );
+
+          if (verificationResult.isValid) {
+            await donationService.updateDonationStatus(donationId, 'completed', sanitizedData.txHash);
+
+            // Store verification details
+            await donationService.updateDonationNotes(donationId, {
+              txHash: sanitizedData.txHash,
+              confirmations: verificationResult.confirmations,
+              blockHeight: verificationResult.details?.blockHeight,
+              timestamp: verificationResult.details?.timestamp,
+              verifiedAmount: verificationResult.details?.actualAmount,
+              fromAddress: verificationResult.details?.fromAddress || sanitizedData.senderAddress,
+              toAddress: verificationResult.details?.toAddress,
+            });
+
+            console.log('✅ Transaction auto-verified successfully');
+          } else {
+            // Mark for manual review
+            await donationService.updateDonationNotes(donationId, {
+              txHash: sanitizedData.txHash,
+              fromAddress: sanitizedData.senderAddress,
+              error: 'Automatic verification failed - pending manual review',
+              requiresManualReview: true,
+            });
+            console.log('⚠️ Transaction pending manual verification');
+          }
+        } catch (verifyError) {
+          console.error('Error during auto-verification:', verifyError);
+          // Don't fail the request, just log it
+        }
+      }
 
       // Create network-specific payment instructions
       const confirmationsMap: Record<string, string> = {

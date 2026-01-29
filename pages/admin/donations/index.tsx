@@ -75,6 +75,7 @@ const DonationsManagement: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [selectedDonations, setSelectedDonations] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv');
 
   useEffect(() => {
     loadDonations();
@@ -251,6 +252,22 @@ const DonationsManagement: React.FC = () => {
       alert('Failed to delete donations. Please try again.');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleExportCrypto = async () => {
+    try {
+      // Build query params
+      const params = new URLSearchParams({
+        format: exportFormat,
+        ...(statusFilter !== 'all' && { status: statusFilter }),
+      });
+
+      // Open download in new window
+      window.open(`/api/donations/export-crypto?${params.toString()}`, '_blank');
+    } catch (error) {
+      console.error('Error exporting crypto donations:', error);
+      alert('Failed to export crypto donations. Please try again.');
     }
   };
 
@@ -544,7 +561,11 @@ const DonationsManagement: React.FC = () => {
   const filteredDonations = apiDonations.filter(donation => {
     const matchesSearch = (donation.donor?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (donation.donor?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (donation.reference || '').toLowerCase().includes(searchTerm.toLowerCase());
+                         (donation.reference || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (donation.transactionHash || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (donation.cryptoTxHash || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (donation.cryptoAddress || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (donation.paypalOrderId || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || donation.status === statusFilter;
     const matchesMethod = methodFilter === 'all' || donation.method === methodFilter;
 
@@ -717,7 +738,7 @@ const DonationsManagement: React.FC = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
                   <input
                     type="text"
-                    placeholder="Search donations..."
+                    placeholder="Search by name, email, tx hash, or wallet..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent w-full sm:w-64"
@@ -768,10 +789,29 @@ const DonationsManagement: React.FC = () => {
                   <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors">
-                  <Download className="w-4 h-4" />
-                  Export
-                </button>
+                <div className="relative group">
+                  <button
+                    onClick={handleExportCrypto}
+                    className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors">
+                    <Download className="w-4 h-4" />
+                    Export Crypto
+                  </button>
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                    <div className="p-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">Export Format:</p>
+                      <button
+                        onClick={() => { setExportFormat('csv'); handleExportCrypto(); }}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        CSV (Spreadsheet)
+                      </button>
+                      <button
+                        onClick={() => { setExportFormat('json'); handleExportCrypto(); }}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        JSON (Raw Data)
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -23,6 +23,12 @@ export interface CryptoDonationData {
   source?: string;
   category?: 'orphan' | 'widow' | 'home' | 'general';
   campaignId?: string;
+  // Transaction details (can be provided upfront or added later)
+  txHash?: string;
+  senderAddress?: string;
+  blockHeight?: number;
+  timestamp?: string;
+  networkFee?: number;
 }
 
 export interface PayPalDonationData {
@@ -208,8 +214,9 @@ class DonationService {
         currency: donationData.currency,
         frequency: 'one-time',
         payment_method: 'crypto',
-        status: 'pending',
+        status: donationData.txHash ? 'pending' : 'pending', // Will be verified if txHash provided
         campaign_id: donationData.campaignId || null,
+        transaction_id: donationData.txHash || null, // Store tx hash if provided
         notes: JSON.stringify({
           network: donationData.network,
           cryptoAmount: donationData.cryptoAmount,
@@ -218,6 +225,15 @@ class DonationService {
           memo: donationData.memo,
           message: donationData.message,
           source: donationData.source,
+          // Transaction details
+          txHash: donationData.txHash,
+          senderAddress: donationData.senderAddress,
+          blockHeight: donationData.blockHeight,
+          timestamp: donationData.timestamp,
+          networkFee: donationData.networkFee,
+          // Metadata
+          createdVia: 'donation-form',
+          submittedAt: new Date().toISOString(),
         }),
       };
 

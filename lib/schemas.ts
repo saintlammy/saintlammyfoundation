@@ -25,6 +25,13 @@ export const CryptoDonationSchema = z.object({
   message: ValidationUtils.message.optional(),
   source: z.string().optional(),
   category: ValidationUtils.enum(['orphan', 'widow', 'home', 'general', 'family', 'outreach', 'emergency', 'education', 'healthcare', 'empowerment', 'infrastructure'], 'category').default('general'),
+  campaignId: ValidationUtils.uuid.optional(),
+  // Transaction details (optional - can be provided upfront if donor already sent payment)
+  txHash: z.string().min(10, 'Transaction hash must be at least 10 characters').max(256, 'Transaction hash too long').optional(),
+  senderAddress: z.string().min(10, 'Sender address must be at least 10 characters').max(256, 'Sender address too long').optional(),
+  blockHeight: z.number().positive('Block height must be positive').optional(),
+  timestamp: z.string().datetime('Invalid timestamp format').optional(),
+  networkFee: z.number().nonnegative('Network fee must be non-negative').optional(),
 });
 
 // Contact form schema

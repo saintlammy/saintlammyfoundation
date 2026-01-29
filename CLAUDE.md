@@ -11,6 +11,15 @@ This is a Next.js website for the Saintlammy Foundation, a non-profit organizati
 
 ## Recent Completed Work
 
+### Enhanced Crypto Donation Transaction Tracking (January 29, 2026)
+- **Complete transaction information capture** including tx hash, sender address, block height, timestamp, network fees
+- **Auto-verification for upfront transactions** when donors provide transaction hash before/during donation
+- **Admin search by transaction hash** and wallet addresses for quick lookup
+- **Crypto donation export API** with CSV/JSON formats containing all 26 transaction fields
+- **Enhanced transparency and auditability** for all blockchain donations
+- **No database migration required** - uses existing flexible JSONB structure
+- See [CRYPTO_DONATION_ENHANCEMENT.md](CRYPTO_DONATION_ENHANCEMENT.md) for complete details
+
 ### Fixed Website Button Functionality (September 27, 2025)
 - **Fixed 25+ unconnected buttons** across all website pages
 - **Connected newsletter subscription** to backend API endpoint
@@ -168,4 +177,4 @@ NEXT_PUBLIC_USDC_SOL_ADDRESS=your_usdc_solana_address
 - Comprehensive error handling and fallback systems in place
 
 ## Last Updated
-September 27, 2025 - Implemented blockchain verification system with real-time transaction verification
+January 29, 2026 - Enhanced crypto donation system with complete transaction tracking, sender address capture, and comprehensive export functionality
