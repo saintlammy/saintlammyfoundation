@@ -1,6 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
 
+interface GalleryContentRow {
+  id: string;
+  title: string;
+  excerpt?: string;
+  content: string;
+  featured_image?: string;
+  gallery_details?: {
+    category?: string;
+    project_date?: string;
+  };
+  publish_date?: string;
+  created_at: string;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
@@ -19,9 +33,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getGallery(req: NextApiRequest, res: NextApiResponse) {
+  const { status = 'published', limit } = req.query;
 
   try {
-    const { status = 'published', limit } = req.query;
 
     if (!supabase) {
       return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
@@ -52,7 +66,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = data.map(item => ({
+    const transformedData = (data as GalleryContentRow[]).map(item => ({
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
@@ -158,7 +172,7 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('content')
       .insert([newGalleryItem])
       .select()
@@ -207,7 +221,7 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('content')
       .update(updateData)
       .eq('id', id)

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Star, User, MessageSquare, CheckCircle, XCircle, Clock, Plus, RefreshCw, Trash2, Eye, X, Award } from 'lucide-react';
+import { Search, Star, User, MessageSquare, CheckCircle, XCircle, Clock, Plus, RefreshCw, Trash2, Eye, X, Award, Image as ImageIcon, Upload, Loader } from 'lucide-react';
 
 interface Testimonial {
   id: string;
@@ -30,9 +30,13 @@ const TestimonialsManagement: React.FC = () => {
     name: '',
     role: '',
     content: '',
-    rating: 5
+    rating: 5,
+    image: ''
   });
   const [stats, setStats] = useState({ approved: 0, pending: 0, total: 0, featured: 0 });
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadTestimonials();
@@ -536,7 +540,7 @@ const TestimonialsManagement: React.FC = () => {
                             </button>
                             <select
                               value={testimonial.status}
-                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value })}
+                              onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value as 'pending' | 'approved' | 'rejected' })}
                               className="bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded text-gray-900 dark:text-white text-xs px-2 py-1"
                             >
                               <option value="pending">Pending</option>
