@@ -186,15 +186,13 @@ const ProgramsManagement: React.FC = () => {
           body: JSON.stringify(programData),
         });
 
-        if (response.ok) {
-          const updatedPrograms = programs.map(p =>
-            p.id === selectedProgram.id ? { ...p, ...programData, updated_at: new Date().toISOString() } : p
-          );
-          setPrograms(updatedPrograms);
-          updateStats(updatedPrograms);
-        } else {
-          throw new Error('Failed to update program');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update program');
         }
+
+        // Reload programs from database to ensure we have the latest data
+        await loadPrograms();
       } else {
         // Create new program
         const response = await fetch('/api/programs', {
@@ -202,32 +200,19 @@ const ProgramsManagement: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(programData),
+          body: JSON.stringify({
+            ...programData,
+            type: 'program'
+          }),
         });
 
-        if (response.ok) {
-          const createdProgram = await response.json();
-          const newProgram: Program = {
-            id: createdProgram.id || `prog-${Date.now()}`,
-            ...programData,
-            type: 'program',
-            author: 'Admin',
-            program_details: programData.program_details || {
-              impact_area: '',
-              target_beneficiaries: '',
-              duration: '',
-              budget: 0,
-              participants_count: 0
-            },
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-          const updatedPrograms = [newProgram, ...programs];
-          setPrograms(updatedPrograms);
-          updateStats(updatedPrograms);
-        } else {
-          throw new Error('Failed to create program');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to create program');
         }
+
+        // Reload programs from database to ensure we have the latest data
+        await loadPrograms();
       }
 
       setShowEditor(false);

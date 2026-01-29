@@ -95,33 +95,6 @@ const Programs: React.FC = () => {
   // All programs now come from the database.
   // Run: npx ts-node scripts/seed-example-programs.ts to populate initial data
 
-  const supportPrograms = [
-    {
-      title: 'Emergency Relief Fund',
-      description: 'Rapid response support for families facing urgent crises',
-      icon: Target,
-      budget: '₦150,000/month'
-    },
-    {
-      title: 'Food Security Initiative',
-      description: 'Regular food distribution to vulnerable households',
-      icon: Home,
-      budget: '₦200,000/month'
-    },
-    {
-      title: 'Clean Water Projects',
-      description: 'Installing water systems in rural communities',
-      icon: Award,
-      budget: '₦100,000/month'
-    },
-    {
-      title: 'Digital Literacy Program',
-      description: 'Computer skills training for youth and adults',
-      icon: TrendingUp,
-      budget: '₦80,000/month'
-    }
-  ];
-
   // Fallback stats if API fails
   const fallbackStats = {
     totalBeneficiaries: '2,450+',
@@ -330,35 +303,6 @@ const Programs: React.FC = () => {
                 </p>
               </div>
             )}
-          </div>
-        </section>
-
-        {/* Support Programs */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Support Programs
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Additional programs complementing our core initiatives
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {supportPrograms.map((program, index) => (
-                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors text-center group shadow-lg dark:shadow-none">
-                  <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <program.icon className="w-6 h-6 text-accent-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{program.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-light mb-4">{program.description}</p>
-                  <div className="inline-flex items-center px-3 py-1 bg-accent-500/20 text-accent-400 rounded-full text-xs font-medium">
-                    {program.budget}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </section>
 
