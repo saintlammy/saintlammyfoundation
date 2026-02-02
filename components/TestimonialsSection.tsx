@@ -21,10 +21,15 @@ const TestimonialsSection: React.FC = () => {
     const fetchTestimonials = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/testimonials?status=published&limit=3');
+        const response = await fetch('/api/testimonials?status=published&limit=6', {
+          cache: 'no-store'
+        });
+
+        console.log('📡 Testimonials API response status:', response.status);
 
         if (response.ok) {
           const data = await response.json();
+          console.log('📊 Testimonials fetched:', data.length, 'items');
 
           if (data && data.length > 0) {
             // Transform database testimonials to component format
@@ -38,15 +43,17 @@ const TestimonialsSection: React.FC = () => {
               donation: t.program || 'Supporter'
             }));
 
+            console.log('✅ Using database testimonials');
             setTestimonials(transformed);
             return;
           }
         }
 
         // Fallback to example testimonials
+        console.warn('⚠️ Falling back to mock testimonials');
         setTestimonials(getFallbackTestimonials());
       } catch (error) {
-        console.error('Error fetching testimonials:', error);
+        console.error('❌ Error fetching testimonials:', error);
         setTestimonials(getFallbackTestimonials());
       } finally {
         setLoading(false);
@@ -99,7 +106,7 @@ const TestimonialsSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
