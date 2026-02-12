@@ -134,7 +134,11 @@ const PageBuilder: React.FC = () => {
     }
   };
 
-  const renderForm = (item: ContentItem, onSave: (item: ContentItem) => void, onCancel: () => void) => {
+  const ContentForm: React.FC<{
+    item: ContentItem;
+    onSave: (item: ContentItem) => void;
+    onCancel: () => void;
+  }> = ({ item, onSave, onCancel }) => {
     const [formData, setFormData] = useState(item.data || {});
 
     const getFields = () => {
@@ -327,13 +331,15 @@ const PageBuilder: React.FC = () => {
         </div>
 
         {/* Add/Edit Modal */}
-        {showAddModal && editingItem && renderForm(
-          editingItem,
-          handleSave,
-          () => {
-            setShowAddModal(false);
-            setEditingItem(null);
-          }
+        {showAddModal && editingItem && (
+          <ContentForm
+            item={editingItem}
+            onSave={handleSave}
+            onCancel={() => {
+              setShowAddModal(false);
+              setEditingItem(null);
+            }}
+          />
         )}
 
         {/* Content List */}
@@ -346,7 +352,11 @@ const PageBuilder: React.FC = () => {
             {contentItems.map((item, index) => (
               <div key={item.id} className="bg-gray-800 p-6 rounded-lg border border-gray-700">
                 {editingItem?.id === item.id && !showAddModal ? (
-                  renderForm(item, handleSave, () => setEditingItem(null))
+                  <ContentForm
+                    item={item}
+                    onSave={handleSave}
+                    onCancel={() => setEditingItem(null)}
+                  />
                 ) : (
                   <>
                     <div className="flex justify-between items-start mb-4">
