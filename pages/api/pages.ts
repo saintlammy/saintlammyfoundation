@@ -19,20 +19,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function getPages(req: NextApiRequest, res: NextApiResponse) {
-  const { status = 'published', limit } = req.query;
+  const { status = 'published', limit, slug } = req.query;
 
   try {
 
     if (!supabase) {
-      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined));
+      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined, slug as string));
     }
 
     let query = (supabase
       .from('content') as any)
       .select('*')
       .eq('type', 'page')
-      .eq('status', status)
-      .order('publish_date', { ascending: false });
+      .eq('status', status);
+
+    if (slug) {
+      query = query.eq('slug', slug);
+    } else {
+      query = query.order('publish_date', { ascending: false });
+    }
 
     if (limit) {
       query = query.limit(parseInt(limit as string));
@@ -42,11 +47,11 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase error:', error);
-      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined));
+      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined, slug as string));
     }
 
     if (!data || data.length === 0) {
-      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined));
+      return res.status(200).json(getMockPages(limit ? parseInt(limit as string) : undefined, slug as string));
     }
 
     // Transform data to match component interface
@@ -65,10 +70,11 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
       updated_at: item.updated_at
     }));
 
-    res.status(200).json(transformedData);
+    // If slug is provided, return single item instead of array
+    res.status(200).json(slug && transformedData.length > 0 ? transformedData[0] : transformedData);
   } catch (error) {
     console.error('API error:', error);
-    res.status(200).json(getMockPages((limit as any) ? parseInt(limit as string) : undefined));
+    res.status(200).json(getMockPages((limit as any) ? parseInt(limit as string) : undefined, slug as string));
   }
 }
 
@@ -206,7 +212,7 @@ async function deletePage(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-function getMockPages(limit?: number) {
+function getMockPages(limit?: number, slug?: string) {
   const mockPages = [
     {
       id: '1',
@@ -240,8 +246,54 @@ function getMockPages(limit?: number) {
       id: '3',
       title: 'Privacy Policy',
       slug: 'privacy',
-      content: 'Our privacy policy outlines how we collect, use, and protect your personal information.',
-      excerpt: 'Learn how we protect your privacy.',
+      content: `<h2>Information We Collect</h2>
+<h3>Personal Information</h3>
+<ul>
+<li>Name, email address, and phone number when you contact us or sign up for our newsletter</li>
+<li>Donation information including billing address and payment method details</li>
+<li>Volunteer application information including background and skills</li>
+<li>Communication preferences and interaction history</li>
+</ul>
+<h3>Automatically Collected Information</h3>
+<ul>
+<li>Website usage data through cookies and analytics tools</li>
+<li>IP address, browser type, and device information</li>
+<li>Pages visited and time spent on our website</li>
+<li>Referral source (how you found our website)</li>
+</ul>
+
+<h2>How We Use Your Information</h2>
+<p><strong>To provide our services:</strong> Processing donations, sending receipts, and communicating about our programs</p>
+<p><strong>To improve our website:</strong> Analyzing usage patterns to enhance user experience and functionality</p>
+<p><strong>To communicate with you:</strong> Sending newsletters, updates about our impact, and responding to inquiries</p>
+<p><strong>To ensure security:</strong> Protecting against fraud and maintaining the security of our systems</p>
+<p><strong>For compliance:</strong> Meeting legal requirements for nonprofit organizations and tax reporting</p>
+
+<h2>How We Protect Your Information</h2>
+<p><strong>Encryption:</strong> All sensitive data is encrypted both in transit and at rest using industry-standard protocols</p>
+<p><strong>Access Controls:</strong> Limited access to personal information on a need-to-know basis</p>
+<p><strong>Secure Payment Processing:</strong> We use PCI-compliant payment processors and never store payment card information</p>
+<p><strong>Regular Security Audits:</strong> Our systems undergo regular security assessments and updates</p>
+<p><strong>Staff Training:</strong> All team members receive privacy and security training</p>
+
+<h2>Information Sharing</h2>
+<p><strong>We do not sell or rent your personal information to third parties.</strong></p>
+<p>We may share your information only in these limited circumstances:</p>
+<ul>
+<li><strong>Service Providers:</strong> With trusted partners who help us operate our website and process donations (under strict confidentiality agreements)</li>
+<li><strong>Legal Requirements:</strong> When required by law or to protect our rights and safety</li>
+<li><strong>Anonymized Data:</strong> We may share aggregated, non-identifying information for research or reporting purposes</li>
+</ul>
+
+<h2>Your Rights and Choices</h2>
+<p><strong>Access and Update:</strong> You can request access to your personal information and ask us to correct or update it</p>
+<p><strong>Opt-Out:</strong> You can unsubscribe from our communications at any time using the link in our emails</p>
+<p><strong>Data Deletion:</strong> You can request deletion of your personal information, subject to legal retention requirements</p>
+<p><strong>Cookies:</strong> You can control cookie settings through your browser preferences</p>
+
+<h2>Contact Us</h2>
+<p>If you have any questions about this Privacy Policy, please contact us at privacy@saintlammyfoundation.org</p>`,
+      excerpt: 'Learn how we protect your privacy and handle your personal information.',
       status: 'published',
       seo_title: 'Privacy Policy - Saintlammy Foundation',
       seo_description: 'Read our privacy policy to understand how we handle your personal information.',
@@ -249,8 +301,133 @@ function getMockPages(limit?: number) {
       featured_image: '',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-05T00:00:00Z'
+    },
+    {
+      id: '4',
+      title: 'Terms of Service',
+      slug: 'terms',
+      content: `<h2>Acceptance of Terms</h2>
+<p>By accessing and using the Saintlammy Foundation website and services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website or services.</p>
+
+<h2>About Saintlammy Foundation</h2>
+<p>Saintlammy Foundation is a registered nonprofit organization in Nigeria, dedicated to empowering orphans, widows, and vulnerable communities through comprehensive support programs.</p>
+<p><strong>CAC Registration:</strong> 9015713</p>
+<p><strong>Tax Status:</strong> Tax-exempt nonprofit organization under Nigerian law</p>
+
+<h2>Use of Our Website</h2>
+<h3>Permitted Uses</h3>
+<ul>
+<li>Browsing and learning about our programs and impact</li>
+<li>Making donations to support our mission</li>
+<li>Applying to volunteer or partner with us</li>
+<li>Subscribing to our newsletter and updates</li>
+<li>Sharing our content for charitable purposes</li>
+</ul>
+<h3>Prohibited Uses</h3>
+<ul>
+<li>Using the website for any unlawful purpose</li>
+<li>Attempting to gain unauthorized access to our systems</li>
+<li>Distributing malware or harmful code</li>
+<li>Impersonating the foundation or its representatives</li>
+<li>Using automated systems to scrape or harvest data</li>
+<li>Interfering with the website's operation or security</li>
+</ul>
+
+<h2>Donations and Payments</h2>
+<h3>Donation Policy</h3>
+<ul>
+<li>All donations are voluntary and non-refundable unless required by law</li>
+<li>Donations are used to support our charitable programs and operations</li>
+<li>We provide receipts for tax-deductible donations as applicable</li>
+<li>Recurring donations can be cancelled at any time by contacting us</li>
+</ul>
+
+<h2>Intellectual Property</h2>
+<p><strong>Our Content:</strong> All content on this website, including text, images, logos, and design elements, is owned by Saintlammy Foundation or used with permission.</p>
+
+<h2>Limitation of Liability</h2>
+<p>To the fullest extent permitted by law, Saintlammy Foundation shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our website or services.</p>
+
+<h2>Contact Information</h2>
+<p>If you have any questions about these Terms of Service, please contact us at legal@saintlammyfoundation.org</p>`,
+      excerpt: 'Terms and conditions governing your use of our website and services.',
+      status: 'published',
+      seo_title: 'Terms of Service - Saintlammy Foundation',
+      seo_description: 'Read our terms of service to understand your rights and responsibilities when using our website.',
+      template: 'legal',
+      featured_image: '',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-05T00:00:00Z'
+    },
+    {
+      id: '5',
+      title: 'Cookie Policy',
+      slug: 'cookie-policy',
+      content: `<h2>What Are Cookies?</h2>
+<p>Cookies are small text files that are placed on your device when you visit our website. They help us provide you with a better experience by remembering your preferences and understanding how you use our site.</p>
+
+<h2>Types of Cookies We Use</h2>
+
+<h3>Necessary Cookies (Always Active)</h3>
+<p>These cookies are essential for the website to function properly. They enable core functionality such as security, network management, and accessibility. You cannot opt out of these cookies.</p>
+<ul>
+<li>Session management and user authentication</li>
+<li>Load balancing and security measures</li>
+<li>Cookie consent preferences</li>
+<li>Form submission and data validation</li>
+</ul>
+
+<h3>Analytics Cookies (Optional)</h3>
+<p>These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our content and user experience.</p>
+<ul>
+<li>Google Analytics - tracking page views and user behavior</li>
+<li>Understanding which pages are most popular</li>
+<li>Identifying technical issues and errors</li>
+<li>Measuring campaign effectiveness</li>
+</ul>
+
+<h3>Marketing Cookies (Optional)</h3>
+<p>These cookies are used to track visitors across websites to display relevant advertisements. They may also be used to limit how many times you see an ad and measure the effectiveness of advertising campaigns.</p>
+<ul>
+<li>Social media integration and sharing</li>
+<li>Targeted advertising based on interests</li>
+<li>Campaign tracking and attribution</li>
+<li>Retargeting and remarketing</li>
+</ul>
+
+<h3>Preference Cookies (Optional)</h3>
+<p>These cookies allow our website to remember choices you make (such as your language preference or the region you're in) and provide enhanced, more personalized features.</p>
+<ul>
+<li>Language and region preferences</li>
+<li>Theme settings (light/dark mode)</li>
+<li>Font size and accessibility preferences</li>
+<li>Previously viewed content</li>
+</ul>
+
+<h2>Managing Your Cookie Preferences</h2>
+<p>You have full control over which cookies you accept. You can manage your preferences at any time through our cookie consent banner or by adjusting your browser settings.</p>
+
+<h2>Browser Settings</h2>
+<p>Most web browsers allow you to control cookies through their settings. You can set your browser to refuse cookies or delete certain cookies. Please note that if you disable cookies, some features of our website may not function properly.</p>
+
+<h2>Contact Us</h2>
+<p>If you have any questions about how we use cookies, please contact us at info@saintlammyfoundation.org or call +234 706 307 6704.</p>`,
+      excerpt: 'Learn about the cookies we use and how you can manage your preferences.',
+      status: 'published',
+      seo_title: 'Cookie Policy - Saintlammy Foundation',
+      seo_description: 'Understand how we use cookies to improve your experience on our website.',
+      template: 'legal',
+      featured_image: '',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-05T00:00:00Z'
     }
   ];
+
+  // If slug is provided, return single page
+  if (slug) {
+    const page = mockPages.find(p => p.slug === slug);
+    return page || null;
+  }
 
   return limit ? mockPages.slice(0, limit) : mockPages;
 }

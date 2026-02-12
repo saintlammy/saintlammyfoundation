@@ -506,6 +506,335 @@ function getMockPageContent(slug?: string, section?: string) {
         url: '/documents/cac-certificate.pdf',
         icon: 'Award'
       }
+    },
+    // Home Page - Who We Are Section
+    {
+      id: '28',
+      page_slug: 'home',
+      section: 'who-we-are',
+      order_index: 1,
+      data: {
+        title: 'Who We Are',
+        subtitle: 'A faith-driven humanitarian initiative operating at the intersection of compassion and execution.',
+        mission_title: 'Our Mission',
+        mission_icon: 'Heart',
+        mission_content: 'Saintlammy Foundation is committed to restoring dignity, stability, and opportunity to the most vulnerable members of society. We mobilize support to orphans, widows, and underserved communities through direct aid, empowerment programs, and transparent partnerships.',
+        mission_tagline: 'Faith-Driven • Community-Focused • Results-Oriented',
+        journey_title: 'Our Journey',
+        journey_icon: 'TrendingUp',
+        journey_content: 'Since inception, we have grown from a small outreach team to a structured charity delivering measurable impact through grassroots programs, donor partnerships, and God-centered leadership.',
+        journey_points: [
+          'Started with small community outreaches',
+          'Expanded to structured programs',
+          'Now serving 500+ widows and 300+ orphans'
+        ]
+      }
+    },
+    {
+      id: '29',
+      page_slug: 'home',
+      section: 'who-we-are',
+      order_index: 2,
+      data: {
+        type: 'pillar',
+        icon: 'Heart',
+        title: 'Orphan Care',
+        description: 'Supporting orphanages and connecting individual orphans with loving donors'
+      }
+    },
+    {
+      id: '30',
+      page_slug: 'home',
+      section: 'who-we-are',
+      order_index: 3,
+      data: {
+        type: 'pillar',
+        icon: 'Users',
+        title: 'Widow Empowerment',
+        description: 'Monthly stipends, counseling, and business grants for financial independence'
+      }
+    },
+    {
+      id: '31',
+      page_slug: 'home',
+      section: 'who-we-are',
+      order_index: 4,
+      data: {
+        type: 'pillar',
+        icon: 'GraduationCap',
+        title: 'Educational Access',
+        description: 'Ensuring every child has access to quality education and learning opportunities'
+      }
+    },
+    {
+      id: '32',
+      page_slug: 'home',
+      section: 'who-we-are',
+      order_index: 5,
+      data: {
+        type: 'pillar',
+        icon: 'MapPin',
+        title: 'Community Development',
+        description: 'Medical outreaches and support structures that help communities thrive'
+      }
+    },
+    // Contact Page - Contact Information
+    {
+      id: '33',
+      page_slug: 'contact',
+      section: 'info',
+      order_index: 1,
+      data: {
+        icon: 'Mail',
+        title: 'Email Us',
+        details: 'hello@saintlammyfoundation.org',
+        description: 'Send us an email and we\'ll respond within 24 hours',
+        link: 'mailto:hello@saintlammyfoundation.org'
+      }
+    },
+    {
+      id: '34',
+      page_slug: 'contact',
+      section: 'info',
+      order_index: 2,
+      data: {
+        icon: 'Phone',
+        title: 'Call Us',
+        details: '+234 706 307 6704',
+        description: 'Available Monday to Friday, 9AM - 5PM WAT',
+        link: 'tel:+2347063076704'
+      }
+    },
+    {
+      id: '35',
+      page_slug: 'contact',
+      section: 'info',
+      order_index: 3,
+      data: {
+        icon: 'MapPin',
+        title: 'Visit Us',
+        details: 'Lagos, Nigeria',
+        description: 'Schedule an appointment to visit our office',
+        link: '#'
+      }
+    },
+    {
+      id: '36',
+      page_slug: 'contact',
+      section: 'info',
+      order_index: 4,
+      data: {
+        icon: 'Globe',
+        title: 'Social Media',
+        details: '@SaintlammyFoundation',
+        description: 'Follow us for updates and impact stories',
+        link: '#'
+      }
+    },
+    {
+      id: '37',
+      page_slug: 'contact',
+      section: 'office-hours',
+      order_index: 1,
+      data: {
+        weekday: 'Monday - Friday: 9:00 AM - 5:00 PM (WAT)',
+        saturday: 'Saturday: 10:00 AM - 2:00 PM (WAT)',
+        sunday: 'Sunday: Closed',
+        note: 'Emergency inquiries will be responded to within 24 hours regardless of office hours.'
+      }
+    },
+    // Partner Page - Partnership Types
+    {
+      id: '38',
+      page_slug: 'partner',
+      section: 'types',
+      order_index: 1,
+      data: {
+        icon: 'Building',
+        title: 'Corporate Partnerships',
+        description: 'Partner with us for CSR initiatives, employee engagement programs, and sustainable community development projects.',
+        benefits: [
+          'Annual CSR programs',
+          'Employee volunteer opportunities',
+          'Brand alignment initiatives'
+        ]
+      }
+    },
+    {
+      id: '39',
+      page_slug: 'partner',
+      section: 'types',
+      order_index: 2,
+      data: {
+        icon: 'Handshake',
+        title: 'NGO Collaborations',
+        description: 'Collaborate with fellow nonprofits to maximize impact through shared resources, expertise, and coordinated efforts.',
+        benefits: [
+          'Joint program implementation',
+          'Resource sharing agreements',
+          'Knowledge exchange programs'
+        ]
+      }
+    },
+    {
+      id: '40',
+      page_slug: 'partner',
+      section: 'types',
+      order_index: 3,
+      data: {
+        icon: 'Users',
+        title: 'Individual Partnerships',
+        description: 'Join as an individual partner to contribute your skills, time, or resources to specific programs and initiatives.',
+        benefits: [
+          'Skill-based volunteering',
+          'Mentorship programs',
+          'Professional consultation'
+        ]
+      }
+    },
+    // Partner Page - Benefits
+    {
+      id: '41',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 1,
+      data: {
+        icon: 'Target',
+        title: 'Measurable Impact',
+        description: 'Track and measure the direct impact of your partnership through detailed reporting and success metrics.'
+      }
+    },
+    {
+      id: '42',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 2,
+      data: {
+        icon: 'Globe',
+        title: 'Brand Visibility',
+        description: 'Gain positive brand exposure through our communications, events, and community engagement activities.'
+      }
+    },
+    {
+      id: '43',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 3,
+      data: {
+        icon: 'Award',
+        title: 'Recognition & Awards',
+        description: 'Receive recognition for your social impact contributions and partnership commitment.'
+      }
+    },
+    {
+      id: '44',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 4,
+      data: {
+        icon: 'Users',
+        title: 'Team Building',
+        description: 'Engage your team in meaningful volunteer activities that build camaraderie and purpose.'
+      }
+    },
+    {
+      id: '45',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 5,
+      data: {
+        icon: 'TrendingUp',
+        title: 'Strategic Growth',
+        description: 'Align your business goals with social impact for sustainable growth and stakeholder value.'
+      }
+    },
+    {
+      id: '46',
+      page_slug: 'partner',
+      section: 'benefits',
+      order_index: 6,
+      data: {
+        icon: 'Heart',
+        title: 'Community Connection',
+        description: 'Build authentic connections with the communities you serve and create lasting relationships.'
+      }
+    },
+    // Partner Page - Contact Info
+    {
+      id: '47',
+      page_slug: 'partner',
+      section: 'contact',
+      order_index: 1,
+      data: {
+        email: 'partnerships@saintlammyfoundation.org',
+        phone: '+234 706 307 6704',
+        location: 'Lagos, Nigeria'
+      }
+    },
+    // Sponsor Page - Tiers
+    {
+      id: '48',
+      page_slug: 'sponsor',
+      section: 'tiers',
+      order_index: 1,
+      data: {
+        id: 'basic',
+        name: 'Basic Sponsor',
+        amount: 50,
+        description: 'Provide essential support for one beneficiary',
+        benefits: [
+          'Monthly updates on your beneficiary',
+          'Quarterly photos and stories',
+          'Annual impact report',
+          'Access to sponsor community'
+        ],
+        icon: 'Heart',
+        color: 'bg-blue-500'
+      }
+    },
+    {
+      id: '49',
+      page_slug: 'sponsor',
+      section: 'tiers',
+      order_index: 2,
+      data: {
+        id: 'premium',
+        name: 'Premium Sponsor',
+        amount: 100,
+        description: 'Comprehensive support with enhanced engagement',
+        benefits: [
+          'All Basic Sponsor benefits',
+          'Monthly video updates',
+          'Direct communication with beneficiary',
+          'Invitation to annual sponsor events',
+          'Educational milestone celebrations'
+        ],
+        popular: true,
+        icon: 'Star',
+        color: 'bg-accent-500'
+      }
+    },
+    {
+      id: '50',
+      page_slug: 'sponsor',
+      section: 'tiers',
+      order_index: 3,
+      data: {
+        id: 'champion',
+        name: 'Champion Sponsor',
+        amount: 200,
+        description: 'Transform lives with premium sponsorship',
+        benefits: [
+          'All Premium Sponsor benefits',
+          'Sponsor multiple beneficiaries',
+          'Exclusive donor recognition',
+          'Site visit opportunities',
+          'Custom program development input',
+          'Legacy impact documentation'
+        ],
+        icon: 'Target',
+        color: 'bg-purple-500'
+      }
     }
   ];
 
