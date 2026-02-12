@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
@@ -17,86 +17,75 @@ interface BoardMember {
   credentials: string[];
 }
 
+interface Policy {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface Document {
+  title: string;
+  description: string;
+  category: string;
+  url: string;
+  icon: string;
+}
+
+// Helper function to map icon names to components
+const getIconComponent = (iconName: string) => {
+  const iconMap: { [key: string]: any } = {
+    Users,
+    Shield,
+    Award,
+    BookOpen,
+    Gavel,
+    Scale,
+    FileText,
+    CheckCircle
+  };
+  return iconMap[iconName] || FileText; // Fallback to FileText icon
+};
+
 const GovernancePage: React.FC = () => {
   const { openDonationModal } = useDonationModal();
+  const [boardMembers, setBoardMembers] = useState<BoardMember[]>([]);
+  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const boardMembers: BoardMember[] = [
-    {
-      name: 'Dr. Adebayo Johnson',
-      position: 'Chairman of the Board',
-      background: 'Former Director of Social Services, Lagos State Government. 25+ years in nonprofit governance.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['PhD Public Administration', 'Certified Nonprofit Executive', 'Board Leadership Certificate']
-    },
-    {
-      name: 'Mrs. Funmi Adebayo',
-      position: 'Vice Chairperson',
-      background: 'Senior Partner at a leading accounting firm. Expert in nonprofit financial management and compliance.',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['CPA, FCCA', 'Nonprofit Finance Specialist', '20+ years audit experience']
-    },
-    {
-      name: 'Dr. Emmanuel Okafor',
-      position: 'Secretary',
-      background: 'Pediatrician and child welfare advocate. Leads healthcare initiatives for vulnerable children.',
-      image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['MD Pediatrics', 'Child Welfare Certification', 'Healthcare Policy Advisor']
-    },
-    {
-      name: 'Rev. Grace Oduya',
-      position: 'Treasurer',
-      background: 'Community leader and microfinance expert. Specializes in widow empowerment and financial literacy.',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['MBA Finance', 'Microfinance Specialist', 'Community Development Expert']
-    },
-    {
-      name: 'Prof. Samuel Kalu',
-      position: 'Member',
-      background: 'Education researcher and former university administrator. Champions educational access for orphans.',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['PhD Education', 'UNESCO Consultant', 'Educational Policy Expert']
-    },
-    {
-      name: 'Mrs. Blessing Uche',
-      position: 'Member',
-      background: 'Legal practitioner specializing in nonprofit law and children\'s rights advocacy.',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
-      credentials: ['LLB, BL', 'Children\'s Rights Advocate', 'Nonprofit Law Specialist']
-    }
-  ];
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const [boardRes, policiesRes, documentsRes] = await Promise.all([
+          fetch('/api/page-content?slug=governance&section=board'),
+          fetch('/api/page-content?slug=governance&section=policies'),
+          fetch('/api/page-content?slug=governance&section=documents')
+        ]);
 
-  const policies = [
-    {
-      title: 'Code of Conduct',
-      description: 'Ethical standards and behavioral expectations for all team members and volunteers',
-      icon: Scale
-    },
-    {
-      title: 'Conflict of Interest Policy',
-      description: 'Guidelines for identifying and managing potential conflicts of interest',
-      icon: Shield
-    },
-    {
-      title: 'Financial Management Policy',
-      description: 'Procedures for budget management, expense approval, and financial oversight',
-      icon: FileText
-    },
-    {
-      title: 'Whistleblower Protection',
-      description: 'Safe channels for reporting misconduct or policy violations',
-      icon: Award
-    },
-    {
-      title: 'Child Protection Policy',
-      description: 'Comprehensive safeguarding measures for all children in our programs',
-      icon: Users
-    },
-    {
-      title: 'Document Retention Policy',
-      description: 'Standards for maintaining and disposing of organizational records',
-      icon: BookOpen
-    }
-  ];
+        const boardData = await boardRes.json();
+        const policiesData = await policiesRes.json();
+        const documentsData = await documentsRes.json();
+
+        if (boardData && boardData.length > 0) {
+          setBoardMembers(boardData.map((item: any) => item.data));
+        }
+
+        if (policiesData && policiesData.length > 0) {
+          setPolicies(policiesData.map((item: any) => item.data));
+        }
+
+        if (documentsData && documentsData.length > 0) {
+          setDocuments(documentsData.map((item: any) => item.data));
+        }
+      } catch (error) {
+        console.error('Error fetching page content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
 
   return (
     <>
@@ -227,8 +216,59 @@ const GovernancePage: React.FC = () => {
             </div>
           </section>
 
-          {/* Policies & Procedures */}
+          {/* Board Members */}
           <section className="py-20 bg-gray-100 dark:bg-gray-900">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
+                  Our Board of Directors
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light">
+                  Experienced leaders committed to effective governance and community impact
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {boardMembers.map((member, index) => (
+                  <div key={index} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:border-accent-500 transition-colors">
+                    <div className="relative h-64">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover object-center"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 font-display">
+                        {member.name}
+                      </h3>
+                      <p className="text-accent-400 font-medium text-sm mb-4">
+                        {member.position}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">
+                        {member.background}
+                      </p>
+                      <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                        <p className="text-xs font-semibold text-gray-900 dark:text-white mb-2">Credentials:</p>
+                        <ul className="space-y-1">
+                          {member.credentials.map((credential, idx) => (
+                            <li key={idx} className="text-xs text-gray-600 dark:text-gray-400 flex items-start">
+                              <CheckCircle className="w-3 h-3 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
+                              {credential}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Policies & Procedures */}
+          <section className="py-20 bg-white dark:bg-black">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
@@ -240,17 +280,20 @@ const GovernancePage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {policies.map((policy, index) => (
-                  <div key={index} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-gray-800/70 transition-colors">
-                    <policy.icon className="w-8 h-8 text-accent-400 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">
-                      {policy.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed">
-                      {policy.description}
-                    </p>
-                  </div>
-                ))}
+                {policies.map((policy, index) => {
+                  const IconComponent = getIconComponent(policy.icon);
+                  return (
+                    <div key={index} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:bg-gray-50 dark:hover:bg-gray-800/70 transition-colors">
+                      <IconComponent className="w-8 h-8 text-accent-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">
+                        {policy.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed">
+                        {policy.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="text-center mt-12">

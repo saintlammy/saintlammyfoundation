@@ -320,6 +320,192 @@ function getMockPageContent(slug?: string, section?: string) {
         description: 'Regular reporting and updates on how donations create real impact.',
         icon: 'Award'
       }
+    },
+    // Governance Page - Board Members
+    {
+      id: '13',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 1,
+      data: {
+        name: 'Dr. Adebayo Johnson',
+        position: 'Chairman of the Board',
+        background: 'Former Director of Social Services, Lagos State Government. 25+ years in nonprofit governance.',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['PhD Public Administration', 'Certified Nonprofit Executive', 'Board Leadership Certificate']
+      }
+    },
+    {
+      id: '14',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 2,
+      data: {
+        name: 'Mrs. Funmi Adebayo',
+        position: 'Vice Chairperson',
+        background: 'Senior Partner at a leading accounting firm. Expert in nonprofit financial management and compliance.',
+        image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['CPA, FCCA', 'Nonprofit Finance Specialist', '20+ years audit experience']
+      }
+    },
+    {
+      id: '15',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 3,
+      data: {
+        name: 'Dr. Emmanuel Okafor',
+        position: 'Secretary',
+        background: 'Pediatrician and child welfare advocate. Leads healthcare initiatives for vulnerable children.',
+        image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['MD Pediatrics', 'Child Welfare Certification', 'Healthcare Policy Advisor']
+      }
+    },
+    {
+      id: '16',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 4,
+      data: {
+        name: 'Rev. Grace Oduya',
+        position: 'Treasurer',
+        background: 'Community leader and microfinance expert. Specializes in widow empowerment and financial literacy.',
+        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['MBA Finance', 'Microfinance Specialist', 'Community Development Expert']
+      }
+    },
+    {
+      id: '17',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 5,
+      data: {
+        name: 'Prof. Samuel Kalu',
+        position: 'Member',
+        background: 'Education researcher and former university administrator. Champions educational access for orphans.',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['PhD Education', 'UNESCO Consultant', 'Educational Policy Expert']
+      }
+    },
+    {
+      id: '18',
+      page_slug: 'governance',
+      section: 'board',
+      order_index: 6,
+      data: {
+        name: 'Mrs. Blessing Uche',
+        position: 'Member',
+        background: 'Legal practitioner specializing in nonprofit law and children\'s rights advocacy.',
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        credentials: ['LLB, BL', 'Children\'s Rights Advocate', 'Nonprofit Law Specialist']
+      }
+    },
+    // Governance Page - Policies
+    {
+      id: '19',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 1,
+      data: {
+        title: 'Code of Conduct',
+        description: 'Ethical standards and behavioral expectations for all team members and volunteers',
+        icon: 'Scale'
+      }
+    },
+    {
+      id: '20',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 2,
+      data: {
+        title: 'Conflict of Interest Policy',
+        description: 'Guidelines for identifying and managing potential conflicts of interest',
+        icon: 'Shield'
+      }
+    },
+    {
+      id: '21',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 3,
+      data: {
+        title: 'Financial Management Policy',
+        description: 'Procedures for budget management, expense approval, and financial oversight',
+        icon: 'FileText'
+      }
+    },
+    {
+      id: '22',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 4,
+      data: {
+        title: 'Whistleblower Protection',
+        description: 'Safe channels for reporting misconduct or policy violations',
+        icon: 'Award'
+      }
+    },
+    {
+      id: '23',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 5,
+      data: {
+        title: 'Child Protection Policy',
+        description: 'Comprehensive safeguarding measures for all children in our programs',
+        icon: 'Users'
+      }
+    },
+    {
+      id: '24',
+      page_slug: 'governance',
+      section: 'policies',
+      order_index: 6,
+      data: {
+        title: 'Document Retention Policy',
+        description: 'Standards for maintaining and disposing of organizational records',
+        icon: 'BookOpen'
+      }
+    },
+    // Governance Page - Documents
+    {
+      id: '25',
+      page_slug: 'governance',
+      section: 'documents',
+      order_index: 1,
+      data: {
+        title: 'Annual Report 2024',
+        description: 'Comprehensive overview of our programs, financial statements, and impact metrics',
+        category: 'annual-report',
+        url: '/documents/annual-report-2024.pdf',
+        icon: 'FileText'
+      }
+    },
+    {
+      id: '26',
+      page_slug: 'governance',
+      section: 'documents',
+      order_index: 2,
+      data: {
+        title: 'Financial Audit 2024',
+        description: 'Independent audit report from certified accountants',
+        category: 'audit',
+        url: '/documents/audit-2024.pdf',
+        icon: 'FileText'
+      }
+    },
+    {
+      id: '27',
+      page_slug: 'governance',
+      section: 'documents',
+      order_index: 3,
+      data: {
+        title: 'CAC Registration Certificate',
+        description: 'Official registration certificate from Corporate Affairs Commission',
+        category: 'legal',
+        url: '/documents/cac-certificate.pdf',
+        icon: 'Award'
+      }
     }
   ];
 
