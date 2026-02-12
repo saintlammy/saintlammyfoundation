@@ -39,8 +39,13 @@ const TestimonialsSection: React.FC = () => {
               // Get gender from data or infer from name
               const gender = t.gender || inferGenderFromName(t.name);
 
+              console.log(`🎭 Processing testimonial: ${t.name}`);
+              console.log(`   Original image: ${t.image}`);
+              console.log(`   Gender: ${gender}`);
+
               // Get avatar with fallback
               const avatarUrl = getTestimonialAvatar(t.image, gender, t.name);
+              console.log(`   Final avatar URL: ${avatarUrl}`);
 
               return {
                 id: t.id,
@@ -53,7 +58,7 @@ const TestimonialsSection: React.FC = () => {
               };
             });
 
-            console.log('✅ Using database testimonials');
+            console.log('✅ Using database testimonials with transformed data:', transformed);
             setTestimonials(transformed);
             return;
           }
