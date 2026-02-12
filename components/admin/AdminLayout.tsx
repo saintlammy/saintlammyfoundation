@@ -122,6 +122,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       label: 'Content',
       icon: FileText,
       children: [
+        { id: 'content-page-builder', label: 'Page Builder', icon: Settings, href: '/admin/content/page-builder' },
         { id: 'content-pages', label: 'Pages', icon: Globe, href: '/admin/content/pages' },
         { id: 'content-stories', label: 'Stories', icon: FileText, href: '/admin/content/stories' },
         { id: 'content-news', label: 'News', icon: Newspaper, href: '/admin/content/news' },
