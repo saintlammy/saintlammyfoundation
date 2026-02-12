@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SponsorModal from './SponsorModal';
 import { Heart, MapPin, Calendar } from 'lucide-react';
+import { truncateText } from '@/lib/textUtils';
 
 interface Beneficiary {
   id: string;
@@ -133,7 +134,7 @@ const BeneficiaryShowcase: React.FC = () => {
                 </div>
 
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">
-                  {beneficiary.story}
+                  {truncateText(beneficiary.story, 3)}
                 </p>
 
                 {/* Support Info */}
