@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
+import { getItems, createItem, updateItem, deleteItem } from '@/lib/fileStorage';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -22,39 +23,42 @@ async function getPageContent(req: NextApiRequest, res: NextApiResponse) {
   const { slug, section } = req.query;
 
   try {
-    if (!supabase) {
-      return res.status(200).json(getMockPageContent(slug as string, section as string));
+    // First check file storage for persisted data
+    const fileStorageData = getItems(slug as string, section as string);
+
+    // If file storage has data, return it (user edits are persisted here)
+    if (fileStorageData && fileStorageData.length > 0) {
+      return res.status(200).json(fileStorageData);
     }
 
-    let query = (supabase
-      .from('page_content') as any)
-      .select('*');
+    // Try Supabase if no file storage data
+    if (supabase) {
+      let query = (supabase
+        .from('page_content') as any)
+        .select('*');
 
-    if (slug) {
-      query = query.eq('page_slug', slug);
+      if (slug) {
+        query = query.eq('page_slug', slug);
+      }
+
+      if (section) {
+        query = query.eq('section', section);
+      }
+
+      query = query.order('order_index', { ascending: true });
+
+      const { data, error } = await query;
+
+      if (!error && data && data.length > 0) {
+        return res.status(200).json(data);
+      }
     }
 
-    if (section) {
-      query = query.eq('section', section);
-    }
-
-    query = query.order('order_index', { ascending: true });
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json(getMockPageContent(slug as string, section as string));
-    }
-
-    if (!data || data.length === 0) {
-      return res.status(200).json(getMockPageContent(slug as string, section as string));
-    }
-
-    res.status(200).json(data);
+    // Fallback to mock data (only for first load)
+    return res.status(200).json(getMockPageContent(slug as string, section as string));
   } catch (error) {
     console.error('API error:', error);
-    res.status(200).json(getMockPageContent(slug as string, section as string));
+    return res.status(200).json(getMockPageContent(slug as string, section as string));
   }
 }
 
@@ -66,36 +70,22 @@ async function createPageContent(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'page_slug and section are required' });
     }
 
-    const newContent = {
-      ...contentData,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+    // Save to file storage (this persists the data)
+    const newContent = createItem(contentData);
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newContent,
-        message: 'Page content created successfully (mock mode)'
-      });
+    // Also try to save to Supabase if available
+    if (supabase) {
+      try {
+        await (supabase
+          .from('page_content') as any)
+          .insert([newContent] as any);
+      } catch (error) {
+        console.error('Supabase insert error (non-fatal):', error);
+        // Continue anyway - file storage is the source of truth
+      }
     }
 
-    const { data, error } = await (supabase
-      .from('page_content') as any)
-      .insert([newContent] as any)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newContent,
-        message: 'Page content created successfully (mock mode)'
-      });
-    }
-
-    res.status(201).json(data);
+    res.status(201).json(newContent);
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -111,33 +101,27 @@ async function updatePageContent(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Content ID is required' });
     }
 
-    updateData.updated_at = new Date().toISOString();
+    // Update in file storage (this persists the data)
+    const updatedContent = updateItem(id as string, updateData);
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Page content updated successfully (mock mode)'
-      });
+    if (!updatedContent) {
+      return res.status(404).json({ error: 'Content not found' });
     }
 
-    const { data, error } = await (supabase
-      .from('page_content') as any)
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Page content updated successfully (mock mode)'
-      });
+    // Also try to update in Supabase if available
+    if (supabase) {
+      try {
+        await (supabase
+          .from('page_content') as any)
+          .update(updateData)
+          .eq('id', id);
+      } catch (error) {
+        console.error('Supabase update error (non-fatal):', error);
+        // Continue anyway - file storage is the source of truth
+      }
     }
 
-    res.status(200).json(data);
+    res.status(200).json(updatedContent);
   } catch (error) {
     console.error('API error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -152,23 +136,24 @@ async function deletePageContent(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Content ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Page content deleted successfully (mock mode)'
-      });
+    // Delete from file storage (this persists the deletion)
+    const deleted = deleteItem(id as string);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Content not found' });
     }
 
-    const { error } = await (supabase
-      .from('page_content') as any)
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return res.status(200).json({
-        message: 'Page content deleted successfully (mock mode)'
-      });
+    // Also try to delete from Supabase if available
+    if (supabase) {
+      try {
+        await (supabase
+          .from('page_content') as any)
+          .delete()
+          .eq('id', id);
+      } catch (error) {
+        console.error('Supabase delete error (non-fatal):', error);
+        // Continue anyway - file storage is the source of truth
+      }
     }
 
     res.status(200).json({ message: 'Page content deleted successfully' });
