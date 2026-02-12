@@ -9,16 +9,21 @@ import { useDonationModal } from '@/components/DonationModalProvider';
 import { Heart, Users, GraduationCap, Star, CheckCircle, ArrowRight, Gift, Target, Clock } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
+import { GetStaticProps } from 'next';
 
-interface SponsorshipTier {
+interface SponsorshipTierData {
   id: string;
   name: string;
   amount: number;
   description: string;
   benefits: string[];
   popular?: boolean;
-  icon: React.ElementType;
+  icon: string;
   color: string;
+}
+
+interface SponsorshipTier extends Omit<SponsorshipTierData, 'icon'> {
+  icon: React.ElementType;
 }
 
 interface Beneficiary {
@@ -28,17 +33,40 @@ interface Beneficiary {
   location: string;
   category: 'orphan' | 'widow' | 'family';
   story: string;
+  needs: string[];
   image: string;
   monthlyCost: number;
   isSponsored?: boolean;
+  schoolGrade?: string;
 }
 
-const SponsorPage: React.FC = () => {
+interface SponsorProps {
+  sponsorshipTiers: SponsorshipTierData[];
+}
+
+// Helper function to map icon names to components
+const getIconComponent = (iconName: string) => {
+  const iconMap: { [key: string]: any } = {
+    Heart,
+    Users,
+    GraduationCap,
+    Star,
+    CheckCircle,
+    ArrowRight,
+    Gift,
+    Target,
+    Clock
+  };
+  return iconMap[iconName] || Heart;
+};
+
+const SponsorPage: React.FC<SponsorProps> = ({ sponsorshipTiers: apiSponsorshipTiers }) => {
   const { openDonationModal } = useDonationModal();
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [isSponsorModalOpen, setIsSponsorModalOpen] = useState(false);
 
-  const sponsorshipTiers: SponsorshipTier[] = [
+  // Use API data or fallback to defaults
+  const sponsorshipTiersData: SponsorshipTierData[] = apiSponsorshipTiers.length > 0 ? apiSponsorshipTiers : [
     {
       id: 'basic',
       name: 'Basic Sponsor',
@@ -50,7 +78,7 @@ const SponsorPage: React.FC = () => {
         'Annual impact report',
         'Access to sponsor community'
       ],
-      icon: Heart,
+      icon: 'Heart',
       color: 'bg-blue-500'
     },
     {
@@ -66,7 +94,7 @@ const SponsorPage: React.FC = () => {
         'Educational milestone celebrations'
       ],
       popular: true,
-      icon: Star,
+      icon: 'Star',
       color: 'bg-accent-500'
     },
     {
@@ -82,10 +110,16 @@ const SponsorPage: React.FC = () => {
         'Custom program development input',
         'Legacy impact documentation'
       ],
-      icon: Target,
+      icon: 'Target',
       color: 'bg-purple-500'
     }
   ];
+
+  // Convert icon strings to components
+  const sponsorshipTiers: SponsorshipTier[] = sponsorshipTiersData.map(tier => ({
+    ...tier,
+    icon: getIconComponent(tier.icon)
+  }));
 
   const featuredBeneficiaries: Beneficiary[] = [
     {
@@ -95,9 +129,11 @@ const SponsorPage: React.FC = () => {
       location: 'Lagos, Nigeria',
       category: 'orphan',
       story: 'Dreams of becoming a doctor to help other children like herself. Your sponsorship provides education, healthcare, and hope.',
+      needs: ['School tuition and supplies', 'Healthcare and medication', 'Clothing and shoes'],
       image: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
       monthlyCost: 85,
-      isSponsored: false
+      isSponsored: false,
+      schoolGrade: 'Primary 3'
     },
     {
       id: 'grace-featured',
@@ -106,6 +142,7 @@ const SponsorPage: React.FC = () => {
       location: 'Abuja, Nigeria',
       category: 'widow',
       story: 'Mother of three learning new skills to provide for her family. Your support helps her start a sustainable business.',
+      needs: ['Business startup capital', 'Vocational training', 'Monthly food support'],
       image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
       monthlyCost: 120,
       isSponsored: false
@@ -117,9 +154,11 @@ const SponsorPage: React.FC = () => {
       location: 'Port Harcourt, Nigeria',
       category: 'orphan',
       story: 'Passionate about technology and engineering. Your sponsorship gives him access to education and tools for his future.',
+      needs: ['Secondary school fees', 'Technology learning materials', 'Career mentorship'],
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
       monthlyCost: 95,
-      isSponsored: false
+      isSponsored: false,
+      schoolGrade: 'SS2'
     }
   ];
 
@@ -425,5 +464,29 @@ const SponsorPage: React.FC = () => {
   );
 };
 
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+    const tiersRes = await fetch(`${baseUrl}/api/page-content?slug=sponsor&section=tiers`);
+
+    const tiersData = tiersRes.ok ? await tiersRes.json() : [];
+
+    return {
+      props: {
+        sponsorshipTiers: tiersData.map((item: any) => item.data)
+      },
+      revalidate: 3600
+    };
+  } catch (error) {
+    console.error('Error fetching sponsor data:', error);
+    return {
+      props: {
+        sponsorshipTiers: []
+      },
+      revalidate: 3600
+    };
+  }
+};
 
 export default SponsorPage;

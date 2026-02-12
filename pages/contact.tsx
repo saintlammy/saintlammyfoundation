@@ -3,8 +3,44 @@ import Head from 'next/head';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, User, Globe } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
+import { GetStaticProps } from 'next';
 
-const Contact: React.FC = () => {
+interface ContactInfoItem {
+  icon: string;
+  title: string;
+  details: string;
+  description: string;
+  link: string;
+}
+
+interface OfficeHours {
+  weekday: string;
+  saturday: string;
+  sunday: string;
+  note: string;
+}
+
+interface ContactProps {
+  contactInfo: ContactInfoItem[];
+  officeHours: OfficeHours | null;
+}
+
+// Helper function to map icon names to components
+const getIconComponent = (iconName: string) => {
+  const iconMap: { [key: string]: any } = {
+    Mail,
+    Phone,
+    MapPin,
+    Globe,
+    Clock,
+    Send,
+    MessageSquare,
+    User
+  };
+  return iconMap[iconName] || Mail;
+};
+
+const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHours: apiOfficeHours }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -41,36 +77,44 @@ const Contact: React.FC = () => {
     });
   };
 
-  const contactInfo = [
+  // Use API data or fallback to defaults
+  const contactInfo = apiContactInfo.length > 0 ? apiContactInfo : [
     {
-      icon: Mail,
+      icon: 'Mail',
       title: 'Email Us',
       details: 'hello@saintlammyfoundation.org',
       description: 'Send us an email and we\'ll respond within 24 hours',
       link: 'mailto:hello@saintlammyfoundation.org'
     },
     {
-      icon: Phone,
+      icon: 'Phone',
       title: 'Call Us',
       details: '+234 706 307 6704',
       description: 'Available Monday to Friday, 9AM - 5PM WAT',
       link: 'tel:+234XXXXXXXXX'
     },
     {
-      icon: MapPin,
+      icon: 'MapPin',
       title: 'Visit Us',
       details: 'Lagos, Nigeria',
       description: 'Schedule an appointment to visit our office',
       link: '#'
     },
     {
-      icon: Globe,
+      icon: 'Globe',
       title: 'Social Media',
       details: '@SaintlammyFoundation',
       description: 'Follow us for updates and impact stories',
       link: '#'
     }
   ];
+
+  const officeHours = apiOfficeHours || {
+    weekday: '9:00 AM - 5:00 PM (WAT)',
+    saturday: '10:00 AM - 2:00 PM (WAT)',
+    sunday: 'Closed',
+    note: 'Emergency inquiries will be responded to within 24 hours regardless of office hours.'
+  };
 
   const inquiryTypes = [
     { value: 'general', label: 'General Inquiry' },
@@ -129,25 +173,28 @@ const Contact: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {contactInfo.map((info, index) => (
-                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none text-center group">
-                  <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <info.icon className="w-6 h-6 text-accent-400" />
+              {contactInfo.map((info, index) => {
+                const IconComponent = getIconComponent(info.icon);
+                return (
+                  <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none text-center group">
+                    <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <IconComponent className="w-6 h-6 text-accent-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{info.title}</h3>
+                    <p className="text-accent-400 font-medium text-sm mb-2">{info.details}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-xs font-light mb-4">{info.description}</p>
+                    <a
+                      href={info.link}
+                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors"
+                    >
+                      Contact Now
+                      <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </a>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{info.title}</h3>
-                  <p className="text-accent-400 font-medium text-sm mb-2">{info.details}</p>
-                  <p className="text-gray-600 dark:text-gray-300 text-xs font-light mb-4">{info.description}</p>
-                  <a
-                    href={info.link}
-                    className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors"
-                  >
-                    Contact Now
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </a>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -329,12 +376,12 @@ const Contact: React.FC = () => {
                 Office Hours
               </h2>
               <div className="space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-                <p><strong>Monday - Friday:</strong> 9:00 AM - 5:00 PM (WAT)</p>
-                <p><strong>Saturday:</strong> 10:00 AM - 2:00 PM (WAT)</p>
-                <p><strong>Sunday:</strong> Closed</p>
+                <p><strong>Monday - Friday:</strong> {officeHours.weekday}</p>
+                <p><strong>Saturday:</strong> {officeHours.saturday}</p>
+                <p><strong>Sunday:</strong> {officeHours.sunday}</p>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 font-light">
-                Emergency inquiries will be responded to within 24 hours regardless of office hours.
+                {officeHours.note}
               </p>
             </div>
           </div>
@@ -342,6 +389,37 @@ const Contact: React.FC = () => {
 
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+    const [contactInfoRes, officeHoursRes] = await Promise.all([
+      fetch(`${baseUrl}/api/page-content?slug=contact&section=info`),
+      fetch(`${baseUrl}/api/page-content?slug=contact&section=office-hours`)
+    ]);
+
+    const contactInfoData = contactInfoRes.ok ? await contactInfoRes.json() : [];
+    const officeHoursData = officeHoursRes.ok ? await officeHoursRes.json() : [];
+
+    return {
+      props: {
+        contactInfo: contactInfoData.map((item: any) => item.data),
+        officeHours: officeHoursData.length > 0 ? officeHoursData[0].data : null
+      },
+      revalidate: 3600
+    };
+  } catch (error) {
+    console.error('Error fetching contact data:', error);
+    return {
+      props: {
+        contactInfo: [],
+        officeHours: null
+      },
+      revalidate: 3600
+    };
+  }
 };
 
 export default Contact;
