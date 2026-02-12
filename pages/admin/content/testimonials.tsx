@@ -31,7 +31,8 @@ const TestimonialsManagement: React.FC = () => {
     role: '',
     content: '',
     rating: 5,
-    image: ''
+    image: '',
+    gender: '' as 'male' | 'female' | 'other' | ''
   });
   const [stats, setStats] = useState({ approved: 0, pending: 0, total: 0, featured: 0 });
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -122,6 +123,23 @@ const TestimonialsManagement: React.FC = () => {
 
   const handleSaveTestimonial = async (testimonialData: any) => {
     try {
+      // Format data for API
+      const apiData = {
+        title: testimonialData.name,
+        content: testimonialData.content,
+        excerpt: testimonialData.role,
+        featured_image: testimonialData.image || null,
+        status: 'published',
+        testimonial_details: {
+          author_name: testimonialData.name,
+          author_role: testimonialData.role,
+          rating: testimonialData.rating,
+          gender: testimonialData.gender || null,
+          program: 'General',
+          is_featured: false
+        }
+      };
+
       if (selectedTestimonial) {
         // Update existing testimonial
         const response = await fetch(`/api/testimonials?id=${selectedTestimonial.id}`, {
@@ -129,7 +147,7 @@ const TestimonialsManagement: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(testimonialData),
+          body: JSON.stringify(apiData),
         });
 
         if (response.ok) {
@@ -146,7 +164,7 @@ const TestimonialsManagement: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(testimonialData),
+          body: JSON.stringify(apiData),
         });
 
         if (response.ok) {
@@ -214,7 +232,8 @@ const TestimonialsManagement: React.FC = () => {
       role: newTestimonial.role,
       content: newTestimonial.content,
       rating: newTestimonial.rating,
-      image: newTestimonial.image || undefined
+      image: newTestimonial.image || undefined,
+      gender: newTestimonial.gender || null
     };
 
     await handleSaveTestimonial(testimonialData);
@@ -225,7 +244,8 @@ const TestimonialsManagement: React.FC = () => {
       role: '',
       content: '',
       rating: 5,
-      image: ''
+      image: '',
+      gender: ''
     });
     setUploadError(null);
   };
@@ -613,6 +633,26 @@ const TestimonialsManagement: React.FC = () => {
                       <option value={2}>2 Stars</option>
                       <option value={1}>1 Star</option>
                     </select>
+                  </div>
+
+                  {/* Gender Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Gender <span className="text-xs text-gray-400">(for avatar fallback)</span>
+                    </label>
+                    <select
+                      value={newTestimonial.gender}
+                      onChange={(e) => setNewTestimonial({...newTestimonial, gender: e.target.value as 'male' | 'female' | 'other' | ''})}
+                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                    >
+                      <option value="">Auto-detect from name</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other/Neutral</option>
+                    </select>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Used to show appropriate default avatar if no image is uploaded
+                    </p>
                   </div>
 
                   {/* Profile Image Upload */}

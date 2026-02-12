@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
+import { getTestimonialAvatar, inferGenderFromName, type Gender } from '@/lib/avatarUtils';
 
 interface Testimonial {
   id: string;
@@ -9,6 +10,7 @@ interface Testimonial {
   content: string;
   rating?: number;
   image?: string;
+  gender?: Gender;
   program?: string;
   date?: string;
 }
@@ -33,15 +35,23 @@ const TestimonialsSection: React.FC = () => {
 
           if (data && data.length > 0) {
             // Transform database testimonials to component format
-            const transformed = data.map((t: Testimonial) => ({
-              id: t.id,
-              name: t.name,
-              role: t.role || 'Beneficiary',
-              location: t.program || 'Nigeria',
-              image: t.image || 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-              quote: t.content,
-              donation: t.program || 'Supporter'
-            }));
+            const transformed = data.map((t: Testimonial) => {
+              // Get gender from data or infer from name
+              const gender = t.gender || inferGenderFromName(t.name);
+
+              // Get avatar with fallback
+              const avatarUrl = getTestimonialAvatar(t.image, gender, t.name);
+
+              return {
+                id: t.id,
+                name: t.name,
+                role: t.role || 'Beneficiary',
+                location: t.program || 'Nigeria',
+                image: avatarUrl,
+                quote: t.content,
+                donation: t.program || 'Supporter'
+              };
+            });
 
             console.log('✅ Using database testimonials');
             setTestimonials(transformed);

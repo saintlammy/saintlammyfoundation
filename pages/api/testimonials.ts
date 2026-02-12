@@ -64,6 +64,7 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
       content: item.content,
       rating: item.story_details?.rating || 5,
       image: item.featured_image,
+      gender: item.story_details?.gender || null,
       program: item.story_details?.program || 'General',
       date: item.publish_date || item.created_at,
       status: item.status,
