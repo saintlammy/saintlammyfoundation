@@ -1,67 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Image from 'next/image';
 import { Heart, Users, Target, Award, MapPin, Calendar, Clock, Globe, Mail, Phone } from 'lucide-react';
 import { useDonationModal } from '@/components/DonationModalProvider';
 
+interface TeamMember {
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  linkedin: string;
+}
+
+interface Milestone {
+  year: string;
+  event: string;
+  icon: string;
+}
+
+interface Value {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+// Helper function to map icon names to components
+const getIconComponent = (iconName: string) => {
+  const iconMap: { [key: string]: any } = {
+    Heart,
+    Users,
+    Target,
+    Award,
+    Globe,
+    MapPin,
+    Calendar,
+    Clock,
+    Mail,
+    Phone
+  };
+  return iconMap[iconName] || Heart; // Fallback to Heart icon
+};
+
 const About: React.FC = () => {
   const { openDonationModal } = useDonationModal();
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [values, setValues] = useState<Value[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const teamMembers = [
-    {
-      name: 'Samuel Lammy',
-      role: 'Founder & Executive Director',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      bio: 'Passionate about empowering vulnerable communities with over 8 years of experience in community development and charity work.',
-      linkedin: '#'
-    },
-    {
-      name: 'Grace Adunola',
-      role: 'Program Director',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      bio: 'Leads our outreach programs with a heart for widows and orphans. Former social worker with 12+ years experience.',
-      linkedin: '#'
-    },
-    {
-      name: 'David Okafor',
-      role: 'Operations Manager',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      bio: 'Ensures efficient operations and transparency in all our programs. Background in nonprofit management and finance.',
-      linkedin: '#'
-    }
-  ];
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const [teamRes, milestonesRes, valuesRes] = await Promise.all([
+          fetch('/api/page-content?slug=about&section=team'),
+          fetch('/api/page-content?slug=about&section=milestones'),
+          fetch('/api/page-content?slug=about&section=values')
+        ]);
 
-  const milestones = [
-    { year: '2021', event: 'Foundation established with community outreach programs', icon: Heart },
-    { year: '2022', event: 'First orphanage adoption program launched', icon: Users },
-    { year: '2023', event: 'Reached 500+ widows and 300+ orphans supported', icon: Target },
-    { year: '2024', event: 'Expanded to crypto donations and digital transparency', icon: Globe },
-    { year: '2025', event: 'Officially incorporated as Saintlammy Community Care Initiative (CAC: 9015713)', icon: Award }
-  ];
+        const teamData = await teamRes.json();
+        const milestonesData = await milestonesRes.json();
+        const valuesData = await valuesRes.json();
 
-  const values = [
-    {
-      title: 'Transparency',
-      description: 'Every donation is tracked and documented. We believe in complete financial transparency.',
-      icon: Target
-    },
-    {
-      title: 'Faith-Driven',
-      description: 'Our work is guided by Christian values of love, compassion, and service to others.',
-      icon: Heart
-    },
-    {
-      title: 'Community Impact',
-      description: 'We focus on sustainable solutions that empower communities for long-term growth.',
-      icon: Users
-    },
-    {
-      title: 'Accountability',
-      description: 'Structured governance ensures responsible stewardship of resources and effective programs.',
-      icon: Award
-    }
-  ];
+        if (teamData && teamData.length > 0) {
+          setTeamMembers(teamData.map((item: any) => item.data));
+        }
+
+        if (milestonesData && milestonesData.length > 0) {
+          setMilestones(milestonesData.map((item: any) => item.data));
+        }
+
+        if (valuesData && valuesData.length > 0) {
+          setValues(valuesData.map((item: any) => item.data));
+        }
+      } catch (error) {
+        console.error('Error fetching page content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
 
   return (
     <>
@@ -165,22 +185,25 @@ const About: React.FC = () => {
             </div>
 
             <div className="space-y-8">
-              {milestones.map((milestone, index) => (
-                <div key={index} className="flex items-start gap-6">
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center">
-                      <milestone.icon className="w-8 h-8 text-accent-400" />
+              {milestones.map((milestone, index) => {
+                const IconComponent = getIconComponent(milestone.icon);
+                return (
+                  <div key={index} className="flex items-start gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center">
+                        <IconComponent className="w-8 h-8 text-accent-400" />
+                      </div>
+                    </div>
+                    <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center gap-4 mb-3">
+                        <span className="text-accent-400 font-semibold text-lg">{milestone.year}</span>
+                        <div className="h-px bg-gray-600 flex-1"></div>
+                      </div>
+                      <p className="text-gray-900 dark:text-white text-lg font-medium">{milestone.event}</p>
                     </div>
                   </div>
-                  <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-4 mb-3">
-                      <span className="text-accent-400 font-semibold text-lg">{milestone.year}</span>
-                      <div className="h-px bg-gray-600 flex-1"></div>
-                    </div>
-                    <p className="text-gray-900 dark:text-white text-lg font-medium">{milestone.event}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -198,15 +221,18 @@ const About: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {values.map((value, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
-                  <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-6">
-                    <value.icon className="w-6 h-6 text-accent-400" />
+              {values.map((value, index) => {
+                const IconComponent = getIconComponent(value.icon);
+                return (
+                  <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
+                    <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-6">
+                      <IconComponent className="w-6 h-6 text-accent-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{value.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{value.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{value.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{value.description}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
