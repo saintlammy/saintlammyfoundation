@@ -276,9 +276,117 @@ function getMockPageContent(slug?: string, section?: string) {
         icon: 'Award'
       }
     },
-    // About Page - Values
+    // About Page - Hero
     {
       id: '9',
+      page_slug: 'about',
+      section: 'hero',
+      order_index: 1,
+      data: {
+        title: 'About Our Mission',
+        subtitle: 'Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.',
+        background_image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80'
+      }
+    },
+    // About Page - Mission
+    {
+      id: '10',
+      page_slug: 'about',
+      section: 'mission',
+      order_index: 1,
+      data: {
+        title: 'Our Mission',
+        content: 'To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency.',
+        tagline: 'We believe that every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances.',
+        icon: 'Target'
+      }
+    },
+    // About Page - Vision
+    {
+      id: '11',
+      page_slug: 'about',
+      section: 'vision',
+      order_index: 1,
+      data: {
+        title: 'Our Vision',
+        content: 'A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all.',
+        tagline: 'Through faith-driven action and sustainable solutions, we\'re building a future of hope and transformation.',
+        icon: 'Heart'
+      }
+    },
+    // About Page - Story
+    {
+      id: '12',
+      page_slug: 'about',
+      section: 'story',
+      order_index: 1,
+      data: {
+        title: 'Our Story',
+        subtitle: 'From a vision to a movement - how Saintlammy Foundation began',
+        paragraphs: [
+          'Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.',
+          'What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We\'ve embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.',
+          'In November 2025, we achieved a significant milestone: official incorporation as Saintlammy Community Care Initiative with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.',
+          'Today, we stand as a testament to what\'s possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.'
+        ]
+      }
+    },
+    // About Page - Testimonials
+    {
+      id: '13',
+      page_slug: 'about',
+      section: 'testimonials',
+      order_index: 1,
+      data: {
+        name: 'Mrs. Chinelo Okafor',
+        role: 'Widow Empowerment Program Beneficiary',
+        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
+        duration: '2 years in program'
+      }
+    },
+    {
+      id: '14',
+      page_slug: 'about',
+      section: 'testimonials',
+      order_index: 2,
+      data: {
+        name: 'Emmanuel Adebayo',
+        role: 'Educational Program Graduate',
+        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
+        duration: 'Scholarship recipient since 2022'
+      }
+    },
+    {
+      id: '15',
+      page_slug: 'about',
+      section: 'testimonials',
+      order_index: 3,
+      data: {
+        name: 'Dr. Sarah Adunola',
+        role: 'Medical Volunteer',
+        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
+        duration: '3 years volunteering'
+      }
+    },
+    {
+      id: '16',
+      page_slug: 'about',
+      section: 'testimonials',
+      order_index: 4,
+      data: {
+        name: 'Pastor David Okon',
+        role: 'Community Partner',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
+        duration: 'Partnership since 2021'
+      }
+    },
+    // About Page - Values
+    {
+      id: '17',
       page_slug: 'about',
       section: 'values',
       order_index: 1,
@@ -289,7 +397,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '10',
+      id: '18',
       page_slug: 'about',
       section: 'values',
       order_index: 2,
@@ -300,7 +408,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '11',
+      id: '19',
       page_slug: 'about',
       section: 'values',
       order_index: 3,
@@ -311,7 +419,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '12',
+      id: '20',
       page_slug: 'about',
       section: 'values',
       order_index: 4,
@@ -323,7 +431,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Governance Page - Board Members
     {
-      id: '13',
+      id: '21',
       page_slug: 'governance',
       section: 'board',
       order_index: 1,
@@ -336,7 +444,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '14',
+      id: '22',
       page_slug: 'governance',
       section: 'board',
       order_index: 2,
@@ -349,7 +457,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '15',
+      id: '23',
       page_slug: 'governance',
       section: 'board',
       order_index: 3,
@@ -362,7 +470,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '16',
+      id: '24',
       page_slug: 'governance',
       section: 'board',
       order_index: 4,
@@ -375,7 +483,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '17',
+      id: '25',
       page_slug: 'governance',
       section: 'board',
       order_index: 5,
@@ -388,7 +496,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '18',
+      id: '26',
       page_slug: 'governance',
       section: 'board',
       order_index: 6,
@@ -402,7 +510,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Governance Page - Policies
     {
-      id: '19',
+      id: '27',
       page_slug: 'governance',
       section: 'policies',
       order_index: 1,
@@ -413,7 +521,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '20',
+      id: '28',
       page_slug: 'governance',
       section: 'policies',
       order_index: 2,
@@ -424,7 +532,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '21',
+      id: '29',
       page_slug: 'governance',
       section: 'policies',
       order_index: 3,
@@ -435,7 +543,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '22',
+      id: '30',
       page_slug: 'governance',
       section: 'policies',
       order_index: 4,
@@ -446,7 +554,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '23',
+      id: '31',
       page_slug: 'governance',
       section: 'policies',
       order_index: 5,
@@ -457,7 +565,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '24',
+      id: '32',
       page_slug: 'governance',
       section: 'policies',
       order_index: 6,
@@ -469,7 +577,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Governance Page - Documents
     {
-      id: '25',
+      id: '33',
       page_slug: 'governance',
       section: 'documents',
       order_index: 1,
@@ -482,7 +590,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '26',
+      id: '34',
       page_slug: 'governance',
       section: 'documents',
       order_index: 2,
@@ -495,7 +603,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '27',
+      id: '35',
       page_slug: 'governance',
       section: 'documents',
       order_index: 3,
@@ -509,7 +617,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Home Page - Who We Are Section
     {
-      id: '28',
+      id: '36',
       page_slug: 'home',
       section: 'who-we-are',
       order_index: 1,
@@ -531,7 +639,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '29',
+      id: '37',
       page_slug: 'home',
       section: 'who-we-are',
       order_index: 2,
@@ -543,7 +651,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '30',
+      id: '38',
       page_slug: 'home',
       section: 'who-we-are',
       order_index: 3,
@@ -555,7 +663,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '31',
+      id: '39',
       page_slug: 'home',
       section: 'who-we-are',
       order_index: 4,
@@ -567,7 +675,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '32',
+      id: '40',
       page_slug: 'home',
       section: 'who-we-are',
       order_index: 5,
@@ -580,7 +688,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Contact Page - Contact Information
     {
-      id: '33',
+      id: '41',
       page_slug: 'contact',
       section: 'info',
       order_index: 1,
@@ -593,7 +701,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '34',
+      id: '42',
       page_slug: 'contact',
       section: 'info',
       order_index: 2,
@@ -606,7 +714,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '35',
+      id: '43',
       page_slug: 'contact',
       section: 'info',
       order_index: 3,
@@ -619,7 +727,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '36',
+      id: '44',
       page_slug: 'contact',
       section: 'info',
       order_index: 4,
@@ -632,7 +740,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '37',
+      id: '45',
       page_slug: 'contact',
       section: 'office-hours',
       order_index: 1,
@@ -645,7 +753,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Partner Page - Partnership Types
     {
-      id: '38',
+      id: '46',
       page_slug: 'partner',
       section: 'types',
       order_index: 1,
@@ -661,7 +769,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '39',
+      id: '47',
       page_slug: 'partner',
       section: 'types',
       order_index: 2,
@@ -677,7 +785,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '40',
+      id: '48',
       page_slug: 'partner',
       section: 'types',
       order_index: 3,
@@ -694,7 +802,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Partner Page - Benefits
     {
-      id: '41',
+      id: '49',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 1,
@@ -705,7 +813,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '42',
+      id: '50',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 2,
@@ -716,7 +824,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '43',
+      id: '51',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 3,
@@ -727,7 +835,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '44',
+      id: '52',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 4,
@@ -738,7 +846,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '45',
+      id: '53',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 5,
@@ -749,7 +857,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '46',
+      id: '54',
       page_slug: 'partner',
       section: 'benefits',
       order_index: 6,
@@ -761,7 +869,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Partner Page - Contact Info
     {
-      id: '47',
+      id: '55',
       page_slug: 'partner',
       section: 'contact',
       order_index: 1,
@@ -773,7 +881,7 @@ function getMockPageContent(slug?: string, section?: string) {
     },
     // Sponsor Page - Tiers
     {
-      id: '48',
+      id: '56',
       page_slug: 'sponsor',
       section: 'tiers',
       order_index: 1,
@@ -793,7 +901,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '49',
+      id: '57',
       page_slug: 'sponsor',
       section: 'tiers',
       order_index: 2,
@@ -815,7 +923,7 @@ function getMockPageContent(slug?: string, section?: string) {
       }
     },
     {
-      id: '50',
+      id: '58',
       page_slug: 'sponsor',
       section: 'tiers',
       order_index: 3,

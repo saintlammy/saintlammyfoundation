@@ -25,6 +25,40 @@ interface Value {
   icon: string;
 }
 
+interface HeroSection {
+  title: string;
+  subtitle: string;
+  background_image: string;
+}
+
+interface MissionSection {
+  title: string;
+  content: string;
+  tagline: string;
+  icon: string;
+}
+
+interface VisionSection {
+  title: string;
+  content: string;
+  tagline: string;
+  icon: string;
+}
+
+interface StorySection {
+  title: string;
+  subtitle: string;
+  paragraphs: string[];
+}
+
+interface AboutTestimonial {
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+  duration: string;
+}
+
 // Helper function to map icon names to components
 const getIconComponent = (iconName: string) => {
   const iconMap: { [key: string]: any } = {
@@ -47,20 +81,35 @@ const About: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [values, setValues] = useState<Value[]>([]);
+  const [hero, setHero] = useState<HeroSection | null>(null);
+  const [mission, setMission] = useState<MissionSection | null>(null);
+  const [vision, setVision] = useState<VisionSection | null>(null);
+  const [story, setStory] = useState<StorySection | null>(null);
+  const [testimonials, setTestimonials] = useState<AboutTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const [teamRes, milestonesRes, valuesRes] = await Promise.all([
+        const [teamRes, milestonesRes, valuesRes, heroRes, missionRes, visionRes, storyRes, testimonialsRes] = await Promise.all([
           fetch('/api/page-content?slug=about&section=team'),
           fetch('/api/page-content?slug=about&section=milestones'),
-          fetch('/api/page-content?slug=about&section=values')
+          fetch('/api/page-content?slug=about&section=values'),
+          fetch('/api/page-content?slug=about&section=hero'),
+          fetch('/api/page-content?slug=about&section=mission'),
+          fetch('/api/page-content?slug=about&section=vision'),
+          fetch('/api/page-content?slug=about&section=story'),
+          fetch('/api/page-content?slug=about&section=testimonials')
         ]);
 
         const teamData = await teamRes.json();
         const milestonesData = await milestonesRes.json();
         const valuesData = await valuesRes.json();
+        const heroData = await heroRes.json();
+        const missionData = await missionRes.json();
+        const visionData = await visionRes.json();
+        const storyData = await storyRes.json();
+        const testimonialsData = await testimonialsRes.json();
 
         if (teamData && teamData.length > 0) {
           setTeamMembers(teamData.map((item: any) => item.data));
@@ -72,6 +121,26 @@ const About: React.FC = () => {
 
         if (valuesData && valuesData.length > 0) {
           setValues(valuesData.map((item: any) => item.data));
+        }
+
+        if (heroData && heroData.length > 0) {
+          setHero(heroData[0].data);
+        }
+
+        if (missionData && missionData.length > 0) {
+          setMission(missionData[0].data);
+        }
+
+        if (visionData && visionData.length > 0) {
+          setVision(visionData[0].data);
+        }
+
+        if (storyData && storyData.length > 0) {
+          setStory(storyData[0].data);
+        }
+
+        if (testimonialsData && testimonialsData.length > 0) {
+          setTestimonials(testimonialsData.map((item: any) => item.data));
         }
       } catch (error) {
         console.error('Error fetching page content:', error);
@@ -92,7 +161,7 @@ const About: React.FC = () => {
         <section className="relative py-16 sm:py-24 md:py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
-              src="https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"
+              src={hero?.background_image || "https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"}
               alt="Community gathering"
               fill
               className="object-cover object-center opacity-30"
@@ -102,10 +171,10 @@ const About: React.FC = () => {
 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
-              About Our Mission
+              {hero?.title || "About Our Mission"}
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
-              Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.
+              {hero?.subtitle || "Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria."}
             </p>
           </div>
         </section>
@@ -116,27 +185,27 @@ const About: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
                 <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
-                  <Target className="w-8 h-8 text-accent-400" />
+                  {mission?.icon ? React.createElement(getIconComponent(mission.icon), { className: "w-8 h-8 text-accent-400" }) : <Target className="w-8 h-8 text-accent-400" />}
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">Our Mission</h2>
+                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">{mission?.title || "Our Mission"}</h2>
                 <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
-                  To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency.
+                  {mission?.content || "To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency."}
                 </p>
                 <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                  We believe that every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances.
+                  {mission?.tagline || "We believe that every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances."}
                 </p>
               </div>
 
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
                 <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
-                  <Heart className="w-8 h-8 text-accent-400" />
+                  {vision?.icon ? React.createElement(getIconComponent(vision.icon), { className: "w-8 h-8 text-accent-400" }) : <Heart className="w-8 h-8 text-accent-400" />}
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">Our Vision</h2>
+                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">{vision?.title || "Our Vision"}</h2>
                 <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
-                  A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all.
+                  {vision?.content || "A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all."}
                 </p>
                 <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                  Through faith-driven action and sustainable solutions, we're building a future of hope and transformation.
+                  {vision?.tagline || "Through faith-driven action and sustainable solutions, we're building a future of hope and transformation."}
                 </p>
               </div>
             </div>
@@ -148,26 +217,44 @@ const About: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
-                Our Story
+                {story?.title || "Our Story"}
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
-                From a vision to a movement - how Saintlammy Foundation began
+                {story?.subtitle || "From a vision to a movement - how Saintlammy Foundation began"}
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                In November 2025, we achieved a significant milestone: official incorporation as <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span> with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed break-words">
-                Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.
-              </p>
+              {story?.paragraphs ? (
+                story.paragraphs.map((paragraph, index) => (
+                  <p key={index} className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
+                    {paragraph.includes('Saintlammy Community Care Initiative') ? (
+                      <>
+                        {paragraph.split('Saintlammy Community Care Initiative')[0]}
+                        <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span>
+                        {paragraph.split('Saintlammy Community Care Initiative')[1]}
+                      </>
+                    ) : (
+                      paragraph
+                    )}
+                  </p>
+                ))
+              ) : (
+                <>
+                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
+                    Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
+                    What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
+                    In November 2025, we achieved a significant milestone: official incorporation as <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span> with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed break-words">
+                    Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -250,7 +337,7 @@ const About: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-              {[
+              {(testimonials.length > 0 ? testimonials : [
                 {
                   name: 'Mrs. Chinelo Okafor',
                   role: 'Widow Empowerment Program Beneficiary',
@@ -279,7 +366,7 @@ const About: React.FC = () => {
                   quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
                   duration: 'Partnership since 2021'
                 }
-              ].map((testimonial, index) => (
+              ]).map((testimonial, index) => (
                 <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
                   <div className="flex items-center mb-6">
                     <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">

@@ -22,11 +22,14 @@ const PageBuilder: React.FC = () => {
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const pages = ['about', 'governance', 'home'];
+  const pages = ['about', 'governance', 'home', 'contact', 'partner', 'sponsor'];
   const sections: { [key: string]: string[] } = {
-    about: ['team', 'milestones', 'values'],
+    about: ['team', 'milestones', 'values', 'hero', 'mission', 'vision', 'story', 'testimonials'],
     governance: ['board', 'policies', 'documents'],
-    home: ['who-we-are', 'mission', 'vision']
+    home: ['who-we-are', 'mission', 'vision'],
+    contact: ['info', 'office-hours'],
+    partner: ['types', 'benefits', 'contact'],
+    sponsor: ['tiers']
   };
 
   const iconOptions = ['Heart', 'Users', 'Target', 'Award', 'Globe', 'MapPin', 'Calendar', 'Clock', 'Mail', 'Phone', 'Shield', 'BookOpen', 'Gavel', 'Scale', 'FileText', 'CheckCircle'];
@@ -144,6 +147,34 @@ const PageBuilder: React.FC = () => {
           return ['title', 'description', 'icon'];
         case 'board':
           return ['name', 'position', 'background', 'image', 'credentials'];
+        case 'hero':
+          return ['title', 'subtitle', 'background_image'];
+        case 'mission':
+          return ['title', 'content', 'tagline', 'icon'];
+        case 'vision':
+          return ['title', 'content', 'tagline', 'icon'];
+        case 'story':
+          return ['title', 'subtitle', 'paragraphs'];
+        case 'testimonials':
+          return ['name', 'role', 'image', 'quote', 'duration'];
+        case 'info':
+          return ['icon', 'title', 'details', 'description', 'link'];
+        case 'office-hours':
+          return ['weekday', 'saturday', 'sunday', 'note'];
+        case 'types':
+          return ['icon', 'title', 'description', 'benefits'];
+        case 'benefits':
+          return ['icon', 'title', 'description'];
+        case 'contact':
+          return ['email', 'phone', 'location'];
+        case 'tiers':
+          return ['name', 'amount', 'description', 'benefits', 'popular', 'icon', 'color'];
+        case 'policies':
+          return ['title', 'description', 'icon'];
+        case 'documents':
+          return ['title', 'description', 'category', 'url', 'icon'];
+        case 'who-we-are':
+          return ['title', 'description', 'icon'];
         default:
           return ['title', 'description'];
       }
@@ -169,20 +200,37 @@ const PageBuilder: React.FC = () => {
                   <option key={icon} value={icon}>{icon}</option>
                 ))}
               </select>
-            ) : field === 'credentials' ? (
+            ) : field === 'popular' ? (
+              <select
+                value={formData[field] ? 'true' : 'false'}
+                onChange={(e) => setFormData({ ...formData, [field]: e.target.value === 'true' })}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+              >
+                <option value="false">No</option>
+                <option value="true">Yes (Mark as Popular)</option>
+              </select>
+            ) : field === 'amount' ? (
+              <input
+                type="number"
+                value={formData[field] || ''}
+                onChange={(e) => setFormData({ ...formData, [field]: parseFloat(e.target.value) })}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                placeholder="Enter amount (e.g., 50, 100, 200)"
+              />
+            ) : field === 'credentials' || field === 'paragraphs' || field === 'benefits' ? (
               <textarea
                 value={Array.isArray(formData[field]) ? formData[field].join('\n') : ''}
                 onChange={(e) => setFormData({ ...formData, [field]: e.target.value.split('\n') })}
-                placeholder="Enter one credential per line"
+                placeholder={field === 'credentials' ? 'Enter one credential per line' : field === 'paragraphs' ? 'Enter one paragraph per line' : 'Enter one benefit per line'}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                rows={3}
+                rows={field === 'paragraphs' ? 6 : field === 'benefits' ? 5 : 3}
               />
-            ) : field === 'bio' || field === 'background' || field === 'description' ? (
+            ) : field === 'bio' || field === 'background' || field === 'description' || field === 'content' || field === 'quote' || field === 'note' ? (
               <textarea
                 value={formData[field] || ''}
                 onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                rows={4}
+                rows={field === 'content' || field === 'quote' ? 5 : 4}
               />
             ) : (
               <input
@@ -190,6 +238,7 @@ const PageBuilder: React.FC = () => {
                 value={formData[field] || ''}
                 onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                placeholder={field === 'background_image' ? 'Enter image URL' : field === 'color' ? 'e.g., blue, green, purple' : ''}
               />
             )}
           </div>
