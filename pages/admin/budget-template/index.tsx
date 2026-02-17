@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import type {
   BudgetDocumentData, BudgetTemplateMeta, Bucket, BucketColumn, BucketRow, Guardrail
-} from '@/components/admin/BudgetTemplatePDF';
+} from '@/types/budget';
 
 // ─── Types for saved templates ─────────────────────────────────────────────────
 interface SavedTemplate {
