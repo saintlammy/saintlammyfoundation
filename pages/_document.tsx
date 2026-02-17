@@ -248,6 +248,12 @@ export default function Document() {
             __html: `
               (function() {
                 try {
+                  // Admin routes are always dark mode - no flash, no system preference check
+                  if (window.location.pathname.startsWith('/admin')) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                    return;
+                  }
                   const theme = localStorage.getItem('saintlammy-theme') ||
                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
                   document.documentElement.classList.add(theme);

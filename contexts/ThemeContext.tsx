@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/router';
 
 export type Theme = 'light' | 'dark';
 
@@ -23,26 +24,38 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const router = useRouter();
+  const isAdminRoute = router.pathname.startsWith('/admin');
+
   const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
 
-    // Get theme from localStorage or system preference
+    // Admin routes are always dark mode regardless of system/localStorage preference
+    if (isAdminRoute) {
+      setTheme('dark');
+      return;
+    }
+
+    // Get theme from localStorage or system preference for public routes
     const savedTheme = localStorage.getItem('saintlammy-theme') as Theme;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const initialTheme = savedTheme || systemTheme;
 
     setTheme(initialTheme);
-  }, []);
+  }, [isAdminRoute]);
 
   useEffect(() => {
     if (mounted) {
       applyTheme(theme);
-      localStorage.setItem('saintlammy-theme', theme);
+      // Only persist theme for non-admin routes
+      if (!isAdminRoute) {
+        localStorage.setItem('saintlammy-theme', theme);
+      }
     }
-  }, [theme, mounted]);
+  }, [theme, mounted, isAdminRoute]);
 
   const applyTheme = (newTheme: Theme) => {
     if (typeof window === 'undefined') return;
@@ -59,11 +72,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   const toggleTheme = () => {
+    // Admin routes always stay dark
+    if (isAdminRoute) return;
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
   };
 
   const handleSetTheme = (newTheme: Theme) => {
+    // Admin routes always stay dark
+    if (isAdminRoute) return;
     setTheme(newTheme);
   };
 
