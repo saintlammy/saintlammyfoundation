@@ -12,6 +12,7 @@
   "dependencies": {
     "@paypal/paypal-js": "^8.4.2",
     "@paypal/react-paypal-js": "^8.9.1",
+    "@react-pdf/renderer": "^4.3.2",
     "@solana/web3.js": "^1.98.4",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/supabase-js": "^2.38.4",

@@ -30,7 +30,8 @@ import {
   Newspaper,
   Image,
   Target,
-  Cookie
+  Cookie,
+  Calculator
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -165,6 +166,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         { id: 'communications-newsletter', label: 'Newsletter', icon: Bell, href: '/admin/communications/newsletter' },
         { id: 'communications-notifications', label: 'Notifications', icon: Bell, href: '/admin/communications/notifications' }
       ]
+    },
+    {
+      id: 'budget-template',
+      label: 'Budget Template',
+      icon: Calculator,
+      href: '/admin/budget-template'
     },
     {
       id: 'settings',
