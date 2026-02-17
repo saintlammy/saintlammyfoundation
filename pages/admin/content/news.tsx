@@ -457,7 +457,7 @@ const NewsManagement: React.FC = () => {
                     </tr>
                   ) : (
                     filteredNews.map((news) => (
-                      <tr key={news.id} className="hover:bg-gray-50 dark:bg-gray-700/50">
+                      <tr key={news.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td className="px-6 py-4">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">{news.title}</div>

@@ -367,7 +367,7 @@ const AdminPrograms: React.FC = () => {
               </select>
               <button
                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors"
+                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 {viewMode === 'grid' ? 'List' : 'Grid'}
               </button>
@@ -555,7 +555,7 @@ const AdminPrograms: React.FC = () => {
                       const progressPercentage = getProgressPercentage(program.currentAmount, program.targetAmount);
 
                       return (
-                        <tr key={program.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                        <tr key={program.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                           <td className="px-6 py-4">
                             <input
                               type="checkbox"
@@ -637,13 +637,13 @@ const AdminPrograms: React.FC = () => {
               Showing {filteredPrograms.length} of {programs.length} programs
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Previous
               </button>
               <button className="px-3 py-1 bg-accent-500 text-white rounded">
                 1
               </button>
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Next
               </button>
             </div>

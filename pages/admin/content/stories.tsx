@@ -467,7 +467,7 @@ const StoriesManagement: React.FC = () => {
                     </tr>
                   ) : (
                     filteredStories.map((story) => (
-                      <tr key={story.id} className="hover:bg-gray-50 dark:bg-gray-700/50">
+                      <tr key={story.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td className="px-6 py-4">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">{story.title}</div>

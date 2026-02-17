@@ -98,7 +98,7 @@ const ClearSession: React.FC = () => {
 
             <button
               onClick={forceReload}
-              className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-white rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-3 px-4 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-white rounded-lg transition-colors"
             >
               <RefreshCw className="w-5 h-5" />
               <span>Force Page Reload</span>

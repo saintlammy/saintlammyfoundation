@@ -54,6 +54,18 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   const router = useRouter();
   const { user, signOut, isAdmin, isModerator } = useAuth();
 
+  // Admin dashboard always uses dark mode - force dark class on <html>
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+    return () => {
+      // Restore system theme preference on unmount (when leaving admin)
+      const savedTheme = localStorage.getItem('saintlammy-theme');
+      if (savedTheme !== 'dark') {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+  }, []);
+
   // Auto-logout after 60 minutes of inactivity
   const { showLogoutModal, logoutReason, closeModal } = useAutoLogout({
     timeoutMinutes: 60,
@@ -294,7 +306,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
 
   return (
     <ProtectedRoute requireAdmin={true}>
-    <div className="dark flex h-screen bg-gray-900">
+    <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
       <div className={clsx(
         'fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0',
@@ -311,7 +323,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
                 className="w-full h-full object-contain"
               />
             </div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white font-display">
+            <h1 className="text-lg font-semibold text-white font-display">
               Admin Panel
             </h1>
           </div>
@@ -339,10 +351,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               </span>
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
+              <p className="text-sm font-medium text-white">
                 {user?.user_metadata?.name || user?.email?.split('@')[0] || 'Admin'}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Administrator</p>
+              <p className="text-xs text-gray-400">Administrator</p>
             </div>
             <button
               onClick={handleSignOut}
@@ -356,7 +368,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-gray-800 border-b border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
@@ -367,7 +379,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
+              <h1 className="text-2xl font-semibold text-white font-display">
                 {title}
               </h1>
             </div>
@@ -401,7 +413,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-900 p-6">
           {children}
         </main>
       </div>

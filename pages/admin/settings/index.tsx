@@ -407,7 +407,7 @@ const AdminSettings: React.FC = () => {
                     className={`w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-colors mb-1 ${
                       activeTab === tab.id
                         ? 'bg-accent-500 text-gray-900 dark:text-white'
-                        : 'text-gray-300 hover:bg-gray-50 dark:bg-gray-700 hover:text-gray-900 dark:text-white'
+                        : 'text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-white'
                     }`}
                   >
                     <tab.icon className="w-5 h-5" />

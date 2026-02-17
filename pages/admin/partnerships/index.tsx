@@ -380,7 +380,7 @@ const AdminPartnerships: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                     {filteredApplications.map((application) => (
-                      <tr key={application.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                      <tr key={application.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-start space-x-3">
                             <div className="flex items-center justify-center w-10 h-10 bg-gray-50 dark:bg-gray-700 rounded-lg">

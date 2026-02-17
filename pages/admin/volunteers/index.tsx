@@ -549,7 +549,7 @@ const AdminVolunteers: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-700">
                       {filteredVolunteers.map((volunteer) => (
-                        <tr key={volunteer.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                        <tr key={volunteer.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                           <td className="px-6 py-4">
                             <input
                               type="checkbox"
@@ -737,13 +737,13 @@ const AdminVolunteers: React.FC = () => {
               Showing {activeTab === 'volunteers' ? filteredVolunteers.length : filteredApplications.length} of {activeTab === 'volunteers' ? volunteers.length : applications.length} {activeTab}
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Previous
               </button>
               <button className="px-3 py-1 bg-accent-500 text-white rounded">
                 1
               </button>
-              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Next
               </button>
             </div>

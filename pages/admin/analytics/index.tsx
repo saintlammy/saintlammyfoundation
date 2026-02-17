@@ -182,7 +182,7 @@ const Analytics: React.FC = () => {
                 <option value="90d">Last 3 months</option>
                 <option value="1y">Last year</option>
               </select>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors border border-gray-200 dark:border-gray-700">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors border border-gray-200 dark:border-gray-700">
                 <RefreshCw className="w-4 h-4" />
                 Refresh
               </button>
@@ -408,7 +408,7 @@ const Analytics: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-700">
                   {topPages.map((page: { page: string; views: number; uniqueVisitors: number; avgTimeOnPage: string; conversionRate: string }, index: number) => (
-                    <tr key={index} className="hover:bg-gray-50 dark:bg-gray-700/20">
+                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/20">
                       <td className="px-6 py-4">
                         <span className="text-gray-900 dark:text-white font-mono">{page.page}</span>
                       </td>

@@ -487,7 +487,7 @@ const GalleryManagement: React.FC = () => {
                     filteredGallery.map((item) => {
                       const CategoryIcon = getCategoryIcon(item.gallery_details.category);
                       return (
-                        <tr key={item.id} className="hover:bg-gray-50 dark:bg-gray-700/50">
+                        <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <div className="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center mr-4">

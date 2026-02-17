@@ -1750,7 +1750,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('withdraw', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-gray-50 dark:bg-gray-700 rounded-t-lg transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-green-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-t-lg transition-colors"
                                 >
                                   <Send className="w-4 h-4 inline mr-2" />
                                   Send/Withdraw
@@ -1790,7 +1790,7 @@ const AdminWalletManagement: React.FC = () => {
                                     e.stopPropagation();
                                     handleWalletAction('archive', wallet);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-50 dark:bg-gray-700 rounded-b-lg transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-b-lg transition-colors"
                                 >
                                   <AlertTriangle className="w-4 h-4 inline mr-2" />
                                   Archive Wallet
@@ -1941,7 +1941,7 @@ const AdminWalletManagement: React.FC = () => {
               {recentTransactions.map((tx) => {
                 const IconComponent = cryptoIcons[tx.currency as keyof typeof cryptoIcons];
                 return (
-                  <div key={tx.id} className="p-4 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                  <div key={tx.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${

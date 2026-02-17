@@ -306,7 +306,7 @@ const AdminContent: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <Filter className="w-4 h-4" />
                 <span>Filters</span>
@@ -385,7 +385,7 @@ const AdminContent: React.FC = () => {
                   <button
                     onClick={() => handleBulkAction('archive')}
                     disabled={loading}
-                    className="px-3 py-1 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 disabled:opacity-50 text-gray-900 dark:text-white rounded text-sm transition-colors"
+                    className="px-3 py-1 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 text-gray-900 dark:text-white rounded text-sm transition-colors"
                   >
                     Archive
                   </button>
@@ -456,7 +456,7 @@ const AdminContent: React.FC = () => {
                     </tr>
                   ) : (
                     contentItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+                    <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <td className="px-6 py-4">
                         <input
                           type="checkbox"
@@ -560,16 +560,16 @@ const AdminContent: React.FC = () => {
               Showing {contentItems.length} of {total} items
             </div>
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Previous
               </button>
               <button className="px-3 py-1 bg-accent-500 text-gray-900 dark:text-white rounded">
                 1
               </button>
-              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 2
               </button>
-              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:bg-gray-700 transition-colors">
+              <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Next
               </button>
             </div>

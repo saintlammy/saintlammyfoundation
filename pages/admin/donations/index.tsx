@@ -664,7 +664,7 @@ const DonationsManagement: React.FC = () => {
                     className={`p-2 rounded-lg transition-colors ${
                       autoRefresh
                         ? 'bg-accent-500/20 text-accent-400'
-                        : 'bg-gray-200 dark:bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-300'
                     }`}
                     title={autoRefresh ? 'Auto-refresh enabled' : 'Auto-refresh disabled'}
                   >
@@ -785,7 +785,7 @@ const DonationsManagement: React.FC = () => {
                 <button
                   onClick={handleRefresh}
                   disabled={refreshing}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-50 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors disabled:opacity-50">
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors disabled:opacity-50">
                   <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>

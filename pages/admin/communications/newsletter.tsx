@@ -246,7 +246,7 @@ const NewsletterManagement: React.FC = () => {
                 </button>
                 <button
                   onClick={loadSubscribers}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Refresh
@@ -293,7 +293,7 @@ const NewsletterManagement: React.FC = () => {
                     </tr>
                   ) : (
                     filteredSubscribers.map((subscriber) => (
-                      <tr key={subscriber.id} className="hover:bg-gray-50 dark:bg-gray-700/50">
+                      <tr key={subscriber.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
                             <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -396,7 +396,7 @@ const NewsletterManagement: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setShowAddModal(false)}
-                      className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
                     >
                       Cancel
                     </button>
