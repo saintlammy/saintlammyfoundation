@@ -3,7 +3,10 @@ import { useRouter } from 'next/router';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO, generateStructuredData } from '@/lib/seo';
 import Navigation from '@/components/Navigation';
-import Hero from '@/components/Hero';
+// import Hero from '@/components/Hero'; // Original Hero
+// import Hero from '@/components/HeroSplitScreen'; // Option 1: Modern Split-Screen Hero
+import Hero from '@/components/HeroGlassmorphism'; // Option 2: Glassmorphism Card Hero
+// import Hero from '@/components/HeroAsymmetric'; // Option 3: Asymmetric Diagonal Hero
 import BeneficiaryShowcase from '@/components/BeneficiaryShowcase';
 import ImpactGallery from '@/components/ImpactGallery';
 import TestimonialsSection from '@/components/TestimonialsSection';
