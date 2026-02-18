@@ -257,8 +257,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             onClick={() => toggleMenu(item.id)}
             className={clsx(
               'w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-colors',
-              level === 0 ? 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50',
-              (isExpanded || hasActiveChild) && 'text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700'
+              level === 0 ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50',
+              (isExpanded || hasActiveChild) && 'text-white bg-gray-700'
             )}
             style={{ paddingLeft: `${12 + level * 16}px` }}
           >
@@ -295,8 +295,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             isActive
               ? 'text-white bg-accent-500'
               : level === 0
-                ? 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                ? 'text-gray-300 hover:text-white hover:bg-gray-700'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50'
           )}
           style={{ paddingLeft: `${12 + level * 16}px` }}
         >
@@ -339,7 +339,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+            className="lg:hidden text-gray-400 hover:text-white"
           >
             <X className="w-6 h-6" />
           </button>
@@ -368,7 +368,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             </div>
             <button
               onClick={handleSignOut}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+              className="text-gray-400 hover:text-white"
               title="Sign Out"
             >
               <LogOut className="w-5 h-5" />
@@ -385,7 +385,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white mr-4"
+                className="lg:hidden text-gray-400 hover:text-white mr-4"
               >
                 <Menu className="w-6 h-6" />
               </button>
@@ -397,11 +397,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             <div className="flex items-center space-x-4">
               {/* Search */}
               <div className="relative hidden md:block">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
 
