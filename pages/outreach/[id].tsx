@@ -119,7 +119,7 @@ const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
     impact: details.impact || [],
     budget: {
       planned: details.budget_planned || details.budget || 0,
-      actual: details.budget_actual || details.budget || 0,
+      actual: details.budget_actual || 0,
       breakdown: details.budget_breakdown || []
     },
     volunteers: {
@@ -154,7 +154,10 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
       : null
   );
   const [loading, setLoading] = useState(!initialOutreach);
-  const [activeTab, setActiveTab] = useState<'overview' | 'impact' | 'financials' | 'gallery'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'impact' | 'financials' | 'gallery' | 'plans'>('overview');
+  const isUpcoming = outreach?.status === 'upcoming' || (outreach?.status as string) === 'draft';
+  const isCompleted = outreach?.status === 'completed';
+  const isOngoing = outreach?.status === 'ongoing';
 
   useEffect(() => {
     // Only fetch if we don't have initialOutreach
@@ -623,11 +626,12 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
 
               <div className="flex items-center gap-2 sm:gap-3 mb-4 flex-wrap">
                 <span className={`px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium ${
-                  outreach.status === 'completed'
-                    ? 'bg-green-500/20 text-green-300'
-                    : 'bg-blue-500/20 text-blue-300'
+                  outreach.status === 'completed' ? 'bg-green-500/20 text-green-300' :
+                  outreach.status === 'ongoing' ? 'bg-yellow-500/20 text-yellow-300' :
+                  'bg-blue-500/20 text-blue-300'
                 }`}>
-                  {outreach.status === 'completed' ? 'Completed' : 'Upcoming'}
+                  {outreach.status === 'completed' ? 'Completed' :
+                   outreach.status === 'ongoing' ? 'Ongoing' : 'Upcoming'}
                 </span>
 
                 {outreach.status === 'completed' && calculateImpactPercentage() > 100 && (
@@ -653,7 +657,10 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                  <span className="whitespace-nowrap">{outreach.actualBeneficiaries} People Reached</span>
+                  {outreach.status === 'completed'
+                    ? <span className="whitespace-nowrap">{outreach.actualBeneficiaries} People Reached</span>
+                    : <span className="whitespace-nowrap">{outreach.targetBeneficiaries > 0 ? `${outreach.targetBeneficiaries} Expected` : 'Register to Attend'}</span>
+                  }
                 </div>
               </div>
             </div>
@@ -696,21 +703,24 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — upcoming only gets Overview + Plans; completed/ongoing get all tabs */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex gap-4 sm:gap-8 overflow-x-auto">
-              {(['overview', 'impact', 'financials', 'gallery'] as const).map((tab) => (
+              {(isUpcoming
+                ? (['overview', 'plans'] as const)
+                : (['overview', 'impact', 'financials', 'gallery'] as const)
+              ).map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => setActiveTab(tab as any)}
                   className={`py-4 px-2 border-b-2 font-medium transition-colors capitalize whitespace-nowrap flex-shrink-0 cursor-pointer ${
                     activeTab === tab
                       ? 'border-accent-400 text-accent-400'
                       : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                   }`}
                 >
-                  {tab}
+                  {tab === 'plans' ? 'Plans' : tab}
                 </button>
               ))}
             </div>
@@ -732,62 +742,94 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
               {/* Quick Stats */}
               <section>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Statistics</h2>
-                <div className="grid md:grid-cols-4 gap-6">
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Users className="w-8 h-8 text-accent-400 mb-3" />
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                      {outreach.actualBeneficiaries}
+                {isUpcoming ? (
+                  // Upcoming: show planned/expected stats only
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <Users className="w-8 h-8 text-accent-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.targetBeneficiaries > 0 ? outreach.targetBeneficiaries : '—'}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Expected Attendees</div>
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      People Reached
-                      <span className="block text-xs text-green-500 mt-1">
-                        {calculateImpactPercentage()}% of target
-                      </span>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <Heart className="w-8 h-8 text-red-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.volunteers.registered > 0 ? outreach.volunteers.registered : '—'}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Volunteers Needed</div>
                     </div>
-                  </div>
-
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <Heart className="w-8 h-8 text-red-400 mb-3" />
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                      {outreach.volunteers.participated}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Active Volunteers
-                      <span className="block text-xs mt-1">
-                        {outreach.volunteers.hours} total hours
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <CheckCircle className="w-8 h-8 text-green-400 mb-3" />
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                      {outreach.activities.filter(a => a.completed).length}/{outreach.activities.length}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Activities Completed
-                      <span className="block text-xs text-green-500 mt-1">
-                        100% completion rate
-                      </span>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <DollarSign className="w-8 h-8 text-blue-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.budget.planned > 0 ? `₦${(outreach.budget.planned / 1000000).toFixed(2)}M` : '—'}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Planned Budget</div>
                     </div>
                   </div>
-
-                  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-                    <DollarSign className="w-8 h-8 text-blue-400 mb-3" />
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                      ₦{(outreach.budget.actual / 1000000).toFixed(2)}M
+                ) : (
+                  // Completed / Ongoing: show actual results
+                  <div className="grid md:grid-cols-4 gap-6">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <Users className="w-8 h-8 text-accent-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.actualBeneficiaries}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        People Reached
+                        {outreach.targetBeneficiaries > 0 && (
+                          <span className="block text-xs text-green-500 mt-1">
+                            {calculateImpactPercentage()}% of target
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Total Investment
-                      <span className="block text-xs text-green-500 mt-1">
-                        {Math.round((outreach.budget.actual / outreach.budget.planned) * 100)}% of budget
-                      </span>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <Heart className="w-8 h-8 text-red-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.volunteers.participated}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Volunteers
+                        {outreach.volunteers.hours > 0 && (
+                          <span className="block text-xs mt-1">{outreach.volunteers.hours} total hours</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <CheckCircle className="w-8 h-8 text-green-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        {outreach.activities.filter(a => a.completed).length}/{outreach.activities.length}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Activities Completed
+                        {outreach.activities.length > 0 && (
+                          <span className="block text-xs text-green-500 mt-1">
+                            {Math.round((outreach.activities.filter(a => a.completed).length / outreach.activities.length) * 100)}% completion rate
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <DollarSign className="w-8 h-8 text-blue-400 mb-3" />
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+                        ₦{(outreach.budget.actual / 1000000).toFixed(2)}M
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Total Spent
+                        {outreach.budget.planned > 0 && outreach.budget.actual > 0 && (
+                          <span className="block text-xs text-green-500 mt-1">
+                            {Math.round((outreach.budget.actual / outreach.budget.planned) * 100)}% of budget
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </section>
 
-              {/* Beneficiary Breakdown */}
+              {/* Beneficiary Breakdown — only for completed/ongoing */}
+              {!isUpcoming && outreach.beneficiaryCategories.length > 0 && (
               <section>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Beneficiary Demographics</h2>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -801,7 +843,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div
                             className="bg-accent-400 h-2 rounded-full transition-all"
-                            style={{ width: `${(category.count / outreach.actualBeneficiaries) * 100}%` }}
+                            style={{ width: `${outreach.actualBeneficiaries > 0 ? (category.count / outreach.actualBeneficiaries) * 100 : 0}%` }}
                           />
                         </div>
                       </div>
@@ -809,10 +851,14 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                   </div>
                 </div>
               </section>
+              )}
 
               {/* Activities */}
+              {outreach.activities.length > 0 && (
               <section>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Activities Conducted</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                  {isUpcoming ? 'Planned Activities' : 'Activities Conducted'}
+                </h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   {outreach.activities.map((activity, index) => (
                     <div
@@ -830,9 +876,10 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                   ))}
                 </div>
               </section>
+              )}
 
-              {/* Testimonials */}
-              {outreach.testimonials && outreach.testimonials.length > 0 && (
+              {/* Testimonials — only for completed/ongoing */}
+              {!isUpcoming && outreach.testimonials && outreach.testimonials.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">What People Are Saying</h2>
                   <div className="grid md:grid-cols-3 gap-6">
@@ -878,8 +925,8 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                 </section>
               )}
 
-              {/* Future Plans */}
-              {outreach.futurePlans && outreach.futurePlans.length > 0 && (
+              {/* Future Plans — only in overview for completed/ongoing (upcoming has its own Plans tab) */}
+              {!isUpcoming && outreach.futurePlans && outreach.futurePlans.length > 0 && (
                 <section>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Future Plans</h2>
                   <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 sm:p-8 rounded-xl">
@@ -891,6 +938,47 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                         </li>
                       ))}
                     </ul>
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
+
+          {/* Plans tab — upcoming only */}
+          {activeTab === 'plans' && (
+            <div className="space-y-8">
+              {outreach.futurePlans && outreach.futurePlans.length > 0 ? (
+                <section>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Plans for This Outreach</h2>
+                  <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 sm:p-8 rounded-xl">
+                    <ul className="space-y-3">
+                      {outreach.futurePlans.map((plan, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <Target className="w-5 h-5 text-accent-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700 dark:text-gray-200 break-words">{plan}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </section>
+              ) : (
+                <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+                  <Target className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                  <p>No plans added yet. Check back closer to the event date.</p>
+                </div>
+              )}
+
+              {/* Partners */}
+              {outreach.partners && outreach.partners.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Confirmed Partners</h2>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {outreach.partners.map((partner, index) => (
+                      <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-2 break-words">{partner.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 break-words">{partner.contribution}</p>
+                      </div>
+                    ))}
                   </div>
                 </section>
               )}
@@ -964,11 +1052,13 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                     <div>
                       <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Budget Efficiency</div>
                       <div className="text-2xl font-bold text-green-500">
-                        {Math.round((outreach.budget.actual / outreach.budget.planned) * 100)}%
+                        {outreach.budget.planned > 0 ? `${Math.round((outreach.budget.actual / outreach.budget.planned) * 100)}%` : '—'}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        ₦{(outreach.budget.planned - outreach.budget.actual).toLocaleString()} under budget
-                      </div>
+                      {outreach.budget.planned > 0 && outreach.budget.actual > 0 && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          ₦{(outreach.budget.planned - outreach.budget.actual).toLocaleString()} {outreach.budget.actual <= outreach.budget.planned ? 'under' : 'over'} budget
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -976,10 +1066,16 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Cost per Beneficiary</h3>
                   <div className="text-center py-8">
-                    <div className="text-5xl font-bold text-accent-400 mb-2">
-                      ₦{Math.round(outreach.budget.actual / outreach.actualBeneficiaries).toLocaleString()}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400">per person reached</div>
+                    {outreach.budget.actual > 0 && outreach.actualBeneficiaries > 0 ? (
+                      <>
+                        <div className="text-5xl font-bold text-accent-400 mb-2">
+                          ₦{Math.round(outreach.budget.actual / outreach.actualBeneficiaries).toLocaleString()}
+                        </div>
+                        <div className="text-gray-600 dark:text-gray-400">per person reached</div>
+                      </>
+                    ) : (
+                      <div className="text-gray-500 dark:text-gray-400">Available after event completion</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1012,7 +1108,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
             <div className="space-y-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Photo Gallery</h2>
-                <p className="text-gray-600 dark:text-gray-400">Moments captured from the outreach</p>
+                <p className="text-gray-600 dark:text-gray-400">{isUpcoming ? 'Preview images for this outreach' : 'Moments captured from the outreach'}</p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">
