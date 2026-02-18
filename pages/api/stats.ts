@@ -73,6 +73,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('category', 'widow')
       .eq('status', 'active');
 
+    // Sum orphan_count from active orphanage homes (group-visit tracking)
+    const { data: orphanageHomes } = await supabase
+      .from('orphanage_homes')
+      .select('orphan_count')
+      .eq('is_active', true);
+
     // Calculate total donations
     const totalDonations = (donations as any)?.reduce((sum: number, d: any) => {
       return sum + (parseFloat(String(d.amount)) || 0);
@@ -99,7 +105,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       totalDonations: hasRealData ? Math.round(totalDonations) : FALLBACK_STATS.totalDonations,
       totalDonors: hasRealData ? (donorCount || 0) : FALLBACK_STATS.totalDonors,
       totalBeneficiaries: (beneficiaryCount && beneficiaryCount > 0) ? beneficiaryCount : FALLBACK_STATS.totalBeneficiaries,
-      totalOrphans: (orphanCount && orphanCount > 0) ? orphanCount : 0,
+      totalOrphans: (() => {
+        const individual = orphanCount ?? 0;
+        const fromHomes = (orphanageHomes || []).reduce((sum: number, h: any) => sum + (h.orphan_count || 0), 0);
+        const total = individual + fromHomes;
+        return total > 0 ? total : 0;
+      })(),
       totalWidows: (widowCount && widowCount > 0) ? widowCount : 0,
       totalOutreaches: (outreachCount && outreachCount > 0) ? outreachCount : 3,
       yearsOfImpact,
