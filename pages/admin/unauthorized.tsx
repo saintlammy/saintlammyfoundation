@@ -112,7 +112,7 @@ const Unauthorized: React.FC = () => {
             {/* Go Back */}
             <button
               onClick={() => router.back()}
-              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Go Back</span>
@@ -121,7 +121,7 @@ const Unauthorized: React.FC = () => {
             {/* Home */}
             <Link
               href="/"
-              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 py-2 px-4 border border-gray-600 text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <Home className="w-5 h-5" />
               <span>Return to Homepage</span>

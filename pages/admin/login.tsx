@@ -257,7 +257,7 @@ const AdminLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(false)}
-                  className="flex-1 py-3 px-4 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-1 py-3 px-4 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-800 transition-colors"
                 >
                   Back to Login
                 </button>

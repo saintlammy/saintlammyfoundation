@@ -319,7 +319,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
     <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
       <div className={clsx(
-        'fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0',
+        'fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 flex flex-col transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
         <div className="flex items-center justify-between h-16 px-4 bg-gray-900 border-b border-gray-700">
@@ -345,7 +345,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
           </button>
         </div>
 
-        <div className="flex-1 px-4 py-6 overflow-y-auto">
+        <div className="flex-1 px-4 py-6 overflow-y-auto bg-gray-800">
           <nav className="space-y-2">
             {menuItems.map(item => renderMenuItem(item))}
           </nav>

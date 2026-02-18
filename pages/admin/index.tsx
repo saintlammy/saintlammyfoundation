@@ -358,7 +358,7 @@ const AdminDashboard: React.FC = () => {
                   <a
                     key={index}
                     href={action.href}
-                    className="block p-4 rounded-lg bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group"
+                    className="block p-4 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors group"
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
