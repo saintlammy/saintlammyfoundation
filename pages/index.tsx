@@ -58,11 +58,14 @@ const HomeContent: React.FC<HomeProps> = ({ stats }) => {
 
       <ErrorBoundary>
         <main className="min-h-screen">
-        <Hero onDonateClick={() => openDonationModal({
-        source: 'hero-cta',
-        title: 'Transform Lives Today',
-        description: 'Join thousands of donors making a difference for orphans and widows'
-      })} />
+        <Hero
+          stats={stats}
+          onDonateClick={() => openDonationModal({
+            source: 'hero-cta',
+            title: 'Transform Lives Today',
+            description: 'Join thousands of donors making a difference for orphans and widows'
+          })}
+        />
 
         {/* Who We Are Section */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900">

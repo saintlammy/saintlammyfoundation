@@ -1,18 +1,22 @@
 import React from 'react';
-import { ComponentProps } from '@/types';
-import { Heart, Users, GraduationCap, TrendingUp, Handshake, MapPin, ArrowRight, Sparkles } from 'lucide-react';
+import { ComponentProps, DashboardStats } from '@/types';
+import { Heart, Users, GraduationCap, TrendingUp, Handshake, MapPin, ArrowRight } from 'lucide-react';
 
 interface HeroProps extends ComponentProps {
   title?: string;
   subtitle?: string;
   onDonateClick?: () => void;
+  stats?: DashboardStats;
 }
+
+const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1)}k+` : `${n}+`;
 
 const HeroGlassmorphism: React.FC<HeroProps> = ({
   className = '',
   title = 'Hope Has a Home — Empowering Widows, Orphans, and the Vulnerable',
   subtitle = 'We are building a future where no widow is forgotten, no orphan left behind, and no vulnerable home stands alone.',
-  onDonateClick
+  onDonateClick,
+  stats
 }) => {
   return (
     <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}>
@@ -103,10 +107,10 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
             {/* Stats - Premium Display */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-200/50 dark:border-white/10">
               {[
-                { value: '50+', label: 'Widows Supported', icon: Users },
-                { value: '24+', label: 'Orphans Connected', icon: Heart },
-                { value: '3', label: 'Outreaches', icon: MapPin },
-                { value: '0.5+', label: 'Years of Impact', icon: TrendingUp },
+                { value: stats?.totalBeneficiaries ? fmt(stats.totalBeneficiaries) : '50+', label: 'Beneficiaries Supported', icon: Users },
+                { value: stats?.totalDonors ? fmt(stats.totalDonors) : '24+', label: 'Generous Donors', icon: Heart },
+                { value: stats?.totalPrograms ? String(stats.totalPrograms) : '3+', label: 'Active Programs', icon: MapPin },
+                { value: stats?.totalVolunteers ? fmt(stats.totalVolunteers) : '10+', label: 'Volunteers', icon: TrendingUp },
               ].map((stat, index) => (
                 <div key={index} className="text-center group cursor-pointer">
                   <div className="flex justify-center mb-2">
