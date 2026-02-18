@@ -107,10 +107,10 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
             {/* Stats - Premium Display */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-200/50 dark:border-white/10">
               {[
-                { value: stats?.totalBeneficiaries ? fmt(stats.totalBeneficiaries) : '50+', label: 'Beneficiaries Supported', icon: Users },
-                { value: stats?.totalDonors ? fmt(stats.totalDonors) : '24+', label: 'Generous Donors', icon: Heart },
-                { value: stats?.totalPrograms ? String(stats.totalPrograms) : '3+', label: 'Active Programs', icon: MapPin },
-                { value: stats?.totalVolunteers ? fmt(stats.totalVolunteers) : '10+', label: 'Volunteers', icon: TrendingUp },
+                { value: stats?.totalWidows ? `${stats.totalWidows}+` : '50+', label: 'Widows Supported', icon: Users },
+                { value: stats?.totalOrphans ? `${stats.totalOrphans}+` : '75+', label: 'Orphans Connected', icon: Heart },
+                { value: stats?.totalOutreaches ? `${stats.totalOutreaches}` : '3', label: 'Outreaches', icon: MapPin },
+                { value: stats?.yearsOfImpact ? `${stats.yearsOfImpact}+` : '0.5+', label: 'Years of Impact', icon: TrendingUp },
               ].map((stat, index) => (
                 <div key={index} className="text-center group cursor-pointer">
                   <div className="flex justify-center mb-2">

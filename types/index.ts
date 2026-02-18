@@ -503,6 +503,10 @@ export interface DashboardStats {
   totalDonations: number;
   totalDonors: number;
   totalBeneficiaries: number;
+  totalOrphans?: number;
+  totalWidows?: number;
+  totalOutreaches?: number;
+  yearsOfImpact?: number;
   totalPrograms: number;
   totalVolunteers: number;
   totalPartnerships: number;

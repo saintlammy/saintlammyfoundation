@@ -52,6 +52,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('programs')
       .select('*', { count: 'exact', head: true });
 
+    const { count: outreachCount } = await supabase
+      .from('outreaches')
+      .select('*', { count: 'exact', head: true });
+
+    const { count: beneficiaryCount } = await supabase
+      .from('beneficiaries')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active');
+
+    const { count: orphanCount } = await supabase
+      .from('beneficiaries')
+      .select('*', { count: 'exact', head: true })
+      .eq('category', 'orphan')
+      .eq('status', 'active');
+
+    const { count: widowCount } = await supabase
+      .from('beneficiaries')
+      .select('*', { count: 'exact', head: true })
+      .eq('category', 'widow')
+      .eq('status', 'active');
+
     // Calculate total donations
     const totalDonations = (donations as any)?.reduce((sum: number, d: any) => {
       return sum + (parseFloat(String(d.amount)) || 0);
@@ -70,17 +91,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // If we have real data, use it; otherwise use fallback
     const hasRealData = donations && donations.length > 0;
 
+    // Years of impact — foundation started July 2025
+    const foundingDate = new Date('2025-07-01');
+    const yearsOfImpact = parseFloat(((Date.now() - foundingDate.getTime()) / (1000 * 60 * 60 * 24 * 365)).toFixed(1));
+
     const stats = {
       totalDonations: hasRealData ? Math.round(totalDonations) : FALLBACK_STATS.totalDonations,
       totalDonors: hasRealData ? (donorCount || 0) : FALLBACK_STATS.totalDonors,
-      totalBeneficiaries: FALLBACK_STATS.totalBeneficiaries, // This would need a beneficiaries table
+      totalBeneficiaries: (beneficiaryCount && beneficiaryCount > 0) ? beneficiaryCount : FALLBACK_STATS.totalBeneficiaries,
+      totalOrphans: (orphanCount && orphanCount > 0) ? orphanCount : 0,
+      totalWidows: (widowCount && widowCount > 0) ? widowCount : 0,
+      totalOutreaches: (outreachCount && outreachCount > 0) ? outreachCount : 3,
+      yearsOfImpact,
       totalPrograms: (programCount && programCount > 0) ? programCount : FALLBACK_STATS.totalPrograms,
       totalVolunteers: (volunteerCount && volunteerCount > 0) ? volunteerCount : FALLBACK_STATS.totalVolunteers,
-      totalPartnerships: FALLBACK_STATS.totalPartnerships, // This would need a partnerships table
+      totalPartnerships: FALLBACK_STATS.totalPartnerships,
       monthlyRevenue: hasRealData ? Math.round(monthlyRevenue) : FALLBACK_STATS.monthlyRevenue,
-      monthlyExpenses: FALLBACK_STATS.monthlyExpenses, // This would need an expenses table
-      activeAdoptions: FALLBACK_STATS.activeAdoptions, // This would need an adoptions table
-      pendingGrants: FALLBACK_STATS.pendingGrants, // This would need a grants table
+      monthlyExpenses: FALLBACK_STATS.monthlyExpenses,
+      activeAdoptions: FALLBACK_STATS.activeAdoptions,
+      pendingGrants: FALLBACK_STATS.pendingGrants,
     };
 
     return res.status(200).json({
