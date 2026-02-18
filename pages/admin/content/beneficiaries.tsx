@@ -10,13 +10,17 @@ interface Beneficiary {
   name: string;
   age: number | null;
   location: string;
-  category: 'orphan' | 'widow' | 'family';
+  category: 'orphan' | 'widow' | 'vulnerable_home';
   story: string;
   needs: string[];
   monthly_cost: number;
   image: string;
   school_grade: string | null;
   family_size: number | null;
+  // Vulnerable Home planning fields
+  planned_homes: number | null;
+  estimated_per_home: number | null;
+  actual_people_reached: number | null;
   dream_aspiration: string;
   is_sponsored: boolean;
   days_supported: number;
@@ -37,6 +41,9 @@ const EMPTY_FORM: Omit<Beneficiary, 'id' | 'created_at' | 'updated_at'> = {
   image: '',
   school_grade: null,
   family_size: null,
+  planned_homes: null,
+  estimated_per_home: null,
+  actual_people_reached: null,
   dream_aspiration: '',
   is_sponsored: false,
   days_supported: 0,
@@ -57,6 +64,9 @@ const SEED_DATA: Omit<Beneficiary, 'id' | 'created_at' | 'updated_at'>[] = [
     image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     school_grade: '3',
     family_size: null,
+    planned_homes: null,
+    estimated_per_home: null,
+    actual_people_reached: null,
     dream_aspiration: 'I want to become a doctor so I can help sick children get better and make them smile again.',
     is_sponsored: false,
     days_supported: 120,
@@ -74,6 +84,9 @@ const SEED_DATA: Omit<Beneficiary, 'id' | 'created_at' | 'updated_at'>[] = [
     image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     school_grade: null,
     family_size: 4,
+    planned_homes: null,
+    estimated_per_home: null,
+    actual_people_reached: null,
     dream_aspiration: 'I want to build a successful tailoring business so my children can have the education I never had.',
     is_sponsored: false,
     days_supported: 85,
@@ -91,6 +104,9 @@ const SEED_DATA: Omit<Beneficiary, 'id' | 'created_at' | 'updated_at'>[] = [
     image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     school_grade: '7',
     family_size: null,
+    planned_homes: null,
+    estimated_per_home: null,
+    actual_people_reached: null,
     dream_aspiration: 'I want to become a software engineer and create apps that help people in my community.',
     is_sponsored: false,
     days_supported: 200,
@@ -159,19 +175,13 @@ const BeneficiaryForm: React.FC<{
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Basic Info */}
+          {/* Category first — drives the rest of the form */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Full Name *">
-              <input required className={inputCls} value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Amara" />
-            </Field>
-            <Field label="Age">
-              <input type="number" min="0" max="120" className={inputCls} value={form.age ?? ''} onChange={e => set('age', e.target.value ? parseInt(e.target.value) : null)} placeholder="e.g. 8" />
-            </Field>
             <Field label="Category *">
               <select required className={inputCls} value={form.category} onChange={e => set('category', e.target.value as Beneficiary['category'])}>
-                <option value="orphan">Orphan</option>
-                <option value="widow">Widow</option>
-                <option value="family">Family</option>
+                <option value="orphan">Orphan (individual)</option>
+                <option value="widow">Widow (individual)</option>
+                <option value="vulnerable_home">Vulnerable Home (group)</option>
               </select>
             </Field>
             <Field label="Location">
@@ -179,17 +189,76 @@ const BeneficiaryForm: React.FC<{
             </Field>
           </div>
 
-          {/* Story */}
-          <Field label="Story (shown on card)" hint="Keep to 2–3 sentences — it will be truncated on the website.">
-            <textarea rows={3} className={textareaCls} value={form.story} onChange={e => set('story', e.target.value)} placeholder="Brief story shown on the public beneficiary card..." />
-          </Field>
+          {/* Vulnerable Home — group planning mode */}
+          {form.category === 'vulnerable_home' ? (
+            <>
+              <div className="bg-yellow-900/20 border border-yellow-700/40 rounded-xl p-4 text-sm text-yellow-300">
+                <strong>Group planning mode</strong> — You don&apos;t need exact headcounts upfront. Plan by number of homes and update actual people reached after the visit.
+              </div>
 
-          {/* Dream / Aspiration */}
-          <Field label="Dream / Aspiration (longer quote)">
-            <textarea rows={2} className={textareaCls} value={form.dream_aspiration} onChange={e => set('dream_aspiration', e.target.value)} placeholder="In their own words — shown in sponsor modal..." />
-          </Field>
+              <Field label="Home / Group Name *" hint="e.g. 'Orphanage Cluster — Surulere' or 'Widow Homes — Agege'">
+                <input required className={inputCls} value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Vulnerable Homes — Surulere District" />
+              </Field>
 
-          {/* Image */}
+              <Field label="Description" hint="What kind of homes are these? What support will be provided?">
+                <textarea rows={3} className={textareaCls} value={form.story} onChange={e => set('story', e.target.value)} placeholder="Brief description of these homes and the planned support..." />
+              </Field>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Field label="Planned Homes to Visit" hint="How many homes you're planning to reach">
+                  <input type="number" min="0" className={inputCls} value={form.planned_homes ?? ''} onChange={e => set('planned_homes', e.target.value ? parseInt(e.target.value) : null)} placeholder="e.g. 12" />
+                </Field>
+                <Field label="Est. People per Home" hint="Best estimate — can be updated later">
+                  <input type="number" min="0" className={inputCls} value={form.estimated_per_home ?? ''} onChange={e => set('estimated_per_home', e.target.value ? parseInt(e.target.value) : null)} placeholder="e.g. 6" />
+                </Field>
+                <Field
+                  label="Actual People Reached"
+                  hint="Fill after the visit — leave blank while planning"
+                >
+                  <input type="number" min="0" className={inputCls} value={form.actual_people_reached ?? ''} onChange={e => set('actual_people_reached', e.target.value ? parseInt(e.target.value) : null)} placeholder="e.g. 74" />
+                </Field>
+              </div>
+
+              {/* Estimated total read-only display */}
+              {(form.planned_homes || form.estimated_per_home) && (
+                <div className="bg-gray-700/40 rounded-lg px-4 py-3 text-sm text-gray-300">
+                  Estimated reach:{' '}
+                  <span className="font-bold text-white">
+                    {(form.planned_homes ?? 0) * (form.estimated_per_home ?? 0)} people
+                  </span>
+                  {' '}across{' '}
+                  <span className="font-bold text-white">{form.planned_homes ?? 0} homes</span>
+                  {form.actual_people_reached != null && form.actual_people_reached > 0 && (
+                    <span className="ml-2 text-green-400">
+                      → Actual: <strong>{form.actual_people_reached}</strong>
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Individual beneficiary fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Full Name *">
+                  <input required className={inputCls} value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Amara" />
+                </Field>
+                <Field label="Age">
+                  <input type="number" min="0" max="120" className={inputCls} value={form.age ?? ''} onChange={e => set('age', e.target.value ? parseInt(e.target.value) : null)} placeholder="e.g. 8" />
+                </Field>
+              </div>
+
+              <Field label="Story (shown on card)" hint="Keep to 2–3 sentences — it will be truncated on the website.">
+                <textarea rows={3} className={textareaCls} value={form.story} onChange={e => set('story', e.target.value)} placeholder="Brief story shown on the public beneficiary card..." />
+              </Field>
+
+              <Field label="Dream / Aspiration (longer quote)">
+                <textarea rows={2} className={textareaCls} value={form.dream_aspiration} onChange={e => set('dream_aspiration', e.target.value)} placeholder="In their own words — shown in sponsor modal..." />
+              </Field>
+            </>
+          )}
+
+          {/* Image — for all categories */}
           <Field label="Photo URL" hint="Use a direct image URL (Unsplash, Cloudinary, etc.)">
             <input className={inputCls} value={form.image} onChange={e => set('image', e.target.value)} placeholder="https://..." />
             {form.image && (
@@ -198,7 +267,7 @@ const BeneficiaryForm: React.FC<{
             )}
           </Field>
 
-          {/* Needs */}
+          {/* Needs — for all categories */}
           <Field label="Needs (press Enter or Add to add each one)">
             <div className="flex gap-2 mb-2">
               <input
@@ -206,7 +275,7 @@ const BeneficiaryForm: React.FC<{
                 value={needInput}
                 onChange={e => setNeedInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addNeed(); } }}
-                placeholder="e.g. School fees and supplies"
+                placeholder={form.category === 'vulnerable_home' ? 'e.g. Food parcels, Hygiene kits' : 'e.g. School fees and supplies'}
               />
               <button type="button" onClick={addNeed} className="px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg text-sm flex-shrink-0 transition-colors">
                 Add
@@ -225,7 +294,8 @@ const BeneficiaryForm: React.FC<{
             </div>
           </Field>
 
-          {/* Financials & progress */}
+          {/* Financials & progress — individual only */}
+          {form.category !== 'vulnerable_home' && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <Field label="Monthly Cost ($)">
               <input type="number" min="0" step="0.01" className={inputCls} value={form.monthly_cost || ''} onChange={e => set('monthly_cost', parseFloat(e.target.value) || 0)} placeholder="45" />
@@ -238,12 +308,13 @@ const BeneficiaryForm: React.FC<{
                 <input className={inputCls} value={form.school_grade ?? ''} onChange={e => set('school_grade', e.target.value || null)} placeholder="e.g. 3" />
               </Field>
             )}
-            {(form.category === 'widow' || form.category === 'family') && (
-              <Field label="Family Size">
+            {form.category === 'widow' && (
+              <Field label="Family Size" hint="Number of dependents in her household">
                 <input type="number" min="1" className={inputCls} value={form.family_size ?? ''} onChange={e => set('family_size', e.target.value ? parseInt(e.target.value) : null)} placeholder="4" />
               </Field>
             )}
           </div>
+          )}
 
           {/* Flags */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -385,6 +456,7 @@ export default function BeneficiariesManagement() {
     total: beneficiaries.length,
     orphans: beneficiaries.filter(b => b.category === 'orphan').length,
     widows: beneficiaries.filter(b => b.category === 'widow').length,
+    homes: beneficiaries.filter(b => b.category === 'vulnerable_home').length,
     featured: beneficiaries.filter(b => b.is_featured).length,
     sponsored: beneficiaries.filter(b => b.is_sponsored).length,
   };
@@ -430,11 +502,12 @@ export default function BeneficiariesManagement() {
           </div>
 
           {/* Stats strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-5">
             {[
               { label: 'Total', value: stats.total, color: 'text-white' },
               { label: 'Orphans', value: stats.orphans, color: 'text-blue-400' },
               { label: 'Widows', value: stats.widows, color: 'text-purple-400' },
+              { label: 'Vuln. Homes', value: stats.homes, color: 'text-yellow-400' },
               { label: 'Featured', value: stats.featured, color: 'text-accent-400' },
               { label: 'Sponsored', value: stats.sponsored, color: 'text-green-400' },
             ].map(s => (
@@ -464,7 +537,7 @@ export default function BeneficiariesManagement() {
               <option value="all">All Categories</option>
               <option value="orphan">Orphans</option>
               <option value="widow">Widows</option>
-              <option value="family">Families</option>
+              <option value="vulnerable_home">Vulnerable Homes</option>
             </select>
           </div>
 
@@ -511,11 +584,23 @@ export default function BeneficiariesManagement() {
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${b.category === 'orphan' ? 'bg-blue-500/20 text-blue-400' : b.category === 'widow' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-600 text-gray-300'}`}>
-                            {b.category.charAt(0).toUpperCase() + b.category.slice(1)}
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            b.category === 'orphan' ? 'bg-blue-500/20 text-blue-400' :
+                            b.category === 'widow' ? 'bg-purple-500/20 text-purple-400' :
+                            'bg-yellow-500/20 text-yellow-400'
+                          }`}>
+                            {b.category === 'vulnerable_home' ? 'Vuln. Home' : b.category.charAt(0).toUpperCase() + b.category.slice(1)}
                           </span>
+                          {b.category === 'vulnerable_home' && (b as any).planned_homes && (
+                            <span className="block text-xs text-gray-500 mt-0.5">
+                              {(b as any).planned_homes} homes planned
+                              {(b as any).actual_people_reached ? ` · ${(b as any).actual_people_reached} reached` : (b as any).estimated_per_home ? ` · ~${(b as any).planned_homes * (b as any).estimated_per_home} est.` : ''}
+                            </span>
+                          )}
                         </td>
-                        <td className="px-4 py-3 text-gray-300">${b.monthly_cost}/mo</td>
+                        <td className="px-4 py-3 text-gray-300">
+                          {b.category === 'vulnerable_home' ? '—' : `$${b.monthly_cost}/mo`}
+                        </td>
                         <td className="px-4 py-3">
                           <div>
                             <span className="text-accent-400 font-medium">{b.days_supported}</span>
