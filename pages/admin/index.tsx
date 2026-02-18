@@ -181,13 +181,13 @@ const AdminDashboard: React.FC = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {statsCards.map((stat, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
+                    <p className="text-gray-400 text-sm font-medium">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
                     {(stat as any).subtitle && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{(stat as any).subtitle}</p>
+                      <p className="text-xs text-gray-400 mt-1">{(stat as any).subtitle}</p>
                     )}
                     {!(stat as any).subtitle && (
                       <div className="flex items-center mt-2">
@@ -201,7 +201,7 @@ const AdminDashboard: React.FC = () => {
                         }`}>
                           {stat.change}
                         </span>
-                        <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">vs last month</span>
+                        <span className="text-gray-400 text-sm ml-1">vs last month</span>
                       </div>
                     )}
                   </div>
@@ -216,10 +216,10 @@ const AdminDashboard: React.FC = () => {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Donation Trends */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Donation Trends</h3>
-                <select className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 text-gray-900 dark:text-white text-sm">
+                <h3 className="text-lg font-semibold text-white">Donation Trends</h3>
+                <select className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-1 text-white text-sm">
                   <option>Last 6 months</option>
                   <option>Last year</option>
                   <option>All time</option>
@@ -256,8 +256,8 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Donation Methods */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Donation Methods</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-6">Donation Methods</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -290,19 +290,19 @@ const AdminDashboard: React.FC = () => {
           {/* Recent Activity & Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Activity */}
-            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="lg:col-span-2 bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
+                <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
                 <a href="/admin/donations/transactions" className="text-accent-400 text-sm hover:text-accent-300 transition-colors">
                   View all
                 </a>
               </div>
               <div className="space-y-4">
                 {recentActivities.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">No recent activity</p>
+                  <p className="text-gray-400 text-center py-8">No recent activity</p>
                 ) : (
                   recentActivities.map((activity: { id: string; type: string; title: string; description: string; time: string; status?: string; user?: string; amount?: number; method?: string }) => (
-                    <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-700 transition-colors">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         activity.type === 'donation' ?
                           ((activity as any).status === 'completed' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400') :
@@ -314,7 +314,7 @@ const AdminDashboard: React.FC = () => {
                          <Users className="w-5 h-5" />}
                       </div>
                       <div className="flex-1">
-                        <p className="text-gray-900 dark:text-white font-medium">
+                        <p className="text-white font-medium">
                           {activity.user}
                           {activity.type === 'donation' && (
                             <>
@@ -340,7 +340,7 @@ const AdminDashboard: React.FC = () => {
                             <span className="text-purple-400 ml-2">{(activity as any).action}</span>
                           )}
                         </p>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        <p className="text-gray-400 text-sm">
                           {activity.method && `via ${activity.method} • `}{activity.time}
                         </p>
                       </div>
@@ -351,22 +351,22 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-6">Quick Actions</h3>
               <div className="space-y-4">
                 {quickActions.map((action, index) => (
                   <a
                     key={index}
                     href={action.href}
-                    className="block p-4 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group"
+                    className="block p-4 rounded-lg bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors group"
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                         <action.icon className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <p className="text-gray-900 dark:text-white font-medium text-sm">{action.title}</p>
-                        <p className="text-gray-600 dark:text-gray-400 text-xs">{action.description}</p>
+                        <p className="text-white font-medium text-sm">{action.title}</p>
+                        <p className="text-gray-400 text-xs">{action.description}</p>
                       </div>
                     </div>
                   </a>
@@ -376,29 +376,29 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Performance Metrics */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Performance Metrics</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-6">Performance Metrics</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
                   <TrendingUp className="w-8 h-8 text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats ? `${stats.successRate}%` : '0%'}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Donation Success Rate</p>
+                <p className="text-2xl font-bold text-white">{stats ? `${stats.successRate}%` : '0%'}</p>
+                <p className="text-gray-400 text-sm">Donation Success Rate</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-3">
                   <Heart className="w-8 h-8 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats ? `₦${(stats.totalDonations / 6).toFixed(0)}K` : '₦0'}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Average Monthly Donations</p>
+                <p className="text-2xl font-bold text-white">{stats ? `₦${(stats.totalDonations / 6).toFixed(0)}K` : '₦0'}</p>
+                <p className="text-gray-400 text-sm">Average Monthly Donations</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
                   <Users className="w-8 h-8 text-purple-400" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats ? (stats.donorCount + stats.volunteerCount).toLocaleString() : '0'}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Active Community Members</p>
+                <p className="text-2xl font-bold text-white">{stats ? (stats.donorCount + stats.volunteerCount).toLocaleString() : '0'}</p>
+                <p className="text-gray-400 text-sm">Active Community Members</p>
               </div>
             </div>
           </div>

@@ -263,13 +263,13 @@ const AdminReports: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Reports & Analytics</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">Generate comprehensive reports and export data</p>
+              <h1 className="text-2xl font-bold text-white">Reports & Analytics</h1>
+              <p className="text-gray-400 mt-1">Generate comprehensive reports and export data</p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowCustomReport(true)}
-                className="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                className="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 <Settings className="w-4 h-4" />
                 <span>Custom Report</span>
@@ -283,11 +283,11 @@ const AdminReports: React.FC = () => {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Reports</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{reports.length}</p>
+                  <p className="text-gray-400 text-sm font-medium">Total Reports</p>
+                  <p className="text-2xl font-bold text-white mt-1">{reports.length}</p>
                   <p className="text-green-600 dark:text-green-400 text-sm mt-2">{reports.filter(r => r.status === 'ready').length} ready</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
@@ -296,11 +296,11 @@ const AdminReports: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Downloads Today</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{totalDownloadsToday}</p>
+                  <p className="text-gray-400 text-sm font-medium">Downloads Today</p>
+                  <p className="text-2xl font-bold text-white mt-1">{totalDownloadsToday}</p>
                   <p className="text-green-600 dark:text-green-400 text-sm mt-2">+18% from yesterday</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
@@ -309,11 +309,11 @@ const AdminReports: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Automated Reports</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{reports.filter(r => r.isAutomated).length}</p>
+                  <p className="text-gray-400 text-sm font-medium">Automated Reports</p>
+                  <p className="text-2xl font-bold text-white mt-1">{reports.filter(r => r.isAutomated).length}</p>
                   <p className="text-blue-600 dark:text-blue-400 text-sm mt-2">Running scheduled</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
@@ -322,12 +322,12 @@ const AdminReports: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Storage Used</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{totalStorageUsed.toFixed(1)} MB</p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">{Math.round((totalStorageUsed / 250) * 100)}% of allocated space</p>
+                  <p className="text-gray-400 text-sm font-medium">Storage Used</p>
+                  <p className="text-2xl font-bold text-white mt-1">{totalStorageUsed.toFixed(1)} MB</p>
+                  <p className="text-gray-400 text-sm mt-2">{Math.round((totalStorageUsed / 250) * 100)}% of allocated space</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-white" />
@@ -366,8 +366,8 @@ const AdminReports: React.FC = () => {
 
           {/* Quick Analytics Overview */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Donation Trends</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Donation Trends</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={reportData.donationsByMonth}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -386,8 +386,8 @@ const AdminReports: React.FC = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Program Funding Status</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Program Funding Status</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={reportData.programFunding}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -408,25 +408,25 @@ const AdminReports: React.FC = () => {
           </div>
 
           {/* Reports List */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Available Reports</h3>
+          <div className="bg-gray-800 border border-gray-700 rounded-lg">
+            <div className="p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Available Reports</h3>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="divide-y divide-gray-700">
               {filteredReports.map((report) => {
                 const IconComponent = categoryIcons[report.category];
                 const isGenerating = generatingReports.includes(report.id);
 
                 return (
-                  <div key={report.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <div key={report.id} className="p-6 hover:bg-gray-700 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4 flex-1">
-                        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-700 rounded-lg">
                           <IconComponent className="w-6 h-6 text-accent-400" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-3">
-                            <h4 className="text-gray-900 dark:text-white font-medium">{report.name}</h4>
+                            <h4 className="text-white font-medium">{report.name}</h4>
                             <span className={`flex items-center space-x-1 ${getStatusColor(report.status)}`}>
                               {getStatusIcon(report.status)}
                               <span className="text-xs capitalize">{report.status}</span>
@@ -437,8 +437,8 @@ const AdminReports: React.FC = () => {
                               </span>
                             )}
                           </div>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{report.description}</p>
-                          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-gray-400 text-sm mt-1">{report.description}</p>
+                          <div className="flex items-center space-x-4 mt-2 text-sm text-gray-400">
                             <span className="capitalize">{report.category}</span>
                             <span>•</span>
                             <span className="capitalize">{report.frequency}</span>
@@ -469,7 +469,7 @@ const AdminReports: React.FC = () => {
                                 <button
                                   key={format}
                                   onClick={() => downloadReport(report.id, format)}
-                                  className="flex items-center space-x-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs transition-colors"
+                                  className="flex items-center space-x-1 px-2 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-300 rounded text-xs transition-colors"
                                   title={`Download as ${format.toUpperCase()}`}
                                 >
                                   <FormatIcon className="w-3 h-3" />
@@ -504,24 +504,24 @@ const AdminReports: React.FC = () => {
           </div>
 
           {/* Export History */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Exports</h3>
+          <div className="bg-gray-800 border border-gray-700 rounded-lg">
+            <div className="p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Recent Exports</h3>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="divide-y divide-gray-700">
               {[
                 { report: 'Monthly Financial Report', format: 'PDF', date: '2024-01-15 14:30', size: '2.4 MB', user: 'Sarah Johnson' },
                 { report: 'Donor Activity Analysis', format: 'Excel', date: '2024-01-14 09:15', size: '1.8 MB', user: 'Michael Chen' },
                 { report: 'Program Impact Assessment', format: 'PDF', date: '2024-01-12 16:45', size: '4.2 MB', user: 'Emma Williams' },
                 { report: 'User Engagement Report', format: 'CSV', date: '2024-01-11 11:20', size: '856 KB', user: 'David Brown' }
               ].map((export_, index) => (
-                <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div key={index} className="p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
                   <div>
-                    <p className="text-gray-900 dark:text-white font-medium">{export_.report}</p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{export_.format} • {export_.size} • by {export_.user}</p>
+                    <p className="text-white font-medium">{export_.report}</p>
+                    <p className="text-gray-400 text-sm">{export_.format} • {export_.size} • by {export_.user}</p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-gray-600 dark:text-gray-400 text-sm">{export_.date}</span>
+                    <span className="text-gray-400 text-sm">{export_.date}</span>
                     <button className="p-1 text-gray-400 hover:text-gray-300 transition-colors">
                       <Download className="w-4 h-4" />
                     </button>

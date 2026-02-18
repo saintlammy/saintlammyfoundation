@@ -323,13 +323,13 @@ const DonationAnalyticsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Time Range Filter */}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Donation Analytics</h2>
+            <h2 className="text-2xl font-bold text-white">Donation Analytics</h2>
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-400" />
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="week">Last 7 Days</option>
                 <option value="month">Last 30 Days</option>
@@ -342,12 +342,12 @@ const DonationAnalyticsManagement: React.FC = () => {
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Total Revenue */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Revenue</p>
+                <p className="text-gray-400 text-sm">Total Revenue</p>
                 <DollarSign className="w-5 h-5 text-green-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : formatCurrency(stats.totalRevenue)}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.revenueChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -357,12 +357,12 @@ const DonationAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Total Donations */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Donations</p>
+                <p className="text-gray-400 text-sm">Total Donations</p>
                 <TrendingUp className="w-5 h-5 text-blue-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : stats.totalDonations.toLocaleString()}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.donationsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -372,12 +372,12 @@ const DonationAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Average Donation */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Avg Donation</p>
+                <p className="text-gray-400 text-sm">Avg Donation</p>
                 <CreditCard className="w-5 h-5 text-purple-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : formatCurrency(stats.avgDonation)}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.avgChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -387,12 +387,12 @@ const DonationAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Active Donors */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Active Donors</p>
+                <p className="text-gray-400 text-sm">Active Donors</p>
                 <Users className="w-5 h-5 text-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : stats.activeDonors.toLocaleString()}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.donorsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -405,8 +405,8 @@ const DonationAnalyticsManagement: React.FC = () => {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Donation Trends */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Donation Trends</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Donation Trends</h3>
               {loading ? (
                 <div className="h-[300px] flex items-center justify-center text-gray-400">
                   Loading chart...
@@ -445,8 +445,8 @@ const DonationAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Payment Methods */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Payment Methods</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Payment Methods</h3>
               {loading ? (
                 <div className="h-[300px] flex items-center justify-center text-gray-400">
                   Loading chart...
@@ -483,17 +483,17 @@ const DonationAnalyticsManagement: React.FC = () => {
           </div>
 
           {/* Top Donors Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Donors</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Top Donors</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Donor</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Email</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Total Donated</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Donations</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Last Donation</th>
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Donor</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Email</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Total Donated</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Donations</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Last Donation</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -511,12 +511,12 @@ const DonationAnalyticsManagement: React.FC = () => {
                     </tr>
                   ) : (
                     topDonors.map((donor) => (
-                      <tr key={donor.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td className="py-3 px-4 text-gray-900 dark:text-white font-medium">{donor.name}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{donor.email}</td>
-                        <td className="py-3 px-4 text-gray-900 dark:text-white font-semibold">{formatCurrency(donor.totalDonated)}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{donor.donationCount}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{formatDate(donor.lastDonation)}</td>
+                      <tr key={donor.id} className="border-b border-gray-700 hover:bg-gray-700/50">
+                        <td className="py-3 px-4 text-white font-medium">{donor.name}</td>
+                        <td className="py-3 px-4 text-gray-400">{donor.email}</td>
+                        <td className="py-3 px-4 text-white font-semibold">{formatCurrency(donor.totalDonated)}</td>
+                        <td className="py-3 px-4 text-gray-400">{donor.donationCount}</td>
+                        <td className="py-3 px-4 text-gray-400">{formatDate(donor.lastDonation)}</td>
                       </tr>
                     ))
                   )}

@@ -322,8 +322,8 @@ const AdminNotifications: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notification Management</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">Manage notifications, messages and communication</p>
+              <h1 className="text-2xl font-bold text-white">Notification Management</h1>
+              <p className="text-gray-400 mt-1">Manage notifications, messages and communication</p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
@@ -336,11 +336,11 @@ const AdminNotifications: React.FC = () => {
 
           {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Notifications</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{totalNotifications}</p>
+                  <p className="text-gray-400 text-sm font-medium">Total Notifications</p>
+                  <p className="text-2xl font-bold text-white mt-1">{totalNotifications}</p>
                   <p className="text-green-600 dark:text-green-400 text-sm mt-2">{sentNotifications} sent</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
@@ -349,11 +349,11 @@ const AdminNotifications: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Recipients</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{totalRecipients.toLocaleString()}</p>
+                  <p className="text-gray-400 text-sm font-medium">Total Recipients</p>
+                  <p className="text-2xl font-bold text-white mt-1">{totalRecipients.toLocaleString()}</p>
                   <p className="text-blue-600 dark:text-blue-400 text-sm mt-2">Reached this month</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
@@ -362,11 +362,11 @@ const AdminNotifications: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Scheduled</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{scheduledNotifications}</p>
+                  <p className="text-gray-400 text-sm font-medium">Scheduled</p>
+                  <p className="text-2xl font-bold text-white mt-1">{scheduledNotifications}</p>
                   <p className="text-yellow-600 dark:text-yellow-400 text-sm mt-2">Pending delivery</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center">
@@ -375,11 +375,11 @@ const AdminNotifications: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg. Open Rate</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{avgOpenRate}%</p>
+                  <p className="text-gray-400 text-sm font-medium">Avg. Open Rate</p>
+                  <p className="text-2xl font-bold text-white mt-1">{avgOpenRate}%</p>
                   <p className="text-green-600 dark:text-green-400 text-sm mt-2">+3% this month</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
@@ -390,7 +390,7 @@ const AdminNotifications: React.FC = () => {
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="border-b border-gray-700">
             <nav className="flex space-x-8">
               <button
                 onClick={() => setActiveTab('notifications')}
@@ -436,7 +436,7 @@ const AdminNotifications: React.FC = () => {
                     placeholder="Search notifications..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -467,9 +467,9 @@ const AdminNotifications: React.FC = () => {
 
               {/* Bulk Actions */}
               {selectedNotifications.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-gray-300">
                       {selectedNotifications.length} notification{selectedNotifications.length !== 1 ? 's' : ''} selected
                     </span>
                     <div className="flex gap-2">
@@ -488,35 +488,35 @@ const AdminNotifications: React.FC = () => {
               )}
 
               {/* Notifications List */}
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-100 dark:bg-gray-700">
+                    <thead className="bg-gray-700">
                       <tr>
                         <th className="px-6 py-3 text-left">
                           <input
                             type="checkbox"
                             checked={selectedNotifications.length === filteredNotifications.length}
                             onChange={toggleSelectAll}
-                            className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800"
+                            className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800"
                           />
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Notification
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Type
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Recipients
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Performance
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                           Date
                         </th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -524,24 +524,24 @@ const AdminNotifications: React.FC = () => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-gray-700">
                       {filteredNotifications.map((notification) => {
                         const TypeIcon = typeIcons[notification.type];
 
                         return (
-                          <tr key={notification.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                          <tr key={notification.id} className="hover:bg-gray-700 transition-colors">
                             <td className="px-6 py-4">
                               <input
                                 type="checkbox"
                                 checked={selectedNotifications.includes(notification.id)}
                                 onChange={() => toggleNotificationSelection(notification.id)}
-                                className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800"
+                                className="rounded border-gray-600 bg-gray-700 text-accent-500 focus:ring-accent-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800"
                               />
                             </td>
                             <td className="px-6 py-4">
                               <div>
-                                <p className="text-gray-900 dark:text-white font-medium">{notification.title}</p>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{notification.message}</p>
+                                <p className="text-white font-medium">{notification.title}</p>
+                                <p className="text-gray-400 text-sm line-clamp-2">{notification.message}</p>
                                 <div className="flex items-center space-x-2 mt-1">
                                   <span className={`text-xs ${priorityColors[notification.priority]}`}>
                                     {notification.priority} priority
@@ -566,18 +566,18 @@ const AdminNotifications: React.FC = () => {
                             </td>
                             <td className="px-6 py-4">
                               <div>
-                                <p className="text-gray-900 dark:text-white font-medium">{notification.recipients.count.toLocaleString()}</p>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm capitalize">{notification.recipients.type}</p>
+                                <p className="text-white font-medium">{notification.recipients.count.toLocaleString()}</p>
+                                <p className="text-gray-400 text-sm capitalize">{notification.recipients.type}</p>
                               </div>
                             </td>
                             <td className="px-6 py-4">
                               {notification.metrics ? (
                                 <div className="text-sm">
-                                  <div className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
+                                  <div className="flex items-center space-x-3 text-gray-300">
                                     <span>{getDeliveryRate(notification.metrics)}% delivered</span>
                                     <span>{getOpenRate(notification.metrics)}% opened</span>
                                   </div>
-                                  <div className="flex items-center space-x-3 text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                  <div className="flex items-center space-x-3 text-gray-400 text-xs mt-1">
                                     <span>{notification.metrics.clicked} clicks</span>
                                     {notification.metrics.unsubscribed > 0 && (
                                       <span>{notification.metrics.unsubscribed} unsub</span>
@@ -589,21 +589,21 @@ const AdminNotifications: React.FC = () => {
                               )}
                             </td>
                             <td className="px-6 py-4">
-                              <div className="text-gray-700 dark:text-gray-300 text-sm">
+                              <div className="text-gray-300 text-sm">
                                 {notification.sentAt ? (
                                   <>
                                     <div>Sent</div>
-                                    <div className="text-gray-500 dark:text-gray-400 text-xs">{notification.sentAt.toLocaleDateString()}</div>
+                                    <div className="text-gray-400 text-xs">{notification.sentAt.toLocaleDateString()}</div>
                                   </>
                                 ) : notification.scheduledFor ? (
                                   <>
                                     <div>Scheduled</div>
-                                    <div className="text-gray-500 dark:text-gray-400 text-xs">{notification.scheduledFor.toLocaleDateString()}</div>
+                                    <div className="text-gray-400 text-xs">{notification.scheduledFor.toLocaleDateString()}</div>
                                   </>
                                 ) : (
                                   <>
                                     <div>Created</div>
-                                    <div className="text-gray-500 dark:text-gray-400 text-xs">{notification.createdAt.toLocaleDateString()}</div>
+                                    <div className="text-gray-400 text-xs">{notification.createdAt.toLocaleDateString()}</div>
                                   </>
                                 )}
                               </div>
@@ -657,7 +657,7 @@ const AdminNotifications: React.FC = () => {
                 {templates.map((template) => {
                   const TypeIcon = typeIcons[template.type];
                   return (
-                    <div key={template.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+                    <div key={template.id} className="bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-2">
                           <TypeIcon className="w-5 h-5 text-accent-400" />
@@ -677,13 +677,13 @@ const AdminNotifications: React.FC = () => {
                         </div>
                       </div>
 
-                      <h3 className="text-gray-900 dark:text-white font-semibold mb-2">{template.name}</h3>
+                      <h3 className="text-white font-semibold mb-2">{template.name}</h3>
                       {template.subject && (
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Subject: {template.subject}</p>
+                        <p className="text-gray-400 text-sm mb-2">Subject: {template.subject}</p>
                       )}
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">{template.content}</p>
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">{template.content}</p>
 
-                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center justify-between text-sm text-gray-400">
                         <span>Used {template.usageCount} times</span>
                         {template.lastUsed && (
                           <span>Last: {template.lastUsed.toLocaleDateString()}</span>
@@ -715,10 +715,10 @@ const AdminNotifications: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Email Settings */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <Mail className="w-5 h-5 text-accent-400" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Email Settings</h3>
+                    <h3 className="text-lg font-semibold text-white">Email Settings</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -726,7 +726,7 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="text"
                         value="smtp.saintlammy.org"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div>
@@ -734,7 +734,7 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="text"
                         value="Saintlammy Foundation"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div>
@@ -742,11 +742,11 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="email"
                         value="noreply@saintlammy.org"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Enable email tracking</span>
+                      <span className="text-gray-300">Enable email tracking</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
@@ -755,15 +755,15 @@ const AdminNotifications: React.FC = () => {
                 </div>
 
                 {/* SMS Settings */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <MessageSquare className="w-5 h-5 text-accent-400" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">SMS Settings</h3>
+                    <h3 className="text-lg font-semibold text-white">SMS Settings</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">SMS Provider</label>
-                      <select className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">SMS Provider</label>
+                      <select className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
                         <option>Twilio</option>
                         <option>AWS SNS</option>
                         <option>Nexmo</option>
@@ -774,17 +774,17 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="text"
                         value="+1 (555) 123-4567"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">SMS Credits Remaining</label>
-                      <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white">
+                      <div className="bg-gray-700 rounded-lg px-3 py-2 text-white">
                         8,543 credits
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Enable SMS delivery reports</span>
+                      <span className="text-gray-300">Enable SMS delivery reports</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
@@ -793,10 +793,10 @@ const AdminNotifications: React.FC = () => {
                 </div>
 
                 {/* Push Notification Settings */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <Bell className="w-5 h-5 text-accent-400" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Push Notifications</h3>
+                    <h3 className="text-lg font-semibold text-white">Push Notifications</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -804,7 +804,7 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="password"
                         value="••••••••••••••••••••••••••••••••"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div>
@@ -812,11 +812,11 @@ const AdminNotifications: React.FC = () => {
                       <input
                         type="text"
                         value="org.saintlammy.foundation"
-                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Enable push notifications</span>
+                      <span className="text-gray-300">Enable push notifications</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
@@ -825,33 +825,33 @@ const AdminNotifications: React.FC = () => {
                 </div>
 
                 {/* General Settings */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="flex items-center space-x-2 mb-4">
                     <Settings className="w-5 h-5 text-accent-400" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">General Settings</h3>
+                    <h3 className="text-lg font-semibold text-white">General Settings</h3>
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Auto-retry failed notifications</span>
+                      <span className="text-gray-300">Auto-retry failed notifications</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Send delivery reports</span>
+                      <span className="text-gray-300">Send delivery reports</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">Enable unsubscribe link</span>
+                      <span className="text-gray-300">Enable unsubscribe link</span>
                       <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
                       </button>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Default timezone</label>
-                      <select className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Default timezone</label>
+                      <select className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-500">
                         <option>Africa/Lagos (GMT+1)</option>
                         <option>UTC (GMT+0)</option>
                         <option>America/New_York (GMT-5)</option>
@@ -872,17 +872,17 @@ const AdminNotifications: React.FC = () => {
           {/* Pagination */}
           {activeTab === 'notifications' && (
             <div className="flex items-center justify-between">
-              <div className="text-gray-600 dark:text-gray-400 text-sm">
+              <div className="text-gray-400 text-sm">
                 Showing {filteredNotifications.length} of {notifications.length} notifications
               </div>
               <div className="flex items-center space-x-2">
-                <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <button className="px-3 py-1 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-700 transition-colors">
                   Previous
                 </button>
                 <button className="px-3 py-1 bg-accent-500 text-white rounded">
                   1
                 </button>
-                <button className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <button className="px-3 py-1 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-300 hover:bg-gray-700 transition-colors">
                   Next
                 </button>
               </div>

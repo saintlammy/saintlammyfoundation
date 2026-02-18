@@ -583,13 +583,13 @@ const DonationsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Collected</p>
+                  <p className="text-gray-400 text-sm">Total Collected</p>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">${(stats?.totalAmount || realStats.totalAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">₦{((stats?.totalAmount || realStats.totalAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                    <p className="text-2xl font-bold text-white">${(stats?.totalAmount || realStats.totalAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-gray-400">₦{((stats?.totalAmount || realStats.totalAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -598,10 +598,10 @@ const DonationsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Donations</p>
+                  <p className="text-gray-400 text-sm">Total Donations</p>
                   <p className="text-2xl font-bold text-white">{stats?.totalDonations || realStats.totalDonations}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
@@ -610,13 +610,13 @@ const DonationsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Pending Amount</p>
+                  <p className="text-gray-400 text-sm">Pending Amount</p>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">${(stats?.pendingAmount || realStats.pendingAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">₦{((stats?.pendingAmount || realStats.pendingAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
+                    <p className="text-2xl font-bold text-white">${(stats?.pendingAmount || realStats.pendingAmountUSD).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-gray-400">₦{((stats?.pendingAmount || realStats.pendingAmountUSD) * USD_TO_NGN_RATE).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
                 <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
@@ -625,10 +625,10 @@ const DonationsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Success Rate</p>
+                  <p className="text-gray-400 text-sm">Success Rate</p>
                   <p className="text-2xl font-bold text-white">{(stats?.successRate || realStats.successRate || 95.0).toFixed(1)}%</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -640,14 +640,14 @@ const DonationsManagement: React.FC = () => {
 
           {/* Real-Time Monitoring Controls */}
           {monitoringStatus && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold text-white flex items-center">
                     <Globe className="w-5 h-5 mr-2 text-accent-400" />
                     Real-Time Blockchain Monitoring
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-400 text-sm">
                     Monitor cryptocurrency wallets for incoming donations automatically
                   </p>
                 </div>
@@ -664,7 +664,7 @@ const DonationsManagement: React.FC = () => {
                     className={`p-2 rounded-lg transition-colors ${
                       autoRefresh
                         ? 'bg-accent-500/20 text-accent-400'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-300'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-400 hover:text-gray-300 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-gray-300'
                     }`}
                     title={autoRefresh ? 'Auto-refresh enabled' : 'Auto-refresh disabled'}
                   >
@@ -675,19 +675,19 @@ const DonationsManagement: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
-                  <div className="text-gray-600 dark:text-gray-400 text-sm">Wallets Configured</div>
+                  <div className="text-gray-400 text-sm">Wallets Configured</div>
                   <div className="text-xl font-bold text-white">
                     {monitoringStatus.walletsConfigured}
                   </div>
                 </div>
                 <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
-                  <div className="text-gray-600 dark:text-gray-400 text-sm">Transactions Processed</div>
+                  <div className="text-gray-400 text-sm">Transactions Processed</div>
                   <div className="text-xl font-bold text-white">
                     {monitoringStatus.processedTransactions}
                   </div>
                 </div>
                 <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
-                  <div className="text-gray-600 dark:text-gray-400 text-sm">Today's Donations</div>
+                  <div className="text-gray-400 text-sm">Today's Donations</div>
                   <div className="text-xl font-bold text-green-400">
                     {realTimeStats?.totalDonationsToday || 0}
                   </div>
@@ -720,7 +720,7 @@ const DonationsManagement: React.FC = () => {
                   <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                   <span>Check Now</span>
                 </button>
-                <div className="text-gray-600 dark:text-gray-400 text-sm">
+                <div className="text-gray-400 text-sm">
                   Last checked: {monitoringStatus.lastChecked?.bitcoin
                     ? new Date(monitoringStatus.lastChecked.bitcoin).toLocaleTimeString()
                     : 'Never'}
@@ -730,18 +730,18 @@ const DonationsManagement: React.FC = () => {
           )}
 
           {/* Filters and Search */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                 {/* Search */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search by name, email, tx hash, or wallet..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent w-full sm:w-64"
+                    className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent w-full sm:w-64"
                   />
                 </div>
 
@@ -749,7 +749,7 @@ const DonationsManagement: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 >
                   <option value="all">All Status</option>
                   <option value="completed">Completed</option>
@@ -761,7 +761,7 @@ const DonationsManagement: React.FC = () => {
                 <select
                   value={methodFilter}
                   onChange={(e) => setMethodFilter(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 >
                   <option value="all">All Methods</option>
                   <option value="paypal">PayPal</option>
@@ -785,7 +785,7 @@ const DonationsManagement: React.FC = () => {
                 <button
                   onClick={handleRefresh}
                   disabled={refreshing}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors disabled:opacity-50">
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50">
                   <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
@@ -796,17 +796,17 @@ const DonationsManagement: React.FC = () => {
                     <Download className="w-4 h-4" />
                     Export Crypto
                   </button>
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                     <div className="p-2">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">Export Format:</p>
+                      <p className="text-xs text-gray-400 px-2 py-1">Export Format:</p>
                       <button
                         onClick={() => { setExportFormat('csv'); handleExportCrypto(); }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">
                         CSV (Spreadsheet)
                       </button>
                       <button
                         onClick={() => { setExportFormat('json'); handleExportCrypto(); }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded">
                         JSON (Raw Data)
                       </button>
                     </div>
@@ -817,10 +817,10 @@ const DonationsManagement: React.FC = () => {
           </div>
 
           {/* Donations Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700/50">
+                <thead className="bg-gray-700/50">
                   <tr>
                     <th className="px-6 py-4 text-left">
                       <input
@@ -841,7 +841,7 @@ const DonationsManagement: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-700">
                   {filteredDonations.map((donation) => (
-                    <tr key={donation.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/20">
+                    <tr key={donation.id} className="hover:bg-gray-700/20">
                       <td className="px-6 py-4">
                         <input
                           type="checkbox"
@@ -859,7 +859,7 @@ const DonationsManagement: React.FC = () => {
                           </div>
                           <div>
                             <p className="text-white font-medium">{donation.donor?.name || 'Anonymous'}</p>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">{donation.donor?.email || 'N/A'}</p>
+                            <p className="text-gray-400 text-sm">{donation.donor?.email || 'N/A'}</p>
                           </div>
                         </div>
                       </td>
@@ -869,7 +869,7 @@ const DonationsManagement: React.FC = () => {
                             {formatAmount(donation.amount, donation.currency)}
                           </p>
                           {donation.campaign && (
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">{donation.campaign}</p>
+                            <p className="text-gray-400 text-sm">{donation.campaign}</p>
                           )}
                         </div>
                       </td>
@@ -962,7 +962,7 @@ const DonationsManagement: React.FC = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between bg-gray-800 rounded-xl p-4 border border-gray-700">
             <p className="text-gray-400 text-sm">
               Showing {filteredDonations.length} of {apiDonations.length} donations
             </p>

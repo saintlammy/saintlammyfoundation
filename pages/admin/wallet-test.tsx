@@ -33,7 +33,7 @@ const WalletTest: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
+                <div className="bg-gray-700 p-4 rounded">
                   <h3 className="text-white font-semibold mb-2">User Information:</h3>
                   <p className="text-gray-300">Email: {user?.email}</p>
                   <p className="text-gray-300">Admin Status: {isAdmin ? 'YES' : 'NO'}</p>

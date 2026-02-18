@@ -143,10 +143,10 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-bold text-white">
             {item ? 'Edit Gallery Item' : 'Create Gallery Item'}
           </h2>
           <button
@@ -167,7 +167,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
 
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Project Details</h3>
+            <h3 className="text-lg font-semibold text-white">Project Details</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -177,7 +177,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Project title"
                 required
               />
@@ -191,7 +191,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Brief description"
                 required
               />
@@ -207,7 +207,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="e.g., Education, Healthcare"
                 />
               </div>
@@ -219,7 +219,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                 <select
                   value={formData.icon}
                   onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   {iconOptions.map(icon => (
                     <option key={icon} value={icon}>{icon}</option>
@@ -236,7 +236,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -251,7 +251,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="Project location"
                 />
               </div>
@@ -265,7 +265,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   type="number"
                   value={formData.beneficiaries}
                   onChange={(e) => setFormData({ ...formData, beneficiaries: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="Number of people impacted"
                 />
               </div>
@@ -274,7 +274,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
 
           {/* Additional Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Additional Information</h3>
+            <h3 className="text-lg font-semibold text-white">Additional Information</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -285,7 +285,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                 value={formData.outcome}
                 onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Project outcome or impact achieved"
               />
             </div>
@@ -298,7 +298,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                 value={formData.fullStory}
                 onChange={(e) => setFormData({ ...formData, fullStory: e.target.value })}
                 rows={5}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Detailed story about the project..."
               />
             </div>
@@ -306,7 +306,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
 
           {/* Featured Image */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
               Project Image
             </h3>
@@ -348,7 +348,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   <div className="w-full border-t border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                  <span className="px-2 bg-gray-800 text-gray-400">Or enter image URL</span>
                 </div>
               </div>
 
@@ -357,7 +357,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
                   type="url"
                   value={formData.image.startsWith('data:') ? '' : formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="https://..."
                   disabled={uploadingImage}
                 />
@@ -390,7 +390,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
             >
               <option value="published">Published</option>
               <option value="draft">Draft</option>
@@ -398,7 +398,7 @@ const GalleryEditor: React.FC<GalleryEditorProps> = ({ isOpen, onClose, item, on
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-3 pt-4 border-t border-gray-700">
             <button
               type="submit"
               disabled={isSubmitting}

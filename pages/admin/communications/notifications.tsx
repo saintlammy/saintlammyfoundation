@@ -277,7 +277,7 @@ const NotificationsManagement: React.FC = () => {
   };
 
   const getNotificationBgColor = (type: string, read: boolean) => {
-    if (read) return 'bg-gray-50 dark:bg-gray-700/30';
+    if (read) return 'bg-gray-700/30';
 
     switch (type) {
       case 'success':
@@ -289,7 +289,7 @@ const NotificationsManagement: React.FC = () => {
       case 'info':
         return 'bg-blue-50 dark:bg-blue-900/20';
       default:
-        return 'bg-gray-50 dark:bg-gray-700/30';
+        return 'bg-gray-700/30';
     }
   };
 
@@ -304,60 +304,60 @@ const NotificationsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Unread</p>
+                <p className="text-gray-400 text-sm">Unread</p>
                 <Bell className="w-5 h-5 text-blue-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.unreadCount}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Today</p>
+                <p className="text-gray-400 text-sm">Today</p>
                 <Clock className="w-5 h-5 text-green-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.totalToday}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Success</p>
+                <p className="text-gray-400 text-sm">Success</p>
                 <CheckCircle className="w-5 h-5 text-green-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.successCount}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Warnings</p>
+                <p className="text-gray-400 text-sm">Warnings</p>
                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.warningCount}
               </p>
             </div>
           </div>
 
           {/* Filters and Actions */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <Filter className="w-5 h-5 text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
+                  <span className="text-sm font-medium text-gray-300">Filters:</span>
                 </div>
 
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="all">All Types</option>
                   <option value="success">Success</option>
@@ -369,7 +369,7 @@ const NotificationsManagement: React.FC = () => {
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="all">All Categories</option>
                   <option value="donation">Donations</option>
@@ -400,9 +400,9 @@ const NotificationsManagement: React.FC = () => {
           </div>
 
           {/* Notifications List */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Recent Notifications ({filteredNotifications.length})
               </h3>
 
@@ -420,7 +420,7 @@ const NotificationsManagement: React.FC = () => {
                   {filteredNotifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-4 rounded-lg border border-gray-200 dark:border-gray-600 transition-all ${getNotificationBgColor(notification.type, notification.read)}`}
+                      className={`p-4 rounded-lg border border-gray-600 transition-all ${getNotificationBgColor(notification.type, notification.read)}`}
                     >
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 mt-1">
@@ -430,20 +430,20 @@ const NotificationsManagement: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <div className="flex items-center gap-2">
-                              <h4 className={`font-semibold text-gray-900 dark:text-white ${!notification.read ? 'font-bold' : ''}`}>
+                              <h4 className={`font-semibold text-white ${!notification.read ? 'font-bold' : ''}`}>
                                 {notification.title}
                               </h4>
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded-full">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-300 text-xs rounded-full">
                                 {getCategoryIcon(notification.category)}
                                 {notification.category}
                               </span>
                             </div>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                            <span className="text-xs text-gray-400 whitespace-nowrap">
                               {formatTimestamp(notification.timestamp)}
                             </span>
                           </div>
 
-                          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                          <p className="text-sm text-gray-300 mb-3">
                             {notification.message}
                           </p>
 

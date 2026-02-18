@@ -265,55 +265,55 @@ const SecurityManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Security Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Two-Factor Auth</p>
+                <p className="text-gray-400 text-sm">Two-Factor Auth</p>
                 <Shield className={`w-5 h-5 ${settings.twoFactorEnabled ? 'text-green-500' : 'text-gray-400'}`} />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {settings.twoFactorEnabled ? 'Enabled' : 'Disabled'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-400">
                 {settings.twoFactorEnabled ? 'Account is secure' : 'Recommended for security'}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Active Sessions</p>
+                <p className="text-gray-400 text-sm">Active Sessions</p>
                 <Activity className="w-5 h-5 text-blue-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {sessions.length}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-400">
                 Across {sessions.length} device{sessions.length !== 1 ? 's' : ''}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Password Age</p>
+                <p className="text-gray-400 text-sm">Password Age</p>
                 <Key className="w-5 h-5 text-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {Math.floor((Date.now() - new Date(settings.passwordLastChanged).getTime()) / (1000 * 60 * 60 * 24))} days
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-400">
                 Last changed {formatTimestamp(settings.passwordLastChanged)}
               </p>
             </div>
           </div>
 
           {/* Change Password */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Key className="w-5 h-5" />
               Change Password
             </h3>
             <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Current Password
                 </label>
                 <div className="relative">
@@ -321,7 +321,7 @@ const SecurityManagement: React.FC = () => {
                     type={showCurrentPassword ? 'text' : 'password'}
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                    className="w-full px-4 py-2 pr-10 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full px-4 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                     required
                   />
                   <button
@@ -335,7 +335,7 @@ const SecurityManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   New Password
                 </label>
                 <div className="relative">
@@ -343,7 +343,7 @@ const SecurityManagement: React.FC = () => {
                     type={showNewPassword ? 'text' : 'password'}
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                    className="w-full px-4 py-2 pr-10 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full px-4 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                     required
                   />
                   <button
@@ -357,14 +357,14 @@ const SecurityManagement: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Confirm New Password
                 </label>
                 <input
                   type="password"
                   value={passwordForm.confirmPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                   required
                 />
               </div>
@@ -379,14 +379,14 @@ const SecurityManagement: React.FC = () => {
           </div>
 
           {/* Two-Factor Authentication */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   <Shield className="w-5 h-5" />
                   Two-Factor Authentication
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-sm text-gray-400 mt-1">
                   Add an extra layer of security to your account
                 </p>
               </div>
@@ -415,15 +415,15 @@ const SecurityManagement: React.FC = () => {
           </div>
 
           {/* Security Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Security Preferences</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Security Preferences</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-blue-500" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Login Notifications</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Receive email alerts for new logins</p>
+                    <p className="font-medium text-white">Login Notifications</p>
+                    <p className="text-sm text-gray-400">Receive email alerts for new logins</p>
                   </div>
                 </div>
                 <button
@@ -440,18 +440,18 @@ const SecurityManagement: React.FC = () => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-purple-500" />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Session Timeout</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Auto-logout after inactivity</p>
+                    <p className="font-medium text-white">Session Timeout</p>
+                    <p className="text-sm text-gray-400">Auto-logout after inactivity</p>
                   </div>
                 </div>
                 <select
                   value={settings.sessionTimeout}
                   onChange={(e) => handleSessionTimeoutChange(Number(e.target.value))}
-                  className="px-4 py-2 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value={15}>15 minutes</option>
                   <option value={30}>30 minutes</option>
@@ -464,23 +464,23 @@ const SecurityManagement: React.FC = () => {
           </div>
 
           {/* Active Sessions */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Active Sessions</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Active Sessions</h3>
             <div className="space-y-3">
               {sessions.map((session) => (
-                <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div key={session.id} className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
                   <div className="flex items-start gap-3">
                     <Smartphone className="w-5 h-5 text-gray-500 mt-1" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900 dark:text-white">{session.device}</p>
+                        <p className="font-medium text-white">{session.device}</p>
                         {session.current && (
                           <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">
                             Current
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-gray-400">
                         {session.location} • {session.ipAddress}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
@@ -502,20 +502,20 @@ const SecurityManagement: React.FC = () => {
           </div>
 
           {/* Recent Security Events */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Security Events</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Recent Security Events</h3>
             <div className="space-y-3">
               {securityEvents.map((event) => (
-                <div key={event.id} className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div key={event.id} className="flex items-start gap-3 p-4 bg-gray-700/50 rounded-lg">
                   {getEventIcon(event.type)}
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <p className="font-medium text-gray-900 dark:text-white">{getEventLabel(event.type)}</p>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="font-medium text-white">{getEventLabel(event.type)}</p>
+                      <span className="text-xs text-gray-400">
                         {formatTimestamp(event.timestamp)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-gray-400 mt-1">
                       {event.device} • {event.ipAddress}
                     </p>
                   </div>

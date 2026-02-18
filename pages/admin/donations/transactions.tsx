@@ -459,40 +459,40 @@ const DonationTransactions: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Cards - Dynamic */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Transactions</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total.toLocaleString()}</p>
+                  <p className="text-gray-400 text-sm">Total Transactions</p>
+                  <p className="text-2xl font-bold text-white">{stats.total.toLocaleString()}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Completed</p>
+                  <p className="text-gray-400 text-sm">Completed</p>
                   <p className="text-2xl font-bold text-green-400">{stats.completed.toLocaleString()}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Pending</p>
+                  <p className="text-gray-400 text-sm">Pending</p>
                   <p className="text-2xl font-bold text-yellow-400">{stats.pending.toLocaleString()}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Failed</p>
+                  <p className="text-gray-400 text-sm">Failed</p>
                   <p className="text-2xl font-bold text-red-400">{stats.failed.toLocaleString()}</p>
                 </div>
                 <XCircle className="w-8 h-8 text-red-500" />
@@ -501,7 +501,7 @@ const DonationTransactions: React.FC = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
@@ -511,7 +511,7 @@ const DonationTransactions: React.FC = () => {
                     placeholder="Search transactions..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -519,7 +519,7 @@ const DonationTransactions: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Status</option>
                 <option value="completed">Completed</option>
@@ -530,7 +530,7 @@ const DonationTransactions: React.FC = () => {
               <select
                 value={methodFilter}
                 onChange={(e) => setMethodFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Methods</option>
                 <option value="card">Credit Card</option>
@@ -547,7 +547,7 @@ const DonationTransactions: React.FC = () => {
                 Refresh
               </button>
 
-              <button className="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors">
+              <button className="px-4 py-2 bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-white rounded-lg flex items-center gap-2 transition-colors">
                 <Download className="w-4 h-4" />
                 Export
               </button>
@@ -555,30 +555,30 @@ const DonationTransactions: React.FC = () => {
           </div>
 
           {/* Transactions Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-100 dark:bg-gray-700">
+                <thead className="bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Transaction
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Donor
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Method
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -586,13 +586,13 @@ const DonationTransactions: React.FC = () => {
                 <tbody className="divide-y divide-gray-700">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         Loading transactions...
                       </td>
                     </tr>
                   ) : filteredTransactions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         No transactions found
                       </td>
                     </tr>
@@ -600,37 +600,37 @@ const DonationTransactions: React.FC = () => {
                     filteredTransactions.map((transaction) => (
                       <tr
                         key={transaction.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
+                        className="hover:bg-gray-700/50 cursor-pointer"
                         onClick={() => setSelectedTransaction(transaction)}
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {getStatusIcon(transaction.status)}
-                            <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                            <span className="ml-2 text-sm font-medium text-white">
                               #{transaction.id}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            <div className="text-sm font-medium text-white">
                               {transaction.donorName}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="text-sm text-gray-400">
                               {transaction.donorEmail}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white">
+                          <div className="text-sm font-bold text-white">
                             {transaction.amount} {transaction.currency}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                          <div className="text-sm text-gray-400 capitalize">
                             {transaction.category}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="text-sm text-gray-300">
                             {transaction.paymentMethod}
                           </span>
                         </td>
@@ -639,7 +639,7 @@ const DonationTransactions: React.FC = () => {
                             {transaction.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                           {new Date(transaction.createdAt).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -661,7 +661,7 @@ const DonationTransactions: React.FC = () => {
                                   const explorerUrl = getBlockchainExplorerUrl(transaction.txHash!, transaction.currency);
                                   if (explorerUrl) window.open(explorerUrl, '_blank');
                                 }}
-                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                className="text-gray-400 hover:text-gray-700 dark:hover:text-white"
                                 title="View on Blockchain"
                               >
                                 <ExternalLink className="w-4 h-4" />
@@ -738,9 +738,9 @@ const DonationTransactions: React.FC = () => {
         {/* Manual Confirmation Modal */}
         {confirmModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl max-w-md w-full p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-white">
                   Manually Confirm Donation
                 </h3>
                 <button
@@ -759,31 +759,31 @@ const DonationTransactions: React.FC = () => {
                   <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-2">
                     ⚠️ You are about to manually confirm this donation without blockchain verification.
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-400">
                     This should only be done if you have verified the payment through other means (e.g., bank confirmation, email receipt, etc.)
                   </p>
                 </div>
 
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Donation Amount</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <p className="text-sm text-gray-400 mb-1">Donation Amount</p>
+                  <p className="text-2xl font-bold text-white">
                     {confirmModal.amount} {confirmModal.currency}
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Confirmation Notes <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={confirmNotes}
                     onChange={(e) => setConfirmNotes(e.target.value)}
                     placeholder="e.g., Verified via bank statement, Email confirmation received, etc."
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                     rows={4}
                     required
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     Provide details on how you verified this donation
                   </p>
                 </div>
@@ -825,9 +825,9 @@ const DonationTransactions: React.FC = () => {
         {/* Transaction Detail Modal */}
         {selectedTransaction && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-semibold text-white">
                   Transaction Details
                 </h3>
                 <button
@@ -840,10 +840,10 @@ const DonationTransactions: React.FC = () => {
 
               <div className="space-y-6">
                 {/* Transaction ID and Status */}
-                <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between pb-4 border-b border-gray-700">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Transaction ID</p>
-                    <p className="text-lg font-mono text-gray-900 dark:text-white">
+                    <p className="text-sm text-gray-400">Transaction ID</p>
+                    <p className="text-lg font-mono text-white">
                       #{selectedTransaction.id}
                     </p>
                   </div>
@@ -857,8 +857,8 @@ const DonationTransactions: React.FC = () => {
 
                 {/* Amount */}
                 <div className="bg-gradient-to-br from-accent-500/10 to-accent-600/10 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Amount</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-400 mb-1">Amount</p>
+                  <p className="text-3xl font-bold text-white">
                     {selectedTransaction.amount.toLocaleString()} {selectedTransaction.currency}
                   </p>
                 </div>
@@ -866,14 +866,14 @@ const DonationTransactions: React.FC = () => {
                 {/* Donor Information */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Donor Name</p>
-                    <p className="text-base font-medium text-gray-900 dark:text-white">
+                    <p className="text-sm text-gray-400 mb-1">Donor Name</p>
+                    <p className="text-base font-medium text-white">
                       {selectedTransaction.donorName}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Email</p>
-                    <p className="text-base font-medium text-gray-900 dark:text-white break-all">
+                    <p className="text-sm text-gray-400 mb-1">Email</p>
+                    <p className="text-base font-medium text-white break-all">
                       {selectedTransaction.donorEmail}
                     </p>
                   </div>
@@ -882,14 +882,14 @@ const DonationTransactions: React.FC = () => {
                 {/* Payment Details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Payment Method</p>
-                    <p className="text-base font-medium text-gray-900 dark:text-white">
+                    <p className="text-sm text-gray-400 mb-1">Payment Method</p>
+                    <p className="text-base font-medium text-white">
                       {selectedTransaction.paymentMethod}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Category</p>
-                    <p className="text-base font-medium text-gray-900 dark:text-white capitalize">
+                    <p className="text-sm text-gray-400 mb-1">Category</p>
+                    <p className="text-base font-medium text-white capitalize">
                       {selectedTransaction.category}
                     </p>
                   </div>
@@ -897,9 +897,9 @@ const DonationTransactions: React.FC = () => {
 
                 {/* Transaction Hash */}
                 {selectedTransaction.txHash && (
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                  <div className="bg-gray-700/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Transaction Hash</p>
+                      <p className="text-sm text-gray-400">Transaction Hash</p>
                       <button
                         onClick={() => {
                           const explorerUrl = getBlockchainExplorerUrl(selectedTransaction.txHash!, selectedTransaction.currency);
@@ -911,7 +911,7 @@ const DonationTransactions: React.FC = () => {
                         <span>View on Blockchain</span>
                       </button>
                     </div>
-                    <p className="text-sm font-mono text-gray-900 dark:text-white break-all">
+                    <p className="text-sm font-mono text-white break-all">
                       {selectedTransaction.txHash}
                     </p>
                   </div>
@@ -919,8 +919,8 @@ const DonationTransactions: React.FC = () => {
 
                 {/* Timestamp */}
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Transaction Date</p>
-                  <p className="text-base font-medium text-gray-900 dark:text-white">
+                  <p className="text-sm text-gray-400 mb-1">Transaction Date</p>
+                  <p className="text-base font-medium text-white">
                     {new Date(selectedTransaction.createdAt).toLocaleString('en-US', {
                       weekday: 'long',
                       year: 'numeric',
@@ -934,7 +934,7 @@ const DonationTransactions: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col space-y-3 pt-4 border-t border-gray-700">
                   <div className="flex items-center space-x-3">
                     <button
                       onClick={() => handleExportPDF(selectedTransaction)}

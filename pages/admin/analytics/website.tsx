@@ -224,13 +224,13 @@ const WebsiteAnalyticsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Header with Filter */}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Website Analytics</h2>
+            <h2 className="text-2xl font-bold text-white">Website Analytics</h2>
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-400" />
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
               >
                 <option value="week">Last 7 Days</option>
                 <option value="month">Last 30 Days</option>
@@ -243,12 +243,12 @@ const WebsiteAnalyticsManagement: React.FC = () => {
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Total Visitors */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Visitors</p>
+                <p className="text-gray-400 text-sm">Total Visitors</p>
                 <Users className="w-5 h-5 text-blue-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : formatNumber(stats.totalVisitors)}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.visitorsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -258,12 +258,12 @@ const WebsiteAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Page Views */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Page Views</p>
+                <p className="text-gray-400 text-sm">Page Views</p>
                 <Eye className="w-5 h-5 text-green-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : formatNumber(stats.pageViews)}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.pageViewsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -273,12 +273,12 @@ const WebsiteAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Avg Session Duration */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Avg Session Duration</p>
+                <p className="text-gray-400 text-sm">Avg Session Duration</p>
                 <Clock className="w-5 h-5 text-purple-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : stats.avgSessionDuration}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.durationChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -288,12 +288,12 @@ const WebsiteAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Bounce Rate */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Bounce Rate</p>
+                <p className="text-gray-400 text-sm">Bounce Rate</p>
                 <MousePointer className="w-5 h-5 text-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+              <p className="text-2xl font-bold text-white mb-1">
                 {loading ? '...' : `${stats.bounceRate}%`}
               </p>
               <div className={`flex items-center gap-1 text-sm ${stats.bounceRateChange <= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -304,8 +304,8 @@ const WebsiteAnalyticsManagement: React.FC = () => {
           </div>
 
           {/* Traffic Trends Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Traffic Overview</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Traffic Overview</h3>
             {loading ? (
               <div className="h-[350px] flex items-center justify-center text-gray-400">
                 Loading chart...
@@ -361,8 +361,8 @@ const WebsiteAnalyticsManagement: React.FC = () => {
           {/* Device & Traffic Sources Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Device Breakdown */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Devices</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Devices</h3>
               {loading ? (
                 <div className="h-[300px] flex items-center justify-center text-gray-400">
                   Loading chart...
@@ -398,14 +398,14 @@ const WebsiteAnalyticsManagement: React.FC = () => {
                     {deviceData.map((device) => {
                       const IconComponent = getDeviceIcon(device.device);
                       return (
-                        <div key={device.device} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div key={device.device} className="flex items-center justify-between p-2 bg-gray-700/50 rounded-lg">
                           <div className="flex items-center gap-2">
                             <IconComponent className="w-5 h-5" style={{ color: device.color }} />
-                            <span className="text-gray-900 dark:text-white font-medium">{device.device}</span>
+                            <span className="text-white font-medium">{device.device}</span>
                           </div>
                           <div className="text-right">
-                            <p className="text-gray-900 dark:text-white font-semibold">{formatNumber(device.visitors)}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{device.percentage}%</p>
+                            <p className="text-white font-semibold">{formatNumber(device.visitors)}</p>
+                            <p className="text-xs text-gray-400">{device.percentage}%</p>
                           </div>
                         </div>
                       );
@@ -416,8 +416,8 @@ const WebsiteAnalyticsManagement: React.FC = () => {
             </div>
 
             {/* Traffic Sources */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Traffic Sources</h3>
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+              <h3 className="text-lg font-semibold text-white mb-4">Traffic Sources</h3>
               {loading ? (
                 <div className="h-[300px] flex items-center justify-center text-gray-400">
                   Loading chart...
@@ -446,14 +446,14 @@ const WebsiteAnalyticsManagement: React.FC = () => {
                   </ResponsiveContainer>
                   <div className="space-y-2">
                     {trafficSources.map((source) => (
-                      <div key={source.source} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                      <div key={source.source} className="flex items-center justify-between p-2 bg-gray-700/50 rounded-lg">
                         <div className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: source.color }} />
-                          <span className="text-gray-900 dark:text-white font-medium">{source.source}</span>
+                          <span className="text-white font-medium">{source.source}</span>
                         </div>
                         <div className="text-right">
-                          <p className="text-gray-900 dark:text-white font-semibold">{formatNumber(source.visitors)}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{source.percentage}%</p>
+                          <p className="text-white font-semibold">{formatNumber(source.visitors)}</p>
+                          <p className="text-xs text-gray-400">{source.percentage}%</p>
                         </div>
                       </div>
                     ))}
@@ -464,17 +464,17 @@ const WebsiteAnalyticsManagement: React.FC = () => {
           </div>
 
           {/* Top Pages Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Pages</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Top Pages</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Page</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Views</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Unique Visitors</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Avg Duration</th>
-                    <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Bounce Rate</th>
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Page</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Views</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Unique Visitors</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Avg Duration</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Bounce Rate</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -486,11 +486,11 @@ const WebsiteAnalyticsManagement: React.FC = () => {
                     </tr>
                   ) : (
                     topPages.map((page) => (
-                      <tr key={page.path} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td className="py-3 px-4 text-gray-900 dark:text-white font-medium">{page.path}</td>
-                        <td className="py-3 px-4 text-gray-900 dark:text-white font-semibold">{formatNumber(page.views)}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{formatNumber(page.uniqueVisitors)}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{page.avgDuration}</td>
+                      <tr key={page.path} className="border-b border-gray-700 hover:bg-gray-700/50">
+                        <td className="py-3 px-4 text-white font-medium">{page.path}</td>
+                        <td className="py-3 px-4 text-white font-semibold">{formatNumber(page.views)}</td>
+                        <td className="py-3 px-4 text-gray-400">{formatNumber(page.uniqueVisitors)}</td>
+                        <td className="py-3 px-4 text-gray-400">{page.avgDuration}</td>
                         <td className="py-3 px-4">
                           <span className={`${page.bounceRate < 40 ? 'text-green-500' : page.bounceRate < 50 ? 'text-yellow-500' : 'text-red-500'}`}>
                             {page.bounceRate}%

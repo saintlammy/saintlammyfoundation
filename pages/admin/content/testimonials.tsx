@@ -345,7 +345,7 @@ const TestimonialsManagement: React.FC = () => {
       case 'rejected':
         return `${baseClasses} bg-red-500/20 text-red-400`;
       default:
-        return `${baseClasses} bg-gray-500/20 text-gray-600 dark:text-gray-400`;
+        return `${baseClasses} bg-gray-500/20 text-gray-400`;
     }
   };
 
@@ -353,7 +353,7 @@ const TestimonialsManagement: React.FC = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-600 dark:text-gray-400'}`}
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-400'}`}
       />
     ));
   };
@@ -380,37 +380,37 @@ const TestimonialsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Testimonials</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+                  <p className="text-gray-400 text-sm">Total Testimonials</p>
+                  <p className="text-2xl font-bold text-white">{stats.total}</p>
                 </div>
                 <MessageSquare className="w-8 h-8 text-blue-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Approved</p>
+                  <p className="text-gray-400 text-sm">Approved</p>
                   <p className="text-2xl font-bold text-green-400">{stats.approved}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Pending Review</p>
+                  <p className="text-gray-400 text-sm">Pending Review</p>
                   <p className="text-2xl font-bold text-yellow-400">{stats.pending}</p>
                 </div>
                 <Clock className="w-8 h-8 text-yellow-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Featured</p>
+                  <p className="text-gray-400 text-sm">Featured</p>
                   <p className="text-2xl font-bold text-purple-400">{stats.featured}</p>
                 </div>
                 <Award className="w-8 h-8 text-purple-500" />
@@ -419,24 +419,24 @@ const TestimonialsManagement: React.FC = () => {
           </div>
 
           {/* Actions */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search testimonials..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="all">All Status</option>
                   <option value="pending">Pending</option>
@@ -448,14 +448,14 @@ const TestimonialsManagement: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Add Testimonial
                 </button>
                 <button
                   onClick={loadTestimonials}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Refresh
@@ -465,10 +465,10 @@ const TestimonialsManagement: React.FC = () => {
           </div>
 
           {/* Testimonials Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+                <thead className="bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Author
@@ -496,32 +496,32 @@ const TestimonialsManagement: React.FC = () => {
                 <tbody className="divide-y divide-gray-700">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         Loading testimonials...
                       </td>
                     </tr>
                   ) : filteredTestimonials.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         No testimonials found
                       </td>
                     </tr>
                   ) : (
                     filteredTestimonials.map((testimonial) => (
-                      <tr key={testimonial.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr key={testimonial.id} className="hover:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center">
+                            <div className="text-sm font-medium text-white flex items-center">
                               <User className="w-4 h-4 mr-2" />
                               {testimonial.name}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="text-sm text-gray-400">
                               {testimonial.role || 'No role specified'}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 dark:text-white max-w-xs truncate">
+                          <div className="text-sm text-white max-w-xs truncate">
                             {testimonial.content}
                           </div>
                         </td>
@@ -541,7 +541,7 @@ const TestimonialsManagement: React.FC = () => {
                             className={`px-2 py-1 text-xs font-medium rounded ${
                               testimonial.is_featured
                                 ? 'bg-purple-500/20 text-purple-400'
-                                : 'bg-gray-500/20 text-gray-600 dark:text-gray-400'
+                                : 'bg-gray-500/20 text-gray-400'
                             }`}
                           >
                             {testimonial.is_featured ? 'Featured' : 'Not Featured'}
@@ -561,7 +561,7 @@ const TestimonialsManagement: React.FC = () => {
                             <select
                               value={testimonial.status}
                               onChange={(e) => updateTestimonial(testimonial.id, { status: e.target.value as 'pending' | 'approved' | 'rejected' })}
-                              className="bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded text-gray-900 dark:text-white text-xs px-2 py-1"
+                              className="bg-gray-700 border border-gray-600 rounded text-white text-xs px-2 py-1"
                             >
                               <option value="pending">Pending</option>
                               <option value="approved">Approved</option>
@@ -586,12 +586,12 @@ const TestimonialsManagement: React.FC = () => {
           {/* Add Testimonial Modal */}
           {showAddModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+              <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Add New Testimonial</h3>
+                  <h3 className="text-lg font-semibold text-white">Add New Testimonial</h3>
                   <button
                     onClick={() => setShowAddModal(false)}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -604,7 +604,7 @@ const TestimonialsManagement: React.FC = () => {
                       type="text"
                       value={newTestimonial.name}
                       onChange={(e) => setNewTestimonial({...newTestimonial, name: e.target.value})}
-                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter author name"
                     />
                   </div>
@@ -615,7 +615,7 @@ const TestimonialsManagement: React.FC = () => {
                       type="text"
                       value={newTestimonial.role}
                       onChange={(e) => setNewTestimonial({...newTestimonial, role: e.target.value})}
-                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter role or title"
                     />
                   </div>
@@ -625,7 +625,7 @@ const TestimonialsManagement: React.FC = () => {
                     <select
                       value={newTestimonial.rating}
                       onChange={(e) => setNewTestimonial({...newTestimonial, rating: parseInt(e.target.value)})}
-                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                     >
                       <option value={5}>5 Stars</option>
                       <option value={4}>4 Stars</option>
@@ -643,7 +643,7 @@ const TestimonialsManagement: React.FC = () => {
                     <select
                       value={newTestimonial.gender}
                       onChange={(e) => setNewTestimonial({...newTestimonial, gender: e.target.value as 'male' | 'female' | 'other' | ''})}
-                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                     >
                       <option value="">Auto-detect from name</option>
                       <option value="male">Male</option>
@@ -704,7 +704,7 @@ const TestimonialsManagement: React.FC = () => {
                         <div className="w-full border-t border-gray-600"></div>
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                        <span className="px-2 bg-gray-800 text-gray-400">Or enter image URL</span>
                       </div>
                     </div>
 
@@ -713,7 +713,7 @@ const TestimonialsManagement: React.FC = () => {
                         type="url"
                         value={newTestimonial.image.startsWith('data:') ? '' : newTestimonial.image}
                         onChange={(e) => setNewTestimonial({ ...newTestimonial, image: e.target.value })}
-                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         placeholder="https://..."
                         disabled={uploadingImage}
                       />
@@ -743,7 +743,7 @@ const TestimonialsManagement: React.FC = () => {
                       value={newTestimonial.content}
                       onChange={(e) => setNewTestimonial({...newTestimonial, content: e.target.value})}
                       rows={4}
-                      className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter testimonial content"
                     />
                   </div>
@@ -752,13 +752,13 @@ const TestimonialsManagement: React.FC = () => {
                     <button
                       onClick={addTestimonial}
                       disabled={!newTestimonial.name || !newTestimonial.content}
-                      className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-gray-900 dark:text-white rounded-lg transition-colors"
+                      className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
                     >
                       Add Testimonial
                     </button>
                     <button
                       onClick={() => setShowAddModal(false)}
-                      className="px-4 py-2 bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
                     >
                       Cancel
                     </button>
@@ -771,12 +771,12 @@ const TestimonialsManagement: React.FC = () => {
           {/* View Testimonial Modal */}
           {showViewModal && selectedTestimonial && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+              <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Testimonial Details</h3>
+                  <h3 className="text-lg font-semibold text-white">Testimonial Details</h3>
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -785,8 +785,8 @@ const TestimonialsManagement: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div>
-                      <h4 className="text-gray-900 dark:text-white font-medium">{selectedTestimonial.name}</h4>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">{selectedTestimonial.role || 'No role specified'}</p>
+                      <h4 className="text-white font-medium">{selectedTestimonial.name}</h4>
+                      <p className="text-gray-400 text-sm">{selectedTestimonial.role || 'No role specified'}</p>
                     </div>
                     <div className="flex">
                       {renderStars(selectedTestimonial.rating)}
@@ -808,8 +808,8 @@ const TestimonialsManagement: React.FC = () => {
                     <p className="text-gray-300 text-sm mb-2">Created: {new Date(selectedTestimonial.created_at).toLocaleString()}</p>
                   </div>
 
-                  <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <p className="text-gray-900 dark:text-white italic">"{selectedTestimonial.content}"</p>
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <p className="text-white italic">"{selectedTestimonial.content}"</p>
                   </div>
 
                   <div className="flex gap-2 pt-4">
@@ -818,7 +818,7 @@ const TestimonialsManagement: React.FC = () => {
                         updateTestimonial(selectedTestimonial.id, { status: 'approved' });
                         setShowViewModal(false);
                       }}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-gray-900 dark:text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                     >
                       Approve
                     </button>
@@ -827,7 +827,7 @@ const TestimonialsManagement: React.FC = () => {
                         updateTestimonial(selectedTestimonial.id, { is_featured: !selectedTestimonial.is_featured });
                         setShowViewModal(false);
                       }}
-                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-gray-900 dark:text-white rounded-lg transition-colors"
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                     >
                       {selectedTestimonial.is_featured ? 'Remove Featured' : 'Make Featured'}
                     </button>

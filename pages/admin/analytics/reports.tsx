@@ -218,11 +218,11 @@ const ReportsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Reports</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-gray-400 text-sm">Total Reports</p>
+                  <p className="text-2xl font-bold text-white">
                     {loading ? '...' : stats.totalReports}
                   </p>
                 </div>
@@ -230,10 +230,10 @@ const ReportsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Scheduled</p>
+                  <p className="text-gray-400 text-sm">Scheduled</p>
                   <p className="text-2xl font-bold text-blue-400">
                     {loading ? '...' : stats.scheduledReports}
                   </p>
@@ -242,10 +242,10 @@ const ReportsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Generated This Month</p>
+                  <p className="text-gray-400 text-sm">Generated This Month</p>
                   <p className="text-2xl font-bold text-green-400">
                     {loading ? '...' : stats.generatedThisMonth}
                   </p>
@@ -254,10 +254,10 @@ const ReportsManagement: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Pending</p>
+                  <p className="text-gray-400 text-sm">Pending</p>
                   <p className="text-2xl font-bold text-yellow-400">
                     {loading ? '...' : stats.pendingReports}
                   </p>
@@ -268,18 +268,18 @@ const ReportsManagement: React.FC = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-600 dark:text-gray-400 text-sm font-medium">Filters:</span>
+                <span className="text-gray-400 text-sm font-medium">Filters:</span>
               </div>
 
               <div className="flex flex-wrap gap-3">
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="all">All Types</option>
                   <option value="donation">Donation Reports</option>
@@ -292,7 +292,7 @@ const ReportsManagement: React.FC = () => {
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value)}
-                  className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="week">This Week</option>
                   <option value="month">This Month</option>
@@ -307,11 +307,11 @@ const ReportsManagement: React.FC = () => {
           {/* Reports Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {loading ? (
-              <div className="col-span-2 text-center py-12 text-gray-600 dark:text-gray-400">
+              <div className="col-span-2 text-center py-12 text-gray-400">
                 Loading reports...
               </div>
             ) : filteredReports.length === 0 ? (
-              <div className="col-span-2 text-center py-12 text-gray-600 dark:text-gray-400">
+              <div className="col-span-2 text-center py-12 text-gray-400">
                 No reports found for the selected filters.
               </div>
             ) : (
@@ -320,7 +320,7 @@ const ReportsManagement: React.FC = () => {
                 return (
                   <div
                     key={report.id}
-                    className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors"
+                    className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-accent-500 transition-colors"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -328,10 +328,10 @@ const ReportsManagement: React.FC = () => {
                           <IconComponent className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <h3 className="text-lg font-semibold text-white">
                             {report.name}
                           </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                          <p className="text-sm text-gray-400 capitalize">
                             {report.frequency.replace('-', ' ')}
                           </p>
                         </div>
@@ -342,12 +342,12 @@ const ReportsManagement: React.FC = () => {
                       </span>
                     </div>
 
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                    <p className="text-gray-400 text-sm mb-4">
                       {report.description}
                     </p>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Clock className="w-4 h-4" />
                         Last generated: {formatDate(report.lastGenerated)}
                       </div>
@@ -377,8 +377,8 @@ const ReportsManagement: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button className="px-4 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
                 <FileText className="w-5 h-5" />

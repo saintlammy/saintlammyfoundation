@@ -135,11 +135,11 @@ const IntegrationsManagement: React.FC = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-gray-400 text-sm">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white">{stat.value}</p>
                   </div>
                   <stat.icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
@@ -148,15 +148,15 @@ const IntegrationsManagement: React.FC = () => {
           </div>
 
           {/* Tabs */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="border-b border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl border border-gray-700">
+            <div className="border-b border-gray-700">
               <div className="flex space-x-8 px-6">
                 <button
                   onClick={() => setActiveTab('connected')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'connected'
                       ? 'border-accent-500 text-accent-600 dark:text-accent-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
                 >
                   Connected ({connectedIntegrations.length})
@@ -166,7 +166,7 @@ const IntegrationsManagement: React.FC = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'available'
                       ? 'border-accent-500 text-accent-600 dark:text-accent-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
                 >
                   Available ({availableIntegrations.length})
@@ -176,7 +176,7 @@ const IntegrationsManagement: React.FC = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'webhooks'
                       ? 'border-accent-500 text-accent-600 dark:text-accent-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
                 >
                   Webhooks
@@ -190,17 +190,17 @@ const IntegrationsManagement: React.FC = () => {
                   {connectedIntegrations.map((integration) => {
                     const Icon = integration.icon;
                     return (
-                      <div key={integration.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div key={integration.id} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
                         <div className="flex items-center space-x-4">
                           <div className={`w-12 h-12 rounded-lg ${integration.bgColor} flex items-center justify-center`}>
                             <Icon className={`w-6 h-6 ${integration.color}`} />
                           </div>
                           <div>
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{integration.name}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{integration.description}</p>
+                            <h3 className="text-lg font-medium text-white">{integration.name}</h3>
+                            <p className="text-sm text-gray-400">{integration.description}</p>
                             <div className="flex items-center space-x-4 mt-1">
-                              <span className="text-xs text-gray-500 dark:text-gray-400">{integration.category}</span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">Last sync: {integration.lastSync}</span>
+                              <span className="text-xs text-gray-400">{integration.category}</span>
+                              <span className="text-xs text-gray-400">Last sync: {integration.lastSync}</span>
                             </div>
                           </div>
                         </div>
@@ -230,15 +230,15 @@ const IntegrationsManagement: React.FC = () => {
                   {availableIntegrations.map((integration) => {
                     const Icon = integration.icon;
                     return (
-                      <div key={integration.id} className="p-6 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-gray-300 dark:hover:border-gray-500 transition-colors">
+                      <div key={integration.id} className="p-6 border border-gray-600 rounded-lg hover:border-gray-300 dark:hover:border-gray-500 transition-colors">
                         <div className="flex items-start space-x-4">
                           <div className={`w-12 h-12 rounded-lg ${integration.bgColor} flex items-center justify-center flex-shrink-0`}>
                             <Icon className={`w-6 h-6 ${integration.color}`} />
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{integration.name}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{integration.description}</p>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">{integration.category}</span>
+                            <h3 className="text-lg font-medium text-white">{integration.name}</h3>
+                            <p className="text-sm text-gray-400 mb-2">{integration.description}</p>
+                            <span className="text-xs text-gray-400">{integration.category}</span>
                           </div>
                         </div>
                         <div className="mt-4 flex justify-end">
@@ -255,7 +255,7 @@ const IntegrationsManagement: React.FC = () => {
               {activeTab === 'webhooks' && (
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Webhook Endpoints</h3>
+                    <h3 className="text-lg font-medium text-white">Webhook Endpoints</h3>
                     <button className="bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center space-x-2">
                       <Plus className="w-4 h-4" />
                       <span>Add Webhook</span>
@@ -267,13 +267,13 @@ const IntegrationsManagement: React.FC = () => {
                       { name: 'Volunteer Signup', url: 'https://api.saintlammyfoundation.org/webhooks/volunteer', events: ['volunteer.created'] },
                       { name: 'Contact Form', url: 'https://api.saintlammyfoundation.org/webhooks/contact', events: ['contact.submitted'] }
                     ].map((webhook, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
                         <div>
-                          <h4 className="font-medium text-gray-900 dark:text-white">{webhook.name}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 font-mono">{webhook.url}</p>
+                          <h4 className="font-medium text-white">{webhook.name}</h4>
+                          <p className="text-sm text-gray-400 font-mono">{webhook.url}</p>
                           <div className="flex space-x-2 mt-1">
                             {webhook.events.map((event) => (
-                              <span key={event} className="text-xs bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
+                              <span key={event} className="text-xs bg-gray-200 dark:bg-gray-600 text-gray-300 px-2 py-1 rounded">
                                 {event}
                               </span>
                             ))}
@@ -297,28 +297,28 @@ const IntegrationsManagement: React.FC = () => {
           </div>
 
           {/* API Configuration */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">API Configuration</h3>
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-white mb-6">API Configuration</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   API Base URL
                 </label>
                 <input
                   type="url"
                   defaultValue="https://api.saintlammyfoundation.org"
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                   readOnly
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Rate Limit (requests/minute)
                 </label>
                 <input
                   type="number"
                   defaultValue="100"
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                 />
               </div>
             </div>

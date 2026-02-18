@@ -267,10 +267,10 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-semibold text-white">
             {mode === 'create' ? 'Create New Outreach' : 'Edit Outreach'}
           </h2>
           <button
@@ -285,19 +285,19 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h3>
+            <h3 className="text-lg font-medium text-white">Basic Information</h3>
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Outreach Title *
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleChange('title', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
-                  errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                className={`w-full px-4 py-2 border rounded-lg bg-gray-900 text-white ${
+                  errors.title ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="e.g., Medical Outreach - Ikeja Community"
               />
@@ -308,15 +308,15 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description *
               </label>
               <textarea
                 value={formData.content}
                 onChange={(e) => handleChange('content', e.target.value)}
                 rows={6}
-                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
-                  errors.content ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                className={`w-full px-4 py-2 border rounded-lg bg-gray-900 text-white ${
+                  errors.content ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Describe the outreach program in detail..."
               />
@@ -327,21 +327,21 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
             {/* Excerpt */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Excerpt (Optional)
               </label>
               <textarea
                 value={formData.excerpt}
                 onChange={(e) => handleChange('excerpt', e.target.value)}
                 rows={2}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                 placeholder="Short summary for preview..."
               />
             </div>
 
             {/* Featured Image */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Featured Image
               </label>
               <div className="space-y-2">
@@ -349,7 +349,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="url"
                   value={formData.featured_image.startsWith('data:') ? '' : formData.featured_image}
                   onChange={(e) => handleChange('featured_image', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                   placeholder="Image URL (or upload below)"
                 />
                 <input
@@ -363,7 +363,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadingImage ? (
                     <>
@@ -393,12 +393,12 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
           {/* Event Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Event Details</h3>
+            <h3 className="text-lg font-medium text-white">Event Details</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Location */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   <MapPin className="w-4 h-4 inline mr-1" />
                   Location *
                 </label>
@@ -406,8 +406,8 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="text"
                   value={formData.location}
                   onChange={(e) => handleChange('location', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
-                    errors.location ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  className={`w-full px-4 py-2 border rounded-lg bg-gray-900 text-white ${
+                    errors.location ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="e.g., Ikeja, Lagos"
                 />
@@ -418,7 +418,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
               {/* Event Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   <Calendar className="w-4 h-4 inline mr-1" />
                   Event Date *
                 </label>
@@ -426,8 +426,8 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="date"
                   value={formData.event_date}
                   onChange={(e) => handleChange('event_date', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${
-                    errors.event_date ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  className={`w-full px-4 py-2 border rounded-lg bg-gray-900 text-white ${
+                    errors.event_date ? 'border-red-500' : 'border-gray-600'
                   }`}
                 />
                 {errors.event_date && (
@@ -437,21 +437,21 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
               {/* Time */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Time
                 </label>
                 <input
                   type="text"
                   value={formData.time}
                   onChange={(e) => handleChange('time', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                   placeholder="e.g., 9:00 AM - 4:00 PM"
                 />
               </div>
 
               {/* Expected Attendees */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   <Users className="w-4 h-4 inline mr-1" />
                   Expected Attendees
                 </label>
@@ -459,7 +459,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="number"
                   value={formData.expected_attendees}
                   onChange={(e) => handleChange('expected_attendees', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                   placeholder="e.g., 500"
                   min="0"
                 />
@@ -467,7 +467,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
               {/* Budget */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   <DollarSign className="w-4 h-4 inline mr-1" />
                   Budget (₦)
                 </label>
@@ -475,7 +475,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="number"
                   value={formData.budget}
                   onChange={(e) => handleChange('budget', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                   placeholder="e.g., 500000"
                   min="0"
                   step="1000"
@@ -484,7 +484,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
               {/* Volunteers Needed */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   <User className="w-4 h-4 inline mr-1" />
                   Volunteers Needed
                 </label>
@@ -492,7 +492,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                   type="number"
                   value={formData.volunteers_needed}
                   onChange={(e) => handleChange('volunteers_needed', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                   placeholder="e.g., 20"
                   min="0"
                 />
@@ -501,21 +501,21 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
             {/* Organizer */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Organizer
               </label>
               <input
                 type="text"
                 value={formData.organizer}
                 onChange={(e) => handleChange('organizer', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                 placeholder="e.g., Saintlammy Foundation Team"
               />
             </div>
 
             {/* Contact Info */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 <Mail className="w-4 h-4 inline mr-1" />
                 Contact Information
               </label>
@@ -523,7 +523,7 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
                 type="text"
                 value={formData.contact_info}
                 onChange={(e) => handleChange('contact_info', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
                 placeholder="e.g., outreach@saintlammyfoundation.org"
               />
             </div>
@@ -531,21 +531,21 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
           {/* Additional Details (Optional) */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Additional Details (Optional)</h3>
+            <h3 className="text-lg font-medium text-white">Additional Details (Optional)</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Use JSON format to add structured data for activities, impact metrics, and future plans.
             </p>
 
             {/* Activities */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Activities Conducted (JSON Array)
               </label>
               <textarea
                 value={formData.activities}
                 onChange={(e) => handleChange('activities', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white font-mono text-sm"
                 placeholder='[{"title": "Activity Name", "description": "Description", "completed": true}]'
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -555,14 +555,14 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
             {/* Impact */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Impact Metrics (JSON Array)
               </label>
               <textarea
                 value={formData.impact}
                 onChange={(e) => handleChange('impact', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white font-mono text-sm"
                 placeholder='[{"title": "Metric Name", "value": 100, "description": "Description"}]'
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -572,14 +572,14 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
             {/* Future Plans */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Future Plans (JSON Array of Strings)
               </label>
               <textarea
                 value={formData.future_plans}
                 onChange={(e) => handleChange('future_plans', e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm"
+                className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white font-mono text-sm"
                 placeholder='["Plan 1", "Plan 2", "Plan 3"]'
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -590,13 +590,13 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Status
             </label>
             <select
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -607,11 +607,11 @@ const OutreachEditor: React.FC<OutreachEditorProps> = ({
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
             >
               Cancel
             </button>

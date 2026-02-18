@@ -131,21 +131,21 @@ const DonorsManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Donors</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-gray-400 text-sm">Total Donors</p>
+                  <p className="text-2xl font-bold text-white">
                     {loading ? '...' : stats.totalDonors.toLocaleString()}
                   </p>
                 </div>
                 <Heart className="w-8 h-8 text-red-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Active This Month</p>
+                  <p className="text-gray-400 text-sm">Active This Month</p>
                   <p className="text-2xl font-bold text-green-400">
                     {loading ? '...' : stats.activeThisMonth.toLocaleString()}
                   </p>
@@ -153,10 +153,10 @@ const DonorsManagement: React.FC = () => {
                 <TrendingUp className="w-8 h-8 text-green-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Recurring Donors</p>
+                  <p className="text-gray-400 text-sm">Recurring Donors</p>
                   <p className="text-2xl font-bold text-blue-400">
                     {loading ? '...' : stats.recurringDonors.toLocaleString()}
                   </p>
@@ -164,10 +164,10 @@ const DonorsManagement: React.FC = () => {
                 <Calendar className="w-8 h-8 text-blue-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Avg Lifetime Value</p>
+                  <p className="text-gray-400 text-sm">Avg Lifetime Value</p>
                   <p className="text-2xl font-bold text-yellow-400">
                     {loading ? '...' : formatCurrency(stats.avgLifetimeValue)}
                   </p>
@@ -178,73 +178,73 @@ const DonorsManagement: React.FC = () => {
           </div>
 
           {/* Search */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search donors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Donors Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Donor Directory ({loading ? '...' : filteredDonors.length})
               </h3>
               {loading ? (
-                <div className="text-gray-600 dark:text-gray-400 text-center py-12">
+                <div className="text-gray-400 text-center py-12">
                   Loading donors...
                 </div>
               ) : filteredDonors.length === 0 ? (
-                <div className="text-gray-600 dark:text-gray-400 text-center py-12">
+                <div className="text-gray-400 text-center py-12">
                   {searchTerm ? 'No donors found matching your search.' : 'No donors yet.'}
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Name</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Email</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Phone</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Total Donated</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Last Donation</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Member Since</th>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Name</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Email</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Phone</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Total Donated</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Last Donation</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Member Since</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredDonors.map((donor) => (
-                        <tr key={donor.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <tr key={donor.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-700/50">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center text-white font-semibold">
                                 {donor.name?.charAt(0).toUpperCase() || 'U'}
                               </div>
-                              <span className="text-gray-900 dark:text-white font-medium">{donor.name || 'Unknown'}</span>
+                              <span className="text-white font-medium">{donor.name || 'Unknown'}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             <div className="flex items-center gap-2">
                               <Mail className="w-4 h-4" />
                               {donor.email || 'No email'}
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             <div className="flex items-center gap-2">
                               <Phone className="w-4 h-4" />
                               {donor.phone || 'N/A'}
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-900 dark:text-white font-semibold">
+                          <td className="py-3 px-4 text-white font-semibold">
                             {formatCurrency(donor.total_donated || 0)}
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             {donor.last_donation_date
                               ? new Date(donor.last_donation_date).toLocaleDateString('en-NG', {
                                   year: 'numeric',
@@ -253,7 +253,7 @@ const DonorsManagement: React.FC = () => {
                                 })
                               : 'Never'}
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             {new Date(donor.created_at).toLocaleDateString('en-NG', {
                               year: 'numeric',
                               month: 'short',

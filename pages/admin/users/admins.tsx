@@ -130,21 +130,21 @@ const AdminsManagement: React.FC = () => {
       <AdminLayout title="Administrators">
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Admins</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-gray-400 text-sm">Total Admins</p>
+                  <p className="text-2xl font-bold text-white">
                     {loading ? '...' : stats.totalAdmins}
                   </p>
                 </div>
                 <Shield className="w-8 h-8 text-blue-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Super Admins</p>
+                  <p className="text-gray-400 text-sm">Super Admins</p>
                   <p className="text-2xl font-bold text-red-400">
                     {loading ? '...' : stats.superAdmins}
                   </p>
@@ -152,10 +152,10 @@ const AdminsManagement: React.FC = () => {
                 <Lock className="w-8 h-8 text-red-500" />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Moderators</p>
+                  <p className="text-gray-400 text-sm">Moderators</p>
                   <p className="text-2xl font-bold text-green-400">
                     {loading ? '...' : stats.moderators}
                   </p>
@@ -165,44 +165,44 @@ const AdminsManagement: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Administrator List ({loading ? '...' : admins.length})
               </h3>
 
               {loading ? (
-                <div className="text-gray-600 dark:text-gray-400 text-center py-12">
+                <div className="text-gray-400 text-center py-12">
                   Loading administrators...
                 </div>
               ) : admins.length === 0 ? (
-                <div className="text-gray-600 dark:text-gray-400 text-center py-12">
+                <div className="text-gray-400 text-center py-12">
                   No administrators found in the system.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Administrator</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Role</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Email</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Joined</th>
-                        <th className="text-left py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Last Active</th>
-                        <th className="text-right py-3 px-4 text-gray-600 dark:text-gray-400 font-medium text-sm">Actions</th>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Administrator</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Role</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Email</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Joined</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Last Active</th>
+                        <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {admins.map((admin) => (
-                        <tr key={admin.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <tr key={admin.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-700/50">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center text-white font-semibold">
                                 {admin.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <p className="text-gray-900 dark:text-white font-medium">{admin.name}</p>
-                                <p className="text-gray-500 dark:text-gray-400 text-xs">ID: {admin.id.slice(0, 8)}...</p>
+                                <p className="text-white font-medium">{admin.name}</p>
+                                <p className="text-gray-400 text-xs">ID: {admin.id.slice(0, 8)}...</p>
                               </div>
                             </div>
                           </td>
@@ -213,12 +213,12 @@ const AdminsManagement: React.FC = () => {
                             </span>
                           </td>
                           <td className="py-3 px-4">
-                            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center gap-2 text-gray-400">
                               <Mail className="w-4 h-4" />
                               {admin.email}
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4" />
                               {new Date(admin.created_at).toLocaleDateString('en-US', {
@@ -228,7 +228,7 @@ const AdminsManagement: React.FC = () => {
                               })}
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-gray-600 dark:text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             {admin.last_login
                               ? new Date(admin.last_login).toLocaleDateString('en-US', {
                                   year: 'numeric',

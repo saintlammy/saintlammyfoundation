@@ -142,10 +142,10 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-bold text-white">
             {story ? 'Edit Success Story' : 'Create New Success Story'}
           </h2>
           <button
@@ -166,7 +166,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
 
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <User className="w-5 h-5" />
               Basic Information
             </h3>
@@ -180,7 +180,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="Beneficiary's name"
                   required
                 />
@@ -194,7 +194,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                   type="number"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="Age"
                 />
               </div>
@@ -210,7 +210,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="City, State"
                   required
                 />
@@ -224,7 +224,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="orphan">Orphan Support</option>
                   <option value="widow">Widow Support</option>
@@ -242,14 +242,14 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                 type="date"
                 value={formData.dateHelped}
                 onChange={(e) => setFormData({ ...formData, dateHelped: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Story Content */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Story Content</h3>
+            <h3 className="text-lg font-semibold text-white">Story Content</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -259,7 +259,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                 value={formData.story}
                 onChange={(e) => setFormData({ ...formData, story: e.target.value })}
                 rows={6}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Write the full success story here..."
                 required
               />
@@ -277,7 +277,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                 value={formData.quote}
                 onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="A memorable quote from the beneficiary..."
               />
             </div>
@@ -291,7 +291,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                 value={formData.impact}
                 onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Describe the measurable impact of the support..."
               />
               <p className="text-xs text-gray-400 mt-1">
@@ -302,7 +302,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
 
           {/* Featured Image */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
               Featured Image
             </h3>
@@ -346,7 +346,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                   <div className="w-full border-t border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                  <span className="px-2 bg-gray-800 text-gray-400">Or enter image URL</span>
                 </div>
               </div>
 
@@ -356,7 +356,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
                   type="url"
                   value={formData.image.startsWith('data:') ? '' : formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="https://..."
                   disabled={uploadingImage}
                 />
@@ -390,7 +390,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
             >
               <option value="published">Published</option>
               <option value="draft">Draft</option>
@@ -398,7 +398,7 @@ const StoryEditor: React.FC<StoryEditorProps> = ({ isOpen, onClose, story, onSav
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-3 pt-4 border-t border-gray-700">
             <button
               type="submit"
               disabled={isSubmitting}

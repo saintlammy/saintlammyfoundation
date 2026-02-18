@@ -136,10 +136,10 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-bold text-white">
             {news ? 'Edit News Article' : 'Create News Article'}
           </h2>
           <button
@@ -160,7 +160,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
 
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Article Details</h3>
+            <h3 className="text-lg font-semibold text-white">Article Details</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -170,7 +170,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Enter article title"
                 required
               />
@@ -184,7 +184,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 placeholder="Brief summary (auto-generated if left empty)"
               />
             </div>
@@ -198,7 +198,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="outreach">Outreach</option>
                   <option value="achievement">Achievement</option>
@@ -216,7 +216,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
               </div>
 
@@ -229,7 +229,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                   type="text"
                   value={formData.readTime}
                   onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="Auto-calculated"
                 />
                 <p className="text-xs text-gray-400 mt-1">e.g., "5 min read"</p>
@@ -239,7 +239,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
 
           {/* Article Content */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Content</h3>
+            <h3 className="text-lg font-semibold text-white">Content</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -249,7 +249,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={10}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent font-mono text-sm"
                 placeholder="Write your article content here..."
                 required
               />
@@ -258,7 +258,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
 
           {/* Featured Image */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
               Featured Image
             </h3>
@@ -300,7 +300,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                   <div className="w-full border-t border-gray-600"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-400">Or enter image URL</span>
+                  <span className="px-2 bg-gray-800 text-gray-400">Or enter image URL</span>
                 </div>
               </div>
 
@@ -309,7 +309,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
                   type="url"
                   value={formData.image.startsWith('data:') ? '' : formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   placeholder="https://..."
                   disabled={uploadingImage}
                 />
@@ -342,7 +342,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
             >
               <option value="published">Published</option>
               <option value="draft">Draft</option>
@@ -350,7 +350,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ isOpen, onClose, news, onSave }
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex gap-3 pt-4 border-t border-gray-700">
             <button
               type="submit"
               disabled={isSubmitting}

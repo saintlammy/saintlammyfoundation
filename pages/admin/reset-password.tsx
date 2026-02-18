@@ -164,7 +164,7 @@ const ResetPassword: React.FC = () => {
           <meta name="robots" content="noindex,nofollow" />
         </Head>
 
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
           {/* Theme Toggle - Top Right */}
           <div className="absolute top-4 right-4">
             <ThemeToggle variant="admin" size="md" />
@@ -174,15 +174,15 @@ const ResetPassword: React.FC = () => {
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-display">
+            <h2 className="text-3xl font-bold text-white mb-4 font-display">
               Password Reset Successful
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
+            <p className="text-gray-400 mb-8">
               Your password has been updated successfully. You will be redirected to the admin dashboard shortly.
             </p>
             <div className="flex items-center justify-center space-x-2 mb-6">
               <Loader className="w-5 h-5 animate-spin text-accent-500" />
-              <span className="text-gray-600 dark:text-gray-400">Redirecting...</span>
+              <span className="text-gray-400">Redirecting...</span>
             </div>
             <Link
               href="/admin"
@@ -205,7 +205,7 @@ const ResetPassword: React.FC = () => {
         <meta name="robots" content="noindex,nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
         {/* Theme Toggle - Top Right */}
         <div className="absolute top-4 right-4">
           <ThemeToggle variant="admin" size="md" />
@@ -217,10 +217,10 @@ const ResetPassword: React.FC = () => {
             <div className="mx-auto w-16 h-16 bg-accent-500 rounded-full flex items-center justify-center mb-4">
               <Key className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-display">
+            <h2 className="text-3xl font-bold text-white font-display">
               Reset Password
             </h2>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-gray-400">
               Enter your new password for your admin account
             </p>
           </div>
@@ -238,11 +238,11 @@ const ResetPassword: React.FC = () => {
             <div className="space-y-4">
               {/* New Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                   New Password *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     id="password"
                     name="password"
@@ -250,7 +250,7 @@ const ResetPassword: React.FC = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-12 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
                       errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="Enter new password"
@@ -258,24 +258,24 @@ const ResetPassword: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password}</p>}
-                <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                <div className="mt-2 text-xs text-gray-400">
                   Password must be at least 8 characters with uppercase, lowercase, and number
                 </div>
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                   Confirm New Password *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
@@ -283,7 +283,7 @@ const ResetPassword: React.FC = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     required
-                    className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-12 py-3 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
                       errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                     }`}
                     placeholder="Confirm new password"
@@ -291,7 +291,7 @@ const ResetPassword: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -321,7 +321,7 @@ const ResetPassword: React.FC = () => {
           <div className="text-center">
             <Link
               href="/admin/login"
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 dark:hover:text-accent-400 transition-colors"
+              className="text-sm text-gray-400 hover:text-accent-500 dark:hover:text-accent-400 transition-colors"
             >
               ← Back to Login
             </Link>

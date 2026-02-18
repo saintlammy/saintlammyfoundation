@@ -279,42 +279,42 @@ const MessagesManagement: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Unread Messages</p>
+                <p className="text-gray-400 text-sm">Unread Messages</p>
                 <Mail className="w-5 h-5 text-blue-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.unreadCount}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Total Inbox</p>
+                <p className="text-gray-400 text-sm">Total Inbox</p>
                 <Inbox className="w-5 h-5 text-green-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.totalInbox}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Sent Today</p>
+                <p className="text-gray-400 text-sm">Sent Today</p>
                 <Send className="w-5 h-5 text-purple-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.sentToday}
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">Archived</p>
+                <p className="text-gray-400 text-sm">Archived</p>
                 <Archive className="w-5 h-5 text-orange-500" />
               </div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-white">
                 {loading ? '...' : stats.archivedCount}
               </p>
             </div>
@@ -323,15 +323,15 @@ const MessagesManagement: React.FC = () => {
           {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Messages List */}
-            <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="lg:col-span-1 bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
               {/* Category Tabs */}
-              <div className="flex border-b border-gray-200 dark:border-gray-700">
+              <div className="flex border-b border-gray-700">
                 <button
                   onClick={() => setActiveCategory('inbox')}
                   className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                     activeCategory === 'inbox'
                       ? 'bg-accent-500 text-white'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'text-gray-400 hover:bg-gray-700'
                   }`}
                 >
                   <Inbox className="w-4 h-4 inline mr-1" />
@@ -342,7 +342,7 @@ const MessagesManagement: React.FC = () => {
                   className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                     activeCategory === 'sent'
                       ? 'bg-accent-500 text-white'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'text-gray-400 hover:bg-gray-700'
                   }`}
                 >
                   <Send className="w-4 h-4 inline mr-1" />
@@ -353,7 +353,7 @@ const MessagesManagement: React.FC = () => {
                   className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                     activeCategory === 'archived'
                       ? 'bg-accent-500 text-white'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      : 'text-gray-400 hover:bg-gray-700'
                   }`}
                 >
                   <Archive className="w-4 h-4 inline mr-1" />
@@ -362,7 +362,7 @@ const MessagesManagement: React.FC = () => {
               </div>
 
               {/* Search Bar */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="p-4 border-b border-gray-700">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
@@ -370,7 +370,7 @@ const MessagesManagement: React.FC = () => {
                     placeholder="Search messages..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                   />
                 </div>
               </div>
@@ -386,27 +386,27 @@ const MessagesManagement: React.FC = () => {
                     <div
                       key={message.id}
                       onClick={() => handleMessageClick(message)}
-                      className={`p-4 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-colors ${
+                      className={`p-4 border-b border-gray-700 cursor-pointer transition-colors ${
                         selectedMessage?.id === message.id
                           ? 'bg-accent-50 dark:bg-accent-900/20'
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                          : 'hover:bg-gray-700/50'
                       } ${!message.read ? 'bg-blue-50 dark:bg-blue-900/10' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium text-gray-900 dark:text-white ${!message.read ? 'font-bold' : ''}`}>
+                          <span className={`font-medium text-white ${!message.read ? 'font-bold' : ''}`}>
                             {message.sender}
                           </span>
                           {message.starred && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-gray-400">
                           {formatTimestamp(message.timestamp)}
                         </span>
                       </div>
-                      <p className={`text-sm mb-1 ${!message.read ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>
+                      <p className={`text-sm mb-1 ${!message.read ? 'font-semibold text-white' : 'text-white'}`}>
                         {message.subject}
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                      <p className="text-xs text-gray-400 truncate">
                         {message.preview}
                       </p>
                       {message.priority === 'high' && (
@@ -424,17 +424,17 @@ const MessagesManagement: React.FC = () => {
             </div>
 
             {/* Message Detail */}
-            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div className="lg:col-span-2 bg-gray-800 rounded-xl border border-gray-700">
               {selectedMessage ? (
                 <div className="h-full flex flex-col">
                   {/* Message Header */}
-                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="p-6 border-b border-gray-700">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        <h2 className="text-xl font-semibold text-white mb-2">
                           {selectedMessage.subject}
                         </h2>
-                        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4" />
                             <span>{selectedMessage.sender}</span>
@@ -452,11 +452,11 @@ const MessagesManagement: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleToggleStar(selectedMessage.id)}
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
                         >
                           <Star className={`w-5 h-5 ${selectedMessage.starred ? 'text-yellow-500 fill-yellow-500' : 'text-gray-400'}`} />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
                           <MoreVertical className="w-5 h-5 text-gray-400" />
                         </button>
                       </div>
@@ -494,7 +494,7 @@ const MessagesManagement: React.FC = () => {
                   {/* Message Body */}
                   <div className="flex-1 p-6 overflow-y-auto">
                     <div className="prose dark:prose-invert max-w-none">
-                      <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                      <p className="text-white whitespace-pre-wrap">
                         {selectedMessage.content}
                       </p>
                     </div>

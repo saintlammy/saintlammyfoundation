@@ -90,10 +90,10 @@ const AdminLogin: React.FC = () => {
   // Show loading spinner while checking auth
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader className="w-6 h-6 animate-spin text-accent-500" />
-          <span className="text-gray-600 dark:text-gray-400">Loading...</span>
+          <span className="text-gray-400">Loading...</span>
         </div>
       </div>
     );
@@ -121,10 +121,10 @@ const AdminLogin: React.FC = () => {
             <div className="mx-auto w-16 h-16 bg-accent-500 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white font-display">
+            <h2 className="text-3xl font-bold text-white font-display">
               Admin Portal
             </h2>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-gray-400">
               Sign in to access the Saintlammy Foundation dashboard
             </p>
           </div>
@@ -151,18 +151,18 @@ const AdminLogin: React.FC = () => {
               <div className="space-y-4">
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="admin@saintlammyfoundation.org"
                     />
                   </div>
@@ -170,24 +170,24 @@ const AdminLogin: React.FC = () => {
 
                 {/* Password */}
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                      className="w-full pl-10 pr-12 py-3 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -201,9 +201,9 @@ const AdminLogin: React.FC = () => {
                   <input
                     id="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-accent-500 focus:ring-accent-500 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded"
+                    className="h-4 w-4 text-accent-500 focus:ring-accent-500 border-gray-600 bg-gray-800 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
                     Remember me
                   </label>
                 </div>
@@ -236,18 +236,18 @@ const AdminLogin: React.FC = () => {
             /* Forgot Password Form */
             <form onSubmit={handleForgotPassword} className="mt-8 space-y-6">
               <div>
-                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-300 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     id="reset-email"
                     type="email"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -257,7 +257,7 @@ const AdminLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(false)}
-                  className="flex-1 py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="flex-1 py-3 px-4 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
                   Back to Login
                 </button>
@@ -281,7 +281,7 @@ const AdminLogin: React.FC = () => {
 
           {/* Footer */}
           <div className="text-center space-y-2">
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               Need an admin account?{' '}
               <Link href="/admin/signup" className="text-accent-500 dark:text-accent-400 hover:text-accent-600 dark:hover:text-accent-300">
                 Sign up here
@@ -289,7 +289,7 @@ const AdminLogin: React.FC = () => {
             </p>
             <Link
               href="/"
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 dark:hover:text-accent-400 transition-colors block"
+              className="text-sm text-gray-400 hover:text-accent-500 dark:hover:text-accent-400 transition-colors block"
             >
               ← Back to Saintlammy Foundation
             </Link>

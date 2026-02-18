@@ -141,7 +141,7 @@ const RecurringDonations: React.FC = () => {
       case 'cancelled':
         return `${baseClasses} bg-red-500/20 text-red-400`;
       default:
-        return `${baseClasses} bg-gray-500/20 text-gray-600 dark:text-gray-400`;
+        return `${baseClasses} bg-gray-500/20 text-gray-400`;
     }
   };
 
@@ -189,40 +189,40 @@ const RecurringDonations: React.FC = () => {
         <div className="space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Active Subscriptions</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalActive}</p>
+                  <p className="text-gray-400 text-sm">Active Subscriptions</p>
+                  <p className="text-2xl font-bold text-white">{totalActive}</p>
                 </div>
                 <Repeat className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Monthly Value</p>
+                  <p className="text-gray-400 text-sm">Monthly Value</p>
                   <p className="text-2xl font-bold text-green-400">₦{totalMonthlyValue.toLocaleString()}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Success Rate</p>
+                  <p className="text-gray-400 text-sm">Success Rate</p>
                   <p className="text-2xl font-bold text-blue-400">{successRate.toFixed(1)}%</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-blue-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Total Subscribers</p>
+                  <p className="text-gray-400 text-sm">Total Subscribers</p>
                   <p className="text-2xl font-bold text-purple-400">{donations.length}</p>
                 </div>
                 <Users className="w-8 h-8 text-purple-500" />
@@ -231,17 +231,17 @@ const RecurringDonations: React.FC = () => {
           </div>
 
           {/* Filters */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <div className="flex flex-col lg:flex-row gap-4 items-center">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search recurring donations..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -249,7 +249,7 @@ const RecurringDonations: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -260,7 +260,7 @@ const RecurringDonations: React.FC = () => {
               <select
                 value={frequencyFilter}
                 onChange={(e) => setFrequencyFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500"
+                className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
               >
                 <option value="all">All Frequencies</option>
                 <option value="weekly">Weekly</option>
@@ -271,7 +271,7 @@ const RecurringDonations: React.FC = () => {
 
               <button
                 onClick={loadRecurringDonations}
-                className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white rounded-lg flex items-center gap-2 transition-colors"
+                className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg flex items-center gap-2 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Refresh
@@ -280,10 +280,10 @@ const RecurringDonations: React.FC = () => {
           </div>
 
           {/* Recurring Donations Table */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+                <thead className="bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Donor
@@ -311,35 +311,35 @@ const RecurringDonations: React.FC = () => {
                 <tbody className="divide-y divide-gray-700">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         Loading recurring donations...
                       </td>
                     </tr>
                   ) : filteredDonations.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-600 dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
                         No recurring donations found
                       </td>
                     </tr>
                   ) : (
                     filteredDonations.map((donation) => (
-                      <tr key={donation.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr key={donation.id} className="hover:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            <div className="text-sm font-medium text-white">
                               {donation.donorName}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="text-sm text-gray-400">
                               {donation.donorEmail}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-bold text-gray-900 dark:text-white">
+                            <div className="text-sm font-bold text-white">
                               {donation.amount} {donation.currency}
                             </div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                            <div className="text-sm text-gray-400">
                               {getFrequencyLabel(donation.frequency)}
                             </div>
                           </div>
@@ -363,7 +363,7 @@ const RecurringDonations: React.FC = () => {
                           {new Date(donation.nextPayment).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white">
+                          <div className="text-sm font-bold text-white">
                             {donation.totalCollected} {donation.currency}
                           </div>
                         </td>
@@ -378,7 +378,7 @@ const RecurringDonations: React.FC = () => {
                                 <Play className="w-4 h-4" />
                               </button>
                             )}
-                            <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white">
+                            <button className="text-gray-400 hover:text-white">
                               <MoreVertical className="w-4 h-4" />
                             </button>
                           </div>

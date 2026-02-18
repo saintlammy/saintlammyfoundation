@@ -112,11 +112,11 @@ const PaymentGatewayManagement: React.FC = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-gray-400 text-sm">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white">{stat.value}</p>
                   </div>
                   <stat.icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
@@ -129,15 +129,15 @@ const PaymentGatewayManagement: React.FC = () => {
             {paymentGateways.map((gateway) => {
               const Icon = gateway.icon;
               return (
-                <div key={gateway.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div key={gateway.id} className="bg-gray-800 rounded-xl border border-gray-700 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-12 h-12 rounded-xl ${gateway.bgColor} flex items-center justify-center`}>
                         <Icon className={`w-6 h-6 ${gateway.color}`} />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{gateway.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{gateway.description}</p>
+                        <h3 className="text-lg font-semibold text-white">{gateway.name}</h3>
+                        <p className="text-sm text-gray-400">{gateway.description}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -156,7 +156,7 @@ const PaymentGatewayManagement: React.FC = () => {
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-gray-300 mb-1">
                         Public API Key
                       </label>
                       <div className="flex items-center space-x-2">
@@ -164,7 +164,7 @@ const PaymentGatewayManagement: React.FC = () => {
                           type={showApiKeys[`${gateway.id}_public`] ? 'text' : 'password'}
                           value={gateway.apiKey}
                           readOnly
-                          className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm"
+                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                         />
                         <button
                           onClick={() => toggleApiKeyVisibility(`${gateway.id}_public`)}
@@ -179,7 +179,7 @@ const PaymentGatewayManagement: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      <label className="block text-sm font-medium text-gray-300 mb-1">
                         Secret Key
                       </label>
                       <div className="flex items-center space-x-2">
@@ -187,7 +187,7 @@ const PaymentGatewayManagement: React.FC = () => {
                           type={showApiKeys[`${gateway.id}_secret`] ? 'text' : 'password'}
                           value={gateway.secretKey}
                           readOnly
-                          className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm"
+                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm"
                         />
                         <button
                           onClick={() => toggleApiKeyVisibility(`${gateway.id}_secret`)}
@@ -205,7 +205,7 @@ const PaymentGatewayManagement: React.FC = () => {
                       <button className="text-sm text-accent-500 dark:text-accent-400 hover:text-accent-600 dark:hover:text-accent-300">
                         Test Connection
                       </button>
-                      <button className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+                      <button className="flex items-center space-x-1 text-sm text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
                         <RefreshCw className="w-4 h-4" />
                         <span>Refresh Keys</span>
                       </button>
@@ -217,47 +217,47 @@ const PaymentGatewayManagement: React.FC = () => {
           </div>
 
           {/* Configuration Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Global Settings</h3>
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-white mb-6">Global Settings</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Default Currency
                 </label>
-                <select className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white">
+                <select className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
                   <option value="NGN">Nigerian Naira (NGN)</option>
                   <option value="USD">US Dollar (USD)</option>
                   <option value="EUR">Euro (EUR)</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Transaction Fee Structure
                 </label>
-                <select className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white">
+                <select className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
                   <option value="absorb">Foundation Absorbs Fees</option>
                   <option value="donor">Donor Pays Fees</option>
                   <option value="split">Split Fees</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Minimum Donation Amount
                 </label>
                 <input
                   type="number"
                   defaultValue="100"
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Maximum Donation Amount
                 </label>
                 <input
                   type="number"
                   defaultValue="1000000"
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                 />
               </div>
             </div>

@@ -77,7 +77,7 @@ const WalletSimple: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div className="bg-gray-700 rounded-lg p-4">
                   <h3 className="text-white font-semibold mb-2">Sample Wallet Information</h3>
                   <div className="text-sm text-gray-300 space-y-1">
                     <div><strong>Bitcoin:</strong> 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</div>
