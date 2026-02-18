@@ -371,7 +371,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
       props: {
         stats: data,
       },
-      revalidate: 3600, // Revalidate every hour to get fresh data
+      revalidate: 300, // Revalidate every 5 minutes to get fresh data
     };
   } catch (error) {
     console.error('Error fetching stats:', error);
