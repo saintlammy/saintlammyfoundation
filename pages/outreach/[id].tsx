@@ -127,7 +127,11 @@ const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
       participated: details.volunteers_participated || 0,
       hours: details.volunteer_hours || 0
     },
-    activities: details.activities || [],
+    activities: Array.isArray(details.activities)
+      ? details.activities
+      : (typeof details.activities === 'string' && details.activities.trim()
+          ? (() => { try { return JSON.parse(details.activities); } catch { return []; } })()
+          : []),
     gallery: details.gallery || (outreach.image || outreach.featured_image ? [outreach.image || outreach.featured_image] : []),
     reportDocument: details.report_document || outreach.report_document,
     testimonials: details.testimonials || [],
@@ -720,7 +724,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
                       : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                   }`}
                 >
-                  {tab === 'plans' ? 'Plans' : tab}
+                  {tab === 'plans' ? 'Future Plans' : tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </button>
               ))}
             </div>
@@ -944,12 +948,12 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
             </div>
           )}
 
-          {/* Plans tab — upcoming only */}
+          {/* Future Plans tab — upcoming only */}
           {activeTab === 'plans' && (
             <div className="space-y-8">
               {outreach.futurePlans && outreach.futurePlans.length > 0 ? (
                 <section>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Plans for This Outreach</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Future Plans for This Outreach</h2>
                   <div className="bg-gradient-to-br from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20 p-6 sm:p-8 rounded-xl">
                     <ul className="space-y-3">
                       {outreach.futurePlans.map((plan, index) => (
