@@ -129,9 +129,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       children: [
         { id: 'users-all', label: 'All Users', icon: Users, href: '/admin/users' },
         { id: 'users-donors', label: 'Donors', icon: Heart, href: '/admin/users/donors' },
-        { id: 'users-volunteers', label: 'Volunteers', icon: UserCheck, href: '/admin/users/volunteers' },
-        { id: 'users-volunteer-roles', label: 'Volunteer Roles', icon: Briefcase, href: '/admin/users/volunteer-roles' },
-        { id: 'users-volunteer-forms', label: 'Registration Forms', icon: ClipboardList, href: '/admin/users/volunteer-forms' },
+        {
+          id: 'users-volunteers',
+          label: 'Volunteers',
+          icon: UserCheck,
+          children: [
+            { id: 'users-volunteers-all', label: 'All Volunteers', icon: UserCheck, href: '/admin/users/volunteers' },
+            { id: 'users-volunteer-roles', label: 'Volunteer Roles', icon: Briefcase, href: '/admin/users/volunteer-roles' },
+            { id: 'users-volunteer-forms', label: 'Registration Forms', icon: ClipboardList, href: '/admin/users/volunteer-forms' }
+          ]
+        },
         { id: 'users-admins', label: 'Administrators', icon: Shield, href: '/admin/users/admins' }
       ]
     },
