@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Heart, Users, Clock, MapPin, Send, Star, CheckCircle, Calendar } from 'lucide-react';
+import { Heart, Users, Clock, MapPin, Send, Star, CheckCircle, Calendar, Briefcase } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';
 
@@ -18,6 +18,17 @@ interface VolunteerFormData {
   skills: string;
   backgroundCheck: boolean;
   commitment: string;
+}
+
+interface VolunteerRole {
+  id: string;
+  title: string;
+  description: string;
+  required_skills: string[];
+  time_commitment: string;
+  location: string;
+  spots_available: number | null;
+  category: string;
 }
 
 const Volunteer: React.FC = () => {
@@ -39,49 +50,27 @@ const Volunteer: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [volunteerOpportunities, setVolunteerOpportunities] = useState<VolunteerRole[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(true);
 
-  const volunteerOpportunities = [
-    {
-      id: 1,
-      title: 'Outreach Coordinator',
-      commitment: 'Weekly',
-      location: 'Lagos, Abuja, Port Harcourt',
-      description: 'Help organize and coordinate community outreach programs. Perfect for those with event planning experience.',
-      skills: ['Event Planning', 'Communication', 'Organization'],
-      timeCommitment: '4-6 hours/week',
-      icon: Users
-    },
-    {
-      id: 2,
-      title: 'Medical Volunteer',
-      commitment: 'Monthly',
-      location: 'Various Communities',
-      description: 'Support medical outreaches by assisting healthcare professionals and providing basic care.',
-      skills: ['Healthcare Background', 'First Aid', 'Patient Care'],
-      timeCommitment: '8 hours/month',
-      icon: Heart
-    },
-    {
-      id: 3,
-      title: 'Education Mentor',
-      commitment: 'Bi-weekly',
-      location: 'Orphanages & Schools',
-      description: 'Provide tutoring and mentorship to children in our educational programs.',
-      skills: ['Teaching', 'Patience', 'Subject Expertise'],
-      timeCommitment: '3-4 hours/week',
-      icon: Star
-    },
-    {
-      id: 4,
-      title: 'Skills Trainer',
-      commitment: 'Monthly',
-      location: 'Training Centers',
-      description: 'Teach vocational skills to widows and youth in our empowerment programs.',
-      skills: ['Vocational Skills', 'Training Experience', 'Patience'],
-      timeCommitment: '6 hours/month',
-      icon: CheckCircle
-    }
-  ];
+  // Fetch volunteer opportunities from API
+  useEffect(() => {
+    const fetchOpportunities = async () => {
+      try {
+        const response = await fetch('/api/public/volunteer-roles');
+        if (response.ok) {
+          const roles = await response.json();
+          setVolunteerOpportunities(roles);
+        }
+      } catch (error) {
+        console.error('Error fetching volunteer roles:', error);
+      } finally {
+        setLoadingRoles(false);
+      }
+    };
+
+    fetchOpportunities();
+  }, []);
 
   const volunteerBenefits = [
     {
@@ -103,23 +92,6 @@ const Volunteer: React.FC = () => {
       title: 'Recognition',
       description: 'Receive certificates and recognition for your volunteer contributions',
       icon: CheckCircle
-    }
-  ];
-
-  const volunteerTestimonials = [
-    {
-      name: 'Adunola Grace',
-      role: 'Medical Volunteer',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      quote: 'Volunteering with Saintlammy has been the most rewarding experience. Seeing the smiles on children\'s faces after treatment is priceless.',
-      duration: '2 years'
-    },
-    {
-      name: 'David Okafor',
-      role: 'Outreach Coordinator',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-      quote: 'The organization provides excellent support and training. I\'ve grown professionally while making a real difference.',
-      duration: '1.5 years'
     }
   ];
 
@@ -189,10 +161,14 @@ const Volunteer: React.FC = () => {
     }));
   };
 
-  const interests = [
-    'Medical Outreach', 'Education & Mentoring', 'Event Coordination', 'Skills Training',
-    'Administrative Support', 'Fundraising', 'Social Media', 'Photography/Videography'
-  ];
+  // Derive interests dynamically from volunteer roles
+  const interests = Array.from(new Set([
+    ...volunteerOpportunities.map(role => role.title),
+    'Administrative Support',
+    'Fundraising',
+    'Social Media',
+    'Photography/Videography'
+  ]));
 
   return (
     <>
@@ -260,54 +236,87 @@ const Volunteer: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {volunteerOpportunities.map((opportunity) => (
-                <div key={opportunity.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <opportunity.icon className="w-6 h-6 text-accent-400" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1 font-display">{opportunity.title}</h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {opportunity.timeCommitment}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {opportunity.commitment}
-                        </span>
+            {loadingRoles ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-400 mx-auto mb-4"></div>
+                <p className="text-gray-600 dark:text-gray-300">Loading opportunities...</p>
+              </div>
+            ) : volunteerOpportunities.length === 0 ? (
+              <div className="text-center py-12">
+                <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-300">No volunteer opportunities available at the moment. Please check back later.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {volunteerOpportunities.map((opportunity) => {
+                  // Map category to icon
+                  const getCategoryIcon = (category: string) => {
+                    switch (category) {
+                      case 'medical': return Heart;
+                      case 'education': return Star;
+                      case 'events': return Users;
+                      case 'admin': return CheckCircle;
+                      case 'technical': return Briefcase;
+                      default: return Users;
+                    }
+                  };
+                  const IconComponent = getCategoryIcon(opportunity.category);
+
+                  return (
+                    <div key={opportunity.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <IconComponent className="w-6 h-6 text-accent-400" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1 font-display">{opportunity.title}</h3>
+                          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            {opportunity.time_commitment && (
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-4 h-4" />
+                                {opportunity.time_commitment}
+                              </span>
+                            )}
+                            {opportunity.spots_available && (
+                              <span className="flex items-center gap-1">
+                                <Users className="w-4 h-4" />
+                                {opportunity.spots_available} spots
+                              </span>
+                            )}
+                          </div>
+                          <p className="flex items-center gap-1 text-sm text-accent-400 mb-3">
+                            <MapPin className="w-4 h-4" />
+                            {opportunity.location}
+                          </p>
+                        </div>
                       </div>
-                      <p className="flex items-center gap-1 text-sm text-accent-400 mb-3">
-                        <MapPin className="w-4 h-4" />
-                        {opportunity.location}
-                      </p>
+
+                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-4">{opportunity.description}</p>
+
+                      {opportunity.required_skills.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Required Skills:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {opportunity.required_skills.map((skill, index) => (
+                              <span key={index} className="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <a
+                        href={`/contact?subject=Volunteer Application - ${opportunity.title}&message=I am interested in applying for the ${opportunity.title} position. Please find my details in the form below.`}
+                        className="w-full bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white py-3 px-4 rounded-full font-medium text-sm transition-colors font-sans text-center block"
+                      >
+                        Apply for This Role
+                      </a>
                     </div>
-                  </div>
-
-                  <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-4">{opportunity.description}</p>
-
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Skills Needed:</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {opportunity.skills.map((skill, index) => (
-                        <span key={index} className="px-2 py-1 bg-accent-500/20 text-accent-400 rounded-full text-xs font-medium">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <a
-                    href={`/contact?subject=Volunteer Application - ${opportunity.title}&message=I am interested in applying for the ${opportunity.title} position. Please find my details in the form below.`}
-                    className="w-full bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white py-3 px-4 rounded-full font-medium text-sm transition-colors font-sans text-center block"
-                  >
-                    Apply for This Role
-                  </a>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
@@ -536,45 +545,6 @@ const Volunteer: React.FC = () => {
           </div>
         </section>
 
-        {/* Volunteer Testimonials */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Hear From Our Volunteers
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Stories from volunteers who are making a difference every day
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {volunteerTestimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
-                  <div className="flex items-center mb-6">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover object-center"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white font-display">{testimonial.name}</h3>
-                      <p className="text-sm text-accent-400 font-medium">{testimonial.role}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.duration} volunteering</p>
-                    </div>
-                  </div>
-
-                  <blockquote className="text-gray-600 dark:text-gray-300 font-light leading-relaxed italic">
-                    "{testimonial.quote}"
-                  </blockquote>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
     </>
   );
 };
