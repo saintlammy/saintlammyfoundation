@@ -192,9 +192,31 @@ const Volunteer: React.FC = () => {
             <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
               Volunteer With Us
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-8">
               Join our community of changemakers and help transform lives across Nigeria. Your time and skills can make a lasting difference.
             </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+              <a
+                href="#volunteer-form"
+                className="px-8 py-4 bg-accent-500 hover:bg-accent-600 text-white rounded-xl font-medium transition-colors shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              >
+                Apply Now
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+              <Link
+                href="/volunteer/login"
+                className="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium transition-colors inline-flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Volunteer Login
+              </Link>
+            </div>
           </div>
         </section>
 
