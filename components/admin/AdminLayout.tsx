@@ -34,7 +34,8 @@ import {
   Calculator,
   Home,
   Briefcase,
-  ClipboardList
+  ClipboardList,
+  FormInput
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -196,7 +197,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         { id: 'settings-payment', label: 'Payment Gateway', icon: Wallet, href: '/admin/settings/payment' },
         { id: 'settings-security', label: 'Security', icon: Shield, href: '/admin/settings/security' },
         { id: 'settings-cookie-compliance', label: 'Cookie Compliance', icon: Cookie, href: '/admin/cookie-compliance' },
-        { id: 'settings-integrations', label: 'Integrations', icon: Globe, href: '/admin/settings/integrations' }
+        { id: 'settings-integrations', label: 'Integrations', icon: Globe, href: '/admin/settings/integrations' },
+        { id: 'settings-form-options', label: 'Form Options', icon: FormInput, href: '/admin/settings/form-options' }
       ]
     }
   ];

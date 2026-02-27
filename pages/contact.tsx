@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Mail, Phone, MapPin, Clock, Send, MessageSquare, User, Globe } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
@@ -46,8 +46,11 @@ const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHo
     email: '',
     subject: '',
     message: '',
-    inquiryType: 'general'
+    inquiryType: ''
   });
+
+  const [inquiryTypes, setInquiryTypes] = useState<Array<{ id: string; title: string; value?: string }>>([]);
+  const [loadingInquiryTypes, setLoadingInquiryTypes] = useState(true);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -116,14 +119,30 @@ const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHo
     note: 'Emergency inquiries will be responded to within 24 hours regardless of office hours.'
   };
 
-  const inquiryTypes = [
-    { value: 'general', label: 'General Inquiry' },
-    { value: 'donation', label: 'Donation Questions' },
-    { value: 'volunteer', label: 'Volunteer Opportunities' },
-    { value: 'partnership', label: 'Partnership' },
-    { value: 'media', label: 'Media & Press' },
-    { value: 'support', label: 'Technical Support' }
-  ];
+  // Fetch inquiry types from API
+  useEffect(() => {
+    const fetchInquiryTypes = async () => {
+      try {
+        const response = await fetch('/api/public/contact-inquiry-types');
+        if (response.ok) {
+          const types = await response.json();
+          setInquiryTypes(types);
+          // Set default inquiry type to first option
+          if (types.length > 0 && !formData.inquiryType) {
+            setFormData(prev => ({ ...prev, inquiryType: types[0].id }));
+          }
+        } else {
+          console.error('Failed to fetch inquiry types');
+        }
+      } catch (error) {
+        console.error('Error fetching inquiry types:', error);
+      } finally {
+        setLoadingInquiryTypes(false);
+      }
+    };
+
+    fetchInquiryTypes();
+  }, []);
 
   const faqs = [
     {
@@ -269,13 +288,20 @@ const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHo
                         name="inquiryType"
                         value={formData.inquiryType}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                        disabled={loadingInquiryTypes}
+                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans disabled:opacity-50"
                       >
-                        {inquiryTypes.map((type) => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
-                          </option>
-                        ))}
+                        {loadingInquiryTypes ? (
+                          <option value="">Loading inquiry types...</option>
+                        ) : inquiryTypes.length === 0 ? (
+                          <option value="">No inquiry types available</option>
+                        ) : (
+                          inquiryTypes.map((type) => (
+                            <option key={type.id} value={type.id}>
+                              {type.title}
+                            </option>
+                          ))
+                        )}
                       </select>
                     </div>
                     <div>
