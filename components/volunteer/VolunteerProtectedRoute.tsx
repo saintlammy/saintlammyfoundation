@@ -8,7 +8,7 @@ interface VolunteerProtectedRouteProps {
 
 const VolunteerProtectedRoute: React.FC<VolunteerProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
-  const { user, session, isLoading } = useAuth();
+  const { user, session, loading } = useAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -17,7 +17,7 @@ const VolunteerProtectedRoute: React.FC<VolunteerProtectedRouteProps> = ({ child
   }, [user, session]);
 
   const checkAuthorization = async () => {
-    if (isLoading) {
+    if (loading) {
       return;
     }
 
@@ -57,7 +57,7 @@ const VolunteerProtectedRoute: React.FC<VolunteerProtectedRouteProps> = ({ child
     }
   };
 
-  if (isLoading || isCheckingAuth) {
+  if (loading || isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">

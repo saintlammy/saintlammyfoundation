@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Heart, Users, Clock, MapPin, Send, Star, CheckCircle, Calendar, Briefcase } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
 import { pageSEO } from '@/lib/seo';

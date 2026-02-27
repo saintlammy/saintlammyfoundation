@@ -89,9 +89,11 @@ const VolunteerDashboard: React.FC = () => {
   return (
     <VolunteerProtectedRoute>
       <SEOHead
-        title="Volunteer Dashboard - Saintlammy Foundation"
-        description="Your volunteer portal dashboard"
-        canonical="/volunteer/dashboard"
+        config={{
+          title: "Volunteer Dashboard - Saintlammy Foundation",
+          description: "Your volunteer portal dashboard",
+          canonical: "/volunteer/dashboard"
+        }}
       />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
