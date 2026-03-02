@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { VolunteerFormSchema } from '@/lib/schemas';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { getTypedSupabaseClient } from '@/lib/supabase';
+import { sendVolunteerApplicationEmails } from '@/lib/email';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -95,9 +96,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       timestamp: dbData.created_at
     });
 
+    // Send email notifications (async, don't wait for completion)
+    sendVolunteerApplicationEmails({
+      firstName: sanitizedData.firstName,
+      lastName: sanitizedData.lastName,
+      email: sanitizedData.email,
+      phone: sanitizedData.phone || '',
+      location: sanitizedData.location,
+      interests: sanitizedData.interests,
+      availability: sanitizedData.availability,
+      skills: sanitizedData.skills,
+      experience: sanitizedData.experience,
+      motivation: sanitizedData.motivation,
+      commitment: sanitizedData.commitment,
+      applicationId: newVolunteer.id
+    }).catch(err => {
+      console.error('Error sending volunteer emails (non-blocking):', err);
+    });
+
     return res.status(201).json({
       success: true,
-      message: 'Thank you for your volunteer application! We will review it and get back to you within 5-7 business days.',
+      message: 'Thank you for your volunteer application! We will review it and get back to you within 5-7 business days. A confirmation email has been sent to your email address.',
       applicationId: newVolunteer.id,
       timestamp: new Date().toISOString(),
       nextSteps: [
