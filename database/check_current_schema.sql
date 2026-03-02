@@ -87,20 +87,46 @@ BEGIN
 END $$;
 
 -- 5. Check for any existing volunteer data
-SELECT
-  'EXISTING VOLUNTEER DATA' as section,
-  id,
-  email,
-  name,
-  status,
-  created_at,
-  -- Check if form fields have data
-  CASE WHEN experience IS NOT NULL THEN '✅' ELSE '❌' END as has_experience,
-  CASE WHEN motivation IS NOT NULL THEN '✅' ELSE '❌' END as has_motivation,
-  CASE WHEN commitment IS NOT NULL THEN '✅' ELSE '❌' END as has_commitment
-FROM volunteers
-ORDER BY created_at DESC
-LIMIT 5;
+DO $$
+DECLARE
+  has_form_fields BOOLEAN;
+BEGIN
+  -- Check if form fields exist in volunteers table
+  has_form_fields := EXISTS (
+    SELECT FROM information_schema.columns
+    WHERE table_name = 'volunteers'
+    AND column_name IN ('experience', 'motivation', 'commitment')
+  );
+
+  IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'volunteers') THEN
+    IF has_form_fields THEN
+      -- If form fields exist, show them
+      RAISE NOTICE '';
+      RAISE NOTICE '=== EXISTING VOLUNTEER DATA (with form fields) ===';
+      RAISE NOTICE 'Run this query manually to see data:';
+      RAISE NOTICE 'SELECT id, email, name, status, created_at, experience, motivation, commitment FROM volunteers LIMIT 5;';
+      RAISE NOTICE '';
+    ELSE
+      -- If no form fields, show basic data only
+      RAISE NOTICE '';
+      RAISE NOTICE '=== EXISTING VOLUNTEER DATA (basic fields only) ===';
+      RAISE NOTICE 'Run this query manually to see data:';
+      RAISE NOTICE 'SELECT id, email, name, status, created_at FROM volunteers LIMIT 5;';
+      RAISE NOTICE '';
+    END IF;
+  END IF;
+END $$;
+
+-- Try to show basic volunteer data if table exists (may show empty if table doesn't exist)
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'volunteers') THEN
+    -- Table exists, we can query it
+    RAISE NOTICE 'Showing basic volunteer data...';
+  ELSE
+    RAISE NOTICE 'Volunteers table does not exist yet - skipping data query';
+  END IF;
+END $$;
 
 -- 6. Check RLS policies on volunteers table
 SELECT
