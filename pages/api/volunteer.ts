@@ -40,19 +40,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const client = getTypedSupabaseClient();
 
     // Convert to database format
+    // Note: Store additional form fields in notes as structured text
+    const additionalInfo = [
+      `Experience: ${sanitizedData.experience}`,
+      `Motivation: ${sanitizedData.motivation}`,
+      `Commitment: ${sanitizedData.commitment}`,
+      `Background Check Consent: ${sanitizedData.backgroundCheck ? 'Yes' : 'No'}`
+    ].join('\n\n');
+
     const dbData = {
       first_name: sanitizedData.firstName,
       last_name: sanitizedData.lastName,
+      name: `${sanitizedData.firstName} ${sanitizedData.lastName}`,
       email: sanitizedData.email.toLowerCase().trim(),
       phone: sanitizedData.phone || '',
       location: sanitizedData.location,
       interests: sanitizedData.interests,
-      availability: sanitizedData.availability,
-      experience: sanitizedData.experience,
-      motivation: sanitizedData.motivation,
-      skills: sanitizedData.skills,
-      background_check: sanitizedData.backgroundCheck,
-      commitment: sanitizedData.commitment,
+      skills: sanitizedData.skills ? [sanitizedData.skills] : [], // Convert string to array
+      availability: [sanitizedData.availability], // Convert string to array
+      notes: additionalInfo,
       status: 'pending' as const,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
