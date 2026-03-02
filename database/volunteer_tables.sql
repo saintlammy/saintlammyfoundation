@@ -27,6 +27,7 @@ CREATE INDEX IF NOT EXISTS idx_volunteer_roles_category ON volunteer_roles(categ
 CREATE INDEX IF NOT EXISTS idx_volunteer_roles_created ON volunteer_roles(created_at DESC);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_volunteer_roles_updated_at ON volunteer_roles;
 CREATE TRIGGER update_volunteer_roles_updated_at
     BEFORE UPDATE ON volunteer_roles
     FOR EACH ROW
@@ -35,11 +36,13 @@ CREATE TRIGGER update_volunteer_roles_updated_at
 -- RLS Policies for volunteer_roles
 ALTER TABLE volunteer_roles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public can view active volunteer roles" ON volunteer_roles;
 CREATE POLICY "Public can view active volunteer roles"
     ON volunteer_roles
     FOR SELECT
     USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage volunteer roles" ON volunteer_roles;
 CREATE POLICY "Admins can manage volunteer roles"
     ON volunteer_roles
     FOR ALL
@@ -73,6 +76,7 @@ CREATE INDEX IF NOT EXISTS idx_volunteer_forms_role ON volunteer_forms(role_id);
 CREATE INDEX IF NOT EXISTS idx_volunteer_forms_dates ON volunteer_forms(start_date, end_date);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_volunteer_forms_updated_at ON volunteer_forms;
 CREATE TRIGGER update_volunteer_forms_updated_at
     BEFORE UPDATE ON volunteer_forms
     FOR EACH ROW
@@ -81,11 +85,13 @@ CREATE TRIGGER update_volunteer_forms_updated_at
 -- RLS Policies for volunteer_forms
 ALTER TABLE volunteer_forms ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public can view active volunteer forms" ON volunteer_forms;
 CREATE POLICY "Public can view active volunteer forms"
     ON volunteer_forms
     FOR SELECT
     USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage volunteer forms" ON volunteer_forms;
 CREATE POLICY "Admins can manage volunteer forms"
     ON volunteer_forms
     FOR ALL
