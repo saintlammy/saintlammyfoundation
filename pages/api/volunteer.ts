@@ -12,9 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Validate input using schema
     const validation = validateInput(VolunteerFormSchema)(req.body);
     if (!validation.success) {
+      console.error('Volunteer form validation failed:', validation.errors);
       return res.status(400).json({
         error: 'Invalid input data',
-        details: validation.errors
+        details: validation.errors,
+        message: validation.errors.join(', ')
       });
     }
 

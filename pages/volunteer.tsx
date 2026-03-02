@@ -111,7 +111,11 @@ const Volunteer: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || data.error || 'Submission failed. Please try again.');
+        console.error('Validation errors:', data.details);
+        const errorMessage = data.details
+          ? `Validation failed:\n${data.details.join('\n')}`
+          : (data.message || data.error || 'Submission failed. Please try again.');
+        throw new Error(errorMessage);
       }
 
       setIsSubmitted(true);
@@ -578,7 +582,7 @@ const Volunteer: React.FC = () => {
 
                   {submitError && (
                     <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                      <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">{submitError}</p>
+                      <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2 whitespace-pre-line">{submitError}</p>
                       <p className="text-red-600 dark:text-red-500 text-xs">
                         Please ensure all required fields (*) are filled out correctly.
                       </p>
