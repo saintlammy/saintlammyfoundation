@@ -344,7 +344,7 @@ const Volunteer: React.FC = () => {
         </section>
 
         {/* Volunteer Application Form */}
-        <section className="py-24 bg-white dark:bg-black">
+        <section id="volunteer-form" className="py-24 bg-white dark:bg-black">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-16">
               <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
@@ -473,13 +473,14 @@ const Volunteer: React.FC = () => {
 
                   <div>
                     <label htmlFor="availability" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                      Availability
+                      Availability *
                     </label>
                     <select
                       id="availability"
                       name="availability"
                       value={formData.availability}
                       onChange={handleChange}
+                      required
                       className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                     >
                       <option value="">Select your availability</option>
@@ -491,17 +492,34 @@ const Volunteer: React.FC = () => {
                   </div>
 
                   <div>
+                    <label htmlFor="skills" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+                      Skills & Qualifications *
+                    </label>
+                    <textarea
+                      id="skills"
+                      name="skills"
+                      value={formData.skills}
+                      onChange={handleChange}
+                      required
+                      rows={3}
+                      className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans resize-none"
+                      placeholder="List your relevant skills and qualifications (e.g., First Aid, Teaching, Social Media, etc.)..."
+                    />
+                  </div>
+
+                  <div>
                     <label htmlFor="experience" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                      Relevant Experience
+                      Relevant Experience *
                     </label>
                     <textarea
                       id="experience"
                       name="experience"
                       value={formData.experience}
                       onChange={handleChange}
+                      required
                       rows={4}
                       className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans resize-none"
-                      placeholder="Tell us about your relevant experience, skills, or qualifications..."
+                      placeholder="Tell us about your relevant experience, previous volunteer work, or related activities..."
                     />
                   </div>
 
@@ -521,6 +539,28 @@ const Volunteer: React.FC = () => {
                     />
                   </div>
 
+                  <div>
+                    <label htmlFor="commitment" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+                      Time Commitment *
+                    </label>
+                    <select
+                      id="commitment"
+                      name="commitment"
+                      value={formData.commitment}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    >
+                      <option value="">Select your time commitment</option>
+                      <option value="1-3 hours per week">1-3 hours per week</option>
+                      <option value="4-6 hours per week">4-6 hours per week</option>
+                      <option value="7-10 hours per week">7-10 hours per week</option>
+                      <option value="10+ hours per week">10+ hours per week</option>
+                      <option value="One-time event">One-time event</option>
+                      <option value="Seasonal/Project-based">Seasonal/Project-based</option>
+                    </select>
+                  </div>
+
                   <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
@@ -537,8 +577,11 @@ const Volunteer: React.FC = () => {
                   </div>
 
                   {submitError && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
-                      {submitError}
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                      <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">{submitError}</p>
+                      <p className="text-red-600 dark:text-red-500 text-xs">
+                        Please ensure all required fields (*) are filled out correctly.
+                      </p>
                     </div>
                   )}
 
