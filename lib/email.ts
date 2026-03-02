@@ -24,19 +24,61 @@ export interface VolunteerEmailData {
 
 /**
  * Send email notification when new volunteer application is submitted
+ * Using Supabase Edge Functions (Option A - True Supabase Implementation)
  */
 export async function sendVolunteerApplicationEmails(data: VolunteerEmailData) {
-  try {
-    // Send confirmation email to volunteer
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn('⚠️ Supabase not configured - emails logged to console only');
     await sendVolunteerConfirmationEmail(data);
-
-    // Send notification email to admin
     await sendAdminNotificationEmail(data);
+    return { success: true, mode: 'console-only' };
+  }
 
-    return { success: true };
+  try {
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Send confirmation email to volunteer via Supabase Edge Function
+    const { data: confirmationResult, error: confirmationError } = await supabase.functions.invoke(
+      'send-volunteer-email',
+      {
+        body: {
+          type: 'confirmation',
+          data
+        }
+      }
+    );
+
+    if (confirmationError) {
+      console.error('Error sending confirmation email:', confirmationError);
+    } else {
+      console.log('✅ Confirmation email sent to volunteer:', data.email);
+    }
+
+    // Send notification email to admin via Supabase Edge Function
+    const { data: adminResult, error: adminError } = await supabase.functions.invoke(
+      'send-volunteer-email',
+      {
+        body: {
+          type: 'admin',
+          data
+        }
+      }
+    );
+
+    if (adminError) {
+      console.error('Error sending admin notification:', adminError);
+    } else {
+      console.log('✅ Admin notification email sent');
+    }
+
+    return { success: true, mode: 'edge-function' };
   } catch (error) {
-    console.error('Error sending volunteer emails:', error);
-    return { success: false, error };
+    console.error('Error sending volunteer emails via Edge Function:', error);
+    // Fallback to console logging
+    console.log('📧 Falling back to console logging...');
+    await sendVolunteerConfirmationEmail(data);
+    await sendAdminNotificationEmail(data);
+    return { success: false, error, mode: 'fallback-console' };
   }
 }
 
