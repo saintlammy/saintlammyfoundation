@@ -46,9 +46,9 @@ ORDER BY ordinal_position;
 -- 3. Check if volunteer form fields exist
 SELECT
   'VOLUNTEER FORM FIELDS' as section,
-  column_name,
-  data_type,
-  CASE WHEN column_name IS NOT NULL THEN '✅ EXISTS' ELSE '❌ MISSING' END as status
+  expected.column_name,
+  c.data_type,
+  CASE WHEN c.column_name IS NOT NULL THEN '✅ EXISTS' ELSE '❌ MISSING' END as status
 FROM (VALUES
   ('experience'),
   ('motivation'),
