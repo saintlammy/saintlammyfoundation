@@ -10,10 +10,11 @@ export const ValidationUtils = {
     .min(5, 'Email must be at least 5 characters')
     .max(254, 'Email must be less than 254 characters'),
 
-  // Phone number validation
+  // Phone number validation - flexible format
   phone: z.string()
     .trim()
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number format')
+    .min(1, 'Phone number is required')
+    .regex(/^[\+\d\s\-\(\)]{7,20}$/, 'Phone number must be 7-20 characters and contain only numbers, spaces, +, -, (, )')
     .optional(),
 
   // Name validation (prevents XSS, allows alphanumeric)
