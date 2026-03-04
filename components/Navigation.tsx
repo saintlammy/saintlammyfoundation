@@ -122,7 +122,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+            <a href="/" className="flex-shrink-0 flex items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="h-8 w-auto rounded-lg overflow-hidden flex items-center mr-3">
                 <img
                   src="/images/logo/logo-icon.svg"
@@ -133,7 +133,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
                 Saintlammy Foundation
               </h1>
-            </div>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
