@@ -338,7 +338,7 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Meet the Families
+                  Meet few of the Families
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300">
                   Your support helps these families with food, hygiene, and stability support.
