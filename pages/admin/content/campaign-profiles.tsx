@@ -453,52 +453,31 @@ const ProfileEditorModal: React.FC<{
     try {
       setUploading(true);
 
-      // Convert to base64
+      // Convert to base64 and store directly
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64 = reader.result as string;
-        const base64Content = base64.split(',')[1];
 
-        // Upload to server
-        const uploadRes = await fetch('/api/content/upload', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('auth_token') || 'admin-token'}`
-          },
-          body: JSON.stringify({
-            filename: file.name,
-            content: base64Content,
-            mimetype: file.type,
-            size: file.size,
-            alt: formData.title || 'Profile image',
-            caption: formData.descriptor || ''
-          })
+        // Store the base64 data URL directly in the database
+        // This works without needing external file storage
+        setFormData({
+          ...formData,
+          image_url: base64
         });
+        setImagePreview(base64);
 
-        const uploadData = await uploadRes.json();
-
-        if (uploadData.success) {
-          setFormData({
-            ...formData,
-            image_url: uploadData.data.url
-          });
-          setImagePreview(base64); // Use base64 for preview since mock upload
-          alert('Image uploaded successfully!');
-        } else {
-          alert(`Upload failed: ${uploadData.error || 'Unknown error'}`);
-        }
+        setUploading(false);
       };
 
       reader.onerror = () => {
         alert('Failed to read image file');
+        setUploading(false);
       };
 
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload image');
-    } finally {
       setUploading(false);
     }
   };
