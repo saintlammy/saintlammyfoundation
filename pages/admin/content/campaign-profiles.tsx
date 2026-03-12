@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
-  Plus, Search, Edit, Trash2, Heart, Users, X, Save, Loader2, Check, AlertCircle, Eye, Tag
+  Plus, Search, Edit, Trash2, Heart, Users, X, Save, Loader2, Check, AlertCircle, Eye, Tag, Upload, Image as ImageIcon
 } from 'lucide-react';
 import type { CampaignProfile, Campaign } from '@/types';
 
@@ -75,6 +75,8 @@ const CampaignProfilesManagement: React.FC = () => {
     try {
       setSaving(true);
 
+      console.log('Saving profile data:', profileData);
+
       const url = selectedProfile
         ? `/api/campaign-profiles?id=${selectedProfile.id}`
         : '/api/campaign-profiles';
@@ -88,17 +90,20 @@ const CampaignProfilesManagement: React.FC = () => {
       });
 
       const data = await res.json();
+      console.log('Save response:', data);
 
       if (data.success) {
         setShowEditor(false);
         setSelectedProfile(null);
         await loadData();
       } else {
-        alert(`Error: ${data.error || 'Failed to save profile'}`);
+        const errorMsg = data.error || data.message || 'Failed to save profile';
+        console.error('Save failed:', errorMsg);
+        alert(`Error: ${errorMsg}`);
       }
     } catch (error) {
       console.error('Save error:', error);
-      alert('Failed to save profile');
+      alert(`Failed to save profile: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
     }
@@ -408,6 +413,8 @@ const ProfileEditorModal: React.FC<{
   });
 
   const [tagInput, setTagInput] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>(profile?.image_url || '');
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags?.includes(tagInput.trim())) {
@@ -424,6 +431,76 @@ const ProfileEditorModal: React.FC<{
       ...formData,
       tags: formData.tags?.filter(t => t !== tag)
     });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a valid image file (JPEG, PNG, WebP, or GIF)');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    try {
+      setUploading(true);
+
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        const base64Content = base64.split(',')[1];
+
+        // Upload to server
+        const uploadRes = await fetch('/api/content/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('auth_token') || 'admin-token'}`
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            content: base64Content,
+            mimetype: file.type,
+            size: file.size,
+            alt: formData.title || 'Profile image',
+            caption: formData.descriptor || ''
+          })
+        });
+
+        const uploadData = await uploadRes.json();
+
+        if (uploadData.success) {
+          setFormData({
+            ...formData,
+            image_url: uploadData.data.url
+          });
+          setImagePreview(base64); // Use base64 for preview since mock upload
+          alert('Image uploaded successfully!');
+        } else {
+          alert(`Upload failed: ${uploadData.error || 'Unknown error'}`);
+        }
+      };
+
+      reader.onerror = () => {
+        alert('Failed to read image file');
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -582,28 +659,98 @@ const ProfileEditorModal: React.FC<{
             </div>
           </div>
 
-          {/* Image & Video URLs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Image URL</label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                placeholder="https://..."
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500"
-              />
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Profile Image</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Image Preview */}
+              <div className="relative">
+                {(imagePreview || formData.image_url) ? (
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-700 border-2 border-gray-600">
+                    <img
+                      src={imagePreview || formData.image_url}
+                      alt="Profile preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData({ ...formData, image_url: '' });
+                        setImagePreview('');
+                      }}
+                      className="absolute top-2 right-2 p-1.5 bg-red-600 hover:bg-red-700 rounded-full text-white transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="aspect-square rounded-lg bg-gray-700 border-2 border-dashed border-gray-600 flex flex-col items-center justify-center text-gray-400">
+                    <ImageIcon className="w-12 h-12 mb-2" />
+                    <p className="text-sm">No image uploaded</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Controls */}
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="image-upload" className="block">
+                    <div className="px-4 py-3 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors cursor-pointer text-center flex items-center justify-center gap-2">
+                      {uploading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-5 h-5" />
+                          Upload Image
+                        </>
+                      )}
+                    </div>
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                </div>
+                <p className="text-xs text-gray-400">
+                  Supported: JPEG, PNG, WebP, GIF<br />
+                  Max size: 10MB
+                </p>
+
+                {/* Manual URL Input */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-400 mb-1">Or paste image URL</label>
+                  <input
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => {
+                      setFormData({ ...formData, image_url: e.target.value });
+                      setImagePreview(e.target.value);
+                    }}
+                    placeholder="https://..."
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-400 focus:ring-2 focus:ring-accent-500"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Video URL</label>
-              <input
-                type="url"
-                value={formData.video_url}
-                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                placeholder="https://..."
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500"
-              />
-            </div>
+          </div>
+
+          {/* Video URL */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Video URL (Optional)</label>
+            <input
+              type="url"
+              value={formData.video_url}
+              onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+              placeholder="https://youtube.com/embed/... or https://vimeo.com/..."
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500"
+            />
           </div>
 
           {/* Status, Featured, Sort Order, Funding Goal */}
