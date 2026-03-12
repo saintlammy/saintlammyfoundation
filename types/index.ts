@@ -171,6 +171,54 @@ export interface AsyncState<T> extends LoadingState {
   data?: T;
 }
 
+// Campaign Profiles (Vulnerable Homes feature)
+export interface CampaignProfile {
+  id: string;
+  campaign_id: string;
+  profile_code: string;
+  title: string;
+  descriptor: string;
+  story_snippet: string;
+  story_full: string;
+  how_your_gift_helps: string;
+  tags: string[];
+  image_url?: string;
+  video_url?: string;
+  status: 'active' | 'inactive' | 'archived' | 'draft';
+  is_featured: boolean;
+  sort_order: number;
+  funding_goal?: number;
+  current_funding: number;
+  sponsor_count: number;
+  metadata?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Campaign {
+  id: string;
+  title: string;
+  description: string;
+  goal_amount: number;
+  current_amount: number;
+  currency: string;
+  deadline: string;
+  status: 'active' | 'completed' | 'archived' | 'draft';
+  is_featured: boolean;
+  impact_details: Record<string, string>;
+  image_url?: string;
+  category?: string;
+  campaign_type?: 'general' | 'vulnerable_homes' | 'emergency' | 'seasonal';
+  share_count?: number;
+  beneficiary_count?: number;
+  stat_label?: string;
+  urgency_message?: string;
+  profile_count?: number;
+  profiles?: CampaignProfile[];
+  created_at: string;
+  updated_at: string;
+}
+
 // Supabase types
 export interface SupabaseError {
   message: string;

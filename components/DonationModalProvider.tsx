@@ -3,7 +3,7 @@ import NewDonationModal from './NewDonationModal';
 
 export interface DonationContext {
   source: string; // Source tracking for analytics - can be any page/component identifier
-  category?: 'orphan' | 'widow' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' | 'general';
+  category?: 'orphan' | 'widow' | 'home' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' | 'general';
   amount?: number;
   suggestedAmount?: number;
   title?: string;
@@ -12,6 +12,7 @@ export interface DonationContext {
   storyId?: string;
   programType?: string;
   campaignId?: string; // Link donation to specific campaign
+  metadata?: Record<string, any>; // Flexible metadata for profile_id, etc.
 }
 
 interface DonationModalContextType {

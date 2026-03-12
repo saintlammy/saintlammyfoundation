@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar, Share2, Copy, QrCode, Upload, Loader, Image as ImageIcon, X } from 'lucide-react';
+import { Plus, Edit, Trash2, CheckCircle, Clock, AlertCircle, Star, Calendar, Share2, Copy, QrCode, Upload, Loader, Image as ImageIcon, X, Users, ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/router';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Campaign } from '@/pages/api/campaigns';
 import CampaignQRModal from '@/components/CampaignQRModal';
 
 const CampaignsManagement: React.FC = () => {
+  const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -23,6 +25,7 @@ const CampaignsManagement: React.FC = () => {
     is_featured: false,
     impact_details: {},
     category: '',
+    campaign_type: 'general',
     image_url: '',
     beneficiary_count: 70,
     stat_label: 'Orphans Need',
@@ -304,6 +307,17 @@ const CampaignsManagement: React.FC = () => {
                           {campaign.status}
                         </span>
                       </div>
+                      {campaign.campaign_type && (
+                        <span className="px-2 py-1 bg-teal-500/20 text-teal-400 rounded text-xs capitalize">
+                          {campaign.campaign_type.replace('_', ' ')}
+                        </span>
+                      )}
+                      {campaign.campaign_type === 'vulnerable_homes' && campaign.profile_count !== undefined && (
+                        <span className="px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {campaign.profile_count} profiles
+                        </span>
+                      )}
                       {campaign.category && (
                         <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">
                           {campaign.category}
@@ -318,6 +332,16 @@ const CampaignsManagement: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2 ml-4">
+                    {campaign.campaign_type === 'vulnerable_homes' && (
+                      <button
+                        onClick={() => router.push('/admin/content/campaign-profiles?campaign_id=' + campaign.id)}
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                        title="Manage campaign profiles"
+                      >
+                        <Users className="w-4 h-4" />
+                        Manage Profiles
+                      </button>
+                    )}
                     {campaign.is_featured && (
                       <>
                         <button
@@ -450,7 +474,7 @@ const CampaignsManagement: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Currency
@@ -462,6 +486,22 @@ const CampaignsManagement: React.FC = () => {
                     >
                       <option value="USD">USD ($)</option>
                       <option value="NGN">NGN (₦)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Campaign Type
+                    </label>
+                    <select
+                      value={formData.campaign_type || 'general'}
+                      onChange={(e) => setFormData({ ...formData, campaign_type: e.target.value as any })}
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white"
+                    >
+                      <option value="general">General</option>
+                      <option value="vulnerable_homes">Vulnerable Homes</option>
+                      <option value="emergency">Emergency</option>
+                      <option value="seasonal">Seasonal</option>
                     </select>
                   </div>
 

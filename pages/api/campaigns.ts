@@ -25,10 +25,12 @@ export interface Campaign {
   impact_details: Record<string, string>;
   image_url?: string;
   category?: string;
+  campaign_type?: 'general' | 'vulnerable_homes' | 'emergency' | 'seasonal';
   share_count?: number;
   beneficiary_count?: number;
   stat_label?: string;
   urgency_message?: string;
+  profile_count?: number; // Number of associated campaign profiles
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +38,24 @@ export interface Campaign {
 // Mock campaigns data for fallback (using USD for international donors)
 function getMockCampaigns(): Campaign[] {
   return [
+    {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      title: 'Vulnerable Homes: Stories of Hope',
+      description: 'Your support helps families in Alimosho LGA, Lagos with food, hygiene, and targeted stability support.',
+      goal_amount: 5000.00,
+      current_amount: 0.00,
+      currency: 'USD',
+      deadline: '2026-12-31T23:59:59Z',
+      status: 'active',
+      is_featured: true,
+      impact_details: {},
+      category: 'vulnerable_homes',
+      campaign_type: 'vulnerable_homes',
+      share_count: 0,
+      profile_count: 4,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
     {
       id: '1',
       title: 'Feed 100 Widows Before Christmas',
@@ -52,6 +72,7 @@ function getMockCampaigns(): Campaign[] {
         '100': 'Provides essential food package for 4 widows'
       },
       category: 'widows',
+      campaign_type: 'general',
       share_count: 0,
       beneficiary_count: 70,
       stat_label: 'Orphans Need',
@@ -75,6 +96,7 @@ function getMockCampaigns(): Campaign[] {
         '100': 'Full medical care package'
       },
       category: 'medical',
+      campaign_type: 'emergency',
       share_count: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -109,7 +131,7 @@ export default async function handler(
 }
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
-  const { id, status, featured } = req.query;
+  const { id, status, featured, campaign_type, expand } = req.query;
 
   try {
     if (!supabase) {
@@ -125,6 +147,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       if (featured === 'true') {
         campaigns = campaigns.filter(c => c.is_featured);
       }
+      if (campaign_type) {
+        campaigns = campaigns.filter(c => c.campaign_type === campaign_type);
+      }
 
       return res.status(200).json({ success: true, data: campaigns });
     }
@@ -139,6 +164,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
     }
     if (featured === 'true') {
       query = query.eq('is_featured', true);
+    }
+    if (campaign_type) {
+      query = query.eq('campaign_type', campaign_type);
     }
 
     query = query.order('created_at', { ascending: false });
