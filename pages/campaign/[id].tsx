@@ -4,6 +4,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Clock, Target, Heart, Share2, ArrowLeft } from 'lucide-react';
 import { useDonationModal } from '../../components/DonationModalProvider';
+import { ProfileCard } from '@/components/campaigns/ProfileCard';
+import { ProfileDetailModal } from '@/components/campaigns/ProfileDetailModal';
+import type { CampaignProfile } from '@/types';
 
 interface Campaign {
   id: string;
@@ -18,6 +21,7 @@ interface Campaign {
   impact_details: Record<string, string>;
   image_url?: string;
   category?: string;
+  campaign_type?: 'general' | 'vulnerable_homes' | 'emergency' | 'seasonal';
   beneficiary_count?: number;
   stat_label?: string;
   urgency_message?: string;
@@ -32,10 +36,60 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const { openDonationModal } = useDonationModal();
+  const [profiles, setProfiles] = useState<CampaignProfile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<CampaignProfile | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Load profiles if this is a vulnerable_homes campaign
+  useEffect(() => {
+    if (campaign && campaign.campaign_type === 'vulnerable_homes') {
+      loadProfiles();
+    }
+  }, [campaign]);
+
+  const loadProfiles = async () => {
+    if (!campaign) return;
+
+    try {
+      setLoadingProfiles(true);
+      const res = await fetch(`/api/campaign-profiles?campaign_id=${campaign.id}&status=active`);
+      const data = await res.json();
+
+      if (data.success) {
+        setProfiles(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to load profiles:', error);
+    } finally {
+      setLoadingProfiles(false);
+    }
+  };
+
+  const handleReadMore = (profile: CampaignProfile) => {
+    setSelectedProfile(profile);
+    setModalOpen(true);
+  };
+
+  const handleSponsorProfile = (profile: CampaignProfile) => {
+    setModalOpen(false);
+    openDonationModal({
+      source: 'campaign-profile',
+      campaignId: campaign?.id,
+      title: `Sponsor ${profile.title.split('—')[0].trim()}`,
+      description: profile.how_your_gift_helps || profile.story_snippet,
+      category: (campaign?.category as any) || 'general',
+      metadata: {
+        profile_id: profile.id,
+        profile_code: profile.profile_code,
+        profile_title: profile.title
+      }
+    });
+  };
 
   if (error || !campaign) {
     return (
@@ -279,6 +333,41 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
             </button>
           </div>
 
+          {/* Campaign Profiles (Vulnerable Homes) */}
+          {campaign.campaign_type === 'vulnerable_homes' && (
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Meet the Families
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Your support helps these families with food, hygiene, and stability support.
+                </p>
+              </div>
+
+              {loadingProfiles ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+                </div>
+              ) : profiles.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                  No profiles available at this time.
+                </p>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {profiles.map((profile) => (
+                    <ProfileCard
+                      key={profile.id}
+                      profile={profile}
+                      onReadMore={handleReadMore}
+                      onSponsor={handleSponsorProfile}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Impact Details */}
           {campaign.impact_details && Object.keys(campaign.impact_details).length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
@@ -300,6 +389,14 @@ const CampaignPage: React.FC<CampaignPageProps> = ({ campaign, error }) => {
           )}
         </div>
       </div>
+
+      {/* Profile Detail Modal */}
+      <ProfileDetailModal
+        profile={selectedProfile}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSponsor={handleSponsorProfile}
+      />
     </>
   );
 };

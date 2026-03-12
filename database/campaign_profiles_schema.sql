@@ -108,30 +108,38 @@ COMMENT ON COLUMN campaign_profiles.tags IS 'Array of support tags for filtering
 COMMENT ON COLUMN campaign_profiles.metadata IS 'Flexible JSONB field for additional profile data';
 COMMENT ON COLUMN campaign_profiles.sort_order IS 'Manual ordering (lower = higher priority)';
 
--- Sample data: Create a "Vulnerable Homes 2026" campaign
+-- Sample data: "Feed 100 Widows Before Christmas" campaign with profiles
+-- This extends your existing featured campaign with individual widow/family profiles
 INSERT INTO campaigns (id, title, description, goal_amount, current_amount, currency, deadline, status, is_featured, campaign_type, category)
 VALUES
   (
     '550e8400-e29b-41d4-a716-446655440000'::UUID,
-    'Vulnerable Homes: Stories of Hope',
-    'Your support helps families in Alimosho LGA, Lagos with food, hygiene, and targeted stability support.',
-    5000.00,
-    0.00,
+    'Feed 100 Widows Before Christmas',
+    'Every day without your support means another hungry mother struggling to feed her children. Meet the widows and vulnerable families we support in Alimosho LGA, Lagos.',
+    1795.00,
+    808.00,
     'USD',
-    '2026-12-31 23:59:59+00',
+    '2025-12-20 23:59:59+00',
     'active',
     true,
     'vulnerable_homes',
-    'vulnerable_homes'
+    'widows'
   )
 ON CONFLICT (id) DO NOTHING;
 
--- Sample profiles data
+-- If you want to UPDATE your existing campaign instead, uncomment this:
+-- UPDATE campaigns
+-- SET campaign_type = 'vulnerable_homes',
+--     description = 'Every day without your support means another hungry mother struggling to feed her children. Meet the widows and vulnerable families we support in Alimosho LGA, Lagos.'
+-- WHERE title = 'Feed 100 Widows Before Christmas';
+
+-- Sample widow/family profiles for the campaign
+-- These will appear when users click "Learn More" on the featured campaign
 INSERT INTO campaign_profiles (campaign_id, profile_code, title, descriptor, story_snippet, story_full, how_your_gift_helps, tags, image_url, is_featured, sort_order)
 VALUES
   (
     '550e8400-e29b-41d4-a716-446655440000'::UUID,
-    'VH-001',
+    'W-001',
     'Serah — Carrying Two Futures Alone',
     'Single mother of two children',
     'Serah is a 32-year-old single mother raising two children—Oba (7) and Eniola (12). When her husband left shortly after the children were born, the responsibility for everything fell on her shoulders.',
@@ -144,7 +152,7 @@ VALUES
   ),
   (
     '550e8400-e29b-41d4-a716-446655440000'::UUID,
-    'VH-002',
+    'W-002',
     'Mr. Alagbe — A Salary Swallowed by Sacrifice',
     'Older father, debt + health burden',
     'Mr. Alagbe is 63 and works as a local security officer. He took a loan to send his three sons to university, believing education was the best inheritance he could give.',
@@ -157,7 +165,7 @@ VALUES
   ),
   (
     '550e8400-e29b-41d4-a716-446655440000'::UUID,
-    'VH-003',
+    'W-003',
     'Olusegun — Starting Over with Special Care Needs',
     'Family of six, disability care',
     'Olusegun is a father of four whose life changed drastically after he was deported from Canada. Since returning, stable work has been difficult to secure.',
@@ -170,7 +178,7 @@ VALUES
   ),
   (
     '550e8400-e29b-41d4-a716-446655440000'::UUID,
-    'VH-004',
+    'W-004',
     'Monsuru — Five Daughters, One Unsteady Income',
     'Father of five, informal work',
     'Monsuru is a father of five girls. After losing his job due to a workplace relocation issue, he turned to bricklaying to support his family—hard work, but not steady income.',
