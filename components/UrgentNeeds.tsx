@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { Clock, Target, Heart, AlertCircle, Share2, Facebook, Twitter, Linkedin, Copy, CheckCircle, QrCode, Mail, MessageSquare, X } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { Clock, Target, Heart, AlertCircle, Share2, Facebook, Twitter, Linkedin, Copy, CheckCircle, QrCode, Mail, MessageSquare, X, ExternalLink } from 'lucide-react';
 import { useDonationModal } from './DonationModalProvider';
 import CampaignQRModal from './CampaignQRModal';
 import CampaignMetaTags from './CampaignMetaTags';
@@ -28,6 +29,7 @@ interface UrgentNeedsProps {
 }
 
 const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
+  const router = useRouter();
   const { openDonationModal } = useDonationModal();
   const [featuredCampaign, setFeaturedCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
@@ -338,6 +340,13 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
                   className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans"
                 >
                   Give Now
+                </button>
+                <button
+                  onClick={() => router.push(`/campaign/${featuredCampaign.id}`)}
+                  className="bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans flex items-center justify-center"
+                >
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  Learn More
                 </button>
                 <div className="relative">
                   <button
