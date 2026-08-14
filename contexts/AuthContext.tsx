@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/router';
@@ -6,9 +6,11 @@ import { useRouter } from 'next/router';
 // Enhanced interfaces for better type safety
 interface UserMetadata {
   name?: string;
+  /** Display-only legacy metadata. Never use for authorization. */
   role?: 'admin' | 'moderator' | 'user';
   phone?: string;
   organization?: string;
+  /** Display-only legacy metadata. Never use for authorization. */
   permissions?: string[];
 }
 
@@ -16,9 +18,10 @@ interface AuthUser extends User {
   user_metadata: UserMetadata;
 }
 
+type EditableUserMetadata = Pick<UserMetadata, 'name' | 'phone' | 'organization'>;
+
 interface SignUpData {
   name?: string;
-  role?: string;
   phone?: string;
   organization?: string;
 }
@@ -34,7 +37,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, userData?: SignUpData) => Promise<{ error: AuthError | null; data?: any }>;
   signOut: () => Promise<{ error: AuthError | null }>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
-  updateProfile: (updates: Partial<UserMetadata>) => Promise<{ error: AuthError | null }>;
+  updateProfile: (updates: Partial<EditableUserMetadata>) => Promise<{ error: AuthError | null }>;
   refreshSession: () => Promise<void>;
 }
 
@@ -44,10 +47,35 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+async function getTrustedRole(session: Session | null): Promise<string | null> {
+  if (!session) return null;
+
+  const appRole = session.user.app_metadata?.role;
+
+  try {
+    const response = await fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${session.access_token}` }
+    });
+
+    if (response.ok) {
+      const payload = await response.json();
+      if (typeof payload?.user?.role === 'string') {
+        return payload.user.role;
+      }
+    }
+  } catch (error) {
+    console.warn('Unable to refresh trusted authorization role:', error);
+  }
+
+  return typeof appRole === 'string' ? appRole : null;
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [trustedRole, setTrustedRole] = useState<string | null>(null);
+  const roleRequestIdRef = useRef(0);
   const router = useRouter();
 
   // Auto refresh session before expiry
@@ -70,30 +98,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [session]);
 
   // Enhanced role-based authentication logic
-  const isAdmin = Boolean(
-    user?.email?.includes('@saintlammyfoundation.org') ||
-    user?.user_metadata?.role === 'admin' ||
-    user?.email === 'admin@saintlammyfoundation.org' ||
-    user?.email === 'saintlammyfoundation@gmail.com' ||
-    user?.email === 'saintlammy@gmail.com'
-  );
+  const trustedPermissions = Array.isArray(user?.app_metadata?.permissions)
+    ? user.app_metadata.permissions.filter((permission): permission is string => typeof permission === 'string')
+    : [];
+
+  const isAdmin = trustedRole === 'admin' || trustedRole === 'super_admin';
 
   const isModerator = Boolean(
     isAdmin ||
-    user?.user_metadata?.role === 'moderator'
+    trustedRole === 'moderator'
   );
 
   const hasPermission = (permission: string): boolean => {
     if (!user) return false;
     if (isAdmin) return true; // Admin has all permissions
 
-    const userPermissions = user.user_metadata?.permissions || [];
-    return userPermissions.includes(permission);
+    return trustedPermissions.includes(permission);
   };
 
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
+      const requestId = ++roleRequestIdRef.current;
+
       if (!supabase) {
         console.warn('Supabase not available - skipping session initialization');
         setLoading(false);
@@ -112,6 +139,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           setSession(session);
           setUser(session?.user as AuthUser ?? null);
+          const nextRole = await getTrustedRole(session);
+          if (requestId === roleRequestIdRef.current) {
+            setTrustedRole(nextRole);
+          }
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
@@ -121,7 +152,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(null);
         }
       } finally {
-        setLoading(false);
+        if (requestId === roleRequestIdRef.current) {
+          setLoading(false);
+        }
       }
     };
 
@@ -132,28 +165,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (event, session) => {
+        } = supabase.auth.onAuthStateChange((event, session) => {
+          const requestId = ++roleRequestIdRef.current;
+          setLoading(true);
           console.log('Auth state changed:', event, session?.user?.email);
           setSession(session);
           setUser(session?.user as AuthUser ?? null);
-          setLoading(false);
 
-          // Handle auth events
-          if (event === 'SIGNED_OUT') {
-            // Clear local storage and redirect
-            localStorage.removeItem('supabase.auth.token');
-            router.push('/admin/login');
-          } else if (event === 'SIGNED_IN') {
-            // Redirect to admin dashboard if signing in and on login page
-            if (router.pathname === '/admin/login') {
-              router.push('/admin');
+          // Supabase warns against awaiting additional work inside auth event
+          // callbacks because auth methods wait for the callback to return.
+          void (async () => {
+            const nextRole = await getTrustedRole(session);
+            if (requestId !== roleRequestIdRef.current) return;
+
+            setTrustedRole(nextRole);
+            setLoading(false);
+
+            if (event === 'SIGNED_OUT') {
+              localStorage.removeItem('supabase.auth.token');
+              router.push('/admin/login');
+            } else if (event === 'SIGNED_IN' && (nextRole === 'admin' || nextRole === 'super_admin')) {
+              if (router.pathname === '/admin/login') {
+                router.push('/admin');
+              }
+            } else if (event === 'TOKEN_REFRESHED') {
+              console.log('Session token refreshed successfully');
             }
-          } else if (event === 'TOKEN_REFRESHED') {
-            console.log('Session token refreshed successfully');
-          }
+          })();
         });
 
         return () => {
+          roleRequestIdRef.current += 1;
           try {
             subscription.unsubscribe();
           } catch (error) {
@@ -227,10 +269,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         options: {
           data: {
             name: userData?.name || '',
-            role: userData?.role || 'admin',
             phone: userData?.phone || '',
-            organization: userData?.organization || 'Saintlammy Foundation',
-            permissions: ['read', 'write', 'admin']
+            organization: userData?.organization || 'Saintlammy Foundation'
           }
         }
       });
@@ -253,15 +293,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     try {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (logoutError) {
+        console.warn('Unable to clear the server session cookie:', logoutError);
+      }
+
       const { error } = await supabase.auth.signOut();
+
+      // Always clear local authorization state when the user requests logout.
+      roleRequestIdRef.current += 1;
+      setUser(null);
+      setSession(null);
+      setTrustedRole(null);
+
       if (error) {
         console.error('Sign out error:', error);
         return { error };
       }
-
-      // Clear local state
-      setUser(null);
-      setSession(null);
 
       return { error: null };
     } catch (error) {
@@ -314,7 +363,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = async (updates: Partial<UserMetadata>) => {
+  const updateProfile = async (updates: Partial<EditableUserMetadata>) => {
     if (!supabase) {
       return { error: new Error('Supabase not available') as AuthError };
     }
@@ -347,6 +396,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
+    let requestId: number | null = null;
+    setLoading(true);
+
     try {
       const { data: { session }, error } = await supabase.auth.refreshSession();
       if (error) {
@@ -357,6 +409,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (existingSession) {
             setSession(existingSession);
             setUser(existingSession.user as AuthUser ?? null);
+            requestId = ++roleRequestIdRef.current;
+            const nextRole = await getTrustedRole(existingSession);
+            if (requestId === roleRequestIdRef.current) {
+              setTrustedRole(nextRole);
+            }
           } else {
             // No valid session - clear state
             setSession(null);
@@ -371,6 +428,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else {
         setSession(session);
         setUser(session?.user as AuthUser ?? null);
+        requestId = ++roleRequestIdRef.current;
+        const nextRole = await getTrustedRole(session);
+        if (requestId === roleRequestIdRef.current) {
+          setTrustedRole(nextRole);
+        }
       }
     } catch (error) {
       console.error('Refresh session error:', error);
@@ -382,6 +444,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Other errors - clear session state
         setSession(null);
         setUser(null);
+      }
+    } finally {
+      if (requestId === null || requestId === roleRequestIdRef.current) {
+        setLoading(false);
       }
     }
   };

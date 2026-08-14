@@ -301,15 +301,29 @@ const OutreachReportsManagement: React.FC = () => {
         id: selectedOutreach.id,
         title: reportData.title,
         description: reportData.description,
+        content: reportData.description,
+        excerpt: reportData.description,
         location: reportData.location,
         date: reportData.date,
+        event_date: reportData.date,
+        publish_date: reportData.date,
         beneficiaries: reportData.actualBeneficiaries || reportData.targetBeneficiaries,
+        expected_attendees: reportData.targetBeneficiaries,
+        featured_image: reportData.image,
         status: reportData.status,
         image: reportData.image,
+        outreach_details: {
+          location: reportData.location,
+          event_date: reportData.date,
+          expected_attendees: reportData.targetBeneficiaries,
+          actual_attendees: reportData.actualBeneficiaries,
+          volunteers_needed: reportData.volunteers.registered,
+        },
       };
 
       // Check if this is a new outreach (starts with 'new-')
-      const isNew = selectedOutreach.id.startsWith('new-');
+      const isNew = selectedOutreach.id.startsWith('new-')
+        && !outreaches.some((outreach) => outreach.id === selectedOutreach.id);
 
       console.log('Saving outreach:', isNew ? 'CREATE' : 'UPDATE', selectedOutreach.id);
 
@@ -365,8 +379,7 @@ const OutreachReportsManagement: React.FC = () => {
   };
 
   const updateReportField = (field: string, value: any) => {
-    if (!reportData) return;
-    setReportData({ ...reportData, [field]: value });
+    setReportData((current) => current ? { ...current, [field]: value } : current);
   };
 
   const compressImage = async (file: File): Promise<string> => {
@@ -461,10 +474,10 @@ const OutreachReportsManagement: React.FC = () => {
       if (field === 'image') {
         updateReportField('image', compressedBase64);
       } else if (field === 'gallery') {
-        setReportData({
-          ...reportData!,
-          gallery: [...reportData!.gallery, compressedBase64]
-        });
+        setReportData((current) => current ? {
+          ...current,
+          gallery: [...current.gallery, compressedBase64]
+        } : current);
       }
 
       alert('✅ Image uploaded and compressed successfully!');
@@ -707,13 +720,17 @@ const OutreachReportsManagement: React.FC = () => {
 
   const addFuturePlan = () => {
     if (!reportData) return;
-    const plan = prompt('Enter future plan:');
-    if (plan) {
-      setReportData({
-        ...reportData,
-        futurePlans: [...(reportData.futurePlans || []), plan]
-      });
-    }
+    setReportData({
+      ...reportData,
+      futurePlans: [...(reportData.futurePlans || []), '']
+    });
+  };
+
+  const updateFuturePlan = (index: number, value: string) => {
+    if (!reportData) return;
+    const futurePlans = [...(reportData.futurePlans || [])];
+    futurePlans[index] = value;
+    setReportData({ ...reportData, futurePlans });
   };
 
   const removeFuturePlan = (index: number) => {
@@ -1758,7 +1775,13 @@ const OutreachReportsManagement: React.FC = () => {
                         {reportData.futurePlans?.map((plan, index) => (
                           <div key={index} className="flex gap-2 items-center p-3 bg-gray-700 rounded-lg">
                             <ChevronRight className="w-4 h-4 text-accent-400" />
-                            <span className="flex-1 text-white">{plan}</span>
+                            <input
+                              type="text"
+                              value={plan}
+                              onChange={(event) => updateFuturePlan(index, event.target.value)}
+                              placeholder="Describe the next step"
+                              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500"
+                            />
                             <button
                               onClick={() => removeFuturePlan(index)}
                               className="text-red-400 hover:text-red-300"

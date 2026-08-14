@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/serverAuth';
+import { sanitizeRichHtml } from '@/lib/sanitizeRichHtml';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
+  const isPublicRead = method === 'GET' && (req.query.status === undefined || req.query.status === 'published');
+  if (!isPublicRead && !(await requireAdmin(req, res))) return;
 
   switch (method) {
     case 'GET':
@@ -59,7 +63,7 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
       id: item.id,
       title: item.title,
       slug: item.slug,
-      content: item.content,
+      content: sanitizeRichHtml(item.content),
       excerpt: item.excerpt,
       status: item.status,
       seo_title: item.page_details?.seo_title || item.title,
@@ -92,6 +96,7 @@ async function createPage(req: NextApiRequest, res: NextApiResponse) {
 
     const newPage = {
       ...pageData,
+      content: sanitizeRichHtml(pageData.content),
       slug,
       type: 'page',
       created_at: new Date().toISOString(),
@@ -141,6 +146,10 @@ async function updatePage(req: NextApiRequest, res: NextApiResponse) {
       updateData.slug = updateData.title.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
+    }
+
+    if (updateData.content !== undefined) {
+      updateData.content = sanitizeRichHtml(updateData.content);
     }
 
     updateData.updated_at = new Date().toISOString();

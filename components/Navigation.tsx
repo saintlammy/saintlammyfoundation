@@ -130,9 +130,9 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                   className="h-full w-auto object-contain dark:invert"
                 />
               </div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
+              <span className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
                 Saintlammy Foundation
-              </h1>
+              </span>
             </a>
           </div>
 
@@ -249,6 +249,9 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
             <ThemeToggle variant="navigation" size="sm" />
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation-menu"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 inline-flex items-center justify-center p-2 rounded-md transition-colors"
             >
               {isOpen ? (
@@ -262,7 +265,7 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
       </div>
 
       {/* Mobile menu */}
-      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl`}>
+      <div id="mobile-navigation-menu" className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl`}>
         <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200/20 dark:border-white/10">
           {navLinks.map((link) => {
             const isActive = link.href ? router.pathname === link.href : false;

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
 interface FileUploadRequest {
   filename: string;
@@ -38,7 +39,7 @@ function generateFilename(originalName: string): string {
   return `${timestamp}-${hash}.${ext}`;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
@@ -47,15 +48,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Basic auth check
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        error: 'Unauthorized - Admin access required'
-      });
-    }
-
     const { filename, content, mimetype, size, alt, caption }: FileUploadRequest = req.body;
 
     if (!filename || !content || !mimetype) {
@@ -140,3 +132,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

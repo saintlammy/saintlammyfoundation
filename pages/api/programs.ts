@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
+  const isPublicRead = method === 'GET' && (req.query.status === undefined || req.query.status === 'published');
+  if (!isPublicRead && !(await requireAdmin(req, res))) return;
 
   switch (method) {
     case 'GET':

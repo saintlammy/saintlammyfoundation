@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   const client = getTypedSupabaseClient();
 
@@ -42,3 +43,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
+
+export default withAdminAuth(handler);

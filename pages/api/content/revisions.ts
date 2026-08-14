@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withAdminAuth } from '@/lib/serverAuth';
 import { getTypedSupabaseClient } from '@/lib/supabase';
 
 interface RevisionData {
@@ -12,7 +13,7 @@ interface RevisionData {
   author_id?: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Basic auth check
     const authHeader = req.headers.authorization;
@@ -263,3 +264,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

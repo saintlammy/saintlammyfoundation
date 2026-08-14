@@ -3,6 +3,7 @@ import axios from 'axios';
 import { donationService } from '@/lib/donationService';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { z } from 'zod';
+import { rateLimitMiddleware } from '@/lib/rateLimit';
 
 const PAYPAL_API_BASE = process.env.NEXT_PUBLIC_PAYPAL_ENVIRONMENT === 'sandbox'
   ? 'https://api-m.sandbox.paypal.com'
@@ -109,26 +110,19 @@ async function getPayPalSubscriptionDetails(subscriptionId: string, accessToken:
 
 async function storeDonationRecord(donationData: any) {
   try {
-    console.log('Storing PayPal donation record:', donationData);
-
     const result = await donationService.storePayPalDonation(donationData);
 
     console.log('Successfully stored PayPal donation:', result.donationId);
     return result;
   } catch (error) {
     console.error('Error storing PayPal donation:', error);
-    // Fallback to temporary record if database fails
-    return {
-      donationId: `donation_${Date.now()}`,
-      receiptNumber: `RCP-${Date.now()}`,
-      status: 'completed'
-    };
+    throw new Error('Payment completed, but the donation record could not be saved. Please contact support with your PayPal transaction ID.');
   }
 }
 
 async function sendDonationConfirmationEmail(donationData: any) {
   // TODO: Implement email service
-  console.log('Sending confirmation email:', donationData);
+  void donationData;
 
   // In a real implementation, you would:
   // 1. Use email service (SendGrid, Mailgun, etc.)
@@ -142,6 +136,12 @@ async function sendDonationConfirmationEmail(donationData: any) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const rateLimit = rateLimitMiddleware(req, 'STRICT');
+  Object.entries(rateLimit.headers).forEach(([key, value]) => res.setHeader(key, value));
+  if (!rateLimit.allowed) {
+    return res.status(429).json({ error: 'Too many verification attempts. Please try again later.' });
   }
 
   try {

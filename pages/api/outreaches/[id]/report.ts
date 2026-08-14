@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient, supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/serverAuth';
 
 // In-memory storage for mock reports (fallback when no database)
 // Pre-populated with default report data
@@ -108,6 +109,7 @@ const mockReports: Record<string, any> = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   const { method } = req;
+  if (method !== 'GET' && !(await requireAdmin(req, res))) return;
 
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ error: 'Invalid outreach ID' });

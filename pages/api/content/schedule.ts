@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withAdminAuth } from '@/lib/serverAuth';
 import { getTypedSupabaseClient } from '@/lib/supabase';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Basic auth check
     const authHeader = req.headers.authorization;
@@ -220,6 +221,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);
 
 // Helper function for cron jobs or background tasks
 export async function publishScheduledContent() {

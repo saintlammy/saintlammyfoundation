@@ -1,17 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { donationService } from '@/lib/donationService';
+import { withAdminAuth } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Basic auth check (in production, use proper authentication)
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // TODO: Validate JWT token or API key
-    // For now, accept any bearer token
-
     if (req.method === 'GET') {
       const {
         page = '1',
@@ -159,3 +151,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

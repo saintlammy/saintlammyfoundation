@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
+import { rateLimitMiddleware } from '@/lib/rateLimit';
 
 const PAYPAL_API_BASE = process.env.NEXT_PUBLIC_PAYPAL_ENVIRONMENT === 'sandbox'
   ? 'https://api-m.sandbox.paypal.com'
@@ -221,6 +222,12 @@ async function createRecurringSubscription(donationData: DonationRequest, access
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const rateLimit = rateLimitMiddleware(req, 'STRICT');
+  Object.entries(rateLimit.headers).forEach(([key, value]) => res.setHeader(key, value));
+  if (!rateLimit.allowed) {
+    return res.status(429).json({ error: 'Too many payment attempts. Please try again later.' });
   }
 
   try {

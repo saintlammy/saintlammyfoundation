@@ -181,6 +181,7 @@ const Volunteer: React.FC = () => {
         <title>Volunteer - Saintlammy Foundation</title>
         <meta name="description" content="Join Saintlammy Foundation as a volunteer. Make a difference in the lives of widows, orphans, and vulnerable communities across Nigeria." />
       </Head>
+      <main className="overflow-x-clip">
         {/* Hero Section */}
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
@@ -614,7 +615,7 @@ const Volunteer: React.FC = () => {
             </div>
           </div>
         </section>
-
+      </main>
     </>
   );
 };

@@ -1,13 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Basic auth check
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!supabaseAdmin) {
     return res.status(500).json({ error: 'Database connection not available' });
   }
@@ -50,6 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);
 
 async function getOptions(table: string, req: NextApiRequest, res: NextApiResponse) {
   try {

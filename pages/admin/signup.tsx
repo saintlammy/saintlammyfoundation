@@ -25,7 +25,6 @@ interface FormData {
   password: string;
   confirmPassword: string;
   organization: string;
-  role: string;
 }
 
 interface FormErrors {
@@ -44,8 +43,7 @@ const AdminSignup: React.FC = () => {
     phone: '',
     password: '',
     confirmPassword: '',
-    organization: 'Saintlammy Foundation',
-    role: 'admin'
+    organization: 'Saintlammy Foundation'
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -140,8 +138,7 @@ const AdminSignup: React.FC = () => {
       const { error } = await signUp(formData.email, formData.password, {
         name: formData.name,
         phone: formData.phone,
-        organization: formData.organization,
-        role: formData.role
+        organization: formData.organization
       });
 
       if (error) {

@@ -405,10 +405,10 @@ const Donate: React.FC = () => {
 
               <div className="space-y-8">
                 {/* Donation Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <fieldset>
+                  <legend className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Donation Type
-                  </label>
+                  </legend>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setDonationType('one-time')}
@@ -433,7 +433,7 @@ const Donate: React.FC = () => {
                       <div className="text-sm opacity-75">Recurring donation</div>
                     </button>
                   </div>
-                </div>
+                </fieldset>
 
                 {/* Currency Selection */}
                 <div>
@@ -486,7 +486,13 @@ const Donate: React.FC = () => {
                       </button>
                     ))}
                   </div>
+                  <label htmlFor="donation-amount" className="sr-only">
+                    Custom donation amount
+                  </label>
                   <input
+                    id="donation-amount"
+                    name="donationAmount"
+                    aria-label={`Custom donation amount in ${selectedCurrency}`}
                     type="number"
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(e.target.value)}
@@ -529,21 +535,36 @@ const Donate: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <input
                         type="text"
+                        name="cardNumber"
+                        aria-label="Card number"
+                        autoComplete="cc-number"
+                        inputMode="numeric"
                         placeholder="Card Number"
                         className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="text"
+                        name="cardholderName"
+                        aria-label="Cardholder name"
+                        autoComplete="cc-name"
                         placeholder="Cardholder Name"
                         className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
                         type="text"
+                        name="cardExpiry"
+                        aria-label="Card expiry date"
+                        autoComplete="cc-exp"
+                        inputMode="numeric"
                         placeholder="MM/YY"
                         className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />
                       <input
-                        type="text"
+                        type="password"
+                        name="cardSecurityCode"
+                        aria-label="Card security code"
+                        autoComplete="cc-csc"
+                        inputMode="numeric"
                         placeholder="CVV"
                         className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
                       />

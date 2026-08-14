@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 
 // Enhanced interfaces for better type safety
@@ -95,24 +95,41 @@ export function withAuth(
 
       const authUser = user as AuthUser;
 
-      // Enhanced role checking
-      const isAdmin = Boolean(
-        authUser.email?.includes('@saintlammyfoundation.org') ||
-        authUser.user_metadata?.role === 'admin' ||
-        authUser.email === 'admin@saintlammyfoundation.org' ||
-        authUser.email === 'saintlammyfoundation@gmail.com' ||
-        authUser.email === 'saintlammy@gmail.com'
-      );
+      let trustedRole = authUser.app_metadata?.role;
+      const trustedPermissions = Array.isArray(authUser.app_metadata?.permissions)
+        ? authUser.app_metadata.permissions.filter((permission): permission is string => typeof permission === 'string')
+        : [];
+
+      if (supabaseAdmin) {
+        const { data: profile } = await (supabaseAdmin as any)
+          .from('users')
+          .select('role, status')
+          .eq('auth_user_id', authUser.id)
+          .maybeSingle();
+
+        if (profile?.status === 'inactive') {
+          return res.status(403).json({
+            error: 'Forbidden',
+            message: 'User account is inactive',
+            code: 'ACCOUNT_INACTIVE'
+          });
+        }
+
+        if (typeof profile?.role === 'string') {
+          trustedRole = profile.role;
+        }
+      }
+
+      const isAdmin = trustedRole === 'admin' || trustedRole === 'super_admin';
 
       const isModerator = Boolean(
         isAdmin ||
-        authUser.user_metadata?.role === 'moderator'
+        trustedRole === 'moderator'
       );
 
       const hasPermission = (permission: string): boolean => {
         if (isAdmin) return true; // Admin has all permissions
-        const userPermissions = authUser.user_metadata?.permissions || [];
-        return userPermissions.includes(permission);
+        return trustedPermissions.includes(permission);
       };
 
       // Check admin access if required
@@ -187,13 +204,7 @@ export async function getCurrentUser() {
 export function checkIsAdmin(user: AuthUser | null): boolean {
   if (!user) return false;
 
-  return Boolean(
-    user.email?.includes('@saintlammyfoundation.org') ||
-    user.user_metadata?.role === 'admin' ||
-    user.email === 'admin@saintlammyfoundation.org' ||
-    user.email === 'saintlammyfoundation@gmail.com' ||
-    user.email === 'saintlammy@gmail.com'
-  );
+  return user.app_metadata?.role === 'admin' || user.app_metadata?.role === 'super_admin';
 }
 
 export function checkIsModerator(user: AuthUser | null): boolean {
@@ -201,7 +212,7 @@ export function checkIsModerator(user: AuthUser | null): boolean {
 
   return Boolean(
     checkIsAdmin(user) ||
-    user.user_metadata?.role === 'moderator'
+    user.app_metadata?.role === 'moderator'
   );
 }
 
@@ -209,7 +220,9 @@ export function checkHasPermission(user: AuthUser | null, permission: string): b
   if (!user) return false;
   if (checkIsAdmin(user)) return true;
 
-  const userPermissions = user.user_metadata?.permissions || [];
+  const userPermissions = Array.isArray(user.app_metadata?.permissions)
+    ? user.app_metadata.permissions
+    : [];
   return userPermissions.includes(permission);
 }
 

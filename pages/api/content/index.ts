@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient } from '@/lib/supabase';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { ContentSchema } from '@/lib/schemas';
+import { withAdminAuth } from '@/lib/serverAuth';
+import { sanitizeRichHtml } from '@/lib/sanitizeRichHtml';
 
 export interface ContentItem {
   id: string;
@@ -75,17 +77,8 @@ async function ensureUniqueSlug(client: any, slug: string, excludeId?: string): 
   return uniqueSlug;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Basic auth check
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        error: 'Unauthorized - Admin access required'
-      });
-    }
-
     const client = getTypedSupabaseClient();
 
     if (req.method === 'GET') {
@@ -200,7 +193,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Sanitize content
       const sanitizedData = {
         title: sanitizeHtml(contentData.title),
-        content: contentData.content, // Don't sanitize rich content, just validate
+        content: sanitizeRichHtml(contentData.content),
         excerpt: contentData.excerpt ? sanitizeHtml(contentData.excerpt) : null,
         type: contentData.type,
         status: contentData.status,
@@ -275,7 +268,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         sanitizedData.title = sanitizeHtml(updateData.title);
       }
       if (updateData.content !== undefined) {
-        sanitizedData.content = updateData.content;
+        sanitizedData.content = sanitizeRichHtml(updateData.content);
       }
       if (updateData.excerpt !== undefined) {
         sanitizedData.excerpt = updateData.excerpt ? sanitizeHtml(updateData.excerpt) : null;
@@ -386,3 +379,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

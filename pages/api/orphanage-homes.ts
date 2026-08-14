@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { getOptionalAdmin, requireAdmin } from '@/lib/serverAuth';
+
+const PUBLIC_COLUMNS = [
+  'id', 'name', 'location', 'orphan_count', 'age_range', 'description',
+  'needs', 'last_outreach_date', 'next_outreach_date', 'outreach_frequency',
+  'image', 'monthly_support', 'is_active', 'status', 'created_at', 'updated_at'
+].join(',');
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -9,16 +16,20 @@ function getSupabase() {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET' && !(await requireAdmin(req, res))) return;
+
   try {
     const supabase = getSupabase();
 
     if (req.method === 'GET') {
       const { id, status } = req.query;
+      const canViewPrivateFields = Boolean(await getOptionalAdmin(req));
+      const projection = canViewPrivateFields ? '*' : PUBLIC_COLUMNS;
 
       if (id) {
         const { data, error } = await supabase
           .from('orphanage_homes')
-          .select('*')
+          .select(projection)
           .eq('id', id as string)
           .single();
         if (error) return res.status(404).json({ error: 'Not found' });
@@ -27,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let query = supabase
         .from('orphanage_homes')
-        .select('*')
+        .select(projection)
         .order('created_at', { ascending: false });
 
       if (status && status !== 'all') {

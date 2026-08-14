@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: false, // SECURITY: Enable linting during builds to catch issues
-  },
   typescript: {
     ignoreBuildErrors: false, // SECURITY: Enable type checking during builds
   },
-  // Performance optimizations
-  swcMinify: true,
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
@@ -16,7 +16,16 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        port: '',
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
@@ -45,14 +54,6 @@ const nextConfig = {
   },
   async headers() {
     return [
-      {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
-          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version' },
-        ],
-      },
       {
         source: '/(.*)',
         headers: [

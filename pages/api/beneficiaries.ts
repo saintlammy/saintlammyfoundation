@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/serverAuth';
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -9,6 +10,8 @@ function getSupabase() {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET' && !(await requireAdmin(req, res))) return;
+
   try {
     const supabase = getSupabase();
 

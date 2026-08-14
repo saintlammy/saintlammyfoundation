@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
 import { getItems, createItem, updateItem, deleteItem } from '@/lib/fileStorage';
+import { requireAdmin } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
+  if (method !== 'GET' && !(await requireAdmin(req, res))) return;
 
   switch (method) {
     case 'GET':
