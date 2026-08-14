@@ -24,6 +24,7 @@ const Outreaches: React.FC = () => {
   const [upcomingOutreaches, setUpcomingOutreaches] = useState<Outreach[]>([]);
   const [pastOutreaches, setPastOutreaches] = useState<Outreach[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadOutreaches();
@@ -32,20 +33,28 @@ const Outreaches: React.FC = () => {
   const loadOutreaches = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/outreaches?status=all');
+      setLoadError(null);
 
-      if (response.ok) {
-        const data = await response.json();
+      const [upcomingResponse, ongoingResponse, completedResponse] = await Promise.all([
+        fetch('/api/outreaches?status=upcoming'),
+        fetch('/api/outreaches?status=ongoing'),
+        fetch('/api/outreaches?status=completed'),
+      ]);
 
-        // Separate upcoming and past outreaches
-        const upcoming = data.filter((o: any) => o.status === 'upcoming' || o.status === 'ongoing');
-        const past = data.filter((o: any) => o.status === 'completed');
-
-        setUpcomingOutreaches(upcoming);
-        setPastOutreaches(past);
+      const responses = [upcomingResponse, ongoingResponse, completedResponse];
+      if (responses.some((response) => !response.ok)) {
+        throw new Error('One or more outreach feeds could not be loaded');
       }
+
+      const [upcoming, ongoing, completed] = await Promise.all(
+        responses.map((response) => response.json() as Promise<Outreach[]>)
+      );
+
+      setUpcomingOutreaches([...upcoming, ...ongoing]);
+      setPastOutreaches(completed);
     } catch (error) {
       console.error('Error loading outreaches:', error);
+      setLoadError('We could not load outreach information right now. Please try again shortly.');
     } finally {
       setLoading(false);
     }
@@ -232,6 +241,10 @@ const Outreaches: React.FC = () => {
                 <div className="text-center py-12">
                   <p className="text-gray-500 dark:text-gray-400">Loading outreaches...</p>
                 </div>
+              ) : loadError ? (
+                <div className="text-center py-12" role="alert">
+                  <p className="text-red-600 dark:text-red-400">{loadError}</p>
+                </div>
               ) : displayUpcoming.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500 dark:text-gray-400">No upcoming outreaches at this time.</p>
@@ -325,6 +338,10 @@ const Outreaches: React.FC = () => {
               {loading ? (
                 <div className="col-span-3 text-center py-12">
                   <p className="text-gray-500 dark:text-gray-400">Loading past outreaches...</p>
+                </div>
+              ) : loadError ? (
+                <div className="text-center py-12" role="alert">
+                  <p className="text-red-600 dark:text-red-400">{loadError}</p>
                 </div>
               ) : displayPast.length === 0 ? (
                 <div className="col-span-3 text-center py-12">

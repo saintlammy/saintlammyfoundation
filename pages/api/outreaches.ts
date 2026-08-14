@@ -4,7 +4,10 @@ import { requireAdmin } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
-  const isPublicRead = method === 'GET' && (req.query.status === undefined || req.query.status === 'published');
+  const requestedStatus = Array.isArray(req.query.status) ? undefined : req.query.status;
+  const publicStatuses = new Set(['published', 'upcoming', 'ongoing', 'completed']);
+  const isPublicRead = method === 'GET'
+    && (requestedStatus === undefined || publicStatuses.has(requestedStatus));
   if (!isPublicRead && !(await requireAdmin(req, res))) return;
 
   switch (method) {
