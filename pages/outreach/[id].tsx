@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -144,6 +143,14 @@ interface OutreachReportPageProps {
   initialOutreach?: any;
 }
 
+const outreachSocialMeta: Record<string, { title: string; description: string; image: string }> = {
+  'new-1786742411946': {
+    title: 'Restoring Dignity: Q2 Widows Relief Outreach 2026',
+    description: 'See how Saintlammy Foundation reached 71 widows in Lagos with food, hygiene items, financial assistance and targeted housing support in July 2026.',
+    image: '/images/outreaches/q2-widows-relief-2026-og.jpg'
+  }
+};
+
 const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach }) => {
   const router = useRouter();
   const { id } = router.query;
@@ -162,6 +169,10 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
   const isUpcoming = outreach?.status === 'upcoming' || (outreach?.status as string) === 'draft';
   const isCompleted = outreach?.status === 'completed';
   const isOngoing = outreach?.status === 'ongoing';
+  const socialMeta = outreach ? outreachSocialMeta[outreach.id] : undefined;
+  const outreachOgImage = socialMeta?.image
+    ? getCanonicalUrl(socialMeta.image)
+    : outreach?.image;
 
   useEffect(() => {
     // Only fetch if we don't have initialOutreach
@@ -588,9 +599,9 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
     <>
       <SEOHead
         config={{
-          title: `${outreach.title} - Outreach Report`,
-          description: outreach.description || `Learn about ${outreach.title} - an outreach program by Saintlammy Foundation impacting lives in ${outreach.location}.`,
-          image: outreach.image,
+          title: socialMeta?.title || `${outreach.title} - Outreach Report`,
+          description: socialMeta?.description || outreach.description || `Learn about ${outreach.title} - an outreach program by Saintlammy Foundation impacting lives in ${outreach.location}.`,
+          image: outreachOgImage,
           url: getCanonicalUrl(`/outreach/${id}`),
           type: 'article',
           publishedTime: outreach.date,
