@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
+import { isLegacyPeopleStockImage, localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -67,7 +68,12 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
       role: item.story_details?.author_role || item.excerpt || 'Beneficiary',
       content: item.content,
       rating: item.story_details?.rating || 5,
-      image: item.featured_image,
+      image: isLegacyPeopleStockImage(item.featured_image)
+        ? (item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow)
+        : localizeNgoImage(
+            item.featured_image,
+            item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow,
+          ) || (item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow),
       gender: item.story_details?.gender || null,
       program: item.story_details?.program || 'General',
       date: item.publish_date || item.created_at,

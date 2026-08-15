@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
 import { getItems, createItem, updateItem, deleteItem } from '@/lib/fileStorage';
 import { requireAdmin } from '@/lib/serverAuth';
+import { localizeNgoImagesDeep } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -30,7 +31,7 @@ async function getPageContent(req: NextApiRequest, res: NextApiResponse) {
 
     // If file storage has data, return it (user edits are persisted here)
     if (fileStorageData && fileStorageData.length > 0) {
-      return res.status(200).json(fileStorageData);
+      return res.status(200).json(localizeNgoImagesDeep(fileStorageData));
     }
 
     // Try Supabase if no file storage data
@@ -52,15 +53,15 @@ async function getPageContent(req: NextApiRequest, res: NextApiResponse) {
       const { data, error } = await query;
 
       if (!error && data && data.length > 0) {
-        return res.status(200).json(data);
+        return res.status(200).json(localizeNgoImagesDeep(data));
       }
     }
 
     // Fallback to mock data (only for first load)
-    return res.status(200).json(getMockPageContent(slug as string, section as string));
+    return res.status(200).json(localizeNgoImagesDeep(getMockPageContent(slug as string, section as string)));
   } catch (error) {
     console.error('API error:', error);
-    return res.status(200).json(getMockPageContent(slug as string, section as string));
+    return res.status(200).json(localizeNgoImagesDeep(getMockPageContent(slug as string, section as string)));
   }
 }
 
@@ -176,7 +177,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Samuel Lammy',
         role: 'Founder & Executive Director',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         bio: 'Passionate about empowering vulnerable communities with over 8 years of experience in community development and charity work.',
         linkedin: '#'
       }
@@ -189,7 +190,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Grace Adunola',
         role: 'Program Director',
-        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         bio: 'Leads our outreach programs with a heart for widows and orphans. Former social worker with 12+ years experience.',
         linkedin: '#'
       }
@@ -202,7 +203,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'David Okafor',
         role: 'Operations Manager',
-        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         bio: 'Ensures efficient operations and transparency in all our programs. Background in nonprofit management and finance.',
         linkedin: '#'
       }
@@ -272,7 +273,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         title: 'About Our Mission',
         subtitle: 'Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.',
-        background_image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80'
+        background_image: '/images/nigerian-ngo/community-relief.webp'
       }
     },
     // About Page - Mission
@@ -327,7 +328,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Mrs. Chinelo Okafor',
         role: 'Widow Empowerment Program Beneficiary',
-        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
         duration: '2 years in program'
       }
@@ -340,7 +341,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Emmanuel Adebayo',
         role: 'Educational Program Graduate',
-        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
         duration: 'Scholarship recipient since 2022'
       }
@@ -353,7 +354,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Dr. Sarah Adunola',
         role: 'Medical Volunteer',
-        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
         duration: '3 years volunteering'
       }
@@ -366,7 +367,7 @@ function getMockPageContent(slug?: string, section?: string) {
       data: {
         name: 'Pastor David Okon',
         role: 'Community Partner',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
         duration: 'Partnership since 2021'
       }
@@ -426,7 +427,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Dr. Adebayo Johnson',
         position: 'Chairman of the Board',
         background: 'Former Director of Social Services, Lagos State Government. 25+ years in nonprofit governance.',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         credentials: ['PhD Public Administration', 'Certified Nonprofit Executive', 'Board Leadership Certificate']
       }
     },
@@ -439,7 +440,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Mrs. Funmi Adebayo',
         position: 'Vice Chairperson',
         background: 'Senior Partner at a leading accounting firm. Expert in nonprofit financial management and compliance.',
-        image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-student.webp',
         credentials: ['CPA, FCCA', 'Nonprofit Finance Specialist', '20+ years audit experience']
       }
     },
@@ -452,7 +453,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Dr. Emmanuel Okafor',
         position: 'Secretary',
         background: 'Pediatrician and child welfare advocate. Leads healthcare initiatives for vulnerable children.',
-        image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         credentials: ['MD Pediatrics', 'Child Welfare Certification', 'Healthcare Policy Advisor']
       }
     },
@@ -465,7 +466,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Rev. Grace Oduya',
         position: 'Treasurer',
         background: 'Community leader and microfinance expert. Specializes in widow empowerment and financial literacy.',
-        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         credentials: ['MBA Finance', 'Microfinance Specialist', 'Community Development Expert']
       }
     },
@@ -478,7 +479,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Prof. Samuel Kalu',
         position: 'Member',
         background: 'Education researcher and former university administrator. Champions educational access for orphans.',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         credentials: ['PhD Education', 'UNESCO Consultant', 'Educational Policy Expert']
       }
     },
@@ -491,7 +492,7 @@ function getMockPageContent(slug?: string, section?: string) {
         name: 'Mrs. Blessing Uche',
         position: 'Member',
         background: 'Legal practitioner specializing in nonprofit law and children\'s rights advocacy.',
-        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         credentials: ['LLB, BL', 'Children\'s Rights Advocate', 'Nonprofit Law Specialist']
       }
     },

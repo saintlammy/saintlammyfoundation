@@ -24,7 +24,7 @@ const HeroAsymmetric: React.FC<HeroProps> = ({
           <div
             className="absolute inset-0 bg-cover bg-center transform -skew-x-12 scale-110"
             style={{
-              backgroundImage: 'url(https://images.unsplash.com/photo-1603998382124-c9835bf50409?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+              backgroundImage: 'url(/images/nigerian-ngo/community-relief.webp)',
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent dark:from-gray-950/80 dark:via-gray-950/40 dark:to-transparent transform -skew-x-12"></div>

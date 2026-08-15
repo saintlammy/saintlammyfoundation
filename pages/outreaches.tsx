@@ -69,7 +69,7 @@ const Outreaches: React.FC = () => {
       time: '10:00 AM - 4:00 PM',
       location: 'Mushin Community Center, Lagos',
       description: 'Annual Christmas feeding program for 500+ families in Mushin area. Hot meals, gift packages, and medical check-ups.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/community-relief.webp',
       targetBeneficiaries: 500,
       volunteersNeeded: 25,
       status: 'Registration Open'
@@ -81,7 +81,7 @@ const Outreaches: React.FC = () => {
       time: '9:00 AM - 2:00 PM',
       location: 'Hope Children Home, Abuja',
       description: 'Distribution of school bags, books, uniforms, and educational materials to 200 children across 5 orphanages.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/education-classroom.webp',
       targetBeneficiaries: 200,
       volunteersNeeded: 15,
       status: 'Planning Phase'
@@ -93,7 +93,7 @@ const Outreaches: React.FC = () => {
       time: '11:00 AM - 5:00 PM',
       location: 'Community Hall, Port Harcourt',
       description: 'Skills training workshop for widows including tailoring, soap making, and small business management.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/widow-empowerment.webp',
       targetBeneficiaries: 75,
       volunteersNeeded: 12,
       status: 'Registration Soon'
@@ -108,7 +108,7 @@ const Outreaches: React.FC = () => {
       location: 'Ikeja, Lagos',
       beneficiaries: 450,
       description: 'Free medical check-ups, medications, and health education for underserved communities.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/community-relief.webp',
       status: 'completed',
       impact: ['450 people received medical care', '200 medications distributed', '50 referrals to specialists']
     },
@@ -119,7 +119,7 @@ const Outreaches: React.FC = () => {
       location: 'Multiple Locations',
       beneficiaries: 320,
       description: 'School supplies and uniforms distribution for children from vulnerable families.',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/education-classroom.webp',
       status: 'completed',
       impact: ['320 children received school supplies', '150 uniforms distributed', '8 schools supported']
     },
@@ -130,7 +130,7 @@ const Outreaches: React.FC = () => {
       location: 'Rural Kogi State',
       beneficiaries: 600,
       description: 'Installation of water pumps and distribution of water purification tablets.',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: '/images/nigerian-ngo/community-relief.webp',
       status: 'completed',
       impact: ['3 water pumps installed', '600 people gained access to clean water', '1200 purification tablets distributed']
     }
@@ -177,7 +177,7 @@ const Outreaches: React.FC = () => {
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
-              src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              src="/images/nigerian-ngo/community-relief.webp"
               alt="Community outreach program"
               fill
               className="object-cover object-center opacity-30"

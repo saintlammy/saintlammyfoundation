@@ -50,21 +50,21 @@ const OrphanAdoptionProgram: React.FC = () => {
       age: 19,
       story: 'Joined our program at age 8. Now studying Medicine at the University of Lagos.',
       achievement: 'First Class Honors',
-      image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-student.webp'
     },
     {
       name: 'Emmanuel Okafor',
       age: 17,
       story: 'Program participant since age 10. Excelling in sciences and mathematics.',
       achievement: 'Science Olympiad Winner',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-volunteer.webp'
     },
     {
       name: 'Grace Idowu',
       age: 16,
       story: 'Joined at age 9. Passionate about technology and coding.',
       achievement: 'Young Tech Innovator',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b490?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-student.webp'
     }
   ];
 
@@ -139,7 +139,7 @@ const OrphanAdoptionProgram: React.FC = () => {
       <section className="relative py-32 bg-white dark:bg-black">
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+            src="/images/nigerian-ngo/orphan-care.webp"
             alt="Children learning"
             fill
             className="object-cover object-center opacity-20"

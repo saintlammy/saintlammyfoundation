@@ -131,8 +131,8 @@ const Programs: React.FC = () => {
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-              alt="Educational program"
+              src="/images/nigerian-ngo/community-relief.webp"
+              alt="Saintlammy Foundation community outreach in Nigeria"
               fill
               className="object-cover object-center opacity-40"
             />

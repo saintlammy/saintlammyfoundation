@@ -130,7 +130,7 @@ const SponsorPage: React.FC<SponsorProps> = ({ sponsorshipTiers: apiSponsorshipT
       category: 'orphan',
       story: 'Dreams of becoming a doctor to help other children like herself. Your sponsorship provides education, healthcare, and hope.',
       needs: ['School tuition and supplies', 'Healthcare and medication', 'Clothing and shoes'],
-      image: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-student.webp',
       monthlyCost: 85,
       isSponsored: false,
       schoolGrade: 'Primary 3'
@@ -143,7 +143,7 @@ const SponsorPage: React.FC<SponsorProps> = ({ sponsorshipTiers: apiSponsorshipT
       category: 'widow',
       story: 'Mother of three learning new skills to provide for her family. Your support helps her start a sustainable business.',
       needs: ['Business startup capital', 'Vocational training', 'Monthly food support'],
-      image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-student.webp',
       monthlyCost: 120,
       isSponsored: false
     },
@@ -155,7 +155,7 @@ const SponsorPage: React.FC<SponsorProps> = ({ sponsorshipTiers: apiSponsorshipT
       category: 'orphan',
       story: 'Passionate about technology and engineering. Your sponsorship gives him access to education and tools for his future.',
       needs: ['Secondary school fees', 'Technology learning materials', 'Career mentorship'],
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-volunteer.webp',
       monthlyCost: 95,
       isSponsored: false,
       schoolGrade: 'SS2'

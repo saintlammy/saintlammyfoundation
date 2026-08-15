@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getOptionalAdmin, requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
+import { localizeNgoImage, ngoImageForCategory } from '@/lib/ngoImages';
 
 interface GalleryContentRow {
   id: string;
@@ -71,7 +72,10 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
-      image: item.featured_image || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      image: localizeNgoImage(
+        item.featured_image,
+        ngoImageForCategory(item.gallery_details?.category),
+      ) || ngoImageForCategory(item.gallery_details?.category),
       icon: getCategoryIcon(item.gallery_details?.category),
       category: item.gallery_details?.category || 'Education',
       date: item.gallery_details?.project_date || item.publish_date || item.created_at
@@ -105,7 +109,7 @@ function getMockGallery(limit?: number) {
       id: '1',
       title: 'Widows Food Support Outreach',
       description: 'Over 30 widows received carefully packed food supplies including rice, oil, garri, and seasoning items during our second official outreach.',
-      image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=600&auto=format&fit=crop',
+      image: '/images/nigerian-ngo/community-relief.webp',
       icon: 'Heart',
       category: 'Relief',
       date: '2025-08-25'
@@ -114,7 +118,7 @@ function getMockGallery(limit?: number) {
       id: '2',
       title: 'Open Medical Checkup Outreach',
       description: 'Free medical consultations and basic treatments provided for over 40 widows and less privileged individuals during our second outreach.',
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=600&auto=format&fit=crop',
+      image: '/images/nigerian-ngo/health-outreach.webp',
       icon: 'Heart',
       category: 'Healthcare',
       date: '2025-09-21'
@@ -123,7 +127,7 @@ function getMockGallery(limit?: number) {
       id: '3',
       title: 'Widow Empowerment Starter Support',
       description: 'Selected widows began receiving business starter items and monthly stipends, with one-on-one support sessions launched.',
-      image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=600&auto=format&fit=crop',
+      image: '/images/nigerian-ngo/education-classroom.webp',
       icon: 'Users',
       category: 'Empowerment',
       date: '2025-10-14'
@@ -132,7 +136,7 @@ function getMockGallery(limit?: number) {
       id: '4',
       title: 'Community Support for Vulnerable Homes',
       description: 'Groceries, sanitary materials, and children\'s supplies distributed to families in poor housing conditions throughout Lagos.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop',
+      image: '/images/nigerian-ngo/orphan-care.webp',
       icon: 'Home',
       category: 'Relief',
       date: '2025-08-01'

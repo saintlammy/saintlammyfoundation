@@ -26,7 +26,7 @@ const HeroGlassmorphism: React.FC<HeroProps> = ({
         <div
           className="absolute inset-0 bg-cover bg-center scale-105"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1603998382124-c9835bf50409?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+            backgroundImage: 'url(/images/nigerian-ngo/community-relief.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

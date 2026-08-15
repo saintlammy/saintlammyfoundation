@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
 import { sanitizeRichHtml } from '@/lib/sanitizeRichHtml';
+import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -69,7 +70,7 @@ async function getPages(req: NextApiRequest, res: NextApiResponse) {
       seo_title: item.page_details?.seo_title || item.title,
       seo_description: item.page_details?.seo_description || item.excerpt,
       template: item.page_details?.template || 'default',
-      featured_image: item.featured_image,
+      featured_image: localizeNgoImage(item.featured_image, NGO_IMAGES.community) || NGO_IMAGES.community,
       created_at: item.created_at,
       updated_at: item.updated_at
     }));
@@ -233,7 +234,7 @@ function getMockPages(limit?: number, slug?: string) {
       seo_title: 'About Saintlammy Foundation - Our Mission & Impact',
       seo_description: 'Learn about Saintlammy Foundation\'s mission to support orphans, widows, and communities across Nigeria.',
       template: 'default',
-      featured_image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      featured_image: '/images/nigerian-ngo/community-relief.webp',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-15T00:00:00Z'
     },

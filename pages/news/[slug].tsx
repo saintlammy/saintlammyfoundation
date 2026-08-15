@@ -339,7 +339,7 @@ export const getStaticProps: GetStaticProps<NewsDetailProps> = async ({ params }
       content: '', // Full content would be here
       date: '2024-12-15',
       category: 'outreach' as const,
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: '/images/nigerian-ngo/health-outreach.webp',
       readTime: '3 min read',
       author: 'Saintlammy Foundation Team',
       tags: ['medical outreach', 'rural communities', 'healthcare']
@@ -351,7 +351,7 @@ export const getStaticProps: GetStaticProps<NewsDetailProps> = async ({ params }
       content: '',
       date: '2024-12-10',
       category: 'partnership' as const,
-      image: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: '/images/nigerian-ngo/education-classroom.webp',
       readTime: '4 min read',
       author: 'Education Team',
       tags: ['education', 'partnerships', 'orphans']
@@ -363,7 +363,7 @@ export const getStaticProps: GetStaticProps<NewsDetailProps> = async ({ params }
       content: '',
       date: '2024-12-05',
       category: 'achievement' as const,
-      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: '/images/nigerian-ngo/education-classroom.webp',
       readTime: '2 min read',
       author: 'Empowerment Team',
       tags: ['widow empowerment', 'business', 'independence']

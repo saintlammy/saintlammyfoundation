@@ -60,7 +60,7 @@ const examplePrograms = [
     excerpt: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support.',
     type: 'program',
     status: 'published',
-    featured_image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80',
+    featured_image: '/images/nigerian-ngo/orphan-care.webp',
     program_details: {
       category: 'Child Welfare',
       target_audience: 'Orphaned Children',
@@ -92,7 +92,7 @@ const examplePrograms = [
     excerpt: 'Economic empowerment program helping widows become financially independent through skills training and micro-business support.',
     type: 'program',
     status: 'published',
-    featured_image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/widow-empowerment.webp',
     program_details: {
       category: 'Economic Empowerment',
       target_audience: 'Widows',
@@ -124,7 +124,7 @@ const examplePrograms = [
     excerpt: 'Scholarship program and educational support for children from vulnerable families to ensure quality education access.',
     type: 'program',
     status: 'published',
-    featured_image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/education-classroom.webp',
     program_details: {
       category: 'Education',
       target_audience: 'Vulnerable Children',
@@ -156,7 +156,7 @@ const examplePrograms = [
     excerpt: 'Providing healthcare services and medical support to underserved communities through mobile clinics and health education.',
     type: 'program',
     status: 'published',
-    featured_image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/health-outreach.webp',
     program_details: {
       category: 'Healthcare',
       target_audience: 'Underserved Communities',

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
+import { localizeNgoImage, ngoImageForCategory } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -63,7 +64,10 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,
-      image: item.featured_image,
+      image: localizeNgoImage(
+        item.featured_image,
+        ngoImageForCategory(item.program_details?.category),
+      ) || ngoImageForCategory(item.program_details?.category),
       category: item.program_details?.category || 'education',
       targetAudience: item.program_details?.target_audience || 'General',
       status: item.status,

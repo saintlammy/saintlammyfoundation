@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             content: `This is a test ${contentType} item created by the CRUD test.`,
             status: 'draft',
             excerpt: `Test excerpt for ${contentType}`,
-            featured_image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+            featured_image: '/images/nigerian-ngo/orphan-care.webp'
           }),
         });
 

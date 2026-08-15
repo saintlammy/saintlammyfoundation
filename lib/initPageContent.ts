@@ -12,7 +12,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Samuel Lammy',
         role: 'Founder & Executive Director',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         bio: 'Passionate about empowering vulnerable communities with over 8 years of experience in community development and charity work.',
         linkedin: '#'
       }
@@ -25,7 +25,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Grace Adunola',
         role: 'Program Director',
-        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         bio: 'Leads our outreach programs with a heart for widows and orphans. Former social worker with 12+ years experience.',
         linkedin: '#'
       }
@@ -38,7 +38,7 @@ export const initializePageContent = () => {
       data: {
         name: 'David Okafor',
         role: 'Operations Manager',
-        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         bio: 'Ensures efficient operations and transparency in all our programs. Background in nonprofit management and finance.',
         linkedin: '#'
       }
@@ -108,7 +108,7 @@ export const initializePageContent = () => {
       data: {
         title: 'About Our Mission',
         subtitle: 'Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.',
-        background_image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80'
+        background_image: '/images/nigerian-ngo/community-relief.webp'
       }
     },
     // About Page - Mission
@@ -163,7 +163,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Mrs. Chinelo Okafor',
         role: 'Widow Empowerment Program Beneficiary',
-        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
         duration: '2 years in program'
       }
@@ -176,7 +176,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Emmanuel Adebayo',
         role: 'Educational Program Graduate',
-        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
         duration: 'Scholarship recipient since 2022'
       }
@@ -189,7 +189,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Dr. Sarah Adunola',
         role: 'Medical Volunteer',
-        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
         duration: '3 years volunteering'
       }
@@ -202,7 +202,7 @@ export const initializePageContent = () => {
       data: {
         name: 'Pastor David Okon',
         role: 'Community Partner',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
         duration: 'Partnership since 2021'
       }
@@ -262,7 +262,7 @@ export const initializePageContent = () => {
         name: 'Dr. Adebayo Johnson',
         position: 'Chairman of the Board',
         background: 'Former Director of Social Services, Lagos State Government. 25+ years in nonprofit governance.',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         credentials: ['PhD Public Administration', 'Certified Nonprofit Executive', 'Board Leadership Certificate']
       }
     },
@@ -275,7 +275,7 @@ export const initializePageContent = () => {
         name: 'Mrs. Funmi Adebayo',
         position: 'Vice Chairperson',
         background: 'Senior Partner at a leading accounting firm. Expert in nonprofit financial management and compliance.',
-        image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-student.webp',
         credentials: ['CPA, FCCA', 'Nonprofit Finance Specialist', '20+ years audit experience']
       }
     },
@@ -288,7 +288,7 @@ export const initializePageContent = () => {
         name: 'Dr. Emmanuel Okafor',
         position: 'Secretary',
         background: 'Pediatrician and child welfare advocate. Leads healthcare initiatives for vulnerable children.',
-        image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         credentials: ['MD Pediatrics', 'Child Welfare Certification', 'Healthcare Policy Advisor']
       }
     },
@@ -301,7 +301,7 @@ export const initializePageContent = () => {
         name: 'Rev. Grace Oduya',
         position: 'Treasurer',
         background: 'Community leader and microfinance expert. Specializes in widow empowerment and financial literacy.',
-        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-widow.webp',
         credentials: ['MBA Finance', 'Microfinance Specialist', 'Community Development Expert']
       }
     },
@@ -314,7 +314,7 @@ export const initializePageContent = () => {
         name: 'Prof. Samuel Kalu',
         position: 'Member',
         background: 'Education researcher and former university administrator. Champions educational access for orphans.',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-volunteer.webp',
         credentials: ['PhD Education', 'UNESCO Consultant', 'Educational Policy Expert']
       }
     },
@@ -327,7 +327,7 @@ export const initializePageContent = () => {
         name: 'Mrs. Blessing Uche',
         position: 'Member',
         background: 'Legal practitioner specializing in nonprofit law and children\'s rights advocacy.',
-        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+        image: '/images/nigerian-ngo/portrait-doctor.webp',
         credentials: ['LLB, BL', 'Children\'s Rights Advocate', 'Nonprofit Law Specialist']
       }
     },

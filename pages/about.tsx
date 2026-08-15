@@ -161,7 +161,7 @@ const About: React.FC = () => {
         <section className="relative py-16 sm:py-24 md:py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
-              src={hero?.background_image || "https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80"}
+              src={hero?.background_image || "/images/nigerian-ngo/community-relief.webp"}
               alt="Community gathering"
               fill
               className="object-cover object-center opacity-30"
@@ -341,28 +341,28 @@ const About: React.FC = () => {
                 {
                   name: 'Mrs. Chinelo Okafor',
                   role: 'Widow Empowerment Program Beneficiary',
-                  image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  image: '/images/nigerian-ngo/portrait-widow.webp',
                   quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
                   duration: '2 years in program'
                 },
                 {
                   name: 'Emmanuel Adebayo',
                   role: 'Educational Program Graduate',
-                  image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  image: '/images/nigerian-ngo/portrait-volunteer.webp',
                   quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
                   duration: 'Scholarship recipient since 2022'
                 },
                 {
                   name: 'Dr. Sarah Adunola',
                   role: 'Medical Volunteer',
-                  image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  image: '/images/nigerian-ngo/portrait-doctor.webp',
                   quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
                   duration: '3 years volunteering'
                 },
                 {
                   name: 'Pastor David Okon',
                   role: 'Community Partner',
-                  image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+                  image: '/images/nigerian-ngo/portrait-volunteer.webp',
                   quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
                   duration: 'Partnership since 2021'
                 }

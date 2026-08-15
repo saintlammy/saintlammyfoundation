@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getOptionalAdmin, requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
+import { localizeNgoImagesDeep } from '@/lib/ngoImages';
 
 export interface Campaign {
   id: string;
@@ -158,7 +159,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
       return res.status(500).json({ error: 'Failed to load campaigns' });
     }
 
-    return res.status(200).json({ success: true, data: data || [] });
+    return res.status(200).json({ success: true, data: localizeNgoImagesDeep(data || []) });
   } catch (error) {
     console.error('Error fetching campaigns:', error);
     return res.status(500).json({ error: 'Failed to load campaigns' });

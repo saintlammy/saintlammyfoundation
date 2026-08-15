@@ -186,7 +186,7 @@ const Volunteer: React.FC = () => {
         <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0">
             <Image
-              src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              src="/images/nigerian-ngo/volunteer-team.webp"
               alt="Volunteers helping community"
               fill
               className="object-cover object-center opacity-30"

@@ -3,29 +3,24 @@
  * Provides gender-based fallback avatars when no image is uploaded
  */
 
-// Default avatar collections
+import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
+
+// Nigerian portrait fallbacks generated for the Foundation's visual system.
 const MALE_AVATARS = [
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=male1&backgroundColor=b6e3f4',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=male2&backgroundColor=c0aede',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=male3&backgroundColor=d1d4f9',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=male4&backgroundColor=ffd5dc',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=male5&backgroundColor=ffdfbf',
+  NGO_IMAGES.volunteer,
 ];
 
 const FEMALE_AVATARS = [
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=female1&backgroundColor=ffd5dc',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=female2&backgroundColor=c0aede',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=female3&backgroundColor=b6e3f4',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=female4&backgroundColor=d1d4f9',
-  'https://api.dicebear.com/7.x/avataaars/svg?seed=female5&backgroundColor=ffdfbf',
+  NGO_IMAGES.widow,
+  NGO_IMAGES.doctor,
+  NGO_IMAGES.student,
 ];
 
 const NEUTRAL_AVATARS = [
-  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=neutral1&backgroundColor=b6e3f4',
-  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=neutral2&backgroundColor=c0aede',
-  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=neutral3&backgroundColor=d1d4f9',
-  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=neutral4&backgroundColor=ffd5dc',
-  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=neutral5&backgroundColor=ffdfbf',
+  NGO_IMAGES.volunteer,
+  NGO_IMAGES.widow,
+  NGO_IMAGES.doctor,
+  NGO_IMAGES.student,
 ];
 
 export type Gender = 'male' | 'female' | 'other' | null | undefined;
@@ -89,7 +84,7 @@ export function getTestimonialAvatar(
 ): string {
   // If image URL exists and is not empty, use it
   if (imageUrl && imageUrl.trim() !== '') {
-    return imageUrl;
+    return localizeNgoImage(imageUrl, getAvatarFallback(gender, name)) as string;
   }
 
   // Otherwise, return fallback avatar

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
+import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -65,7 +66,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
       excerpt: item.excerpt,
       date: item.publish_date || item.created_at,
       category: item.news_details?.category || 'update',
-      image: item.featured_image || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+      image: localizeNgoImage(item.featured_image, NGO_IMAGES.community) || NGO_IMAGES.community,
       readTime: item.news_details?.read_time || '3 min read',
       slug: item.slug || item.id
     }));

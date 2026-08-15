@@ -110,7 +110,7 @@ const convertBasicOutreachToReport = (outreach: any): OutreachReport => {
     date: outreach.date || details.event_date || 'Date TBD',
     location: outreach.location || details.location || 'Location TBD',
     status: outreach.status,
-    image: outreach.image || outreach.featured_image || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    image: outreach.image || outreach.featured_image || '/images/nigerian-ngo/community-relief.webp',
     description: outreach.description || outreach.content || outreach.excerpt || 'No description available',
     targetBeneficiaries: outreach.targetBeneficiaries || details.expected_attendees || 0,
     actualBeneficiaries: outreach.beneficiaries || details.actual_attendees || outreach.targetBeneficiaries || 0,
@@ -231,7 +231,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         date: 'October 1, 2024',
         location: 'Ikeja, Lagos State',
         status: 'completed',
-        image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+        image: '/images/nigerian-ngo/community-relief.webp',
         description: 'Our flagship medical outreach program providing free healthcare services, medical check-ups, medications, and health education to underserved communities in Ikeja, Lagos.',
         targetBeneficiaries: 400,
         actualBeneficiaries: 487,
@@ -283,12 +283,12 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
       ],
 
       gallery: [
-        'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800',
-        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
-        'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800',
-        'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800',
-        'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800',
-        'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800'
+        '/images/nigerian-ngo/community-relief.webp',
+        '/images/nigerian-ngo/health-outreach.webp',
+        '/images/nigerian-ngo/health-outreach.webp',
+        '/images/nigerian-ngo/health-outreach.webp',
+        '/images/nigerian-ngo/health-outreach.webp',
+        '/images/nigerian-ngo/health-outreach.webp'
       ],
 
       testimonials: [
@@ -296,19 +296,19 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
           name: 'Mrs. Folake Adeyemi',
           role: 'Beneficiary',
           message: 'I received free medication for my diabetes and blood pressure. The doctors were very professional and caring. God bless Saintlammy Foundation!',
-          image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?w=400'
+          image: '/images/nigerian-ngo/portrait-student.webp'
         },
         {
           name: 'Mr. Chukwudi Okonkwo',
           role: 'Volunteer Doctor',
           message: 'It was a privilege to serve alongside such dedicated volunteers. The organization and impact were truly remarkable.',
-          image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400'
+          image: '/images/nigerian-ngo/portrait-doctor.webp'
         },
         {
           name: 'Miss Aisha Mohammed',
           role: 'Community Leader',
           message: 'This outreach brought hope to our community. Many people who cannot afford healthcare received much-needed medical attention.',
-          image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'
+          image: '/images/nigerian-ngo/portrait-doctor.webp'
         }
       ],
 
@@ -348,7 +348,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         date: 'September 12, 2024',
         location: 'Multiple Locations, Nigeria',
         status: 'completed',
-        image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+        image: '/images/nigerian-ngo/education-classroom.webp',
         description: 'Annual back-to-school program providing school supplies, uniforms, and educational materials to children from vulnerable families across Nigeria.',
         targetBeneficiaries: 300,
         actualBeneficiaries: 320,
@@ -391,31 +391,31 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
           { title: 'School Partnership Meetings', description: 'Coordination with school administrators', completed: true }
         ],
         gallery: [
-          'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800',
-          'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
-          'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
-          'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800',
-          'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800',
-          'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800'
+          '/images/nigerian-ngo/education-classroom.webp',
+          '/images/nigerian-ngo/orphan-care.webp',
+          '/images/nigerian-ngo/education-classroom.webp',
+          '/images/nigerian-ngo/education-classroom.webp',
+          '/images/nigerian-ngo/education-classroom.webp',
+          '/images/nigerian-ngo/education-classroom.webp'
         ],
         testimonials: [
           {
             name: 'Mrs. Blessing Eze',
             role: 'Parent',
             message: 'My three children received everything they needed for school. I was struggling to buy these items. Thank you Saintlammy Foundation!',
-            image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400'
+            image: '/images/nigerian-ngo/portrait-doctor.webp'
           },
           {
             name: 'Mr. Tunde Bakare',
             role: 'School Principal',
             message: 'This program has helped reduce absenteeism significantly. Children now come to school properly equipped and motivated to learn.',
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+            image: '/images/nigerian-ngo/portrait-volunteer.webp'
           },
           {
             name: 'Chioma Nwankwo',
             role: 'Scholarship Recipient',
             message: 'Receiving this scholarship means I can continue my education. I promise to work hard and make everyone proud!',
-            image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400'
+            image: '/images/nigerian-ngo/portrait-student.webp'
           }
         ],
         futurePlans: [
@@ -452,7 +452,7 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
         date: 'August 20, 2024',
         location: 'Rural Kogi State, Nigeria',
         status: 'completed',
-        image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+        image: '/images/nigerian-ngo/community-relief.webp',
         description: 'Community water access project installing water pumps and distributing purification tablets to provide clean drinking water to rural communities in Kogi State.',
         targetBeneficiaries: 550,
         actualBeneficiaries: 600,
@@ -497,31 +497,31 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
           { title: 'Tablet Distribution', description: 'Purification tablets to households', completed: true }
         ],
         gallery: [
-          'https://images.unsplash.com/photo-1541840031508-326b77c9a17e?w=800',
-          'https://images.unsplash.com/photo-1594398901394-4e34939a4fd0?w=800',
-          'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800',
-          'https://images.unsplash.com/photo-1600711940033-c2e8d6cc2341?w=800',
-          'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800',
-          'https://images.unsplash.com/photo-1541840031508-326b77c9a17e?w=800'
+          '/images/nigerian-ngo/livelihoods.webp',
+          '/images/nigerian-ngo/livelihoods.webp',
+          '/images/nigerian-ngo/livelihoods.webp',
+          '/images/nigerian-ngo/livelihoods.webp',
+          '/images/nigerian-ngo/volunteer-team.webp',
+          '/images/nigerian-ngo/livelihoods.webp'
         ],
         testimonials: [
           {
             name: 'Chief Idris Yakubu',
             role: 'Village Head',
             message: 'For many years our people walked 5 kilometers for water. Now we have clean water in our community. This has changed our lives!',
-            image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400'
+            image: '/images/nigerian-ngo/portrait-volunteer.webp'
           },
           {
             name: 'Fatima Abdullahi',
             role: 'Community Member',
             message: 'My children used to get sick from bad water. Since the new pumps, our health has improved. God bless this foundation.',
-            image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400'
+            image: '/images/nigerian-ngo/portrait-student.webp'
           },
           {
             name: 'Engr. David Ojo',
             role: 'Project Engineer',
             message: 'Working on this project was fulfilling. The solar pumps are sustainable and the community is trained to maintain them.',
-            image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400'
+            image: '/images/nigerian-ngo/portrait-volunteer.webp'
           }
         ],
         futurePlans: [

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/serverAuth';
+import { isLegacyPeopleStockImage, localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -40,7 +41,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: 'Failed to fetch beneficiaries', message: error.message });
       }
 
-      return res.status(200).json({ success: true, data: data || [] });
+      const localizedData = (data || []).map((beneficiary: any) => ({
+        ...beneficiary,
+        image: isLegacyPeopleStockImage(beneficiary.image)
+          ? (beneficiary.category === 'widow' ? NGO_IMAGES.widow : NGO_IMAGES.student)
+          : localizeNgoImage(
+              beneficiary.image,
+              beneficiary.category === 'widow' ? NGO_IMAGES.widow : NGO_IMAGES.student,
+            ) || (beneficiary.category === 'widow' ? NGO_IMAGES.widow : NGO_IMAGES.student),
+      }));
+
+      return res.status(200).json({ success: true, data: localizedData });
 
     } else if (req.method === 'POST') {
       const body = req.body;

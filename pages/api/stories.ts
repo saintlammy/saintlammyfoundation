@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
+import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -66,7 +67,7 @@ async function getStories(req: NextApiRequest, res: NextApiResponse) {
       location: item.story_details?.location || 'Nigeria',
       story: item.content || item.excerpt,
       quote: item.story_details?.quote || '',
-      image: item.featured_image || 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: localizeNgoImage(item.featured_image, NGO_IMAGES.student) || NGO_IMAGES.student,
       category: item.story_details?.category || 'orphan',
       impact: item.story_details?.impact || '',
       dateHelped: item.story_details?.date_helped || item.publish_date

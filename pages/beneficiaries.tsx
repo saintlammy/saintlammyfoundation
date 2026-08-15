@@ -427,7 +427,7 @@ export const getStaticProps: GetStaticProps<BeneficiariesPageProps> = async () =
       story: 'Amara lost both parents in a car accident when she was 8. Despite the challenges, she dreams of becoming a doctor to help other children. She excels in school and has a bright, curious mind.',
       needs: ['School fees and supplies', 'Healthcare', 'Nutritious meals', 'Emotional support'],
       monthlyCost: 85,
-      image: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-student.webp',
       schoolGrade: '6',
       dreamAspiration: 'I want to become a doctor so I can help sick children get better, just like doctors helped me when I was sad.',
       isSponsored: false
@@ -441,7 +441,7 @@ export const getStaticProps: GetStaticProps<BeneficiariesPageProps> = async () =
       story: 'After losing her husband, Folake struggled to provide for her three young children. She is eager to learn new skills and start a small business to become self-sufficient.',
       needs: ['Business training', 'Micro-loan support', 'Childcare assistance', 'Basic necessities'],
       monthlyCost: 120,
-      image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-student.webp',
       familySize: 4,
       dreamAspiration: 'I want to open a small shop so my children can go to school and have a better future than I had.',
       isSponsored: true
@@ -455,7 +455,7 @@ export const getStaticProps: GetStaticProps<BeneficiariesPageProps> = async () =
       story: 'Emmanuel was living on the streets before our outreach team found him. He is incredibly intelligent and wants to study engineering. He\'s now back in school and excelling.',
       needs: ['Secondary school fees', 'Technical books', 'Computer access', 'University preparation'],
       monthlyCost: 95,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+      image: '/images/nigerian-ngo/portrait-volunteer.webp',
       schoolGrade: '11',
       dreamAspiration: 'I want to become an engineer and build bridges and roads to connect communities across Nigeria.',
       isSponsored: false

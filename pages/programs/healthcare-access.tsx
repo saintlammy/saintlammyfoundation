@@ -113,7 +113,7 @@ const HealthcareAccessProgram: React.FC = () => {
       outcome: 'Safe delivery of twins',
       story: 'Through our maternal health program, received proper prenatal care and delivered healthy twins at our partner clinic.',
       location: 'Kano State',
-      image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-widow.webp'
     },
     {
       name: 'Ibrahim Musa (Age 7)',
@@ -121,7 +121,7 @@ const HealthcareAccessProgram: React.FC = () => {
       outcome: 'Full recovery and healthy growth',
       story: 'Identified through our mobile clinic, received nutritional support and regular monitoring until full recovery.',
       location: 'Kaduna State',
-      image: 'https://images.unsplash.com/photo-1544717301-9cdcb1f5940f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-student.webp'
     },
     {
       name: 'Chief Adebayo',
@@ -129,7 +129,7 @@ const HealthcareAccessProgram: React.FC = () => {
       outcome: 'Stabilized and ongoing care',
       story: 'Emergency intervention by mobile clinic saved his life. Now receives regular monitoring and medication.',
       location: 'Ogun State',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: '/images/nigerian-ngo/portrait-volunteer.webp'
     }
   ];
 
@@ -212,7 +212,7 @@ const HealthcareAccessProgram: React.FC = () => {
       <section className="relative py-32 bg-white dark:bg-black">
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+            src="/images/nigerian-ngo/health-outreach.webp"
             alt="Healthcare workers"
             fill
             className="object-cover object-center opacity-20"

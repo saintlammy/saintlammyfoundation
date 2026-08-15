@@ -78,7 +78,7 @@ const GalleryPage = () => {
             id: '1',
             title: 'Back-to-School Initiative 2024',
             description: 'Over 500 children received complete school supply packages, uniforms, and educational materials for the new academic year across Lagos and Abuja.',
-            image: 'https://images.unsplash.com/photo-1497375638960-ca368c7231e4?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            image: '/images/nigerian-ngo/livelihoods.webp',
             icon: 'GraduationCap',
             category: 'Education',
             date: 'January 2024'
@@ -87,7 +87,7 @@ const GalleryPage = () => {
             id: '2',
             title: 'Mobile Health Clinic Launch',
             description: 'Our new mobile healthcare unit reached 12 rural communities, providing free medical checkups, treatments, and health education sessions.',
-            image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/volunteer-team.webp',
             icon: 'Heart',
             category: 'Healthcare',
             date: 'February 2024'
@@ -96,7 +96,7 @@ const GalleryPage = () => {
             id: '3',
             title: 'Widow Empowerment Graduation',
             description: '35 widows completed our comprehensive skills training program and received startup funds for their new businesses, achieving financial independence.',
-            image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/community-relief.webp',
             icon: 'Users',
             category: 'Empowerment',
             date: 'March 2024'
@@ -105,7 +105,7 @@ const GalleryPage = () => {
             id: '4',
             title: 'Community Center Opening - Abuja',
             description: 'Grand opening of our new community center providing safe space for education, community meetings, and youth development programs.',
-            image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/orphan-care.webp',
             icon: 'Building',
             category: 'Infrastructure',
             date: 'April 2024'
@@ -114,7 +114,7 @@ const GalleryPage = () => {
             id: '5',
             title: 'Scholarship Program Success',
             description: '150 orphaned students received full scholarships covering tuition, books, and boarding for the entire academic year.',
-            image: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/portrait-student.webp',
             icon: 'GraduationCap',
             category: 'Education',
             date: 'May 2024'
@@ -123,7 +123,7 @@ const GalleryPage = () => {
             id: '6',
             title: 'Emergency Food Distribution',
             description: 'Rapid response food distribution reached 2,000 families during the flooding emergency in rural communities.',
-            image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/orphan-care.webp',
             icon: 'Heart',
             category: 'Emergency Relief',
             date: 'June 2024'
@@ -132,7 +132,7 @@ const GalleryPage = () => {
             id: '7',
             title: 'Skills Training Workshop',
             description: '80 young adults completed vocational training in tailoring, carpentry, and digital skills, with 90% employment rate.',
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/portrait-volunteer.webp',
             icon: 'Users',
             category: 'Empowerment',
             date: 'July 2024'
@@ -141,7 +141,7 @@ const GalleryPage = () => {
             id: '8',
             title: 'Water Well Project',
             description: 'New water well and purification system installed, providing clean water access to 800 residents in remote village.',
-            image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            image: '/images/nigerian-ngo/portrait-student.webp',
             icon: 'Building',
             category: 'Infrastructure',
             date: 'August 2024'

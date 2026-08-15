@@ -61,7 +61,7 @@ const exampleOutreaches = [
     excerpt: 'Free medical check-ups, medications, and health education for underserved communities.',
     type: 'outreach',
     status: 'completed',
-    featured_image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/health-outreach.webp',
     outreach_details: {
       date: 'October 1, 2024',
       location: 'Ikeja, Lagos',
@@ -84,7 +84,7 @@ const exampleOutreaches = [
     excerpt: 'School supplies and uniforms distribution for children from vulnerable families.',
     type: 'outreach',
     status: 'completed',
-    featured_image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/education-classroom.webp',
     outreach_details: {
       date: 'September 12, 2024',
       location: 'Multiple Locations',
@@ -107,7 +107,7 @@ const exampleOutreaches = [
     excerpt: 'Installation of water pumps and distribution of water purification tablets.',
     type: 'outreach',
     status: 'completed',
-    featured_image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    featured_image: '/images/nigerian-ngo/community-relief.webp',
     outreach_details: {
       date: 'August 20, 2024',
       location: 'Rural Kogi State',

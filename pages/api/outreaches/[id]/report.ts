@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getTypedSupabaseClient, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
+import { localizeNgoImagesDeep } from '@/lib/ngoImages';
 
 // In-memory storage for mock reports (fallback when no database)
 // Pre-populated with default report data
@@ -11,7 +12,7 @@ const mockReports: Record<string, any> = {
     date: '2024-10-01',
     location: 'Ikeja, Lagos State',
     status: 'completed',
-    image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    image: '/images/nigerian-ngo/community-relief.webp',
     description: 'Our flagship medical outreach program providing free healthcare services, medical check-ups, medications, and health education to underserved communities in Ikeja, Lagos.',
     targetBeneficiaries: 400,
     actualBeneficiaries: 487,
@@ -58,31 +59,31 @@ const mockReports: Record<string, any> = {
       { title: 'Follow-up Referrals', description: 'Specialist hospital referrals for critical cases', completed: true }
     ],
     gallery: [
-      'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800',
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
-      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800',
-      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800',
-      'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800',
-      'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800'
+      '/images/nigerian-ngo/community-relief.webp',
+      '/images/nigerian-ngo/health-outreach.webp',
+      '/images/nigerian-ngo/health-outreach.webp',
+      '/images/nigerian-ngo/health-outreach.webp',
+      '/images/nigerian-ngo/health-outreach.webp',
+      '/images/nigerian-ngo/health-outreach.webp'
     ],
     testimonials: [
       {
         name: 'Mrs. Folake Adeyemi',
         role: 'Beneficiary',
         message: 'I received free medication for my diabetes and blood pressure. The doctors were very professional and caring. God bless Saintlammy Foundation!',
-        image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?w=400'
+        image: '/images/nigerian-ngo/portrait-student.webp'
       },
       {
         name: 'Mr. Chukwudi Okonkwo',
         role: 'Volunteer Doctor',
         message: 'It was a privilege to serve alongside such dedicated volunteers. The organization and impact were truly remarkable.',
-        image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400'
+        image: '/images/nigerian-ngo/portrait-doctor.webp'
       },
       {
         name: 'Miss Aisha Mohammed',
         role: 'Community Leader',
         message: 'This outreach brought hope to our community. Many people who cannot afford healthcare received much-needed medical attention.',
-        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'
+        image: '/images/nigerian-ngo/portrait-doctor.webp'
       }
     ],
     futurePlans: [
@@ -154,7 +155,7 @@ class ReportMediaValidationError extends Error {
 }
 
 function prepareReportForResponse(report: any, compact: boolean) {
-  const prepared = {
+  const prepared = localizeNgoImagesDeep({
     ...report,
     image: replaceInlineMedia(report.image, reportMediaUrl(report.id, 'image')),
     gallery: (report.gallery || []).map((image: unknown, index: number) =>
@@ -164,7 +165,7 @@ function prepareReportForResponse(report: any, compact: boolean) {
       ...testimonial,
       image: replaceInlineMedia(testimonial.image, reportMediaUrl(report.id, 'testimonial', index))
     }))
-  };
+  });
 
   if (!compact) return prepared;
   return {
