@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin, handleSupabaseError } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
 /**
  * Broadcast a notification to all users or specific user groups
  * POST /api/notifications/broadcast
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -28,25 +29,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database not available',
       message: 'Cannot broadcast notification without database connection'
     });
   }
 
-  try {
-    const client = getTypedSupabaseClient();
+  if (!['all', 'admins', 'donors', 'volunteers'].includes(target)) {
+    return res.status(400).json({ error: 'Invalid target', message: 'target must be all, admins, donors, or volunteers' });
+  }
 
+  try {
     // Get target users based on filter
-    let userQuery = (client as any).from('donors').select('id, email');
+    let userQuery = (supabaseAdmin as any).from('users').select('id, email, role');
 
     if (target === 'admins') {
       // Filter for admin users
-      userQuery = userQuery.eq('role', 'admin');
+      userQuery = userQuery.in('role', ['admin', 'super_admin']);
     } else if (target === 'donors') {
-      // Filter for users who have made donations
-      userQuery = userQuery.not('id', 'is', null);
+      userQuery = userQuery.eq('role', 'donor');
+    } else if (target === 'volunteers') {
+      userQuery = userQuery.eq('role', 'volunteer');
     }
 
     const { data: users, error: userError } = await userQuery;
@@ -60,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Create notifications for all target users
-    const notifications = users.map((user: any) => ({
+    const notifications = (users || []).map((user: any) => ({
       title,
       message,
       type,
@@ -72,8 +76,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       created_at: new Date().toISOString()
     }));
 
+    if (notifications.length === 0) {
+      return res.status(200).json({
+        success: true,
+        broadcast_count: 0,
+        notifications: [],
+        message: 'No matching recipients were found'
+      });
+    }
+
     // Batch insert notifications
-    const { data, error } = await (client as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('notifications')
       .insert(notifications)
       .select();
@@ -102,3 +115,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

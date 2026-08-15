@@ -1,435 +1,231 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import {
-  Settings,
-  Save,
-  Globe,
-  Wallet,
-  Shield,
-  Mail,
-  Bell,
-  Eye,
-  EyeOff,
-  Upload,
-  Trash2,
-  Check,
-  X,
-  AlertTriangle,
-  Key,
-  Lock,
-  Database,
-  Server
-} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { CheckCircle2, CircleAlert, Database, KeyRound, Mail, Save, ShieldCheck, Wallet } from 'lucide-react';
+import { formatDateTime } from '@/lib/currency';
+
+interface OrganizationSettings {
+  name: string;
+  registrationNumber: string;
+  primaryEmail: string;
+  phone: string;
+  address: string;
+}
+
+interface Capabilities {
+  paypalConfigured: boolean;
+  configuredWallets: number;
+  donorEncryptionConfigured: boolean;
+  emailSenderConfigured: boolean;
+  databaseConfigured: boolean;
+}
+
+const emptyOrganization: OrganizationSettings = {
+  name: 'Saintlammy Foundation',
+  registrationNumber: '',
+  primaryEmail: '',
+  phone: '',
+  address: ''
+};
 
 const AdminSettings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('general');
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [notifications, setNotifications] = useState({
-    email: true,
-    donations: true,
-    users: false,
-    security: true
-  });
+  const { session, loading: authLoading } = useAuth();
+  const [organization, setOrganization] = useState(emptyOrganization);
+  const [capabilities, setCapabilities] = useState<Capabilities | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
 
-  const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
-    { id: 'payment', label: 'Payment Gateway', icon: Wallet },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'integrations', label: 'Integrations', icon: Globe },
-    { id: 'backup', label: 'Backup & Data', icon: Database }
-  ];
+  useEffect(() => {
+    if (authLoading) return;
+    if (!session?.access_token) {
+      setError('Your admin session is unavailable. Please sign in again.');
+      setLoading(false);
+      return;
+    }
+    const loadSettings = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/admin/settings', {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || result.error || 'Unable to load settings');
+        const data = result?.data;
+        if (!data || typeof data !== 'object') throw new Error('Settings response is incomplete');
+        setOrganization({
+          ...emptyOrganization,
+          ...(data.organization && typeof data.organization === 'object' ? data.organization : {})
+        });
+        setCapabilities(data.capabilities && typeof data.capabilities === 'object' ? data.capabilities : null);
+        setUpdatedAt(typeof data.updatedAt === 'string' ? data.updatedAt : null);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'Unable to load settings');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, [authLoading, session?.access_token]);
 
-  const renderGeneralSettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Organization Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
-              <input
-                type="text"
-                defaultValue="Saintlammy Foundation"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Registration Number</label>
-              <input
-                type="text"
-                defaultValue="CAC/IT/NO/12345678"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Primary Email</label>
-              <input
-                type="email"
-                defaultValue="contact@saintlammy.org"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-              <input
-                type="tel"
-                defaultValue="+234 800 123 4567"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Address</label>
-              <textarea
-                rows={3}
-                defaultValue="123 Foundation Street, Victoria Island, Lagos, Nigeria"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Website Settings</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-white font-medium">Maintenance Mode</h4>
-                <p className="text-gray-400 text-sm">Display a maintenance page to visitors</p>
-              </div>
-              <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-white font-medium">Public Registration</h4>
-                <p className="text-gray-400 text-sm">Allow new users to register on the website</p>
-              </div>
-              <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  const updateField = (field: keyof OrganizationSettings, value: string) => {
+    setOrganization((current) => ({ ...current, [field]: value }));
+    setNotice('');
   };
 
-  const renderPaymentSettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Payment Gateways</h3>
-          <div className="space-y-4">
-            {[
-              { name: 'Stripe', enabled: true, status: 'Connected', fees: '2.9% + ₦50' },
-              { name: 'Paystack', enabled: true, status: 'Connected', fees: '1.5% + ₦100' },
-              { name: 'Flutterwave', enabled: false, status: 'Not Connected', fees: '1.4% + ₦20' },
-              { name: 'Interswitch', enabled: false, status: 'Not Connected', fees: '1.5% + ₦50' }
-            ].map((gateway) => (
-              <div key={gateway.name} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center">
-                    <Wallet className="w-6 h-6 text-gray-300" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium">{gateway.name}</h4>
-                    <p className="text-gray-400 text-sm">{gateway.fees}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    gateway.enabled
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-gray-500/20 text-gray-400'
-                  }`}>
-                    {gateway.status}
-                  </span>
-                  <button className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    gateway.enabled ? 'bg-accent-500' : 'bg-gray-600'
-                  }`}>
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      gateway.enabled ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Currency Settings</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Primary Currency</label>
-              <select className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500">
-                <option>Nigerian Naira (₦)</option>
-                <option>US Dollar ($)</option>
-                <option>Euro (€)</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Minimum Donation</label>
-              <input
-                type="number"
-                defaultValue="1000"
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderSecuritySettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Access Control</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-white font-medium">Two-Factor Authentication</h4>
-                <p className="text-gray-400 text-sm">Require 2FA for all admin accounts</p>
-              </div>
-              <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-white font-medium">Session Timeout</h4>
-                <p className="text-gray-400 text-sm">Auto-logout after 30 minutes of inactivity</p>
-              </div>
-              <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">API Keys</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">API Key</label>
-              <div className="flex space-x-3">
-                <input
-                  type={showApiKey ? 'text' : 'password'}
-                  value="sk_live_abcdef123456789..."
-                  readOnly
-                  className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                />
-                <button
-                  onClick={() => setShowApiKey(!showApiKey)}
-                  className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-300 hover:text-white transition-colors"
-                >
-                  {showApiKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderNotificationSettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Email Notifications</h3>
-          <div className="space-y-4">
-            {[
-              { key: 'email', label: 'Email Notifications', description: 'Receive email notifications' },
-              { key: 'donations', label: 'New Donations', description: 'Notify when new donations are received' },
-              { key: 'users', label: 'New Users', description: 'Notify when new users register' },
-              { key: 'security', label: 'Security Alerts', description: 'Critical security notifications' }
-            ].map((setting) => (
-              <div key={setting.key} className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-white font-medium">{setting.label}</h4>
-                  <p className="text-gray-400 text-sm">{setting.description}</p>
-                </div>
-                <button
-                  onClick={() => setNotifications(prev => ({
-                    ...prev,
-                    [setting.key]: !prev[setting.key as keyof typeof notifications]
-                  }))}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                    notifications[setting.key as keyof typeof notifications] ? 'bg-accent-500' : 'bg-gray-600'
-                  }`}
-                >
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notifications[setting.key as keyof typeof notifications] ? 'translate-x-6' : 'translate-x-1'
-                  }`} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderIntegrationsSettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Third-party Integrations</h3>
-          <div className="space-y-4">
-            {[
-              { name: 'Google Analytics', enabled: true, status: 'Connected' },
-              { name: 'Mailchimp', enabled: false, status: 'Not Connected' },
-              { name: 'Slack', enabled: true, status: 'Connected' },
-              { name: 'Facebook Pixel', enabled: false, status: 'Not Connected' }
-            ].map((integration) => (
-              <div key={integration.name} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-gray-300" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium">{integration.name}</h4>
-                    <span className={`text-xs font-medium ${
-                      integration.enabled ? 'text-green-400' : 'text-gray-400'
-                    }`}>
-                      {integration.status}
-                    </span>
-                  </div>
-                </div>
-                <button className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                  integration.enabled ? 'bg-accent-500' : 'bg-gray-600'
-                }`}>
-                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    integration.enabled ? 'translate-x-6' : 'translate-x-1'
-                  }`} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderBackupSettings = () => {
-    return (
-      <div className="space-y-6">
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Backup & Recovery</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-white font-medium">Automatic Backups</h4>
-                <p className="text-gray-400 text-sm">Daily automated database backups</p>
-              </div>
-              <button className="bg-accent-500 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
-              </button>
-            </div>
-            <div className="pt-4">
-              <button className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors">
-                <Database className="w-4 h-4" />
-                Create Backup Now
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-6">Recent Backups</h3>
-          <div className="space-y-3">
-            {[
-              { date: '2024-01-16 03:00 AM', size: '125 MB', status: 'Success' },
-              { date: '2024-01-15 03:00 AM', size: '123 MB', status: 'Success' },
-              { date: '2024-01-14 03:00 AM', size: '121 MB', status: 'Success' }
-            ].map((backup, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
-                <div>
-                  <p className="text-white text-sm font-medium">{backup.date}</p>
-                  <p className="text-gray-400 text-xs">{backup.size}</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-400 text-xs font-medium">{backup.status}</span>
-                  <button className="text-gray-400 hover:text-white transition-colors">
-                    <Database className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return renderGeneralSettings();
-      case 'payment':
-        return renderPaymentSettings();
-      case 'security':
-        return renderSecuritySettings();
-      case 'notifications':
-        return renderNotificationSettings();
-      case 'integrations':
-        return renderIntegrationsSettings();
-      case 'backup':
-        return renderBackupSettings();
-      default:
-        return renderGeneralSettings();
+  const saveSettings = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!session?.access_token) {
+      setError('Your admin session is not ready. Please sign in again.');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    setNotice('');
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ organization })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to save settings');
+      setUpdatedAt(typeof result?.data?.updated_at === 'string' ? result.data.updated_at : new Date().toISOString());
+      setNotice('Organization settings saved.');
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Unable to save settings');
+    } finally {
+      setSaving(false);
     }
   };
+
+  const capabilityRows = capabilities ? [
+    { label: 'Database service', ready: capabilities.databaseConfigured, detail: capabilities.databaseConfigured ? 'Server connection configured' : 'Missing server database configuration', icon: Database },
+    { label: 'Donor data encryption', ready: capabilities.donorEncryptionConfigured, detail: capabilities.donorEncryptionConfigured ? 'Server encryption key configured' : 'Add ENCRYPTION_KEY before accepting personal donor data', icon: KeyRound },
+    { label: 'PayPal payments', ready: capabilities.paypalConfigured, detail: capabilities.paypalConfigured ? 'Client and server credentials configured' : 'PayPal credentials are incomplete', icon: Wallet },
+    { label: 'Crypto wallets', ready: capabilities.configuredWallets > 0, detail: `${capabilities.configuredWallets} wallet${capabilities.configuredWallets === 1 ? '' : 's'} configured`, icon: Wallet },
+    { label: 'Foundation email', ready: capabilities.emailSenderConfigured, detail: capabilities.emailSenderConfigured ? 'Sender identity configured' : 'No email sender configured', icon: Mail }
+  ] : [];
 
   return (
     <>
       <Head>
         <title>Settings - Saintlammy Foundation Admin</title>
-        <meta name="description" content="Admin settings and configuration" />
+        <meta name="description" content="Organization settings and verified system configuration" />
       </Head>
 
       <AdminLayout title="Settings">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="bg-gray-800 rounded-xl border border-gray-700">
-              <nav className="p-4">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-colors mb-1 ${
-                      activeTab === tab.id
-                        ? 'bg-accent-500 text-white'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                    }`}
-                  >
-                    <tab.icon className="w-5 h-5" />
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="max-w-3xl">
+            <h2 className="text-xl font-semibold text-white">Organization and system settings</h2>
+            <p className="mt-2 text-sm leading-6 text-gray-300">
+              Edit information owned by the foundation and review which production services are actually configured. Credentials remain hidden and cannot be changed from this page.
+            </p>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            {renderTabContent()}
+          {error && (
+            <div role="alert" className="flex items-start gap-3 rounded-xl border border-red-500/40 bg-red-950/40 px-4 py-3 text-sm text-red-100">
+              <CircleAlert className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+              <span>{error}</span>
+            </div>
+          )}
+          {notice && (
+            <div role="status" className="flex items-center gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-100">
+              <CheckCircle2 className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span>{notice}</span>
+            </div>
+          )}
 
-            {/* Save Button */}
-            <div className="mt-8 flex justify-end">
-              <button className="flex items-center gap-2 px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors">
-                <Save className="w-5 h-5" />
-                Save Changes
+          <form onSubmit={saveSettings} className="rounded-xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white">Organization information</h3>
+                <p className="mt-1 text-sm text-gray-300">Blank optional fields are never replaced with sample data.</p>
+              </div>
+              {updatedAt && <p className="text-xs text-gray-400">Last saved {formatDateTime(updatedAt)}</p>}
+            </div>
+
+            {loading ? (
+              <div className="py-14 text-center text-sm text-gray-300" role="status">Loading organization settings…</div>
+            ) : (
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div>
+                  <label htmlFor="organization-name" className="mb-2 block text-sm font-medium text-gray-200">Organization name</label>
+                  <input id="organization-name" required maxLength={160} value={organization.name} onChange={(event) => updateField('name', event.target.value)} className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-2 text-white outline-none focus:border-accent-400 focus:ring-2 focus:ring-accent-400/40" />
+                </div>
+                <div>
+                  <label htmlFor="registration-number" className="mb-2 block text-sm font-medium text-gray-200">Registration number <span className="font-normal text-gray-400">(optional)</span></label>
+                  <input id="registration-number" maxLength={100} value={organization.registrationNumber} onChange={(event) => updateField('registrationNumber', event.target.value)} placeholder="Enter the official registration number" className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-2 text-white placeholder:text-gray-500 outline-none focus:border-accent-400 focus:ring-2 focus:ring-accent-400/40" />
+                </div>
+                <div>
+                  <label htmlFor="primary-email" className="mb-2 block text-sm font-medium text-gray-200">Primary email <span className="font-normal text-gray-400">(optional)</span></label>
+                  <input id="primary-email" type="email" maxLength={254} value={organization.primaryEmail} onChange={(event) => updateField('primaryEmail', event.target.value)} placeholder="name@example.org" className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-2 text-white placeholder:text-gray-500 outline-none focus:border-accent-400 focus:ring-2 focus:ring-accent-400/40" />
+                </div>
+                <div>
+                  <label htmlFor="organization-phone" className="mb-2 block text-sm font-medium text-gray-200">Phone <span className="font-normal text-gray-400">(optional)</span></label>
+                  <input id="organization-phone" type="tel" maxLength={50} value={organization.phone} onChange={(event) => updateField('phone', event.target.value)} placeholder="International format preferred" className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-2 text-white placeholder:text-gray-500 outline-none focus:border-accent-400 focus:ring-2 focus:ring-accent-400/40" />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="organization-address" className="mb-2 block text-sm font-medium text-gray-200">Address <span className="font-normal text-gray-400">(optional)</span></label>
+                  <textarea id="organization-address" rows={3} maxLength={500} value={organization.address} onChange={(event) => updateField('address', event.target.value)} placeholder="Enter the official contact address" className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder:text-gray-500 outline-none focus:border-accent-400 focus:ring-2 focus:ring-accent-400/40" />
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 flex justify-end border-t border-gray-700 pt-5">
+              <button type="submit" disabled={loading || saving} className="flex min-h-11 items-center gap-2 rounded-lg bg-accent-500 px-5 py-2.5 font-medium text-white transition-colors hover:bg-accent-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 disabled:cursor-not-allowed disabled:opacity-50">
+                <Save className="h-5 w-5" aria-hidden="true" />
+                {saving ? 'Saving…' : 'Save organization settings'}
               </button>
             </div>
-          </div>
+          </form>
+
+          <section aria-labelledby="system-readiness" className="rounded-xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <div className="mb-5">
+              <h3 id="system-readiness" className="text-lg font-semibold text-white">System readiness</h3>
+              <p className="mt-1 text-sm text-gray-300">These statuses are read from server configuration, not editable switches.</p>
+            </div>
+            {loading ? (
+              <div className="py-12 text-center text-sm text-gray-300" role="status">Checking production services…</div>
+            ) : (
+              <div className="divide-y divide-gray-700">
+                {capabilityRows.map((capability) => (
+                  <div key={capability.label} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gray-900 text-gray-300"><capability.icon className="h-5 w-5" aria-hidden="true" /></div>
+                      <div className="min-w-0">
+                        <p className="font-medium text-white">{capability.label}</p>
+                        <p className="mt-1 text-sm text-gray-300">{capability.detail}</p>
+                      </div>
+                    </div>
+                    <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${capability.ready ? 'bg-emerald-950/70 text-emerald-200' : 'bg-amber-950/70 text-amber-200'}`}>
+                      {capability.ready ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : <CircleAlert className="h-4 w-4" aria-hidden="true" />}
+                      {capability.ready ? 'Configured' : 'Needs attention'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="mt-6 flex flex-col gap-3 border-t border-gray-700 pt-5 text-sm text-gray-300 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-accent-300" aria-hidden="true" />Admin roles are verified against active database profiles.</p>
+              <Link href="/admin/wallet-management" className="font-medium text-accent-300 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400">Review wallet configuration</Link>
+            </div>
+          </section>
+
+          <section className="rounded-xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+            <h3 className="text-lg font-semibold text-white">Backups and external integrations</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-300">
+              This application does not create or verify database backups, and it does not claim third-party integrations that are not present in server configuration. Manage Supabase backups and provider credentials in their respective service dashboards.
+            </p>
+          </section>
         </div>
       </AdminLayout>
     </>

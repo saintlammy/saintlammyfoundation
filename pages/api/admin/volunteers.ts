@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { withAdminAuth } from '@/lib/serverAuth';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const client = getTypedSupabaseClient();
+  if (!supabaseAdmin) {
+    return res.status(503).json({ error: 'Database connection unavailable' });
+  }
+  const client = supabaseAdmin;
 
   if (req.method === 'GET') {
     try {

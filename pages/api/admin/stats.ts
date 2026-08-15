@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { withAdminAuth } from '@/lib/serverAuth';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -8,12 +8,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const client = getTypedSupabaseClient();
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Database connection unavailable' });
+    }
+    const client = supabaseAdmin;
 
     // Get donation statistics
     const { data: donations, error: donationsError } = await (client as any)
       .from('donations')
-      .select('amount, currency, created_at, payment_method, status');
+      .select('amount, currency, created_at, payment_method, status, donor_id')
+      .limit(10000);
 
     if (donationsError && donationsError.code !== 'PGRST116') {
       console.error('Error fetching donations:', donationsError);
@@ -63,23 +67,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const completedDonations = donationData.filter((d: any) => d.status === 'completed');
     const pendingDonations = donationData.filter((d: any) => d.status === 'pending');
 
-    const totalDonations = completedDonations
-      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
-
-    const pendingAmount = pendingDonations
-      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
-
     // Get current month donations (completed only for stats)
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
-    const monthlyDonations = completedDonations
-      .filter((d: any) => {
+    const currentMonthDonations = completedDonations.filter((d: any) => {
         if (!d.created_at) return false;
         const donationDate = new Date(d.created_at);
         return donationDate.getMonth() === currentMonth &&
                donationDate.getFullYear() === currentYear;
-      })
-      .reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
+      });
+
+    const currentMonthDonationSet = new Set(currentMonthDonations);
+    const totalsByCurrency = donationData.reduce((totals: Record<string, any>, donation: any) => {
+      const currency = String(donation.currency || 'USD').toUpperCase();
+      const amount = parseFloat(donation.amount) || 0;
+      totals[currency] ||= { currency, completed: 0, pending: 0, monthlyCompleted: 0 };
+      if (donation.status === 'completed') totals[currency].completed += amount;
+      if (donation.status === 'pending') totals[currency].pending += amount;
+      if (currentMonthDonationSet.has(donation)) totals[currency].monthlyCompleted += amount;
+      return totals;
+    }, {});
 
     // Get donation trends for last 6 months (completed only)
     const donationTrends = [];
@@ -95,12 +102,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                donationDate.getFullYear() === date.getFullYear();
       });
 
-      const amount = monthDonations.reduce((sum: number, d: any) => sum + (parseFloat(d.amount) || 0), 0);
-      const donors = new Set(monthDonations.map((d: any) => d.donor_id)).size;
+      const donors = new Set(monthDonations.map((d: any) => d.donor_id).filter(Boolean)).size;
 
       donationTrends.push({
         month,
-        amount: Math.round(amount),
+        count: monthDonations.length,
         donors
       });
     }
@@ -143,22 +149,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
 
-    const recentActivities = recentDonations.map((donation: any, index: number) => ({
-      id: index + 1,
-      type: 'donation',
-      user: 'Anonymous Donor',
-      amount: parseFloat(donation.amount),
-      method: donation.payment_method,
-      status: donation.status,
-      time: new Date(donation.created_at).toLocaleString()
-    }));
+    const recentActivities = recentDonations.map((donation: any, index: number) => {
+      const createdAt = new Date(donation.created_at);
+      return {
+        id: index + 1,
+        type: 'donation',
+        user: 'Anonymous Donor',
+        amount: parseFloat(donation.amount),
+        currency: String(donation.currency || 'USD').toUpperCase(),
+        method: donation.payment_method,
+        status: donation.status,
+        time: Number.isNaN(createdAt.getTime()) ? null : createdAt.toISOString()
+      };
+    });
 
     const stats = {
-      totalDonations: Math.round(totalDonations),
-      pendingDonations: Math.round(pendingAmount),
+      totalsByCurrency: Object.values(totalsByCurrency),
       pendingCount: pendingDonations.length,
       completedCount: completedDonations.length,
-      monthlyDonations: Math.round(monthlyDonations),
+      monthlyCompletedCount: currentMonthDonations.length,
       donorCount: donorCount || 0,
       volunteerCount: volunteerCount || 0,
       messageCount: messageCount || 0,
@@ -166,9 +175,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       donationTrends,
       donationMethods,
       recentActivities,
-      cryptoWallets: 6, // We have 6 crypto wallets configured
+      cryptoWallets: [
+        process.env.BTC_WALLET_ADDRESS || process.env.NEXT_PUBLIC_BTC_WALLET_ADDRESS,
+        process.env.ETH_WALLET_ADDRESS || process.env.NEXT_PUBLIC_ETH_WALLET_ADDRESS,
+        process.env.USDT_WALLET_ADDRESS || process.env.NEXT_PUBLIC_USDT_WALLET_ADDRESS,
+        process.env.USDC_WALLET_ADDRESS || process.env.NEXT_PUBLIC_USDC_WALLET_ADDRESS,
+        process.env.XRP_WALLET_ADDRESS || process.env.NEXT_PUBLIC_XRP_WALLET_ADDRESS,
+        process.env.SOL_WALLET_ADDRESS || process.env.NEXT_PUBLIC_SOL_WALLET_ADDRESS
+      ].filter(Boolean).length,
       successRate: donationData.length > 0 ?
-        Math.round((completedDonations.length / donationData.length) * 100) : 0
+        Number(((completedDonations.length / donationData.length) * 100).toFixed(1)) : 0
     };
 
     return res.status(200).json({

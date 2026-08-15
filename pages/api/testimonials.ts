@@ -25,12 +25,13 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-    if (!supabase) {
+    const dbClient = supabaseAdmin || supabase;
+    if (!dbClient) {
       console.error('⚠️ Supabase not configured');
       return res.status(200).json([]);
     }
 
-    let query = (supabase
+    let query = (dbClient
       .from('content') as any)
       .select('*')
       .eq('type', 'testimonial')

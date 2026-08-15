@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader, Shield, AlertTriangle, Lock, UserX } from 'lucide-react';
@@ -26,7 +26,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const router = useRouter();
   const [retrying, setRetrying] = useState(false);
 
-  const checkPermissions = (): boolean => {
+  const checkPermissions = useCallback((): boolean => {
     if (!user) return false;
 
     // Check admin requirements
@@ -41,7 +41,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     return true;
-  };
+  }, [hasPermission, isAdmin, isModerator, requireAdmin, requireModerator, requiredPermissions, user]);
 
   const handleRetry = async () => {
     setRetrying(true);
@@ -58,17 +58,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (!loading) {
       // Not authenticated
       if (!user) {
-        router.push(redirectTo);
+        router.replace(redirectTo);
         return;
       }
 
       // Check all permission requirements
       if (!checkPermissions()) {
-        router.push('/admin/unauthorized');
+        router.replace('/admin/unauthorized');
         return;
       }
     }
-  }, [user, loading, isAdmin, isModerator, requireAdmin, requireModerator, requiredPermissions, router, redirectTo]);
+  }, [checkPermissions, loading, redirectTo, router, user]);
 
   // Show loading while checking authentication
   if (loading || retrying) {

@@ -1,16 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-let supabase: ReturnType<typeof createClient> | null = null;
-
-try {
-  supabase = createClient(supabaseUrl, supabaseKey);
-} catch (error) {
-  console.error('Failed to initialize Supabase client:', error);
-}
+import { supabaseAdmin } from '@/lib/supabase';
+import { getOptionalAdmin, requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
 
 export interface Campaign {
   id: string;
@@ -105,7 +95,7 @@ function getMockCampaigns(): Campaign[] {
 }
 
 export default async function handler(
-  req: NextApiRequest,
+  req: AdminApiRequest,
   res: NextApiResponse
 ) {
   const { method } = req;
@@ -115,10 +105,13 @@ export default async function handler(
       case 'GET':
         return await handleGet(req, res);
       case 'POST':
+        if (!(await requireAdmin(req, res))) return;
         return await handlePost(req, res);
       case 'PUT':
+        if (!(await requireAdmin(req, res))) return;
         return await handlePut(req, res);
       case 'DELETE':
+        if (!(await requireAdmin(req, res))) return;
         return await handleDelete(req, res);
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
@@ -134,33 +127,20 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const { id, status, featured, campaign_type, expand } = req.query;
 
   try {
-    if (!supabase) {
-      // Fallback to mock data
-      let campaigns = getMockCampaigns();
-
-      if (id) {
-        campaigns = campaigns.filter(c => c.id === id);
-      }
-      if (status) {
-        campaigns = campaigns.filter(c => c.status === status);
-      }
-      if (featured === 'true') {
-        campaigns = campaigns.filter(c => c.is_featured);
-      }
-      if (campaign_type) {
-        campaigns = campaigns.filter(c => c.campaign_type === campaign_type);
-      }
-
-      return res.status(200).json({ success: true, data: campaigns });
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Campaign data is temporarily unavailable' });
     }
 
-    let query = supabase.from('campaigns').select('*');
+    const isAdmin = Boolean(await getOptionalAdmin(req));
+    let query = (supabaseAdmin as any).from('campaigns').select('*');
 
     if (id) {
       query = query.eq('id', id);
     }
-    if (status) {
+    if (status && (isAdmin || ['active', 'completed'].includes(String(status)))) {
       query = query.eq('status', status);
+    } else if (!isAdmin) {
+      query = query.in('status', ['active', 'completed']);
     }
     if (featured === 'true') {
       query = query.eq('is_featured', true);
@@ -175,29 +155,20 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase query error:', error);
-      // Fallback to mock data on error
-      let campaigns = getMockCampaigns();
-      if (status) {
-        campaigns = campaigns.filter(c => c.status === status);
-      }
-      if (featured === 'true') {
-        campaigns = campaigns.filter(c => c.is_featured);
-      }
-      return res.status(200).json({ success: true, data: campaigns });
+      return res.status(500).json({ error: 'Failed to load campaigns' });
     }
 
     return res.status(200).json({ success: true, data: data || [] });
   } catch (error) {
     console.error('Error fetching campaigns:', error);
-    // Fallback to mock data
-    return res.status(200).json({ success: true, data: getMockCampaigns() });
+    return res.status(500).json({ error: 'Failed to load campaigns' });
   }
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   const campaignData = req.body;
 
-  if (!supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database unavailable',
       message: 'Campaign creation requires database connection'
@@ -205,7 +176,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabaseAdmin as any)
       .from('campaigns')
       .insert([campaignData] as any)
       .select();
@@ -230,7 +201,7 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Campaign ID required' });
   }
 
-  if (!supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database unavailable',
       message: 'Campaign update requires database connection'
@@ -238,8 +209,8 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const { data, error } = await (supabase
-      .from('campaigns') as any)
+    const { data, error } = await (supabaseAdmin as any)
+      .from('campaigns')
       .update(updateData)
       .eq('id', id)
       .select();
@@ -267,7 +238,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: 'Campaign ID required' });
   }
 
-  if (!supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database unavailable',
       message: 'Campaign deletion requires database connection'
@@ -275,7 +246,7 @@ async function handleDelete(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const { error } = await supabase
+    const { error } = await (supabaseAdmin as any)
       .from('campaigns')
       .delete()
       .eq('id', id);

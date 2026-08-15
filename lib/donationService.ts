@@ -1,13 +1,17 @@
-import { supabase, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from './supabase';
+import { supabase, supabaseAdmin, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from './supabase';
 import { Database } from '@/types/database';
 import { createClient } from '@supabase/supabase-js';
-import * as crypto from 'crypto';
 
 type DonationRow = Database['public']['Tables']['donations']['Row'];
 type DonationInsert = Database['public']['Tables']['donations']['Insert'];
 type DonationUpdate = Database['public']['Tables']['donations']['Update'];
 type DonorRow = Database['public']['Tables']['donors']['Row'];
 type DonorInsert = Database['public']['Tables']['donors']['Insert'];
+
+const getDonationClient = () => {
+  if (typeof window === 'undefined' && supabaseAdmin) return supabaseAdmin;
+  return getTypedSupabaseClient();
+};
 
 export interface CryptoDonationData {
   amount: number;
@@ -72,9 +76,16 @@ class DonationService {
    * Encrypt email address for storage
    */
   private async encryptEmail(email: string): Promise<{ encrypted: string; hash: string }> {
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailBytes = new TextEncoder().encode(normalizedEmail);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', emailBytes);
+    const hash = Array.from(new Uint8Array(hashBuffer))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+
     try {
       // Get typed Supabase client
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
 
       // Try to use RPC functions if they exist
       try {
@@ -86,19 +97,46 @@ class DonationService {
 
         return { encrypted: data, hash: hashData };
       } catch (rpcError) {
-        // Fallback to client-side encryption if RPC functions don't exist
-        console.warn('RPC functions not available, using client-side encryption:', rpcError);
-        // Fall through to client-side encryption below
+        console.warn('Database email encryption functions are unavailable:', rpcError);
       }
     } catch (error) {
-      console.warn('Supabase client error, using client-side encryption:', error);
+      console.warn('Supabase email encryption is unavailable:', error);
     }
 
-    // Client-side encryption fallback
-    const key = process.env.ENCRYPTION_KEY || 'saintlammy-foundation-2024';
-    const cipher = crypto.createCipher('aes256', key);
-    const encrypted = cipher.update(email, 'utf8', 'hex') + cipher.final('hex');
-    const hash = crypto.createHash('sha256').update(email.toLowerCase()).digest('hex');
+    // Never embed an encryption key in the browser bundle. When the database RPC
+    // is unavailable, retain only a non-reversible identifier until the server
+    // encryption configuration is repaired.
+    if (typeof window !== 'undefined') {
+      return { encrypted: `unavailable:${hash}`, hash };
+    }
+
+    if (!process.env.ENCRYPTION_KEY) {
+      console.error('ENCRYPTION_KEY is not configured; donor email cannot be reversibly encrypted.');
+      return { encrypted: `unavailable:${hash}`, hash };
+    }
+
+    const salt = globalThis.crypto.getRandomValues(new Uint8Array(16));
+    const keyMaterial = await globalThis.crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(process.env.ENCRYPTION_KEY),
+      'PBKDF2',
+      false,
+      ['deriveKey']
+    );
+    const key = await globalThis.crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 210_000, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt']
+    );
+    const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+    const cipherBuffer = await globalThis.crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      new TextEncoder().encode(email)
+    );
+    const encrypted = `v2:${Buffer.from(salt).toString('base64')}:${Buffer.from(iv).toString('base64')}:${Buffer.from(cipherBuffer).toString('base64')}`;
 
     return { encrypted, hash };
   }
@@ -133,7 +171,7 @@ class DonationService {
         const { encrypted, hash } = await this.encryptEmail(donorData.email);
 
         // Get typed Supabase client
-        const client = getTypedSupabaseClient();
+        const client = getDonationClient();
 
         // Check if donor exists
         const { data: existingDonor, error: findError } = await (client as any)
@@ -237,7 +275,7 @@ class DonationService {
         }),
       };
 
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { data: donation, error } = await (client as any)
         .from('donations')
         .insert(newDonation)
@@ -304,7 +342,7 @@ class DonationService {
 
       if (!supabase) throw new Error('Supabase not available');
 
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { data: donation, error } = await (client as any)
         .from('donations')
         .insert(newDonation)
@@ -340,7 +378,7 @@ class DonationService {
    */
   async getDonationById(donationId: string): Promise<DonationStatus | null> {
     try {
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { data: donation, error } = await (client as any)
         .from('donations')
         .select('*')
@@ -405,7 +443,7 @@ class DonationService {
         processed_at: status === 'completed' ? new Date().toISOString() : null,
       };
 
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { error } = await (client as any)
         .from('donations')
         .update(updateData)
@@ -447,7 +485,7 @@ class DonationService {
   ): Promise<boolean> {
     try {
       // Get current donation to merge with existing notes
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { data: donation, error: fetchError } = await (client as any)
         .from('donations')
         .select('notes')
@@ -502,7 +540,7 @@ class DonationService {
   ): Promise<boolean> {
     try {
       // Get current donation to find donor_id
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { data: donation, error: fetchError } = await (client as any)
         .from('donations')
         .select('donor_id, donor_name, donor_email')
@@ -569,7 +607,7 @@ class DonationService {
   private async updateDonorTotalDonated(donationId: string): Promise<void> {
     try {
       // Get the donation
-      const donationClient = getTypedSupabaseClient();
+      const donationClient = getDonationClient();
       const { data: donation, error: donationError } = await (donationClient as any)
         .from('donations')
         .select('donor_id, amount')
@@ -581,7 +619,7 @@ class DonationService {
       }
 
       // Calculate total donated by this donor
-      const totalClient = getTypedSupabaseClient();
+      const totalClient = getDonationClient();
       const { data: donorDonations, error: totalError } = await (totalClient as any)
         .from('donations')
         .select('amount')
@@ -596,7 +634,7 @@ class DonationService {
       const totalDonated = donorDonations?.reduce((sum: number, d: any) => sum + d.amount, 0) || 0;
 
       // Update donor record
-      const updateClient = getTypedSupabaseClient();
+      const updateClient = getDonationClient();
       await (updateClient as any)
         .from('donors')
         .update({
@@ -635,7 +673,19 @@ class DonationService {
         endDate,
       } = params;
 
-      const queryClient = getTypedSupabaseClient();
+      if (typeof window !== 'undefined') {
+        const query = new URLSearchParams({ page: String(page), limit: String(limit) });
+        if (status) query.set('status', status);
+        if (paymentMethod) query.set('paymentMethod', paymentMethod);
+        if (startDate) query.set('startDate', startDate);
+        if (endDate) query.set('endDate', endDate);
+        const response = await fetch(`/api/admin/donations?${query.toString()}`, { credentials: 'same-origin' });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || result.error || 'Failed to fetch donations');
+        return result.data;
+      }
+
+      const queryClient = getDonationClient();
       let query = (queryClient as any)
         .from('donations')
         .select('*', { count: 'exact' });
@@ -694,13 +744,22 @@ class DonationService {
     donationsByMethod: { [key: string]: number };
     pendingAmount?: number;
     successRate?: number;
+    totalsByCurrency?: Array<{ currency: string; completed: number; pending: number }>;
+    mixedCurrencies?: boolean;
   }> {
     try {
+      if (typeof window !== 'undefined') {
+        const response = await fetch('/api/admin/donations?stats=true', { credentials: 'same-origin' });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || result.error || 'Failed to fetch donation statistics');
+        return result.data;
+      }
+
       // Get total donations and amount
-      const statsClient = getTypedSupabaseClient();
+      const statsClient = getDonationClient();
       const { data: totalData, error: totalError } = await (statsClient as any)
         .from('donations')
-        .select('amount, status, payment_method');
+        .select('amount, currency, status, payment_method');
 
       if (totalError) {
         console.error('Error fetching donation stats:', totalError);
@@ -708,7 +767,7 @@ class DonationService {
       }
 
       // Get total donors
-      const donorClient = getTypedSupabaseClient();
+      const donorClient = getDonationClient();
       const { count: donorCount, error: donorError } = await (donorClient as any)
         .from('donors')
         .select('id', { count: 'exact', head: true });
@@ -724,8 +783,17 @@ class DonationService {
       const pendingDonations = donations.filter((d: any) => d.status === 'pending');
 
       const totalDonations = completedDonations.length;
-      const totalAmount = completedDonations.reduce((sum: number, d: any) => sum + d.amount, 0);
-      const pendingAmount = pendingDonations.reduce((sum: number, d: any) => sum + d.amount, 0);
+      const totalsMap = donations.reduce((totals: Record<string, { currency: string; completed: number; pending: number }>, donation: any) => {
+        const currency = String(donation.currency || 'USD').toUpperCase();
+        totals[currency] ||= { currency, completed: 0, pending: 0 };
+        if (donation.status === 'completed') totals[currency].completed += Number(donation.amount) || 0;
+        if (donation.status === 'pending') totals[currency].pending += Number(donation.amount) || 0;
+        return totals;
+      }, {} as Record<string, { currency: string; completed: number; pending: number }>);
+      const totalsByCurrency: Array<{ currency: string; completed: number; pending: number }> = Object.values(totalsMap);
+      const mixedCurrencies = totalsByCurrency.length > 1;
+      const totalAmount = mixedCurrencies ? 0 : totalsByCurrency[0]?.completed || 0;
+      const pendingAmount = mixedCurrencies ? 0 : totalsByCurrency[0]?.pending || 0;
       const totalDonors = donorCount || 0;
       const avgDonationAmount = totalDonations > 0 ? totalAmount / totalDonations : 0;
       const successRate = donations.length > 0 ? (completedDonations.length / donations.length) * 100 : 0;
@@ -751,6 +819,8 @@ class DonationService {
         donationsByMethod,
         pendingAmount,
         successRate,
+        totalsByCurrency,
+        mixedCurrencies,
       };
     } catch (error) {
       console.error('Error in getDonationStats:', error);
@@ -793,7 +863,7 @@ class DonationService {
         return false;
       }
 
-      const testClient = getTypedSupabaseClient();
+      const testClient = getDonationClient();
       const { error } = await (testClient as any)
         .from('donations')
         .select('id')
@@ -839,7 +909,7 @@ class DonationService {
     }
 
     try {
-      const client = getTypedSupabaseClient();
+      const client = getDonationClient();
       const { error, count } = await (client as any)
         .from('donations')
         .delete({ count: 'exact' })

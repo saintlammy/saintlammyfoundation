@@ -1,17 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { donationTracker } from '../../../lib/donationTracker';
+import { withAdminAuth } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
-
-  // CORS headers for real-time updates
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (method === 'OPTIONS') {
-    return res.status(200).end();
-  }
 
   try {
     switch (method) {
@@ -104,7 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       default:
-        res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
+        res.setHeader('Allow', ['GET', 'POST']);
         return res.status(405).json({
           success: false,
           error: `Method ${method} not allowed`
@@ -119,3 +111,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

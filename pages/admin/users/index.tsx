@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Search,
-  Filter,
   UserPlus,
   Edit,
-  Trash2,
   Mail,
   Phone,
   MapPin,
@@ -16,8 +14,6 @@ import {
   Users,
   UserCheck,
   Shield,
-  MoreVertical,
-  Eye,
   Ban,
   Check,
   X
@@ -30,8 +26,8 @@ interface User {
   email: string;
   phone?: string;
   location?: string;
-  role: 'donor' | 'volunteer' | 'admin' | 'super_admin';
-  status: 'active' | 'inactive' | 'banned';
+  role: 'user' | 'donor' | 'volunteer' | 'admin' | 'super_admin';
+  status: 'active' | 'inactive' | 'suspended' | 'banned';
   joinDate: Date;
   lastActivity: Date;
   totalDonations?: number;
@@ -39,90 +35,158 @@ interface User {
   verified: boolean;
 }
 
+const emptyUserForm = {
+  name: '',
+  email: '',
+  phone: '',
+  location: '',
+  role: 'user' as User['role'],
+  status: 'active' as User['status']
+};
+
 const UsersManagement: React.FC = () => {
+  const { session } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddUser, setShowAddUser] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userForm, setUserForm] = useState(emptyUserForm);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
-  // Load users from database
   useEffect(() => {
-    loadUsers();
-  }, []);
+    if (!showAddUser) return;
+    nameInputRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !saving) closeUserDialog();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [showAddUser, saving]);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
+    if (!session?.access_token) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      const client = getTypedSupabaseClient();
+      setError('');
+      const response = await fetch('/api/admin/users', {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to load users');
 
-      // Fetch from donors table (users are stored as donors)
-      const { data: donorsData, error: donorsError } = await (client as any)
-        .from('donors')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (donorsError) {
-        console.error('Error fetching users:', donorsError);
-        // Use fallback data
-        setUsers(getFallbackUsers());
-        return;
-      }
-
-      // Transform donors data to User format
-      const transformedUsers: User[] = (donorsData || []).map((donor: any) => ({
-        id: donor.id,
-        name: donor.name || 'Unknown',
-        email: donor.email || 'No email',
-        phone: donor.phone,
-        location: donor.location || donor.address,
-        role: donor.role || 'donor',
-        status: donor.status || 'active',
-        joinDate: new Date(donor.created_at),
-        lastActivity: new Date(donor.updated_at || donor.created_at),
-        totalDonations: donor.total_donated || 0,
-        verified: donor.verified || false,
-        avatar: donor.avatar
+      const transformedUsers: User[] = (result.data || []).map((profile: any) => ({
+        id: profile.id,
+        name: profile.name || 'Unnamed user',
+        email: profile.email || 'No email',
+        phone: profile.phone,
+        location: profile.location,
+        role: profile.role || 'user',
+        status: profile.status || 'active',
+        joinDate: new Date(profile.created_at),
+        lastActivity: new Date(profile.updated_at || profile.created_at),
+        totalDonations: profile.total_donated || 0,
+        verified: Boolean(profile.verified),
+        avatar: profile.avatar
       }));
 
       setUsers(transformedUsers);
     } catch (error) {
       console.error('Error loading users:', error);
-      setUsers(getFallbackUsers());
+      setUsers([]);
+      setError(error instanceof Error ? error.message : 'Unable to load users');
     } finally {
       setLoading(false);
     }
+  }, [session?.access_token]);
+
+  // Load users from database
+  useEffect(() => { void loadUsers(); }, [loadUsers]);
+
+  const openCreateDialog = () => {
+    setEditingUser(null);
+    setUserForm(emptyUserForm);
+    setError('');
+    setShowAddUser(true);
   };
 
-  const getFallbackUsers = (): User[] => {
-    return [
-      {
-        id: '1',
-        name: 'Sarah Johnson',
-        email: 'sarah@example.com',
-        phone: '+234 801 234 5678',
-        location: 'Lagos, Nigeria',
-        role: 'donor',
-        status: 'active',
-        joinDate: new Date('2024-01-15'),
-        lastActivity: new Date('2024-03-15T10:30:00'),
-        totalDonations: 150000,
-        verified: true
-      },
-      {
-        id: '2',
-        name: 'Michael Chen',
-        email: 'michael@example.com',
-        phone: '+234 802 345 6789',
-        location: 'Abuja, Nigeria',
-        role: 'volunteer',
-        status: 'active',
-        joinDate: new Date('2024-02-20'),
-        lastActivity: new Date('2024-03-14T16:45:00'),
-        verified: true
-      }
-    ];
+  const openEditDialog = (user: User) => {
+    setEditingUser(user);
+    setUserForm({
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      location: user.location || '',
+      role: user.role,
+      status: user.status
+    });
+    setError('');
+    setShowAddUser(true);
+  };
+
+  const closeUserDialog = () => {
+    setShowAddUser(false);
+    setEditingUser(null);
+    setUserForm(emptyUserForm);
+  };
+
+  const saveUser = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!session?.access_token) return;
+    setSaving(true);
+    setError('');
+    setNotice('');
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: editingUser ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(editingUser
+          ? { userId: editingUser.id, name: userForm.name, phone: userForm.phone, location: userForm.location, role: userForm.role, status: userForm.status }
+          : userForm)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to save user');
+      setNotice(editingUser ? 'User details updated.' : 'Invitation sent and user profile created.');
+      closeUserDialog();
+      await loadUsers();
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Unable to save user');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleUserAccess = async (user: User) => {
+    if (!session?.access_token) return;
+    const nextStatus = user.status === 'active' ? 'suspended' : 'active';
+    setError('');
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ userId: user.id, status: nextStatus })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to update access');
+      setNotice(nextStatus === 'active' ? `${user.name} can sign in again.` : `${user.name}'s access has been suspended.`);
+      await loadUsers();
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : 'Unable to update access');
+    }
   };
 
   const stats = {
@@ -192,6 +256,16 @@ const UsersManagement: React.FC = () => {
 
       <AdminLayout title="Users Management">
         <div className="space-y-6">
+          {error && (
+            <div role="alert" className="rounded-xl border border-red-500/40 bg-red-950/40 px-4 py-3 text-sm text-red-100">
+              {error} <button type="button" onClick={loadUsers} className="ml-2 font-semibold underline underline-offset-2">Try again</button>
+            </div>
+          )}
+          {notice && (
+            <div role="status" className="rounded-xl border border-emerald-500/40 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-100">
+              {notice}
+            </div>
+          )}
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
@@ -249,9 +323,11 @@ const UsersManagement: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                 {/* Search */}
                 <div className="relative">
+                  <label htmlFor="user-search" className="sr-only">Search users</label>
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
+                    id="user-search"
                     placeholder="Search users..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -260,12 +336,15 @@ const UsersManagement: React.FC = () => {
                 </div>
 
                 {/* Role Filter */}
+                <label htmlFor="role-filter" className="sr-only">Filter by role</label>
                 <select
+                  id="role-filter"
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
                   className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 >
                   <option value="all">All Roles</option>
+                  <option value="user">Users</option>
                   <option value="donor">Donors</option>
                   <option value="volunteer">Volunteers</option>
                   <option value="admin">Admins</option>
@@ -273,7 +352,9 @@ const UsersManagement: React.FC = () => {
                 </select>
 
                 {/* Status Filter */}
+                <label htmlFor="status-filter" className="sr-only">Filter by status</label>
                 <select
+                  id="status-filter"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -286,8 +367,8 @@ const UsersManagement: React.FC = () => {
               </div>
 
               <button
-                onClick={() => setShowAddUser(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors"
+                onClick={openCreateDialog}
+                className="flex min-h-11 items-center gap-2 rounded-lg bg-accent-500 px-4 py-2 text-white transition-colors hover:bg-accent-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300"
               >
                 <UserPlus className="w-4 h-4" />
                 Add User
@@ -306,12 +387,11 @@ const UsersManagement: React.FC = () => {
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Join Date</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Last Activity</th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Donations</th>
                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {filteredUsers.map((user) => (
+                  {!loading && filteredUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-700/20">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
@@ -372,29 +452,28 @@ const UsersManagement: React.FC = () => {
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        {user.totalDonations ? (
-                          <div className="flex items-center">
-                            <Heart className="w-4 h-4 text-pink-400 mr-2" />
-                            <span className="text-white font-medium">
-                              ₦{user.totalDonations.toLocaleString()}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <button className="text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button className="text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+                          <button
+                            type="button"
+                            onClick={() => openEditDialog(user)}
+                            aria-label={`Edit ${user.name}`}
+                            className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-gray-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
+                          >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+                          <a
+                            href={`mailto:${user.email}`}
+                            aria-label={`Email ${user.name}`}
+                            className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-gray-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
+                          >
                             <Mail className="w-4 h-4" />
-                          </button>
-                          <button className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors">
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => toggleUserAccess(user)}
+                            aria-label={user.status === 'active' ? `Suspend ${user.name}` : `Restore ${user.name}`}
+                            className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-950/60 hover:text-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+                          >
                             <Ban className="w-4 h-4" />
                           </button>
                         </div>
@@ -405,7 +484,11 @@ const UsersManagement: React.FC = () => {
               </table>
             </div>
 
-            {filteredUsers.length === 0 && (
+            {loading && (
+              <div className="py-12 text-center text-gray-300" role="status">Loading user accounts…</div>
+            )}
+
+            {!loading && filteredUsers.length === 0 && (
               <div className="text-center py-12">
                 <Users className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400">No users found</p>
@@ -416,73 +499,121 @@ const UsersManagement: React.FC = () => {
 
           {/* Add User Modal */}
           {showAddUser && (
-            <div className="fixed inset-0 z-50 overflow-y-auto">
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowAddUser(false)} />
+            <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="user-dialog-title">
+              <div className="fixed inset-0 bg-black/70" onClick={() => !saving && closeUserDialog()} />
               <div className="relative min-h-screen flex items-center justify-center p-4">
                 <div className="relative bg-gray-800 rounded-xl w-full max-w-md border border-gray-700">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-white">Add New User</h3>
+                      <h3 id="user-dialog-title" className="text-lg font-semibold text-white">{editingUser ? 'Edit user' : 'Invite a user'}</h3>
                       <button
-                        onClick={() => setShowAddUser(false)}
-                        className="text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                        type="button"
+                        onClick={closeUserDialog}
+                        disabled={saving}
+                        aria-label="Close user dialog"
+                        className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-50"
                       >
                         <X className="w-6 h-6" />
                       </button>
                     </div>
 
-                    <div className="space-y-4">
+                    <form className="space-y-4" onSubmit={saveUser}>
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                        <label htmlFor="user-name" className="block text-sm font-medium text-gray-300 mb-2">Name</label>
                         <input
+                          ref={nameInputRef}
+                          id="user-name"
                           type="text"
+                          required
+                          maxLength={120}
+                          value={userForm.name}
+                          onChange={(event) => setUserForm((form) => ({ ...form, name: event.target.value }))}
                           className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                           placeholder="Enter full name"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                        <label htmlFor="user-email" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                         <input
+                          id="user-email"
                           type="email"
+                          required
+                          disabled={Boolean(editingUser)}
+                          value={userForm.email}
+                          onChange={(event) => setUserForm((form) => ({ ...form, email: event.target.value }))}
                           className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                           placeholder="Enter email address"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                        <label htmlFor="user-phone" className="block text-sm font-medium text-gray-300 mb-2">Phone <span className="text-gray-400">(optional)</span></label>
                         <input
+                          id="user-phone"
                           type="tel"
+                          maxLength={40}
+                          value={userForm.phone}
+                          onChange={(event) => setUserForm((form) => ({ ...form, phone: event.target.value }))}
                           className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                           placeholder="Enter phone number"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
-                        <select className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                        <label htmlFor="user-location" className="block text-sm font-medium text-gray-300 mb-2">Location <span className="text-gray-400">(optional)</span></label>
+                        <input
+                          id="user-location"
+                          type="text"
+                          maxLength={160}
+                          value={userForm.location}
+                          onChange={(event) => setUserForm((form) => ({ ...form, location: event.target.value }))}
+                          className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                          placeholder="City, country"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="user-role" className="block text-sm font-medium text-gray-300 mb-2">Role</label>
+                        <select id="user-role" value={userForm.role} onChange={(event) => setUserForm((form) => ({ ...form, role: event.target.value as User['role'] }))} className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                          <option value="user">User</option>
                           <option value="donor">Donor</option>
                           <option value="volunteer">Volunteer</option>
                           <option value="admin">Admin</option>
+                          <option value="super_admin">Super admin</option>
                         </select>
                       </div>
 
+                      {editingUser && (
+                        <div>
+                          <label htmlFor="user-status" className="block text-sm font-medium text-gray-300 mb-2">Access status</label>
+                          <select id="user-status" value={userForm.status} onChange={(event) => setUserForm((form) => ({ ...form, status: event.target.value as User['status'] }))} className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                            <option value="banned">Banned</option>
+                          </select>
+                        </div>
+                      )}
+
                       <div className="flex gap-3 pt-4">
                         <button
-                          onClick={() => setShowAddUser(false)}
-                          className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-white rounded-lg transition-colors"
+                          type="button"
+                          onClick={closeUserDialog}
+                          disabled={saving}
+                          className="flex-1 rounded-lg border border-gray-500 bg-gray-800 px-4 py-2 text-gray-100 transition-colors hover:bg-gray-700"
                         >
                           Cancel
                         </button>
                         <button
-                          onClick={() => setShowAddUser(false)}
+                          type="submit"
+                          disabled={saving}
                           className="flex-1 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg transition-colors"
                         >
-                          Add User
+                          {saving ? 'Saving…' : editingUser ? 'Save changes' : 'Send invitation'}
                         </button>
                       </div>
-                    </div>
+                    </form>
                   </div>
                 </div>
               </div>

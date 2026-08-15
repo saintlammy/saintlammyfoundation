@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
-import { withAdminAuth } from '@/lib/serverAuth';
+import { withAdminAuth, type AdminApiRequest } from '@/lib/serverAuth';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: AdminApiRequest, res: NextApiResponse) {
   if (!supabaseAdmin) {
     return res.status(500).json({ error: 'Database connection not available' });
   }
@@ -37,22 +37,7 @@ async function getUsers(req: NextApiRequest, res: NextApiResponse) {
 
     let query = (supabaseAdmin as any)
       .from('users')
-      .select(`
-        *,
-        volunteers (
-          id,
-          status,
-          interests,
-          skills,
-          availability,
-          role_id,
-          volunteer_roles (
-            id,
-            title,
-            category
-          )
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     // Filter by role
@@ -102,6 +87,8 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+
     if (!['user', 'volunteer', 'donor', 'admin', 'super_admin'].includes(role)) {
       return res.status(400).json({
         error: 'Invalid role',
@@ -113,21 +100,42 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
     const { data: existingUser } = await (supabaseAdmin as any)
       .from('users')
       .select('id, email')
-      .eq('email', email)
+      .eq('email', normalizedEmail)
       .single();
 
     if (existingUser) {
       return res.status(409).json({
         error: 'User already exists',
-        message: `A user with email ${email} already exists`
+        message: `A user with email ${normalizedEmail} already exists`
       });
     }
 
-    // Create user
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saintlammyfoundation.org';
+    const { data: invitedUser, error: inviteError } = await supabaseAdmin!.auth.admin.inviteUserByEmail(
+      normalizedEmail,
+      {
+        data: { name },
+        redirectTo: `${siteUrl}/admin/login`
+      }
+    );
+
+    if (inviteError || !invitedUser.user) {
+      return res.status(400).json({
+        error: 'Failed to invite user',
+        message: inviteError?.message || 'Supabase Auth did not create an invitation'
+      });
+    }
+
+    await supabaseAdmin!.auth.admin.updateUserById(invitedUser.user.id, {
+      app_metadata: { role }
+    });
+
+    // Create the application profile linked to the invited Auth account.
     const { data: newUser, error: userError } = await (supabaseAdmin as any)
       .from('users')
       .insert([{
-        email,
+        auth_user_id: invitedUser.user.id,
+        email: normalizedEmail,
         name,
         phone: phone || null,
         location: location || null,
@@ -142,6 +150,7 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
 
     if (userError) {
       console.error('Error creating user:', userError);
+      await supabaseAdmin!.auth.admin.deleteUser(invitedUser.user.id);
       return res.status(500).json({
         error: 'Failed to create user',
         message: userError.message
@@ -154,7 +163,7 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
         .from('volunteers')
         .insert([{
           user_id: newUser.id,
-          email,
+          email: normalizedEmail,
           name,
           phone: phone || null,
           location: location || null,
@@ -194,7 +203,7 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
     return res.status(201).json({
       success: true,
       data: newUser,
-      message: 'User created successfully'
+      message: 'Invitation sent and user profile created'
     });
   } catch (error) {
     console.error('Create user error:', error);
@@ -237,6 +246,26 @@ async function updateUser(req: NextApiRequest, res: NextApiResponse) {
     delete updateData.auth_user_id;
     delete updateData.created_at;
 
+    const { data: currentUser, error: currentUserError } = await (supabaseAdmin as any)
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (currentUserError || !currentUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (currentUser.auth_user_id && (updates.role || updates.status)) {
+      const authUpdates: Record<string, unknown> = {};
+      if (updates.role) authUpdates.app_metadata = { role: updates.role };
+      if (updates.status) authUpdates.ban_duration = updates.status === 'active' ? 'none' : '876000h';
+      const { error: authError } = await supabaseAdmin!.auth.admin.updateUserById(currentUser.auth_user_id, authUpdates);
+      if (authError) {
+        return res.status(500).json({ error: 'Auth synchronization failed', message: authError.message });
+      }
+    }
+
     const { data, error } = await (supabaseAdmin as any)
       .from('users')
       .update(updateData)
@@ -246,14 +275,16 @@ async function updateUser(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Error updating user:', error);
+      if (currentUser.auth_user_id && (updates.role || updates.status)) {
+        await supabaseAdmin!.auth.admin.updateUserById(currentUser.auth_user_id, {
+          app_metadata: { role: currentUser.role },
+          ban_duration: currentUser.status === 'active' ? 'none' : '876000h'
+        });
+      }
       return res.status(500).json({
         error: 'Failed to update user',
         message: error.message
       });
-    }
-
-    if (!data) {
-      return res.status(404).json({ error: 'User not found' });
     }
 
     // If changing to volunteer role, create volunteer record if doesn't exist
@@ -322,6 +353,20 @@ async function deleteUser(req: NextApiRequest, res: NextApiResponse) {
 
     if (!data) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (data.auth_user_id) {
+      const { error: authError } = await supabaseAdmin!.auth.admin.updateUserById(
+        data.auth_user_id,
+        { ban_duration: '876000h', app_metadata: { role: 'user' } }
+      );
+      if (authError) {
+        console.error('Error deactivating Auth user:', authError);
+        return res.status(500).json({
+          error: 'Profile deactivated but Auth access could not be revoked',
+          message: authError.message
+        });
+      }
     }
 
     // Also deactivate volunteer record if exists

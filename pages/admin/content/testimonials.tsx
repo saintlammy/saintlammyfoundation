@@ -46,24 +46,32 @@ const TestimonialsManagement: React.FC = () => {
   const loadTestimonials = async () => {
     try {
       setLoading(true);
+      if (!session?.access_token) throw new Error('Your admin session is not ready.');
 
       // Use the new Testimonials API
       const searchParams = new URLSearchParams();
-      if (statusFilter !== 'all') searchParams.set('status', statusFilter);
+      if (statusFilter !== 'all') {
+        searchParams.set('status', statusFilter === 'approved' ? 'published' : statusFilter === 'rejected' ? 'archived' : 'draft');
+      } else {
+        searchParams.set('status', 'all');
+      }
 
-      const response = await fetch(`/api/testimonials?${searchParams.toString()}`);
+      const response = await fetch(`/api/testimonials?${searchParams.toString()}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      });
       const data = await response.json();
+      if (!response.ok || !Array.isArray(data)) throw new Error(data.error || 'Failed to load testimonials');
 
       // Transform API data to match component interface
-      const transformedTestimonials = data.map((item: any) => ({
+      const transformedTestimonials: Testimonial[] = data.map((item: any) => ({
         id: item.id,
         name: item.name,
         role: item.role,
         content: item.content,
         rating: item.rating,
         featured_image: item.image,
-        is_featured: false,
-        status: item.status === 'published' ? 'approved' : 'pending',
+        is_featured: Boolean(item.is_featured),
+        status: (item.status === 'published' ? 'approved' : item.status === 'archived' ? 'rejected' : 'pending') as Testimonial['status'],
         created_at: item.created_at,
         updated_at: item.updated_at
       }));
@@ -72,40 +80,8 @@ const TestimonialsManagement: React.FC = () => {
       updateStats(transformedTestimonials);
     } catch (error) {
       console.error('Error loading testimonials:', error);
-
-      // Fall back to mock data
-      const mockTestimonials: Testimonial[] = [
-        {
-          id: '1',
-          name: 'Mrs. Grace Okoro',
-          role: 'Program Beneficiary',
-          content: 'The widow empowerment program transformed my life. I learned tailoring skills and received a micro-loan to start my business.',
-          rating: 5,
-          featured_image: 'https://images.unsplash.com/photo-1494790108755-2616c34ca2f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-          is_featured: true,
-          status: 'approved',
-          created_at: '2024-01-15T00:00:00Z',
-          updated_at: '2024-01-15T00:00:00Z'
-        },
-        {
-          id: '2',
-          name: 'David Adebayo',
-          role: 'Former Beneficiary',
-          content: 'Through the orphan support program, I was able to complete my education. Today, I am a university graduate working as a software engineer.',
-          rating: 5,
-          featured_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-          is_featured: false,
-          status: 'approved',
-          created_at: '2024-01-10T00:00:00Z',
-          updated_at: '2024-01-10T00:00:00Z'
-        }
-      ];
-
-      const filteredTestimonials = statusFilter === 'all' ? mockTestimonials :
-        mockTestimonials.filter(t => t.status === statusFilter);
-
-      setTestimonials(filteredTestimonials);
-      updateStats(filteredTestimonials);
+      setTestimonials([]);
+      updateStats([]);
     } finally {
       setLoading(false);
     }
@@ -146,6 +122,7 @@ const TestimonialsManagement: React.FC = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token || ''}`,
           },
           body: JSON.stringify(apiData),
         });
@@ -163,6 +140,7 @@ const TestimonialsManagement: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token || ''}`,
           },
           body: JSON.stringify(apiData),
         });
@@ -173,7 +151,7 @@ const TestimonialsManagement: React.FC = () => {
             id: createdTestimonial.id || `testimonial-${Date.now()}`,
             ...testimonialData,
             is_featured: false,
-            status: 'pending',
+            status: 'approved',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
@@ -258,6 +236,7 @@ const TestimonialsManagement: React.FC = () => {
     try {
       const response = await fetch(`/api/testimonials?id=${testimonialId}`, {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${session?.access_token || ''}` },
       });
 
       if (response.ok) {
@@ -286,6 +265,7 @@ const TestimonialsManagement: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token || ''}`,
         },
         body: JSON.stringify(updatedData),
       });
@@ -313,12 +293,14 @@ const TestimonialsManagement: React.FC = () => {
 
   const updateTestimonialStatus = async (testimonialId: string, status: string) => {
     try {
+      const databaseStatus = status === 'approved' ? 'published' : status === 'rejected' ? 'archived' : 'draft';
       const response = await fetch(`/api/testimonials?id=${testimonialId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token || ''}`,
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status: databaseStatus }),
       });
 
       if (response.ok) {

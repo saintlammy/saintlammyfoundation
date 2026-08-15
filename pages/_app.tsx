@@ -43,8 +43,8 @@ export default function App({ Component, pageProps }: AppProps) {
                   </Layout>
                 )}
                 <NotificationContainer />
-                <CookieConsent />
-                <CookieSettings />
+                {!isAdminRoute && <CookieConsent />}
+                {!isAdminRoute && <CookieSettings />}
               </CookieConsentProvider>
             </NotificationProvider>
           </AuthProvider>

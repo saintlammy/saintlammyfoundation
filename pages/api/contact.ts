@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContactFormSchema } from '@/lib/schemas';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -31,7 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Store in Supabase database with timeout
-    const client = getTypedSupabaseClient();
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Messaging is temporarily unavailable' });
+    }
+    const client = supabaseAdmin;
 
     // Convert to database format
     const messageData = {
@@ -65,28 +68,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (error) {
       console.error('Error storing contact message:', error);
 
-      // If database unavailable, log for manual processing
-      if (error.message?.includes('timeout') || error.message?.includes('table')) {
-        console.log('CONTACT FORM SUBMISSION (DB unavailable):', messageData);
-        return res.status(200).json({
-          success: true,
-          message: 'Thank you for your message. We will get back to you soon!',
-          submissionId: 'pending',
-          timestamp: new Date().toISOString()
-        });
-      }
-
       return res.status(500).json({
         error: 'Failed to send message',
         message: 'Please try again later.'
       });
     }
-
-    console.log('Contact form submission stored:', {
-      id: newMessage.id,
-      email: messageData.sender_email,
-      timestamp: messageData.created_at
-    });
 
     return res.status(201).json({
       success: true,

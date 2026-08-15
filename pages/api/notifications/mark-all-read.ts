@@ -1,18 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin, handleSupabaseError } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
 /**
  * Mark all notifications as read for a user
  * POST /api/notifications/mark-all-read
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { user_id } = req.body;
 
-  if (!isSupabaseAvailable || !supabase) {
+  if (!user_id || typeof user_id !== 'string') {
+    return res.status(400).json({ error: 'A user ID is required' });
+  }
+
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database not available',
       message: 'Cannot mark notifications as read without database connection'
@@ -20,19 +25,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const client = getTypedSupabaseClient();
-    let query = (client as any)
+    const query = (supabaseAdmin as any)
       .from('notifications')
       .update({
         read: true,
         read_at: new Date().toISOString()
       })
-      .eq('read', false);
-
-    // If user_id provided, only mark that user's notifications
-    if (user_id) {
-      query = query.eq('user_id', user_id);
-    }
+      .eq('read', false)
+      .eq('user_id', user_id);
 
     const { data, error, count } = await query.select('*', { count: 'exact' });
 
@@ -57,3 +57,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

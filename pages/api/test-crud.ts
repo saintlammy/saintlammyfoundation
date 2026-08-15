@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withAdminAuth } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(404).json({ error: 'Not found' });
+  }
   const { method } = req;
 
   if (method !== 'POST') {
@@ -81,3 +85,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

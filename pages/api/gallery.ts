@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
+import { getOptionalAdmin, requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
 
 interface GalleryContentRow {
   id: string;
@@ -15,17 +16,20 @@ interface GalleryContentRow {
   created_at: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: AdminApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   switch (method) {
     case 'GET':
       return await getGallery(req, res);
     case 'POST':
+      if (!(await requireAdmin(req, res))) return;
       return await createGalleryItem(req, res);
     case 'PUT':
+      if (!(await requireAdmin(req, res))) return;
       return await updateGalleryItem(req, res);
     case 'DELETE':
+      if (!(await requireAdmin(req, res))) return;
       return await deleteGalleryItem(req, res);
     default:
       return res.status(405).json({ error: 'Method not allowed' });
@@ -36,16 +40,19 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
   const { status = 'published', limit } = req.query;
 
   try {
-
-    if (!supabase) {
-      return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Gallery data is temporarily unavailable' });
     }
 
-    let query = supabase
+    const isAdmin = Boolean(await getOptionalAdmin(req));
+    const requestedStatus = typeof status === 'string' ? status : 'published';
+    const visibleStatus = isAdmin ? requestedStatus : 'published';
+
+    let query = (supabaseAdmin as any)
       .from('content')
       .select('*')
       .eq('type', 'gallery')
-      .eq('status', status)
+      .eq('status', visibleStatus)
       .order('publish_date', { ascending: false });
 
     if (limit) {
@@ -56,13 +63,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase error:', error);
-      // Fallback to mock data if Supabase fails
-      return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
-    }
-
-    if (!data || data.length === 0) {
-      // Return mock data if no data in database
-      return res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
+      return res.status(500).json({ error: 'Failed to load gallery items' });
     }
 
     // Transform data to match component interface
@@ -79,8 +80,7 @@ async function getGallery(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(transformedData);
   } catch (error) {
     console.error('API error:', error);
-    // Fallback to mock data on any error
-    res.status(200).json(getMockGallery(limit ? parseInt(limit as string) : undefined));
+    res.status(500).json({ error: 'Failed to load gallery items' });
   }
 }
 
@@ -164,15 +164,11 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       updated_at: new Date().toISOString(),
     };
 
-    if (!supabase) {
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newGalleryItem,
-        message: 'Gallery item created successfully (mock mode)'
-      });
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Database connection unavailable' });
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('content')
       .insert([newGalleryItem])
       .select()
@@ -180,12 +176,7 @@ async function createGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(201).json({
-        id: Date.now().toString(),
-        ...newGalleryItem,
-        message: 'Gallery item created successfully (mock mode)'
-      });
+      return res.status(500).json({ error: 'Failed to create gallery item' });
     }
 
     res.status(201).json(data);
@@ -213,15 +204,11 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     updateData.updated_at = new Date().toISOString();
 
-    if (!supabase) {
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Gallery item updated successfully (mock mode)'
-      });
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Database connection unavailable' });
     }
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('content')
       .update(updateData)
       .eq('id', id)
@@ -231,12 +218,7 @@ async function updateGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        id,
-        ...updateData,
-        message: 'Gallery item updated successfully (mock mode)'
-      });
+      return res.status(500).json({ error: 'Failed to update gallery item' });
     }
 
     res.status(200).json(data);
@@ -254,14 +236,11 @@ async function deleteGalleryItem(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Gallery item ID is required' });
     }
 
-    if (!supabase) {
-      return res.status(200).json({
-        success: true,
-        message: 'Gallery item deleted successfully (mock mode)'
-      });
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Database connection unavailable' });
     }
 
-    const { error } = await supabase
+    const { error } = await (supabaseAdmin as any)
       .from('content')
       .delete()
       .eq('id', id)
@@ -269,10 +248,7 @@ async function deleteGalleryItem(req: NextApiRequest, res: NextApiResponse) {
 
     if (error) {
       console.error('Supabase error:', error);
-      // Return mock response for development
-      return res.status(200).json({
-        message: 'Gallery item deleted successfully (mock mode)'
-      });
+      return res.status(500).json({ error: 'Failed to delete gallery item' });
     }
 
     res.status(200).json({ message: 'Gallery item deleted successfully' });

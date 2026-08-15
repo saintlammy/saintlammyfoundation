@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase, handleSupabaseError, isSupabaseAvailable, getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin, handleSupabaseError } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
 export interface AdminNotification {
   id: string;
@@ -22,21 +23,7 @@ export interface AdminNotification {
  * PUT - Update notification (mark as read)
  * DELETE - Delete notification
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method === 'GET') {
       return await getNotifications(req, res);
@@ -58,22 +45,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
+export default withAdminAuth(handler);
+
 async function getNotifications(req: NextApiRequest, res: NextApiResponse) {
   const { user_id, type, category, read, limit = 50, offset = 0 } = req.query;
 
-  if (!isSupabaseAvailable || !supabase) {
-    // Return empty array if database not available
-    return res.status(200).json({
-      success: true,
-      notifications: [],
-      total: 0,
-      message: 'Database not configured'
-    });
+  if (!supabaseAdmin) {
+    return res.status(503).json({ error: 'Database connection unavailable' });
   }
 
   try {
-    const client = getTypedSupabaseClient();
-    let query = (client as any)
+    let query = (supabaseAdmin as any)
       .from('notifications')
       .select('*', { count: 'exact' });
 
@@ -133,7 +115,7 @@ async function createNotification(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database not available',
       message: 'Cannot create notification without database connection'
@@ -141,8 +123,7 @@ async function createNotification(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const client = getTypedSupabaseClient();
-    const { data, error } = await (client as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('notifications')
       .insert({
         title,
@@ -191,7 +172,7 @@ async function updateNotification(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database not available',
       message: 'Cannot update notification without database connection'
@@ -199,7 +180,6 @@ async function updateNotification(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const client = getTypedSupabaseClient();
     const updateData: any = {};
 
     if (read !== undefined) {
@@ -209,7 +189,7 @@ async function updateNotification(req: NextApiRequest, res: NextApiResponse) {
       }
     }
 
-    const { data, error } = await (client as any)
+    const { data, error } = await (supabaseAdmin as any)
       .from('notifications')
       .update(updateData)
       .eq('id', id)
@@ -248,7 +228,7 @@ async function deleteNotification(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  if (!isSupabaseAvailable || !supabase) {
+  if (!supabaseAdmin) {
     return res.status(503).json({
       error: 'Database not available',
       message: 'Cannot delete notification without database connection'
@@ -256,8 +236,7 @@ async function deleteNotification(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const client = getTypedSupabaseClient();
-    const { error } = await (client as any)
+    const { error } = await (supabaseAdmin as any)
       .from('notifications')
       .delete()
       .eq('id', id);

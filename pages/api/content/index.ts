@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { ContentSchema } from '@/lib/schemas';
 import { withAdminAuth } from '@/lib/serverAuth';
@@ -23,20 +23,6 @@ export interface ContentItem {
   metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
-}
-
-interface ContentRequest {
-  id?: string;
-  title: string;
-  slug?: string;
-  content: string;
-  excerpt?: string;
-  type: 'page' | 'blog' | 'program' | 'story' | 'media' | 'team' | 'partnership';
-  status: 'published' | 'draft' | 'scheduled' | 'archived';
-  featured_image?: string;
-  publish_date?: string;
-  metadata?: Record<string, any>;
-  author_id?: string;
 }
 
 // Generate slug from title
@@ -79,7 +65,10 @@ async function ensureUniqueSlug(client: any, slug: string, excludeId?: string): 
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const client = getTypedSupabaseClient();
+    if (!supabaseAdmin) {
+      return res.status(503).json({ success: false, error: 'Database connection unavailable' });
+    }
+    const client = supabaseAdmin;
 
     if (req.method === 'GET') {
       // GET - Fetch content with filtering and pagination
@@ -159,13 +148,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      // Transform data to include mock author info for now
+      // Keep the response stable without inventing analytics or author records.
       const transformedData = (contentItems as any).map((item: any) => ({
         ...item,
-        views: Math.floor(Math.random() * 1000), // Mock views for now
+        views: 0,
         author: {
-          name: 'Admin User', // In production, fetch from users table
-          email: 'admin@saintlammyfoundation.org'
+          name: 'Foundation team'
         }
       }));
 
@@ -188,7 +176,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const contentData = validation.data as ContentRequest;
+      const contentData = validation.data;
 
       // Sanitize content
       const sanitizedData = {
@@ -197,10 +185,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         excerpt: contentData.excerpt ? sanitizeHtml(contentData.excerpt) : null,
         type: contentData.type,
         status: contentData.status,
-        featured_image: contentData.featured_image || null,
-        publish_date: contentData.publish_date || null,
-        metadata: contentData.metadata || {},
-        author_id: contentData.author_id || null
+        featured_image: contentData.featuredImage || null,
+        publish_date: contentData.publishDate || null,
+        metadata: contentData.metadata || {}
       };
 
       // Generate and ensure unique slug
@@ -234,8 +221,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         data: {
           ...(newContent as any),
           author: {
-            name: 'Admin User',
-            email: 'admin@saintlammyfoundation.org'
+            name: 'Foundation team'
           }
         },
         message: 'Content created successfully'
@@ -261,37 +247,39 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
+      const validatedUpdate = validation.data;
+
       // Sanitize update data
       const sanitizedData: any = {};
 
-      if (updateData.title) {
-        sanitizedData.title = sanitizeHtml(updateData.title);
+      if (validatedUpdate.title) {
+        sanitizedData.title = sanitizeHtml(validatedUpdate.title);
       }
-      if (updateData.content !== undefined) {
-        sanitizedData.content = sanitizeRichHtml(updateData.content);
+      if (validatedUpdate.content !== undefined) {
+        sanitizedData.content = sanitizeRichHtml(validatedUpdate.content);
       }
-      if (updateData.excerpt !== undefined) {
-        sanitizedData.excerpt = updateData.excerpt ? sanitizeHtml(updateData.excerpt) : null;
+      if (validatedUpdate.excerpt !== undefined) {
+        sanitizedData.excerpt = validatedUpdate.excerpt ? sanitizeHtml(validatedUpdate.excerpt) : null;
       }
-      if (updateData.type) {
-        sanitizedData.type = updateData.type;
+      if (validatedUpdate.type) {
+        sanitizedData.type = validatedUpdate.type;
       }
-      if (updateData.status) {
-        sanitizedData.status = updateData.status;
+      if (validatedUpdate.status) {
+        sanitizedData.status = validatedUpdate.status;
       }
-      if (updateData.featured_image !== undefined) {
-        sanitizedData.featured_image = updateData.featured_image;
+      if (validatedUpdate.featuredImage !== undefined) {
+        sanitizedData.featured_image = validatedUpdate.featuredImage;
       }
-      if (updateData.publish_date !== undefined) {
-        sanitizedData.publish_date = updateData.publish_date;
+      if (validatedUpdate.publishDate !== undefined) {
+        sanitizedData.publish_date = validatedUpdate.publishDate;
       }
-      if (updateData.metadata !== undefined) {
-        sanitizedData.metadata = updateData.metadata;
+      if (validatedUpdate.metadata !== undefined) {
+        sanitizedData.metadata = validatedUpdate.metadata;
       }
 
       // Handle slug updates
-      if (updateData.slug || updateData.title) {
-        const newSlug = updateData.slug || generateSlug(sanitizedData.title || updateData.title);
+      if (validatedUpdate.slug || validatedUpdate.title) {
+        const newSlug = validatedUpdate.slug || generateSlug(sanitizedData.title || validatedUpdate.title);
         sanitizedData.slug = await ensureUniqueSlug(client, newSlug, id);
       }
 

@@ -1,483 +1,132 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
-import {
-  Bell,
-  CheckCircle,
-  AlertCircle,
-  Info,
-  AlertTriangle,
-  DollarSign,
-  Users,
-  Mail,
-  Calendar,
-  TrendingUp,
-  X,
-  Eye,
-  Trash2,
-  Filter,
-  Clock
-} from 'lucide-react';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { Bell, CheckCircle2, CircleAlert, Plus, Search, Trash2, X } from 'lucide-react';
 
-interface Notification {
+interface NotificationRecord {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  category: 'donation' | 'user' | 'system' | 'event' | 'message';
   title: string;
   message: string;
-  timestamp: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  category: string;
+  priority: 'high' | 'medium' | 'low';
   read: boolean;
-  actionUrl?: string;
-}
-
-interface NotificationStats {
-  unreadCount: number;
-  totalToday: number;
-  successCount: number;
-  warningCount: number;
+  created_at: string;
 }
 
 const NotificationsManagement: React.FC = () => {
+  const { session } = useAuth();
+  const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [stats, setStats] = useState<NotificationStats>({
-    unreadCount: 0,
-    totalToday: 0,
-    successCount: 0,
-    warningCount: 0
-  });
-  const [filterType, setFilterType] = useState<string>('all');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [saving, setSaving] = useState(false);
+  const [showComposer, setShowComposer] = useState(false);
+  const [search, setSearch] = useState('');
+  const [type, setType] = useState('all');
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [form, setForm] = useState({ title: '', message: '', type: 'info', category: 'general', priority: 'medium' });
 
-  useEffect(() => {
-    loadNotifications();
-  }, []);
+  const authHeaders = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined;
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
+    if (!session?.access_token) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError('');
     try {
-      setLoading(true);
-      const client = getTypedSupabaseClient();
-
-      // In production, fetch from database
-      // const { data, error } = await client.from('notifications').select('*').order('timestamp', { ascending: false });
-
-      // Using fallback data
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const allNotifications: Notification[] = [
-        {
-          id: '1',
-          type: 'success',
-          category: 'donation',
-          title: 'New Donation Received',
-          message: 'John Doe donated ₦50,000 to the Educational Excellence program',
-          timestamp: new Date().toISOString(),
-          read: false,
-          actionUrl: '/admin/donations'
-        },
-        {
-          id: '2',
-          type: 'info',
-          category: 'user',
-          title: 'New Volunteer Application',
-          message: 'Jane Smith submitted a volunteer application for community outreach',
-          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          read: false,
-          actionUrl: '/admin/volunteers'
-        },
-        {
-          id: '3',
-          type: 'warning',
-          category: 'system',
-          title: 'Payment Gateway Issue',
-          message: 'Temporary connectivity issue with payment gateway. Monitoring the situation.',
-          timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-          read: false
-        },
-        {
-          id: '4',
-          type: 'success',
-          category: 'donation',
-          title: 'Recurring Donation Processed',
-          message: 'Monthly donation of ₦25,000 from Sarah Johnson processed successfully',
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          read: true,
-          actionUrl: '/admin/donations/recurring'
-        },
-        {
-          id: '5',
-          type: 'info',
-          category: 'message',
-          title: 'New Message Received',
-          message: 'Partnership inquiry from ABC Corporation',
-          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-          read: true,
-          actionUrl: '/admin/communications/messages'
-        },
-        {
-          id: '6',
-          type: 'success',
-          category: 'event',
-          title: 'Event Registration',
-          message: '15 new registrations for upcoming community outreach event',
-          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-          read: true,
-          actionUrl: '/admin/events'
-        },
-        {
-          id: '7',
-          type: 'error',
-          category: 'donation',
-          title: 'Failed Payment',
-          message: 'Payment of ₦10,000 failed - insufficient funds. Donor notified.',
-          timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-          read: true
-        },
-        {
-          id: '8',
-          type: 'warning',
-          category: 'system',
-          title: 'Database Backup Needed',
-          message: 'Last backup was 6 days ago. Schedule backup soon.',
-          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-          read: true
-        },
-        {
-          id: '9',
-          type: 'info',
-          category: 'user',
-          title: 'User Account Created',
-          message: 'New admin account created for Michael Brown',
-          timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-          read: true,
-          actionUrl: '/admin/users/admins'
-        },
-        {
-          id: '10',
-          type: 'success',
-          category: 'donation',
-          title: 'Campaign Milestone',
-          message: 'Healthcare Access campaign reached 75% of funding goal!',
-          timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-          read: true,
-          actionUrl: '/admin/campaigns'
-        }
-      ];
-
-      setNotifications(allNotifications);
-
-      // Calculate stats
-      const unreadCount = allNotifications.filter(n => !n.read).length;
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const totalToday = allNotifications.filter(n => new Date(n.timestamp) >= todayStart).length;
-      const successCount = allNotifications.filter(n => n.type === 'success').length;
-      const warningCount = allNotifications.filter(n => n.type === 'warning' || n.type === 'error').length;
-
-      setStats({
-        unreadCount,
-        totalToday,
-        successCount,
-        warningCount
-      });
-
-    } catch (error) {
-      console.error('Error loading notifications:', error);
+      const response = await fetch('/api/notifications?limit=100', { headers: { Authorization: `Bearer ${session.access_token}` } });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to load notifications');
+      setNotifications(result.notifications || []);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'Unable to load notifications');
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.access_token]);
 
-  const filteredNotifications = notifications.filter(notification => {
-    if (filterType !== 'all' && notification.type !== filterType) return false;
-    if (filterCategory !== 'all' && notification.category !== filterCategory) return false;
-    return true;
-  });
+  useEffect(() => {
+    void loadNotifications();
+  }, [loadNotifications]);
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(notifications.map(n =>
-      n.id === id ? { ...n, read: true } : n
-    ));
-    setStats({ ...stats, unreadCount: stats.unreadCount - 1 });
-  };
+  useEffect(() => {
+    if (!showComposer) return;
+    const closeOnEscape = (event: KeyboardEvent) => event.key === 'Escape' && !saving && setShowComposer(false);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [saving, showComposer]);
 
-  const handleMarkAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
-    setStats({ ...stats, unreadCount: 0 });
-  };
-
-  const handleDelete = (id: string) => {
-    setNotifications(notifications.filter(n => n.id !== id));
-    const notification = notifications.find(n => n.id === id);
-    if (notification && !notification.read) {
-      setStats({ ...stats, unreadCount: stats.unreadCount - 1 });
-    }
-  };
-
-  const handleClearAll = () => {
-    if (confirm('Are you sure you want to clear all notifications?')) {
-      setNotifications([]);
-      setStats({ unreadCount: 0, totalToday: 0, successCount: 0, warningCount: 0 });
-    }
-  };
-
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays}d ago`;
-
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  const visibleNotifications = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return notifications.filter((notification) => {
+      const matchesType = type === 'all' || notification.type === type;
+      const matchesSearch = !query || `${notification.title} ${notification.message} ${notification.category}`.toLowerCase().includes(query);
+      return matchesType && matchesSearch;
     });
-  };
+  }, [notifications, search, type]);
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-500" />;
-      case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
-      case 'info':
-        return <Info className="w-5 h-5 text-blue-500" />;
-      default:
-        return <Bell className="w-5 h-5 text-gray-500" />;
+  const createNotification = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!session?.access_token) return;
+    setSaving(true);
+    setError('');
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify(form)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to create notification');
+      setForm({ title: '', message: '', type: 'info', category: 'general', priority: 'medium' });
+      setShowComposer(false);
+      setNotice('In-app notification published.');
+      await loadNotifications();
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : 'Unable to create notification');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'donation':
-        return <DollarSign className="w-4 h-4" />;
-      case 'user':
-        return <Users className="w-4 h-4" />;
-      case 'message':
-        return <Mail className="w-4 h-4" />;
-      case 'event':
-        return <Calendar className="w-4 h-4" />;
-      case 'system':
-        return <TrendingUp className="w-4 h-4" />;
-      default:
-        return <Bell className="w-4 h-4" />;
+  const deleteNotification = async (notification: NotificationRecord) => {
+    if (!session?.access_token || !window.confirm(`Delete “${notification.title}”?`)) return;
+    setError('');
+    setNotice('');
+    try {
+      const response = await fetch(`/api/notifications?id=${notification.id}`, { method: 'DELETE', headers: authHeaders });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.message || result.error || 'Unable to delete notification');
+      setNotifications((items) => items.filter((item) => item.id !== notification.id));
+      setNotice('Notification deleted.');
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Unable to delete notification');
     }
   };
 
-  const getNotificationBgColor = (type: string, read: boolean) => {
-    if (read) return 'bg-gray-700/30';
-
-    switch (type) {
-      case 'success':
-        return 'bg-green-50 dark:bg-green-900/20';
-      case 'error':
-        return 'bg-red-50 dark:bg-red-900/20';
-      case 'warning':
-        return 'bg-yellow-50 dark:bg-yellow-900/20';
-      case 'info':
-        return 'bg-blue-50 dark:bg-blue-900/20';
-      default:
-        return 'bg-gray-700/30';
-    }
+  const typeClasses: Record<NotificationRecord['type'], string> = {
+    success: 'bg-emerald-950/70 text-emerald-200',
+    error: 'bg-red-950/70 text-red-200',
+    warning: 'bg-amber-950/70 text-amber-200',
+    info: 'bg-blue-950/70 text-blue-200'
   };
 
   return (
     <>
-      <Head>
-        <title>Notifications Management - Admin Dashboard</title>
-        <meta name="description" content="Manage and view system notifications" />
-      </Head>
-
-      <AdminLayout title="Notifications Management">
-        <div className="space-y-6">
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Unread</p>
-                <Bell className="w-5 h-5 text-blue-500" />
-              </div>
-              <p className="text-2xl font-bold text-white">
-                {loading ? '...' : stats.unreadCount}
-              </p>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Today</p>
-                <Clock className="w-5 h-5 text-green-500" />
-              </div>
-              <p className="text-2xl font-bold text-white">
-                {loading ? '...' : stats.totalToday}
-              </p>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Success</p>
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              </div>
-              <p className="text-2xl font-bold text-white">
-                {loading ? '...' : stats.successCount}
-              </p>
-            </div>
-
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-gray-400 text-sm">Warnings</p>
-                <AlertTriangle className="w-5 h-5 text-yellow-500" />
-              </div>
-              <p className="text-2xl font-bold text-white">
-                {loading ? '...' : stats.warningCount}
-              </p>
-            </div>
+      <Head><title>Notifications - Saintlammy Foundation Admin</title><meta name="description" content="Publish and manage in-app admin notifications" /></Head>
+      <AdminLayout title="Notifications">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-3xl"><h2 className="text-xl font-semibold text-white">In-app notifications</h2><p className="mt-2 text-sm leading-6 text-gray-300">Publish operational notices inside the admin dashboard. Email, SMS, and push delivery are not represented here.</p></div><button type="button" onClick={() => setShowComposer(true)} className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent-500 px-4 py-2 text-sm font-medium text-white hover:bg-accent-600"><Plus className="h-4 w-4" aria-hidden="true" />New notification</button></div>
+          {error && <div role="alert" className="flex items-start gap-3 rounded-xl border border-red-500/40 bg-red-950/40 px-4 py-3 text-sm text-red-100"><CircleAlert className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />{error}</div>}
+          {notice && <div role="status" className="flex items-center gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-100"><CheckCircle2 className="h-5 w-5" aria-hidden="true" />{notice}</div>}
+          <div className="rounded-xl border border-gray-700 bg-gray-800">
+            <div className="grid gap-3 border-b border-gray-700 p-4 sm:grid-cols-[minmax(0,1fr)_12rem]"><div className="relative"><label htmlFor="notification-search" className="sr-only">Search notifications</label><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" /><input id="notification-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search title or message" className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-500" /></div><div><label htmlFor="notification-type" className="sr-only">Filter notification type</label><select id="notification-type" value={type} onChange={(event) => setType(event.target.value)} className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 text-sm text-white"><option value="all">All types</option><option value="info">Info</option><option value="success">Success</option><option value="warning">Warning</option><option value="error">Error</option></select></div></div>
+            {loading ? <div className="py-16 text-center text-sm text-gray-300" role="status">Loading notifications…</div> : visibleNotifications.length === 0 ? <div className="py-16 text-center"><Bell className="mx-auto h-10 w-10 text-gray-500" aria-hidden="true" /><p className="mt-3 text-sm text-gray-300">No notifications match this view.</p></div> : <div className="divide-y divide-gray-700">{visibleNotifications.map((notification) => <article key={notification.id} className="grid gap-4 p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${typeClasses[notification.type] || typeClasses.info}`}>{notification.type}</span><span className="text-xs capitalize text-gray-400">{notification.category} · {notification.priority} priority</span></div><h3 className="mt-3 font-medium text-white">{notification.title}</h3><p className="mt-1 max-w-3xl text-sm leading-6 text-gray-300">{notification.message}</p><p className="mt-2 text-xs text-gray-500">{Number.isNaN(new Date(notification.created_at).getTime()) ? 'Date unavailable' : new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(notification.created_at))}</p></div><button type="button" onClick={() => deleteNotification(notification)} aria-label={`Delete ${notification.title}`} className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-red-950/50 hover:text-red-300"><Trash2 className="h-4 w-4" aria-hidden="true" /></button></article>)}</div>}
           </div>
-
-          {/* Filters and Actions */}
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-gray-400" />
-                  <span className="text-sm font-medium text-gray-300">Filters:</span>
-                </div>
-
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
-                >
-                  <option value="all">All Types</option>
-                  <option value="success">Success</option>
-                  <option value="info">Info</option>
-                  <option value="warning">Warning</option>
-                  <option value="error">Error</option>
-                </select>
-
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="donation">Donations</option>
-                  <option value="user">Users</option>
-                  <option value="message">Messages</option>
-                  <option value="event">Events</option>
-                  <option value="system">System</option>
-                </select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleMarkAllAsRead}
-                  disabled={stats.unreadCount === 0}
-                  className="px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Mark All Read
-                </button>
-                <button
-                  onClick={handleClearAll}
-                  disabled={notifications.length === 0}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Clear All
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Notifications List */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Recent Notifications ({filteredNotifications.length})
-              </h3>
-
-              {loading ? (
-                <div className="text-center py-12 text-gray-400">
-                  Loading notifications...
-                </div>
-              ) : filteredNotifications.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  <Bell className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                  <p>No notifications found</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 rounded-lg border border-gray-600 transition-all ${getNotificationBgColor(notification.type, notification.read)}`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 mt-1">
-                          {getNotificationIcon(notification.type)}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className={`font-semibold text-white ${!notification.read ? 'font-bold' : ''}`}>
-                                {notification.title}
-                              </h4>
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-300 text-xs rounded-full">
-                                {getCategoryIcon(notification.category)}
-                                {notification.category}
-                              </span>
-                            </div>
-                            <span className="text-xs text-gray-400 whitespace-nowrap">
-                              {formatTimestamp(notification.timestamp)}
-                            </span>
-                          </div>
-
-                          <p className="text-sm text-gray-300 mb-3">
-                            {notification.message}
-                          </p>
-
-                          <div className="flex items-center gap-2">
-                            {!notification.read && (
-                              <button
-                                onClick={() => handleMarkAsRead(notification.id)}
-                                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-medium transition-colors flex items-center gap-1"
-                              >
-                                <Eye className="w-3 h-3" />
-                                Mark as Read
-                              </button>
-                            )}
-                            {notification.actionUrl && (
-                              <button className="px-3 py-1 bg-accent-500 hover:bg-accent-600 text-white rounded text-xs font-medium transition-colors">
-                                View Details
-                              </button>
-                            )}
-                            <button
-                              onClick={() => handleDelete(notification.id)}
-                              className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs font-medium transition-colors flex items-center gap-1"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          {showComposer && <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="notification-composer-title"><div className="fixed inset-0 bg-black/70" onClick={() => !saving && setShowComposer(false)} /><div className="relative flex min-h-screen items-center justify-center p-4"><form onSubmit={createNotification} className="relative w-full max-w-lg rounded-xl border border-gray-700 bg-gray-800 p-6"><div className="flex items-center justify-between"><div><h2 id="notification-composer-title" className="text-lg font-semibold text-white">Publish in-app notification</h2><p className="mt-1 text-sm text-gray-300">Visible to administrators in the notification menu.</p></div><button type="button" onClick={() => setShowComposer(false)} aria-label="Close notification composer" className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-gray-700"><X className="h-5 w-5" aria-hidden="true" /></button></div><div className="mt-6 space-y-4"><div><label htmlFor="notification-title" className="mb-2 block text-sm font-medium text-gray-200">Title</label><input id="notification-title" autoFocus required maxLength={160} value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-4 text-white" /></div><div><label htmlFor="notification-message" className="mb-2 block text-sm font-medium text-gray-200">Message</label><textarea id="notification-message" required maxLength={1000} rows={5} value={form.message} onChange={(event) => setForm((current) => ({ ...current, message: event.target.value }))} className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white" /></div><div className="grid gap-4 sm:grid-cols-2"><div><label htmlFor="composer-type" className="mb-2 block text-sm font-medium text-gray-200">Type</label><select id="composer-type" value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 text-white"><option value="info">Info</option><option value="success">Success</option><option value="warning">Warning</option><option value="error">Error</option></select></div><div><label htmlFor="composer-priority" className="mb-2 block text-sm font-medium text-gray-200">Priority</label><select id="composer-priority" value={form.priority} onChange={(event) => setForm((current) => ({ ...current, priority: event.target.value }))} className="min-h-11 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 text-white"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div></div><div className="mt-6 flex justify-end gap-3"><button type="button" onClick={() => setShowComposer(false)} disabled={saving} className="min-h-11 rounded-lg border border-gray-600 px-4 text-sm font-medium text-gray-200 hover:bg-gray-700">Cancel</button><button type="submit" disabled={saving} className="min-h-11 rounded-lg bg-accent-500 px-4 text-sm font-medium text-white hover:bg-accent-600 disabled:opacity-50">{saving ? 'Publishing…' : 'Publish notification'}</button></div></form></div></div>}
         </div>
       </AdminLayout>
     </>

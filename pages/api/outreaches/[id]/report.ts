@@ -122,7 +122,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     switch (method) {
       case 'GET':
-        return await getOutreachReport(client, id, res);
+        return await getOutreachReport(client, id, res, req.query.compact === 'true');
       case 'POST':
       case 'PUT':
         return await saveOutreachReport(adminClient, id, req, res);
@@ -140,7 +140,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-async function getOutreachReport(client: any, id: string, res: NextApiResponse) {
+const reportMediaUrl = (id: string, field: string, index?: number) =>
+  `/api/outreaches/${encodeURIComponent(id)}/media?field=${field}${index === undefined ? '' : `&index=${index}`}`;
+
+const replaceInlineMedia = (value: unknown, url: string) =>
+  typeof value === 'string' && value.startsWith('data:image/') ? url : value;
+
+class ReportMediaValidationError extends Error {
+  constructor(message: string, public readonly statusCode: 400 | 413) {
+    super(message);
+    this.name = 'ReportMediaValidationError';
+  }
+}
+
+function prepareReportForResponse(report: any, compact: boolean) {
+  const prepared = {
+    ...report,
+    image: replaceInlineMedia(report.image, reportMediaUrl(report.id, 'image')),
+    gallery: (report.gallery || []).map((image: unknown, index: number) =>
+      replaceInlineMedia(image, reportMediaUrl(report.id, 'gallery', index))
+    ),
+    testimonials: (report.testimonials || []).map((testimonial: any, index: number) => ({
+      ...testimonial,
+      image: replaceInlineMedia(testimonial.image, reportMediaUrl(report.id, 'testimonial', index))
+    }))
+  };
+
+  if (!compact) return prepared;
+  return {
+    ...prepared,
+    _compact: true,
+    gallery: prepared.gallery.slice(0, 1),
+    testimonials: [],
+    activities: [],
+    impact: [],
+    beneficiaryCategories: [],
+    partners: [],
+    futurePlans: [],
+    socialMedia: [],
+    budget: { ...prepared.budget, breakdown: [] }
+  };
+}
+
+async function getOutreachReport(client: any, id: string, res: NextApiResponse, compact = false) {
   try {
     // Try database FIRST if available
     if (client) {
@@ -190,7 +232,8 @@ async function getOutreachReport(client: any, id: string, res: NextApiResponse) 
           };
 
           console.log(`✅ Loaded report ${id} from DATABASE`);
-          return res.status(200).json(parsedData);
+          res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+          return res.status(200).json(prepareReportForResponse(parsedData, compact));
         }
       } catch (dbError) {
         console.error('Database connection error:', dbError);
@@ -201,7 +244,7 @@ async function getOutreachReport(client: any, id: string, res: NextApiResponse) 
     // Fallback to mock storage only if database didn't return data
     if (mockReports[id]) {
       console.log(`⚠️  Loaded report ${id} from MOCK STORAGE (temporary)`);
-      return res.status(200).json(mockReports[id]);
+      return res.status(200).json(prepareReportForResponse(mockReports[id], compact));
     }
 
     return res.status(404).json({ error: 'Outreach report not found' });
@@ -211,9 +254,51 @@ async function getOutreachReport(client: any, id: string, res: NextApiResponse) 
   }
 }
 
+async function storeInlineReportImage(value: unknown, outreachId: string, label: string) {
+  if (typeof value !== 'string' || !value.startsWith('data:image/') || !supabaseAdmin) return value;
+  const match = value.match(/^data:(image\/(?:jpeg|png|webp));base64,([\sA-Za-z0-9+/=]+)$/);
+  if (!match) throw new ReportMediaValidationError(`Unsupported inline image format for ${label}`, 400);
+  const buffer = Buffer.from(match[2].replace(/\s/g, ''), 'base64');
+  if (buffer.length > 12 * 1024 * 1024) throw new ReportMediaValidationError(`${label} exceeds the 12 MB image limit`, 413);
+
+  const extension = match[1] === 'image/jpeg' ? 'jpg' : match[1].split('/')[1];
+  const safeId = outreachId.replace(/[^a-zA-Z0-9_-]/g, '-');
+  const safeLabel = label.replace(/[^a-zA-Z0-9_-]/g, '-');
+  const path = `${safeId}/${Date.now()}-${safeLabel}.${extension}`;
+  const { error } = await supabaseAdmin.storage.from('outreach-media').upload(path, buffer, {
+    contentType: match[1],
+    cacheControl: '31536000',
+    upsert: false
+  });
+  if (error) throw error;
+  return supabaseAdmin.storage.from('outreach-media').getPublicUrl(path).data.publicUrl;
+}
+
+async function persistReportMedia(reportData: any, id: string) {
+  if (!supabaseAdmin) return reportData;
+  const { error: bucketError } = await supabaseAdmin.storage.createBucket('outreach-media', {
+    public: true,
+    fileSizeLimit: 12 * 1024 * 1024,
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp']
+  });
+  if (bucketError && !/already exists/i.test(bucketError.message)) throw bucketError;
+
+  return {
+    ...reportData,
+    image: await storeInlineReportImage(reportData.image, id, 'cover'),
+    gallery: await Promise.all((reportData.gallery || []).map((image: unknown, index: number) =>
+      storeInlineReportImage(image, id, `gallery-${index + 1}`)
+    )),
+    testimonials: await Promise.all((reportData.testimonials || []).map(async (testimonial: any, index: number) => ({
+      ...testimonial,
+      image: await storeInlineReportImage(testimonial.image, id, `testimonial-${index + 1}`)
+    })))
+  };
+}
+
 async function saveOutreachReport(client: any, id: string, req: NextApiRequest, res: NextApiResponse) {
   try {
-    const reportData = req.body;
+    const reportData = await persistReportMedia(req.body, id);
     let savedToDatabase = false;
 
     console.log('📝 Attempting to save report for outreach:', id);
@@ -316,7 +401,8 @@ async function saveOutreachReport(client: any, id: string, req: NextApiRequest, 
       message: error?.message,
       stack: error?.stack
     });
-    return res.status(500).json({
+    const statusCode = error instanceof ReportMediaValidationError ? error.statusCode : 500;
+    return res.status(statusCode).json({
       error: 'Failed to save outreach report',
       message: error?.message || 'Unknown error'
     });

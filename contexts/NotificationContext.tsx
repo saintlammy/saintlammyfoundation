@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';
 
@@ -46,6 +46,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
   const showNotification = useCallback((
     notification: Omit<Notification, 'id' | 'timestamp' | 'read'>
   ): string => {
@@ -72,7 +76,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
 
     return id;
-  }, [maxNotifications]);
+  }, [maxNotifications, removeNotification]);
 
   const success = useCallback((title: string, message: string, duration?: number) => {
     return showNotification({ type: 'success', title, message, duration });
@@ -90,10 +94,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     return showNotification({ type: 'info', title, message, duration });
   }, [showNotification]);
 
-  const removeNotification = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  }, []);
-
   const markAsRead = useCallback((id: string) => {
     setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, read: true } : n)
@@ -107,31 +107,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const clearAll = useCallback(() => {
     setNotifications([]);
   }, []);
-
-  // Load notifications from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('saintlammy-notifications');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setNotifications(parsed.map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp)
-        })));
-      }
-    } catch (error) {
-      console.error('Error loading notifications from localStorage:', error);
-    }
-  }, []);
-
-  // Save notifications to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('saintlammy-notifications', JSON.stringify(notifications));
-    } catch (error) {
-      console.error('Error saving notifications to localStorage:', error);
-    }
-  }, [notifications]);
 
   const value: NotificationContextType = {
     notifications,

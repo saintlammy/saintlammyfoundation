@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Head from 'next/head';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ContentEditor from '@/components/admin/ContentEditor';
-import { ContentService, ContentItem } from '@/lib/contentService';
+import type { ContentItem } from '@/lib/contentService';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Plus,
   Search,
@@ -14,7 +15,7 @@ import {
   User,
   Globe,
   FileText,
-  Image,
+  Image as ImageIcon,
   Video,
   MoreHorizontal,
   ChevronDown,
@@ -23,6 +24,7 @@ import {
 import { truncateForCard } from '@/lib/textUtils';
 
 const AdminContent: React.FC = () => {
+  const { session } = useAuth();
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,91 +37,59 @@ const AdminContent: React.FC = () => {
   const [showEditor, setShowEditor] = useState(false);
   const [editingContent, setEditingContent] = useState<ContentItem | null>(null);
 
-  // Load content on mount and when filters change
-  useEffect(() => {
-    loadContent();
-  }, [selectedType, selectedStatus, searchTerm]);
-
-  const loadContent = async () => {
+  const loadContent = useCallback(async () => {
+    if (!session?.access_token) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
 
-      // Try API call first, fall back to mock service if it fails
-      try {
-        const searchParams = new URLSearchParams();
-        if (selectedType && selectedType !== 'all') searchParams.append('type', selectedType);
-        if (selectedStatus && selectedStatus !== 'all') searchParams.append('status', selectedStatus);
-        if (searchTerm) searchParams.append('search', searchTerm);
-        searchParams.append('limit', '50');
+      const searchParams = new URLSearchParams();
+      if (selectedType && selectedType !== 'all') searchParams.append('type', selectedType);
+      if (selectedStatus && selectedStatus !== 'all') searchParams.append('status', selectedStatus);
+      if (searchTerm) searchParams.append('search', searchTerm);
+      searchParams.append('limit', '50');
 
-        const response = await fetch(`/api/content?${searchParams.toString()}`, {
-          headers: {
-            'Authorization': 'Bearer admin-token'
-          }
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          setContentItems(result.data);
-          setTotal(result.total);
-          return;
-        }
-      } catch (apiError) {
-        console.warn('API failed, falling back to mock data:', apiError);
-      }
-
-      // Fall back to mock service if API fails
-      const result = await ContentService.getContent({
-        type: selectedType,
-        status: selectedStatus,
-        search: searchTerm,
-        limit: 50
+      const response = await fetch(`/api/content?${searchParams.toString()}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Failed to load content');
 
-      setContentItems(result.data);
-      setTotal(result.total);
+      setContentItems(Array.isArray(result.data) ? result.data : []);
+      setTotal(typeof result.total === 'number' ? result.total : 0);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load content');
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, selectedStatus, selectedType, session?.access_token]);
+
+  // Load content on mount and when filters change
+  useEffect(() => {
+    void loadContent();
+  }, [loadContent]);
 
   const handleSaveContent = async (contentData: any) => {
     try {
-      // Try to save via API first
-      try {
-        const method = contentData.id ? 'PUT' : 'POST';
-        const response = await fetch('/api/content', {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer admin-token'
-          },
-          body: JSON.stringify(contentData)
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          await loadContent();
-          setShowEditor(false);
-          setEditingContent(null);
-          return;
-        }
-      } catch (apiError) {
-        console.warn('Save API failed, simulating success:', apiError);
-      }
-
-      // If API fails, simulate success for demo purposes
-      console.log('Content saved (demo mode):', contentData);
+      if (!session?.access_token) throw new Error('Your admin session is not ready.');
+      const method = contentData.id ? 'PUT' : 'POST';
+      const response = await fetch('/api/content', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(contentData)
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Failed to save content');
       await loadContent();
       setShowEditor(false);
       setEditingContent(null);
-
     } catch (error) {
       throw error;
     }
@@ -134,10 +104,11 @@ const AdminContent: React.FC = () => {
     if (!confirm('Are you sure you want to delete this content?')) return;
 
     try {
+      if (!session?.access_token) throw new Error('Your admin session is not ready.');
       const response = await fetch(`/api/content?id=${contentId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': 'Bearer admin-token'
+          Authorization: `Bearer ${session.access_token}`
         }
       });
 
@@ -166,14 +137,14 @@ const AdminContent: React.FC = () => {
 
       switch (action) {
         case 'publish':
-          await ContentService.bulkUpdateStatus(selectedItems, 'published');
+          await Promise.all(selectedItems.map(id => updateContentStatus(id, 'published')));
           break;
         case 'archive':
-          await ContentService.bulkUpdateStatus(selectedItems, 'archived');
+          await Promise.all(selectedItems.map(id => updateContentStatus(id, 'archived')));
           break;
         case 'delete':
           if (confirm('Are you sure you want to delete the selected items?')) {
-            await ContentService.bulkDelete(selectedItems);
+            await Promise.all(selectedItems.map(deleteContent));
           }
           break;
       }
@@ -185,6 +156,41 @@ const AdminContent: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateContentStatus = async (id: string, status: ContentItem['status']) => {
+    if (!session?.access_token) throw new Error('Your admin session is not ready.');
+    const current = contentItems.find(item => item.id === id);
+    if (!current) throw new Error('The selected content item is no longer available.');
+    const payload = {
+      id: current.id,
+      title: current.title,
+      content: current.content || current.excerpt || '',
+      excerpt: current.excerpt,
+      type: current.type,
+      status,
+      slug: current.slug,
+      featuredImage: current.featuredImage,
+      publishDate: current.publishDate,
+      metadata: current.metadata
+    };
+    const response = await fetch('/api/content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) throw new Error(result.error || 'Failed to update content');
+  };
+
+  const deleteContent = async (id: string) => {
+    if (!session?.access_token) throw new Error('Your admin session is not ready.');
+    const response = await fetch(`/api/content?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.access_token}` }
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) throw new Error(result.error || 'Failed to delete content');
   };
 
   const contentTypes = [
@@ -257,7 +263,7 @@ const AdminContent: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white">Content Management</h1>
+              <h2 className="text-2xl font-bold text-white">Content Management</h2>
               <p className="text-gray-400 mt-1">Manage your website content, blog posts, and media</p>
             </div>
             <button
@@ -470,7 +476,7 @@ const AdminContent: React.FC = () => {
                           {item.featuredImage && (
                             <div className="w-12 h-12 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                               <div className="w-full h-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center">
-                                <Image className="w-6 h-6 text-gray-400" />
+                                <ImageIcon className="w-6 h-6 text-gray-400" aria-hidden="true" />
                               </div>
                             </div>
                           )}

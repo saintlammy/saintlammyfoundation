@@ -7,6 +7,7 @@ import { validateInput, sanitizeHtml } from '@/lib/validation';
 import { blockchainVerification } from '@/lib/blockchainVerification';
 import { validateCryptoConfig } from '@/lib/envValidation';
 import { rateLimitMiddleware } from '@/lib/rateLimit';
+import { supabaseAdmin } from '@/lib/supabase';
 
 interface CryptoDonationRequest {
   amount: number;
@@ -238,26 +239,18 @@ function generatePaymentURI(currency: string, network: string, address: string, 
 // Function to update campaign progress
 async function updateCampaignProgress(campaignId: string, donationAmount: number) {
   try {
-    // Fetch current campaign
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/campaigns?id=${campaignId}`);
-    const result = await response.json();
+    if (!supabaseAdmin) return;
 
-    if (result.success && result.data.length > 0) {
-      const campaign = result.data[0];
-      const newAmount = campaign.current_amount + donationAmount;
+    const { data, error } = await (supabaseAdmin as any).rpc('increment_campaign_amount', {
+      campaign_id_input: campaignId,
+      increment_amount: donationAmount
+    });
 
-      // Update campaign with new amount
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/campaigns?id=${campaignId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          current_amount: newAmount,
-          // Auto-complete campaign if goal reached
-          status: newAmount >= campaign.goal_amount ? 'completed' : campaign.status
-        })
-      });
+    if (error) throw error;
 
-      console.log(`Updated campaign ${campaignId}: ${newAmount}/${campaign.goal_amount}`);
+    const campaign = Array.isArray(data) ? data[0] : data;
+    if (campaign) {
+      console.log(`Updated campaign ${campaignId}: ${campaign.current_amount}/${campaign.goal_amount}`);
     }
   } catch (error) {
     console.error('Error updating campaign progress:', error);

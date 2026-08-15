@@ -1,29 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { partnershipService } from '@/lib/partnershipService';
+import { partnershipService, type PartnershipApplication } from '@/lib/partnershipService';
+import { requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
+export default async function handler(req: AdminApiRequest, res: NextApiResponse) {
   try {
     if (req.method === 'GET') {
+      if (!(await requireAdmin(req, res))) return;
       return await getApplications(req, res);
     } else if (req.method === 'POST') {
       return await createApplication(req, res);
     } else if (req.method === 'PUT') {
+      if (!(await requireAdmin(req, res))) return;
       return await updateApplication(req, res);
     } else if (req.method === 'DELETE') {
+      if (!(await requireAdmin(req, res))) return;
       return await deleteApplication(req, res);
     } else {
       res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
@@ -73,7 +63,27 @@ async function getApplications(req: NextApiRequest, res: NextApiResponse) {
 
 async function createApplication(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const applicationData = req.body;
+    const organizationTypes: PartnershipApplication['organization_type'][] = ['corporation', 'ngo', 'government', 'foundation', 'individual', 'other'];
+    const partnershipTypes: PartnershipApplication['partnership_type'][] = ['corporate-csr', 'program-collaboration', 'funding', 'resource-sharing', 'volunteer', 'other'];
+    const timelines: PartnershipApplication['timeline'][] = ['immediate', 'short-term', 'medium-term', 'long-term', 'exploratory'];
+    const requestedOrganizationType = String(req.body?.organization_type || 'other') as PartnershipApplication['organization_type'];
+    const requestedPartnershipType = String(req.body?.partnership_type || 'other') as PartnershipApplication['partnership_type'];
+    const requestedTimeline = String(req.body?.timeline || 'exploratory') as PartnershipApplication['timeline'];
+
+    const applicationData: Omit<PartnershipApplication, 'id' | 'created_at' | 'updated_at'> = {
+      organization_name: String(req.body?.organization_name || '').trim().slice(0, 255),
+      contact_name: String(req.body?.contact_name || '').trim().slice(0, 255),
+      email: String(req.body?.email || '').trim().toLowerCase().slice(0, 254),
+      phone: String(req.body?.phone || '').trim().slice(0, 50) || undefined,
+      organization_type: organizationTypes.includes(requestedOrganizationType) ? requestedOrganizationType : 'other',
+      partnership_type: partnershipTypes.includes(requestedPartnershipType) ? requestedPartnershipType : 'other',
+      message: String(req.body?.message || '').trim().slice(0, 5000),
+      timeline: timelines.includes(requestedTimeline) ? requestedTimeline : 'exploratory',
+      status: 'new',
+      priority: 'medium',
+      assigned_to: undefined,
+      notes: undefined
+    };
 
     // Validate required fields
     if (!applicationData.organization_name || !applicationData.contact_name || !applicationData.email || !applicationData.message) {

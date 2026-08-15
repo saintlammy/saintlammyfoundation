@@ -175,8 +175,8 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
     : outreach?.image;
 
   useEffect(() => {
-    // Only fetch if we don't have initialOutreach
-    if (id && !initialOutreach) {
+    // Compact SSR data keeps metadata fast; hydrate the complete report client-side.
+    if (id && (!initialOutreach || initialOutreach._compact)) {
       loadOutreachReport();
     }
   }, [id, initialOutreach]);
@@ -194,9 +194,17 @@ const OutreachReportPage: React.FC<OutreachReportPageProps> = ({ initialOutreach
       }
 
       // If detailed report not found, try to fetch basic outreach data
-      const basicResponse = await fetch(`/api/outreaches?status=all`);
-      if (basicResponse.ok) {
-        const outreaches = await basicResponse.json();
+      const outreachResponses = await Promise.allSettled(
+        ['completed', 'upcoming', 'ongoing', 'published'].map((status) =>
+          fetch(`/api/outreaches?status=${status}`)
+        )
+      );
+      const successfulResponses = outreachResponses
+        .filter((result): result is PromiseFulfilledResult<Response> => result.status === 'fulfilled' && result.value.ok)
+        .map((result) => result.value);
+      if (successfulResponses.length > 0) {
+        const responsePayloads = await Promise.all(successfulResponses.map((response) => response.json().catch(() => [])));
+        const outreaches = responsePayloads.flatMap((payload) => Array.isArray(payload) ? payload : []);
         const basicOutreach = outreaches.find((o: any) => o.id === id);
 
         if (basicOutreach) {
@@ -1194,13 +1202,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     const host = req.headers.host;
     const baseUrl = `${protocol}://${host}`;
 
-    // Try to fetch full report first (has all the detail sections)
-    console.log(`🔍 SSR: Fetching full report for ${id}`);
-    const reportResponse = await fetch(`${baseUrl}/api/outreaches/${id}/report`);
+    // Fetch compact metadata for the initial HTML. The full report loads after
+    // hydration so base64 media and large galleries are never serialized into SSR.
+    const reportResponse = await fetch(`${baseUrl}/api/outreaches/${id}/report?compact=true`);
 
     if (reportResponse.ok) {
       const reportData = await reportResponse.json();
-      console.log(`✅ SSR: Loaded full report for ${id}`);
       return {
         props: {
           initialOutreach: reportData
@@ -1210,10 +1217,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
 
     // Fallback to basic outreach data if no full report exists
     console.log(`⚠️ SSR: No full report found, trying basic outreach data for ${id}`);
-    const response = await fetch(`${baseUrl}/api/outreaches?status=all`);
+    const outreachResponses = await Promise.allSettled(
+      ['completed', 'upcoming', 'ongoing', 'published'].map((status) =>
+        fetch(`${baseUrl}/api/outreaches?status=${status}`)
+      )
+    );
+    const successfulResponses = outreachResponses
+      .filter((result): result is PromiseFulfilledResult<Response> => result.status === 'fulfilled' && result.value.ok)
+      .map((result) => result.value);
 
-    if (response.ok) {
-      const outreaches = await response.json();
+    if (successfulResponses.length > 0) {
+      const responsePayloads = await Promise.all(successfulResponses.map((response) => response.json().catch(() => [])));
+      const outreaches = responsePayloads.flatMap((payload) => Array.isArray(payload) ? payload : []);
       const outreach = outreaches.find((o: any) => o.id === id);
 
       if (outreach) {

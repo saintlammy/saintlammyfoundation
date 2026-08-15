@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   FileText, Plus, Search, Edit, Eye, Trash2, Save, X,
   MapPin, Calendar, Users, DollarSign, TrendingUp, Award,
@@ -37,6 +38,7 @@ interface OutreachReport {
 }
 
 const OutreachReportsManagement: React.FC = () => {
+  const { session, loading: authLoading } = useAuth();
   const [outreaches, setOutreaches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,14 +58,23 @@ const OutreachReportsManagement: React.FC = () => {
     totalBeneficiaries: 0
   });
 
+  const authHeaders = (headers: Record<string, string> = {}) => {
+    if (!session?.access_token) throw new Error('Your admin session is unavailable. Please sign in again.');
+    return { ...headers, Authorization: `Bearer ${session.access_token}` };
+  };
+
   useEffect(() => {
-    loadOutreaches();
-  }, []);
+    if (authLoading) return;
+    if (session?.access_token) void loadOutreaches();
+    else setLoading(false);
+  }, [authLoading, session?.access_token]);
 
   const loadOutreaches = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/outreaches?status=all');
+      const response = await fetch('/api/outreaches?status=all', {
+        headers: authHeaders()
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -101,7 +112,9 @@ const OutreachReportsManagement: React.FC = () => {
 
   const loadOutreachReport = async (outreachId: string) => {
     try {
-      const response = await fetch(`/api/outreaches/${outreachId}/report`);
+      const response = await fetch(`/api/outreaches/${outreachId}/report`, {
+        headers: authHeaders()
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -228,6 +241,7 @@ const OutreachReportsManagement: React.FC = () => {
 
       const response = await fetch('/api/upload/pdf', {
         method: 'POST',
+        headers: authHeaders(),
         body: formData,
       });
 
@@ -269,11 +283,13 @@ const OutreachReportsManagement: React.FC = () => {
       // Delete the report first
       const reportResponse = await fetch(`/api/outreaches/${outreachId}/report`, {
         method: 'DELETE',
+        headers: authHeaders(),
       });
 
       // Then delete the outreach itself
       const outreachResponse = await fetch(`/api/outreaches?id=${outreachId}`, {
         method: 'DELETE',
+        headers: authHeaders(),
       });
 
       if (reportResponse.ok || outreachResponse.ok) {
@@ -329,9 +345,7 @@ const OutreachReportsManagement: React.FC = () => {
 
       const outreachResponse = await fetch(`/api/outreaches${isNew ? '' : `?id=${selectedOutreach.id}`}`, {
         method: isNew ? 'POST' : 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(outreachData),
       });
 
@@ -349,9 +363,7 @@ const OutreachReportsManagement: React.FC = () => {
 
       const reportResponse = await fetch(`/api/outreaches/${selectedOutreach.id}/report`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(reportData),
       });
 

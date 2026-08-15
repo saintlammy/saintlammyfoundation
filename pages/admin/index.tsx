@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
   TrendingUp,
@@ -32,6 +33,18 @@ import {
   Legend
 } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
+import { formatCurrencyAmount } from '@/lib/currency';
+
+const formatCurrencyBreakdown = (
+  totals: Array<{ currency: string; completed: number; pending: number; monthlyCompleted: number }> = [],
+  key: 'completed' | 'pending' | 'monthlyCompleted'
+) => {
+  const allPopulated = totals.filter((item) => item[key] > 0);
+  const populated = allPopulated.slice(0, 3);
+  if (populated.length === 0) return 'No recorded amount';
+  const breakdown = populated.map((item) => formatCurrencyAmount(item[key], item.currency)).join(' · ');
+  return allPopulated.length > populated.length ? `${breakdown} · +${allPopulated.length - populated.length} more` : breakdown;
+};
 
 // Custom CSS for chart tooltips
 const chartStyles = `
@@ -53,11 +66,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
 
-  useEffect(() => {
-    loadStats();
-  }, [session]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     if (!session?.access_token) {
       setLoading(false);
       return;
@@ -79,16 +88,20 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.access_token]);
+
+  useEffect(() => {
+    void loadStats();
+  }, [loadStats]);
 
   // Default/fallback data
   const donationTrends = stats?.donationTrends || [
-    { month: 'Jan', amount: 0, donors: 0 },
-    { month: 'Feb', amount: 0, donors: 0 },
-    { month: 'Mar', amount: 0, donors: 0 },
-    { month: 'Apr', amount: 0, donors: 0 },
-    { month: 'May', amount: 0, donors: 0 },
-    { month: 'Jun', amount: 0, donors: 0 },
+    { month: 'Jan', count: 0, donors: 0 },
+    { month: 'Feb', count: 0, donors: 0 },
+    { month: 'Mar', count: 0, donors: 0 },
+    { month: 'Apr', count: 0, donors: 0 },
+    { month: 'May', count: 0, donors: 0 },
+    { month: 'Jun', count: 0, donors: 0 },
   ];
 
   const donationMethods = stats?.donationMethods || [
@@ -102,36 +115,30 @@ const AdminDashboard: React.FC = () => {
 
   const statsCards = [
     {
-      title: 'Total Donations',
-      value: stats ? `$${stats.totalDonations.toLocaleString()}` : '$0',
-      subtitle: stats?.completedCount ? `${stats.completedCount} completed` : undefined,
-      change: '+0%',
-      trend: 'up',
+      title: 'Donations Received',
+      value: stats?.completedCount?.toLocaleString() || '0',
+      subtitle: formatCurrencyBreakdown(stats?.totalsByCurrency, 'completed'),
       icon: Heart,
       color: 'bg-gradient-to-r from-pink-500 to-rose-500'
     },
     {
-      title: 'Pending Donations',
-      value: stats ? `$${stats.pendingDonations?.toLocaleString() || '0'}` : '$0',
-      subtitle: stats?.pendingCount ? `${stats.pendingCount} awaiting verification` : undefined,
-      change: '+0%',
-      trend: 'up',
+      title: 'Awaiting Verification',
+      value: stats?.pendingCount?.toLocaleString() || '0',
+      subtitle: formatCurrencyBreakdown(stats?.totalsByCurrency, 'pending'),
       icon: DollarSign,
       color: 'bg-gradient-to-r from-orange-500 to-amber-500'
     },
     {
       title: 'Active Donors',
       value: stats ? stats.donorCount.toLocaleString() : '0',
-      change: '+0%',
-      trend: 'up',
+      subtitle: 'Unique donor profiles',
       icon: Users,
       color: 'bg-gradient-to-r from-blue-500 to-blue-600'
     },
     {
-      title: 'Monthly Revenue',
-      value: stats ? `$${stats.monthlyDonations.toLocaleString()}` : '$0',
-      change: '+0%',
-      trend: 'up',
+      title: 'Completed This Month',
+      value: stats?.monthlyCompletedCount?.toLocaleString() || '0',
+      subtitle: formatCurrencyBreakdown(stats?.totalsByCurrency, 'monthlyCompleted'),
       icon: TrendingUp,
       color: 'bg-gradient-to-r from-green-500 to-emerald-500'
     }
@@ -139,8 +146,8 @@ const AdminDashboard: React.FC = () => {
 
   const quickActions = [
     {
-      title: 'Generate Wallet',
-      description: 'Create new crypto wallet address',
+      title: 'Manage Wallets',
+      description: 'Review configured crypto addresses',
       icon: Wallet,
       href: '/admin/wallet-management',
       color: 'bg-gradient-to-r from-purple-500 to-purple-600'
@@ -189,21 +196,6 @@ const AdminDashboard: React.FC = () => {
                     {(stat as any).subtitle && (
                       <p className="text-xs text-gray-400 mt-1">{(stat as any).subtitle}</p>
                     )}
-                    {!(stat as any).subtitle && (
-                      <div className="flex items-center mt-2">
-                        {stat.trend === 'up' ? (
-                          <ArrowUpRight className="w-4 h-4 text-green-400 mr-1" />
-                        ) : (
-                          <ArrowDownRight className="w-4 h-4 text-red-400 mr-1" />
-                        )}
-                        <span className={`text-sm font-medium ${
-                          stat.trend === 'up' ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          {stat.change}
-                        </span>
-                        <span className="text-gray-400 text-sm ml-1">vs last month</span>
-                      </div>
-                    )}
                   </div>
                   <div className={`w-12 h-12 rounded-lg ${stat.color} flex items-center justify-center`}>
                     <stat.icon className="w-6 h-6 text-white" />
@@ -240,7 +232,8 @@ const AdminDashboard: React.FC = () => {
                   />
                   <Area
                     type="monotone"
-                    dataKey="amount"
+                    dataKey="count"
+                    name="Completed donations"
                     stroke="#3B82F6"
                     fill="url(#donationGradient)"
                     strokeWidth={2}
@@ -293,15 +286,15 @@ const AdminDashboard: React.FC = () => {
             <div className="lg:col-span-2 bg-gray-800 rounded-xl p-6 border border-gray-700">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
-                <a href="/admin/donations/transactions" className="text-accent-400 text-sm hover:text-accent-300 transition-colors">
+                <Link href="/admin/donations/transactions" className="text-accent-400 text-sm hover:text-accent-300 transition-colors">
                   View all
-                </a>
+                </Link>
               </div>
               <div className="space-y-4">
                 {recentActivities.length === 0 ? (
                   <p className="text-gray-400 text-center py-8">No recent activity</p>
                 ) : (
-                  recentActivities.map((activity: { id: string; type: string; title: string; description: string; time: string; status?: string; user?: string; amount?: number; method?: string }) => (
+                  recentActivities.map((activity: { id: string; type: string; title: string; description: string; time: string; status?: string; user?: string; amount?: number; currency?: string; method?: string }) => (
                     <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-700 transition-colors">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         activity.type === 'donation' ?
@@ -319,7 +312,7 @@ const AdminDashboard: React.FC = () => {
                           {activity.type === 'donation' && (
                             <>
                               <span className={(activity as any).status === 'completed' ? 'text-green-400 ml-2' : 'text-orange-400 ml-2'}>
-                                donated ${activity.amount?.toLocaleString()}
+                                donated {formatCurrencyAmount(activity.amount || 0, activity.currency || 'USD')}
                               </span>
                               {(activity as any).status === 'pending' && (
                                 <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
@@ -383,15 +376,15 @@ const AdminDashboard: React.FC = () => {
                 <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
                   <TrendingUp className="w-8 h-8 text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{stats ? `${stats.successRate}%` : '0%'}</p>
+                <p className="text-2xl font-bold text-white">{stats ? `${Number(stats.successRate).toFixed(1)}%` : '0.0%'}</p>
                 <p className="text-gray-400 text-sm">Donation Success Rate</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-3">
                   <Heart className="w-8 h-8 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{stats ? `₦${(stats.totalDonations / 6).toFixed(0)}K` : '₦0'}</p>
-                <p className="text-gray-400 text-sm">Average Monthly Donations</p>
+                <p className="text-2xl font-bold text-white">{stats ? Math.round(stats.completedCount / Math.max(donationTrends.length, 1)) : 0}</p>
+                <p className="text-gray-400 text-sm">Average monthly completed donations</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-3">

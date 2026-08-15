@@ -25,7 +25,11 @@ function getSessionCookie(req: NextApiRequest): string | null {
   for (const entry of rawCookie.split(';')) {
     const [rawName, ...rawValue] = entry.trim().split('=');
     if (rawName === 'slf_admin_session' && rawValue.length > 0) {
-      return decodeURIComponent(rawValue.join('='));
+      try {
+        return decodeURIComponent(rawValue.join('='));
+      } catch {
+        return null;
+      }
     }
   }
 
@@ -34,10 +38,6 @@ function getSessionCookie(req: NextApiRequest): string | null {
 
 async function hasTrustedAdminRole(user: User): Promise<boolean> {
   const appRole = user.app_metadata?.role;
-  if (typeof appRole === 'string' && ADMIN_ROLES.has(appRole)) {
-    return true;
-  }
-
   if (!supabaseAdmin) return false;
 
   const { data, error } = await (supabaseAdmin as any)
@@ -46,11 +46,12 @@ async function hasTrustedAdminRole(user: User): Promise<boolean> {
     .eq('auth_user_id', user.id)
     .maybeSingle();
 
-  if (error || !data || data.status === 'inactive') {
+  if (error || !data || data.status !== 'active') {
     return false;
   }
 
-  return typeof data.role === 'string' && ADMIN_ROLES.has(data.role);
+  const trustedRole = typeof data.role === 'string' ? data.role : appRole;
+  return typeof trustedRole === 'string' && ADMIN_ROLES.has(trustedRole);
 }
 
 export async function requireAdmin(

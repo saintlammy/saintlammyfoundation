@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { donationService } from '@/lib/donationService';
-import { getTypedSupabaseClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/serverAuth';
 
 /**
  * API endpoint to export crypto donation details with complete transaction information
  * Supports CSV and JSON formats
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -15,8 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { format = 'csv', status, startDate, endDate } = req.query;
 
     // Get crypto donations from database
-    const client = getTypedSupabaseClient();
-    let query = (client as any)
+    if (!supabaseAdmin) {
+      return res.status(503).json({ error: 'Database connection unavailable' });
+    }
+
+    let query = (supabaseAdmin as any)
       .from('donations')
       .select('*')
       .eq('payment_method', 'crypto')
@@ -180,3 +183,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+export default withAdminAuth(handler);

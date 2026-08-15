@@ -1,8 +1,8 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, ReactNode, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import ThemeToggle from '@/components/ThemeToggle';
 import NotificationBell from '@/components/NotificationBell';
 import { useAutoLogout } from '@/hooks/useAutoLogout';
 import AutoLogoutModal from '@/components/AutoLogoutModal';
@@ -56,8 +56,13 @@ interface MenuItem {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard' }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['dashboard']);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDesktop, setIsDesktop] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const sidebarOpenerRef = useRef<HTMLButtonElement>(null);
+  const sidebarWasOpenRef = useRef(false);
   const router = useRouter();
-  const { user, signOut, isAdmin, isModerator } = useAuth();
+  const { user, signOut } = useAuth();
 
   // Admin dashboard always uses dark mode - force dark class on <html>
   useEffect(() => {
@@ -75,7 +80,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   const { showLogoutModal, logoutReason, closeModal } = useAutoLogout({
     timeoutMinutes: 60,
     onLogout: (reason) => {
-      console.log(`User logged out due to: ${reason}`);
+      if (process.env.NODE_ENV === 'development') console.warn(`User logged out due to: ${reason}`);
     }
   });
 
@@ -92,7 +97,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
     }
   };
 
-  const menuItems: MenuItem[] = [
+  const menuItems = useMemo<MenuItem[]>(() => [
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -105,7 +110,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       icon: Heart,
       children: [
         { id: 'donations-overview', label: 'Overview', icon: PieChart, href: '/admin/donations' },
-        { id: 'donations-transactions', label: 'Transactions', icon: TrendingUp, href: '/admin/donations/transactions' },
         { id: 'donations-recurring', label: 'Recurring', icon: Calendar, href: '/admin/donations/recurring' },
         { id: 'donations-analytics', label: 'Analytics', icon: BarChart3, href: '/admin/donations/analytics' }
       ]
@@ -120,8 +124,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       id: 'wallets',
       label: 'Crypto Wallets',
       icon: Wallet,
-      href: '/admin/wallet-management',
-      badge: '5'
+      href: '/admin/wallet-management'
     },
     {
       id: 'users',
@@ -148,13 +151,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       label: 'Content',
       icon: FileText,
       children: [
-        { id: 'content-page-builder', label: 'Page Builder', icon: Settings, href: '/admin/content/page-builder' },
-        { id: 'content-pages', label: 'Pages', icon: Globe, href: '/admin/content/pages' },
-        { id: 'content-stories', label: 'Stories', icon: FileText, href: '/admin/content/stories' },
-        { id: 'content-news', label: 'News', icon: Newspaper, href: '/admin/content/news' },
-        { id: 'content-gallery', label: 'Gallery', icon: Image, href: '/admin/content/gallery' },
-        { id: 'content-programs', label: 'Programs', icon: Heart, href: '/admin/content/programs' },
-        { id: 'content-outreaches', label: 'Outreaches', icon: Calendar, href: '/admin/content/outreaches' },
+        { id: 'content-all', label: 'All Content', icon: FileText, href: '/admin/content' },
         { id: 'content-outreach-reports', label: 'Outreach Reports', icon: FileText, href: '/admin/content/outreach-reports' },
         { id: 'content-testimonials', label: 'Testimonials', icon: MessageSquare, href: '/admin/content/testimonials' },
         { id: 'content-volunteers', label: 'Volunteers', icon: UserCheck, href: '/admin/content/volunteers' },
@@ -167,10 +164,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       label: 'Analytics',
       icon: TrendingUp,
       children: [
-        { id: 'analytics-overview', label: 'Overview', icon: BarChart3, href: '/admin/analytics' },
-        { id: 'analytics-donations', label: 'Donation Metrics', icon: Heart, href: '/admin/analytics/donations' },
-        { id: 'analytics-website', label: 'Website Traffic', icon: Globe, href: '/admin/analytics/website' },
-        { id: 'analytics-reports', label: 'Reports', icon: FileText, href: '/admin/analytics/reports' }
+        { id: 'analytics-overview', label: 'Donation Metrics', icon: BarChart3, href: '/admin/analytics' }
       ]
     },
     {
@@ -178,7 +172,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       label: 'Communications',
       icon: MessageSquare,
       children: [
-        { id: 'communications-messages', label: 'Messages', icon: MessageSquare, href: '/admin/communications/messages', badge: '12' },
+        { id: 'communications-messages', label: 'Messages', icon: MessageSquare, href: '/admin/communications/messages' },
         { id: 'communications-newsletter', label: 'Newsletter', icon: Bell, href: '/admin/communications/newsletter' },
         { id: 'communications-notifications', label: 'Notifications', icon: Bell, href: '/admin/communications/notifications' }
       ]
@@ -195,14 +189,26 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       icon: Settings,
       children: [
         { id: 'settings-general', label: 'General', icon: Settings, href: '/admin/settings' },
-        { id: 'settings-payment', label: 'Payment Gateway', icon: Wallet, href: '/admin/settings/payment' },
-        { id: 'settings-security', label: 'Security', icon: Shield, href: '/admin/settings/security' },
+        { id: 'settings-security', label: 'Account Security', icon: Shield, href: '/admin/settings/security' },
         { id: 'settings-cookie-compliance', label: 'Cookie Compliance', icon: Cookie, href: '/admin/cookie-compliance' },
-        { id: 'settings-integrations', label: 'Integrations', icon: Globe, href: '/admin/settings/integrations' },
         { id: 'settings-form-options', label: 'Form Options', icon: FormInput, href: '/admin/settings/form-options' }
       ]
     }
-  ];
+  ], []);
+
+  const searchableItems = useMemo(() => {
+    const flattened: Array<{ id: string; label: string; href: string }> = [];
+    const visit = (items: MenuItem[]) => items.forEach((item) => {
+      if (item.href) flattened.push({ id: item.id, label: item.label, href: item.href });
+      if (item.children) visit(item.children);
+    });
+    visit(menuItems);
+    return flattened;
+  }, [menuItems]);
+
+  const searchResults = searchQuery.trim()
+    ? searchableItems.filter((item) => item.label.toLowerCase().includes(searchQuery.trim().toLowerCase())).slice(0, 6)
+    : [];
 
   const toggleMenu = (menuId: string) => {
     setExpandedMenus(prev =>
@@ -256,7 +262,63 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         return newExpanded;
       });
     }
-  }, [router.pathname]);
+  }, [menuItems, router.pathname]);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+    setSearchQuery('');
+  }, [router.asPath]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const updateViewport = () => setIsDesktop(mediaQuery.matches);
+    updateViewport();
+    mediaQuery.addEventListener('change', updateViewport);
+    return () => mediaQuery.removeEventListener('change', updateViewport);
+  }, []);
+
+  useEffect(() => {
+    if (isDesktop) return;
+
+    if (!sidebarOpen) {
+      if (sidebarWasOpenRef.current) sidebarOpenerRef.current?.focus();
+      sidebarWasOpenRef.current = false;
+      return;
+    }
+
+    sidebarWasOpenRef.current = true;
+    const sidebar = sidebarRef.current;
+    const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusable = sidebar?.querySelectorAll<HTMLElement>(focusableSelector);
+    (focusable?.[0] ?? sidebar)?.focus();
+
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSidebarOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab' || !sidebar) return;
+
+      const elements = Array.from(sidebar.querySelectorAll<HTMLElement>(focusableSelector));
+      if (elements.length === 0) {
+        event.preventDefault();
+        sidebar.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', trapFocus);
+    return () => window.removeEventListener('keydown', trapFocus);
+  }, [isDesktop, sidebarOpen]);
 
   const renderMenuItem = (item: MenuItem, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
@@ -268,7 +330,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
       return (
         <div key={item.id} className="mb-1">
           <button
+            type="button"
             onClick={() => toggleMenu(item.id)}
+            aria-expanded={isExpanded || Boolean(hasActiveChild)}
+            aria-controls={`admin-menu-${item.id}`}
             className={clsx(
               'w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-colors',
               level === 0 ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/50',
@@ -292,7 +357,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
           </button>
 
           {(isExpanded || hasActiveChild) && item.children && (
-            <div className="mt-1 space-y-1">
+            <div id={`admin-menu-${item.id}`} className="mt-1 space-y-1">
               {item.children.map(child => renderMenuItem(child, level + 1))}
             </div>
           )}
@@ -302,8 +367,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
 
     return (
       <div key={item.id} className="mb-1">
-        <a
-          href={item.href}
+        <Link
+          href={item.href || '/admin'}
           className={clsx(
             'w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-colors block',
             isActive
@@ -323,7 +388,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               </span>
             )}
           </div>
-        </a>
+        </Link>
       </div>
     );
   };
@@ -331,8 +396,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   return (
     <ProtectedRoute requireAdmin={true}>
     <div className="flex h-screen bg-gray-900">
+      <a href="#admin-main" className="sr-only z-[70] rounded-lg bg-white px-4 py-2 text-gray-900 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to admin content</a>
       {/* Sidebar */}
-      <div className={clsx(
+      <aside
+        ref={sidebarRef}
+        tabIndex={-1}
+        aria-label="Admin navigation"
+        aria-modal={!isDesktop && sidebarOpen ? 'true' : undefined}
+        aria-hidden={!isDesktop && !sidebarOpen}
+        inert={!isDesktop && !sidebarOpen ? true : undefined}
+        role={!isDesktop && sidebarOpen ? 'dialog' : undefined}
+        className={clsx(
         'fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 flex flex-col transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
@@ -347,20 +421,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
                 className="w-full h-full object-contain"
               />
             </div>
-            <h1 className="text-lg font-semibold text-white font-display">
+            <span className="text-lg font-semibold text-white font-display">
               Admin Panel
-            </h1>
+            </span>
           </div>
           <button
+            type="button"
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-400 hover:text-white"
+            aria-label="Close admin navigation"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white lg:hidden"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         <div className="flex-1 px-4 py-6 overflow-y-auto bg-gray-800">
-          <nav className="space-y-2">
+          <nav className="space-y-2" aria-label="Primary admin sections">
             {menuItems.map(item => renderMenuItem(item))}
           </nav>
         </div>
@@ -381,15 +457,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
               <p className="text-xs text-gray-400">Administrator</p>
             </div>
             <button
+              type="button"
               onClick={handleSignOut}
-              className="text-gray-400 hover:text-white"
+              aria-label="Sign out"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
               title="Sign Out"
             >
               <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -398,8 +476,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <button
+                ref={sidebarOpenerRef}
+                type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-400 hover:text-white mr-4"
+                aria-label="Open admin navigation"
+                aria-expanded={sidebarOpen}
+                className="mr-3 flex h-11 w-11 items-center justify-center rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white lg:hidden"
               >
                 <Menu className="w-6 h-6" />
               </button>
@@ -411,12 +493,35 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
             <div className="flex items-center space-x-4">
               {/* Search */}
               <div className="relative hidden md:block">
+                <label htmlFor="admin-search" className="sr-only">Search admin pages</label>
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search..."
+                  id="admin-search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && searchResults[0]) router.push(searchResults[0].href);
+                    if (event.key === 'Escape') setSearchQuery('');
+                  }}
+                  placeholder="Search admin pages"
+                  autoComplete="off"
+                  role="combobox"
+                  aria-expanded={searchResults.length > 0}
+                  aria-autocomplete="list"
+                  aria-activedescendant={searchResults[0] ? `admin-search-option-${searchResults[0].id}` : undefined}
+                  aria-controls="admin-search-results"
                   className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                 />
+                {searchResults.length > 0 && (
+                  <div id="admin-search-results" className="absolute right-0 top-full z-30 mt-2 w-72 overflow-hidden rounded-xl border border-gray-600 bg-gray-800 py-2 shadow-xl" role="listbox">
+                    {searchResults.map((result) => (
+                      <Link key={result.id} id={`admin-search-option-${result.id}`} href={result.href} role="option" aria-selected={result.id === searchResults[0].id} className="block px-4 py-3 text-sm text-gray-200 hover:bg-gray-700 hover:text-white">
+                        {result.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Admin Dashboard uses permanent dark mode */}
@@ -437,15 +542,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-900 p-6">
+        <main id="admin-main" className="flex-1 overflow-y-auto bg-gray-900 p-4 sm:p-6" tabIndex={-1}>
           {children}
         </main>
       </div>
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+        <button
+          type="button"
+          aria-label="Close admin navigation"
+          className="fixed inset-0 z-40 bg-black/70 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

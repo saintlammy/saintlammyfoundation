@@ -1,29 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { partnershipService } from '@/lib/partnershipService';
+import { requireAdmin, type AdminApiRequest } from '@/lib/serverAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
+export default async function handler(req: AdminApiRequest, res: NextApiResponse) {
   try {
     if (req.method === 'GET') {
       return await getTeamMembers(req, res);
     } else if (req.method === 'POST') {
+      if (!(await requireAdmin(req, res))) return;
       return await createTeamMember(req, res);
     } else if (req.method === 'PUT') {
+      if (!(await requireAdmin(req, res))) return;
       return await updateTeamMember(req, res);
     } else if (req.method === 'DELETE') {
+      if (!(await requireAdmin(req, res))) return;
       return await deleteTeamMember(req, res);
     } else {
       res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
