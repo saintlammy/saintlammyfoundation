@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
-import { isLegacyPeopleStockImage, localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
+import { isLegacyPeopleStockImage, localizeNgoImage, ngoPortraitForName, NGO_IMAGES } from '@/lib/ngoImages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -62,26 +62,31 @@ async function getTestimonials(req: NextApiRequest, res: NextApiResponse) {
 
     // Transform data to match component interface
     // Testimonial details are stored in story_details JSONB field
-    const transformedData = (data as any).map((item: any) => ({
-      id: item.id,
-      name: item.story_details?.author_name || item.title || 'Anonymous',
-      role: item.story_details?.author_role || item.excerpt || 'Beneficiary',
-      content: item.content,
-      rating: item.story_details?.rating || 5,
-      image: isLegacyPeopleStockImage(item.featured_image)
-        ? (item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow)
-        : localizeNgoImage(
-            item.featured_image,
-            item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow,
-          ) || (item.story_details?.gender === 'male' ? NGO_IMAGES.volunteer : NGO_IMAGES.widow),
-      gender: item.story_details?.gender || null,
-      program: item.story_details?.program || 'General',
-      date: item.publish_date || item.created_at,
-      status: item.status,
-      is_featured: item.story_details?.is_featured || false,
-      created_at: item.created_at,
-      updated_at: item.updated_at
-    }));
+    const transformedData = (data as any).map((item: any) => {
+      const name = item.story_details?.author_name || item.title || 'Anonymous';
+      const genderFallback = item.story_details?.gender === 'male'
+        ? NGO_IMAGES.volunteer
+        : NGO_IMAGES.widow;
+      const localizedImage = isLegacyPeopleStockImage(item.featured_image)
+        ? genderFallback
+        : localizeNgoImage(item.featured_image, genderFallback) || genderFallback;
+
+      return {
+        id: item.id,
+        name,
+        role: item.story_details?.author_role || item.excerpt || 'Beneficiary',
+        content: item.content,
+        rating: item.story_details?.rating || 5,
+        image: ngoPortraitForName(name, localizedImage as string),
+        gender: item.story_details?.gender || null,
+        program: item.story_details?.program || 'General',
+        date: item.publish_date || item.created_at,
+        status: item.status,
+        is_featured: item.story_details?.is_featured || false,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+      };
+    });
 
     res.status(200).json(transformedData);
   } catch (error) {

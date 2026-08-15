@@ -10,7 +10,22 @@ export const NGO_IMAGES = {
   widow: '/images/nigerian-ngo/portrait-widow.webp',
   volunteer: '/images/nigerian-ngo/portrait-volunteer.webp',
   doctor: '/images/nigerian-ngo/portrait-doctor.webp',
+  emmanuel: '/images/nigerian-ngo/people/emmanuel.webp',
+  grace: '/images/nigerian-ngo/people/grace.webp',
+  amara: '/images/nigerian-ngo/people/amara.webp',
+  mrsBayo: '/images/nigerian-ngo/people/mrs-bayo.webp',
+  mrsRose: '/images/nigerian-ngo/people/mrs-rose.webp',
 } as const;
+
+const namedPortraits: Record<string, string> = {
+  emmanuel: NGO_IMAGES.emmanuel,
+  grace: NGO_IMAGES.grace,
+  amara: NGO_IMAGES.amara,
+  'mrs bayo': NGO_IMAGES.mrsBayo,
+  'mrs. bayo': NGO_IMAGES.mrsBayo,
+  'mrs rose': NGO_IMAGES.mrsRose,
+  'mrs. rose': NGO_IMAGES.mrsRose,
+};
 
 const legacyStockImageMap: Record<string, string> = {
   '1544717301-9cdcb1f5940f': NGO_IMAGES.education,
@@ -66,6 +81,11 @@ export function ngoImageForCategory(category?: string): string {
   if (normalized.includes('volunteer')) return NGO_IMAGES.volunteers;
   if (normalized.includes('livelihood') || normalized.includes('agric')) return NGO_IMAGES.livelihoods;
   return NGO_IMAGES.community;
+}
+
+export function ngoPortraitForName(name: unknown, fallback: string): string {
+  if (typeof name !== 'string') return fallback;
+  return namedPortraits[name.trim().toLowerCase()] || fallback;
 }
 
 /**
