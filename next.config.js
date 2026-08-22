@@ -11,6 +11,9 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
+  // Keep sanitize-html and its parser dependencies intact in Netlify's
+  // generated serverless functions instead of flattening them with Turbopack.
+  serverExternalPackages: ['sanitize-html'],
   images: {
     // Netlify's deployed /_next/image handler currently rejects valid local
     // assets. These files are already compressed WebP/JPEG/SVG assets, so

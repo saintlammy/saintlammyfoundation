@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
 import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
-import { sanitizeRichHtml } from '@/lib/sanitizeRichHtml';
 
 const NEWS_CATEGORIES = new Set(['outreach', 'achievement', 'partnership', 'update']);
 
@@ -19,6 +18,15 @@ const normalizeStringArray = (value: unknown): string[] => {
     .map((item) => item.trim())
     .filter(Boolean)
     .slice(0, 12);
+};
+
+// Keep the sanitizer out of the public GET bundle path. Netlify loads API
+// modules before invoking their handlers, and sanitize-html's transitive
+// parser dependencies can otherwise prevent the route from starting at all.
+// CMS writes still load and apply the sanitizer before content is persisted.
+const sanitizeNewsWrite = async (value: unknown): Promise<string> => {
+  const { sanitizeRichHtml } = await import('@/lib/sanitizeRichHtml');
+  return sanitizeRichHtml(value);
 };
 
 const buildStoryDetails = (newsData: any, existing: Record<string, unknown> = {}) => {
@@ -103,7 +111,7 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
         slug: item.slug || item.id,
         title: item.title,
         excerpt: item.excerpt || '',
-        content: sanitizeRichHtml(item.content || ''),
+        content: typeof item.content === 'string' ? item.content : '',
         date: item.publish_date || item.created_at,
         category: details.category || 'update',
         image: localizeNgoImage(item.featured_image, NGO_IMAGES.community) || NGO_IMAGES.community,
@@ -139,7 +147,7 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
       title,
       slug,
       excerpt: typeof newsData.excerpt === 'string' ? newsData.excerpt.trim() : '',
-      content: sanitizeRichHtml(String(newsData.content)),
+      content: await sanitizeNewsWrite(String(newsData.content)),
       type: 'news',
       status: newsData.status || 'draft',
       featured_image: newsData.featured_image || newsData.image || NGO_IMAGES.community,
@@ -228,7 +236,7 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
       updateData.slug = slugify(newsData.slug);
     }
     if (typeof newsData.excerpt === 'string') updateData.excerpt = newsData.excerpt.trim();
-    if (typeof newsData.content === 'string') updateData.content = sanitizeRichHtml(newsData.content);
+    if (typeof newsData.content === 'string') updateData.content = await sanitizeNewsWrite(newsData.content);
     if (typeof newsData.status === 'string') updateData.status = newsData.status;
     if (typeof newsData.featured_image === 'string' || typeof newsData.image === 'string') {
       updateData.featured_image = newsData.featured_image || newsData.image;

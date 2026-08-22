@@ -14,7 +14,7 @@
 # Scheduled Functions (Background tasks)
 # Crypto payment monitoring - runs every 5 minutes
 [functions]
-  external_node_modules = ["@netlify/functions"]
+  external_node_modules = ["@netlify/functions", "sanitize-html"]
   node_bundler = "esbuild"
 
 [functions."scheduled-crypto-monitor"]
