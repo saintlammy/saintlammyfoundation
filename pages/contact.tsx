@@ -1,9 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare, User, Globe } from 'lucide-react';
-import SEOHead from '@/components/SEOHead';
-import { pageSEO } from '@/lib/seo';
+import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { GetStaticProps } from 'next';
+import {
+  RiArrowDownLine,
+  RiArrowRightUpLine,
+  RiCheckboxCircleLine,
+  RiGlobalLine,
+  RiMailLine,
+  RiMapPin2Line,
+  RiPhoneLine,
+  RiQuestionAnswerLine,
+  RiSendPlaneLine,
+  RiTimeLine,
+} from 'react-icons/ri';
+import SEOHead from '@/components/SEOHead';
+import AboutHero from '@/components/about/AboutHero';
+import { ActionLink } from '@/components/home/HomePrimitives';
+import { pageSEO } from '@/lib/seo';
 
 interface ContactInfoItem {
   icon: string;
@@ -25,324 +38,277 @@ interface ContactProps {
   officeHours: OfficeHours | null;
 }
 
-// Helper function to map icon names to components
-const getIconComponent = (iconName: string) => {
-  const iconMap: { [key: string]: any } = {
-    Mail,
-    Phone,
-    MapPin,
-    Globe,
-    Clock,
-    Send,
-    MessageSquare,
-    User
-  };
-  return iconMap[iconName] || Mail;
+interface InquiryType {
+  id: string;
+  title: string;
+}
+
+const fallbackContactInfo: ContactInfoItem[] = [
+  {
+    icon: 'Mail',
+    title: 'Email',
+    details: 'info@saintlammyfoundation.org',
+    description: 'For general, donor and programme enquiries.',
+    link: 'mailto:info@saintlammyfoundation.org',
+  },
+  {
+    icon: 'Phone',
+    title: 'Phone',
+    details: '+234 706 307 6704',
+    description: 'Call during the listed office hours.',
+    link: 'tel:+2347063076704',
+  },
+  {
+    icon: 'MapPin',
+    title: 'Location',
+    details: 'Lagos, Nigeria',
+    description: 'Visits and meetings are arranged in advance.',
+    link: 'https://maps.google.com/?q=Lagos,Nigeria',
+  },
+  {
+    icon: 'Globe',
+    title: 'Social',
+    details: '@saintlammyfoundation',
+    description: 'Follow current outreach and foundation updates.',
+    link: 'https://www.instagram.com/saintlammyfoundation/',
+  },
+];
+
+const fallbackOfficeHours: OfficeHours = {
+  weekday: '9:00 AM to 5:00 PM (WAT)',
+  saturday: '10:00 AM to 2:00 PM (WAT)',
+  sunday: 'Closed',
+  note: 'Messages sent outside these hours will be reviewed when the team is next available.',
 };
 
+const fallbackInquiryTypes: InquiryType[] = [
+  { id: 'general', title: 'General enquiry' },
+  { id: 'partnership', title: 'Partnership' },
+  { id: 'volunteer', title: 'Volunteering' },
+  { id: 'donation', title: 'Donation support' },
+];
+
+const iconMap = {
+  Mail: RiMailLine,
+  Phone: RiPhoneLine,
+  MapPin: RiMapPin2Line,
+  Globe: RiGlobalLine,
+};
+
+const emptyForm = {
+  name: '',
+  email: '',
+  phone: '',
+  inquiryType: '',
+  subject: '',
+  message: '',
+};
+
+const faqs = [
+  {
+    question: 'How can I make a donation?',
+    answer: 'Use the Donate page to choose from the currently available payment methods. The donation form will guide you through the details for each method.',
+  },
+  {
+    question: 'Can I volunteer with the foundation?',
+    answer: 'Yes. The Volunteer page lists current roles and includes a general application for people whose skills do not match a listed opening.',
+  },
+  {
+    question: 'Where can I review your reporting?',
+    answer: 'Our Transparency page brings together foundation reporting, governance information and records that help supporters understand how the work is managed.',
+  },
+  {
+    question: 'Can an organisation propose a partnership?',
+    answer: 'Yes. Choose Partnership in the form and tell us what your organisation would like to contribute or build with the foundation.',
+  },
+];
+
 const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHours: apiOfficeHours }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    inquiryType: ''
-  });
-
-  const [inquiryTypes, setInquiryTypes] = useState<Array<{ id: string; title: string; value?: string }>>([]);
+  const [formData, setFormData] = useState(emptyForm);
+  const [inquiryTypes, setInquiryTypes] = useState<InquiryType[]>([]);
   const [loadingInquiryTypes, setLoadingInquiryTypes] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would integrate with your email service
-    console.log('Contact form submitted:', formData);
-    setIsSubmitted(true);
+  const contactInfo = useMemo(
+    () => (apiContactInfo.length > 0 ? apiContactInfo : fallbackContactInfo),
+    [apiContactInfo],
+  );
+  const officeHours = apiOfficeHours || fallbackOfficeHours;
 
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        inquiryType: 'general'
-      });
-    }, 3000);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  // Use API data or fallback to defaults
-  const contactInfo = apiContactInfo.length > 0 ? apiContactInfo : [
-    {
-      icon: 'Mail',
-      title: 'Email Us',
-      details: 'hello@saintlammyfoundation.org',
-      description: 'Send us an email and we\'ll respond within 24 hours',
-      link: 'mailto:hello@saintlammyfoundation.org'
-    },
-    {
-      icon: 'Phone',
-      title: 'Call Us',
-      details: '+234 706 307 6704',
-      description: 'Available Monday to Friday, 9AM - 5PM WAT',
-      link: 'tel:+234XXXXXXXXX'
-    },
-    {
-      icon: 'MapPin',
-      title: 'Visit Us',
-      details: 'Lagos, Nigeria',
-      description: 'Schedule an appointment to visit our office',
-      link: '#'
-    },
-    {
-      icon: 'Globe',
-      title: 'Social Media',
-      details: '@SaintlammyFoundation',
-      description: 'Follow us for updates and impact stories',
-      link: '#'
-    }
-  ];
-
-  const officeHours = apiOfficeHours || {
-    weekday: '9:00 AM - 5:00 PM (WAT)',
-    saturday: '10:00 AM - 2:00 PM (WAT)',
-    sunday: 'Closed',
-    note: 'Emergency inquiries will be responded to within 24 hours regardless of office hours.'
-  };
-
-  // Fetch inquiry types from API
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchInquiryTypes = async () => {
       try {
-        const response = await fetch('/api/public/contact-inquiry-types');
-        if (response.ok) {
-          const types = await response.json();
-          setInquiryTypes(types);
-          // Set default inquiry type to first option
-          if (types.length > 0 && !formData.inquiryType) {
-            setFormData(prev => ({ ...prev, inquiryType: types[0].id }));
-          }
-        } else {
-          console.error('Failed to fetch inquiry types');
-        }
+        const response = await fetch('/api/public/contact-inquiry-types', { signal: controller.signal });
+        if (!response.ok) throw new Error('Inquiry types could not be loaded.');
+        const types = await response.json();
+        const availableTypes = Array.isArray(types) && types.length > 0 ? types : fallbackInquiryTypes;
+        setInquiryTypes(availableTypes);
+        setFormData((current) => ({ ...current, inquiryType: current.inquiryType || availableTypes[0].id }));
       } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
         console.error('Error fetching inquiry types:', error);
+        setInquiryTypes(fallbackInquiryTypes);
+        setFormData((current) => ({ ...current, inquiryType: current.inquiryType || fallbackInquiryTypes[0].id }));
       } finally {
-        setLoadingInquiryTypes(false);
+        if (!controller.signal.aborted) setLoadingInquiryTypes(false);
       }
     };
 
     fetchInquiryTypes();
+    return () => controller.abort();
   }, []);
 
-  const faqs = [
-    {
-      question: 'How can I make a donation?',
-      answer: 'You can donate through our secure online platform using traditional payment methods or cryptocurrency. Visit our donate page for all available options.'
-    },
-    {
-      question: 'Can I volunteer with your organization?',
-      answer: 'Yes! We welcome volunteers. Please fill out our volunteer application form, and our team will contact you with available opportunities that match your skills and interests.'
-    },
-    {
-      question: 'How do you ensure transparency?',
-      answer: 'We provide detailed financial reports, donation tracking, and regular updates on our programs. All major donors receive quarterly impact reports showing exactly how their contributions are being used.'
-    },
-    {
-      question: 'Do you accept international donations?',
-      answer: 'Yes, we accept donations from anywhere in the world through cryptocurrency and international wire transfers. Contact us for specific instructions for your country.'
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const inquiryTitle = inquiryTypes.find((type) => type.id === formData.inquiryType)?.title;
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      subject: inquiryTitle ? `${inquiryTitle}: ${formData.subject}` : formData.subject,
+      message: formData.message,
+    };
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        const details = Array.isArray(result.details) ? result.details.join(' ') : '';
+        throw new Error(details || result.message || result.error || 'Your message could not be sent.');
+      }
+      setIsSubmitted(true);
+      setFormData({ ...emptyForm, inquiryType: inquiryTypes[0]?.id || 'general' });
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Your message could not be sent. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-  ];
+  };
 
   return (
     <>
       <SEOHead config={pageSEO.contact} />
+      <main className="editorial-page contact-editorial-page">
+        <AboutHero
+          eyebrow="Contact the foundation"
+          title="Start a useful conversation."
+          description="Talk with our team about support, volunteering, partnerships or foundation programmes."
+          image="/images/editorial/contact-community-conversation.webp"
+          imageAlt="Women and Saintlammy Foundation team members speaking together during a Lagos community outreach"
+          variant="story"
+        >
+          <a href="#contact-form" className="home-action home-action-primary group">
+            <span>Send a message</span>
+            <span className="home-action-island" aria-hidden="true"><RiArrowDownLine /></span>
+          </a>
+          <ActionLink href="/partner" tone="secondary">Discuss a partnership</ActionLink>
+        </AboutHero>
 
-        {/* Hero Section */}
-        <section className="py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-              Get In Touch
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-              We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-            </p>
-          </div>
-        </section>
-
-        {/* Contact Information */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Contact Information
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Multiple ways to reach us - choose what works best for you
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {contactInfo.map((info, index) => {
-                const IconComponent = getIconComponent(info.icon);
+        <section className="contact-channels" aria-labelledby="contact-channels-title">
+          <div className="editorial-container contact-channels-grid">
+            <header>
+              <p className="editorial-eyebrow">Direct channels</p>
+              <h2 id="contact-channels-title">Reach the right place.</h2>
+              <p>Choose a direct channel or use the form to give the team more context.</p>
+            </header>
+            <div className="contact-channel-list">
+              {contactInfo.map((item) => {
+                const Icon = iconMap[item.icon as keyof typeof iconMap] || RiMailLine;
+                const external = item.link.startsWith('http');
                 return (
-                  <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none text-center group">
-                    <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                      <IconComponent className="w-6 h-6 text-accent-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{info.title}</h3>
-                    <p className="text-accent-400 font-medium text-sm mb-2">{info.details}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-xs font-light mb-4">{info.description}</p>
-                    <a
-                      href={info.link}
-                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors"
-                    >
-                      Contact Now
-                      <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </a>
-                  </div>
+                  <a key={`${item.title}-${item.details}`} href={item.link} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>
+                    <span className="contact-channel-icon"><Icon aria-hidden="true" /></span>
+                    <span><strong>{item.title}</strong><small>{item.description}</small></span>
+                    <span className="contact-channel-detail">{item.details}</span>
+                    <RiArrowRightUpLine aria-hidden="true" />
+                  </a>
                 );
               })}
             </div>
           </div>
         </section>
 
-        {/* Contact Form */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Send Us a Message
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                Fill out the form below and we'll get back to you within 24 hours
-              </p>
-            </div>
+        <section id="contact-form" className="contact-form-section" aria-labelledby="contact-form-title">
+          <div className="editorial-container contact-form-grid">
+            <aside className="contact-form-intro">
+              <p className="editorial-eyebrow">Send a message</p>
+              <h2 id="contact-form-title">Give us the context.</h2>
+              <p>Tell us what you need, who you represent and the best way to continue the conversation.</p>
+              <div className="contact-hours">
+                <RiTimeLine aria-hidden="true" />
+                <div>
+                  <h3>Office hours</h3>
+                  <dl>
+                    <div><dt>Monday to Friday</dt><dd>{officeHours.weekday}</dd></div>
+                    <div><dt>Saturday</dt><dd>{officeHours.saturday}</dd></div>
+                    <div><dt>Sunday</dt><dd>{officeHours.sunday}</dd></div>
+                  </dl>
+                  <p>{officeHours.note}</p>
+                </div>
+              </div>
+            </aside>
 
-            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+            <div className="contact-form-shell">
               {isSubmitted ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Send className="w-8 h-8 text-green-400" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-green-400 mb-2 font-display">
-                    Message Sent!
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Thank you for reaching out. We'll respond to your message within 24 hours.
-                  </p>
+                <div className="contact-success" role="status">
+                  <RiCheckboxCircleLine aria-hidden="true" />
+                  <h3>Your message has been received.</h3>
+                  <p>Thank you for contacting Saintlammy Foundation. The team will review your message and respond when appropriate.</p>
+                  <button type="button" onClick={() => setIsSubmitted(false)}>Send another message</button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
-                        placeholder="Enter your email address"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="inquiryType" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                        Inquiry Type
-                      </label>
-                      <select
-                        id="inquiryType"
-                        name="inquiryType"
-                        value={formData.inquiryType}
-                        onChange={handleChange}
-                        disabled={loadingInquiryTypes}
-                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans disabled:opacity-50"
-                      >
-                        {loadingInquiryTypes ? (
-                          <option value="">Loading inquiry types...</option>
-                        ) : inquiryTypes.length === 0 ? (
-                          <option value="">No inquiry types available</option>
-                        ) : (
-                          inquiryTypes.map((type) => (
-                            <option key={type.id} value={type.id}>
-                              {type.title}
-                            </option>
-                          ))
-                        )}
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                        Subject *
-                      </label>
-                      <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
-                        placeholder="Brief subject of your message"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                      Message *
+                <form onSubmit={handleSubmit} className="contact-form">
+                  <div className="contact-form-row">
+                    <label>
+                      <span>Full name <em>*</em></span>
+                      <input name="name" value={formData.name} onChange={handleChange} autoComplete="name" placeholder="Your full name" required />
                     </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      required
-                      rows={6}
-                      className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans resize-none"
-                      placeholder="Please provide details about your inquiry..."
-                    />
+                    <label>
+                      <span>Email address <em>*</em></span>
+                      <input name="email" type="email" value={formData.email} onChange={handleChange} autoComplete="email" placeholder="you@example.com" required />
+                    </label>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl flex items-center justify-center font-sans"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    Send Message
+                  <div className="contact-form-row">
+                    <label>
+                      <span>Phone number</span>
+                      <input name="phone" type="tel" value={formData.phone} onChange={handleChange} autoComplete="tel" placeholder="+234…" />
+                    </label>
+                    <label>
+                      <span>Enquiry type</span>
+                      <select name="inquiryType" value={formData.inquiryType} onChange={handleChange} disabled={loadingInquiryTypes}>
+                        {loadingInquiryTypes && <option value="">Loading options…</option>}
+                        {inquiryTypes.map((type) => <option key={type.id} value={type.id}>{type.title}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                  <label>
+                    <span>Subject <em>*</em></span>
+                    <input name="subject" value={formData.subject} onChange={handleChange} placeholder="A short summary of your enquiry" required />
+                  </label>
+                  <label>
+                    <span>Message <em>*</em></span>
+                    <textarea name="message" value={formData.message} onChange={handleChange} rows={7} minLength={10} placeholder="Share the details that will help our team understand your enquiry." required />
+                  </label>
+                  {submitError && <div className="contact-form-error" role="alert"><strong>Message not sent.</strong><span>{submitError}</span></div>}
+                  <button type="submit" disabled={isSubmitting}>
+                    <span>{isSubmitting ? 'Sending…' : 'Send message'}</span>
+                    <RiSendPlaneLine aria-hidden="true" />
                   </button>
                 </form>
               )}
@@ -350,101 +316,49 @@ const Contact: React.FC<ContactProps> = ({ contactInfo: apiContactInfo, officeHo
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                Quick answers to common questions
-              </p>
-            </div>
-
-            <div className="space-y-6">
+        <section className="contact-faq" aria-labelledby="contact-faq-title">
+          <div className="editorial-container contact-faq-grid">
+            <header>
+              <RiQuestionAnswerLine aria-hidden="true" />
+              <p className="editorial-eyebrow">Before you write</p>
+              <h2 id="contact-faq-title">A few useful answers.</h2>
+              <p>These links may get you to the right information faster.</p>
+              <div><Link href="/donate">Donate</Link><Link href="/volunteer">Volunteer</Link><Link href="/transparency">Transparency</Link></div>
+            </header>
+            <div className="contact-faq-list">
               {faqs.map((faq, index) => (
-                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">{faq.question}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{faq.answer}</p>
-                </div>
+                <details key={faq.question} open={index === 0}>
+                  <summary>{faq.question}<span aria-hidden="true">+</span></summary>
+                  <p>{faq.answer}</p>
+                </details>
               ))}
             </div>
-
-            <div className="text-center mt-12">
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Can't find what you're looking for?
-              </p>
-              <button
-                onClick={() => {
-                  const subjectField = document.querySelector('#subject') as HTMLInputElement;
-                  const messageField = document.querySelector('#message') as HTMLTextAreaElement;
-                  if (subjectField) subjectField.value = 'General Question';
-                  if (messageField) messageField.focus();
-                  window.scrollTo({ top: document.querySelector('form')?.offsetTop || 0, behavior: 'smooth' });
-                }}
-                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-4 sm:px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans"
-              >
-                Ask a Question
-              </button>
-            </div>
           </div>
         </section>
-
-        {/* Office Hours */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700 text-center">
-              <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Clock className="w-8 h-8 text-accent-400" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
-                Office Hours
-              </h2>
-              <div className="space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-                <p><strong>Monday - Friday:</strong> {officeHours.weekday}</p>
-                <p><strong>Saturday:</strong> {officeHours.saturday}</p>
-                <p><strong>Sunday:</strong> {officeHours.sunday}</p>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-light">
-                {officeHours.note}
-              </p>
-            </div>
-          </div>
-        </section>
-
+      </main>
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<ContactProps> = async () => {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
     const [contactInfoRes, officeHoursRes] = await Promise.all([
       fetch(`${baseUrl}/api/page-content?slug=contact&section=info`),
-      fetch(`${baseUrl}/api/page-content?slug=contact&section=office-hours`)
+      fetch(`${baseUrl}/api/page-content?slug=contact&section=office-hours`),
     ]);
-
     const contactInfoData = contactInfoRes.ok ? await contactInfoRes.json() : [];
     const officeHoursData = officeHoursRes.ok ? await officeHoursRes.json() : [];
-
     return {
       props: {
-        contactInfo: contactInfoData.map((item: any) => item.data),
-        officeHours: officeHoursData.length > 0 ? officeHoursData[0].data : null
+        contactInfo: Array.isArray(contactInfoData) ? contactInfoData.map((item: { data: ContactInfoItem }) => item.data).filter(Boolean) : [],
+        officeHours: Array.isArray(officeHoursData) && officeHoursData.length > 0 ? officeHoursData[0].data : null,
       },
-      revalidate: 3600
+      revalidate: 3600,
     };
   } catch (error) {
-    console.error('Error fetching contact data:', error);
-    return {
-      props: {
-        contactInfo: [],
-        officeHours: null
-      },
-      revalidate: 3600
-    };
+    console.error('Error fetching contact page content:', error);
+    return { props: { contactInfo: [], officeHours: null }, revalidate: 3600 };
   }
 };
 

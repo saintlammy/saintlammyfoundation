@@ -61,9 +61,9 @@ export const pageSEO = {
 
   donate: generateSEO({
     title: "Donate - Support Widows, Orphans & Vulnerable Communities",
-    description: "Make a difference today. Support Saintlammy Foundation's mission to empower widows, orphans, and vulnerable families across Nigeria. Every donation creates lasting impact.",
+    description: "Give securely to support Saintlammy Foundation's food relief, orphanage-home support, open medical check-ups, and community outreaches across Nigeria.",
     url: "https://saintlammyfoundation.org/donate",
-    keywords: "donate Nigeria charity, support orphans, widow empowerment donation, community development funding"
+    keywords: "donate Nigeria charity, support orphans, widow relief donation, vulnerable families Nigeria, community outreach funding"
   }),
 
   volunteer: generateSEO({
@@ -81,8 +81,8 @@ export const pageSEO = {
   }),
 
   news: generateSEO({
-    title: "News & Updates - Latest from Our Communities",
-    description: "Stay updated with the latest news from Saintlammy Foundation. Read about our recent outreaches, success stories, and impact in Nigerian communities.",
+    title: "News & Updates - Verified Foundation Reports",
+    description: "Read verified Saintlammy Foundation outreach notes, programme milestones, and community updates from our work across Nigeria.",
     url: "https://saintlammyfoundation.org/news",
     keywords: "saintlammy foundation news, Nigeria charity updates, community impact stories, outreach programs"
   }),

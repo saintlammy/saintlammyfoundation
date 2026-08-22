@@ -2,6 +2,39 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/serverAuth';
 import { localizeNgoImage, NGO_IMAGES } from '@/lib/ngoImages';
+import { sanitizeRichHtml } from '@/lib/sanitizeRichHtml';
+
+const NEWS_CATEGORIES = new Set(['outreach', 'achievement', 'partnership', 'update']);
+
+const slugify = (value: string) => value
+  .toLowerCase()
+  .trim()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/(^-|-$)/g, '');
+
+const normalizeStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 12);
+};
+
+const buildStoryDetails = (newsData: any, existing: Record<string, unknown> = {}) => {
+  const metadata = newsData?.metadata || newsData?.story_details || newsData?.news_details || {};
+  const requestedCategory = metadata.category || newsData?.category || existing.category || 'update';
+  const category = NEWS_CATEGORIES.has(requestedCategory) ? requestedCategory : 'update';
+
+  return {
+    ...existing,
+    category,
+    read_time: metadata.read_time || metadata.readTime || newsData?.readTime || existing.read_time || '3 min read',
+    author: metadata.author || newsData?.author || existing.author || 'Saintlammy Foundation Team',
+    tags: normalizeStringArray(metadata.tags || newsData?.tags || existing.tags),
+    featured: Boolean(metadata.featured ?? newsData?.featured ?? existing.featured ?? false),
+  };
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -60,16 +93,27 @@ async function getNews(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Transform data to match component interface
-    const transformedData = (data as any).map((item: any) => ({
-      id: item.id,
-      title: item.title,
-      excerpt: item.excerpt,
-      date: item.publish_date || item.created_at,
-      category: item.news_details?.category || 'update',
-      image: localizeNgoImage(item.featured_image, NGO_IMAGES.community) || NGO_IMAGES.community,
-      readTime: item.news_details?.read_time || '3 min read',
-      slug: item.slug || item.id
-    }));
+    const transformedData = (data as any).map((item: any) => {
+      // `story_details` is the metadata column that exists in the content table.
+      // Keep the legacy lookup so older records remain readable if any exist.
+      const details = item.story_details || item.news_details || {};
+
+      return {
+        id: item.id,
+        slug: item.slug || item.id,
+        title: item.title,
+        excerpt: item.excerpt || '',
+        content: sanitizeRichHtml(item.content || ''),
+        date: item.publish_date || item.created_at,
+        category: details.category || 'update',
+        image: localizeNgoImage(item.featured_image, NGO_IMAGES.community) || NGO_IMAGES.community,
+        readTime: details.read_time || details.readTime || '3 min read',
+        author: details.author || item.author || 'Saintlammy Foundation Team',
+        tags: normalizeStringArray(details.tags),
+        featured: Boolean(details.featured || item.featured),
+        status: item.status,
+      };
+    });
 
     res.status(200).json(transformedData);
   } catch (error) {
@@ -86,18 +130,25 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    const slug = newsData.title.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    const title = String(newsData.title).trim();
+    const slug = slugify(newsData.slug || title);
+    const now = new Date().toISOString();
 
     const newNews = {
       id: newsData.id || `news-${Date.now()}`,
-      ...newsData,
+      title,
       slug,
+      excerpt: typeof newsData.excerpt === 'string' ? newsData.excerpt.trim() : '',
+      content: sanitizeRichHtml(String(newsData.content)),
       type: 'news',
       status: newsData.status || 'draft',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      featured_image: newsData.featured_image || newsData.image || NGO_IMAGES.community,
+      publish_date: newsData.publish_date || newsData.date || now,
+      story_details: buildStoryDetails(newsData),
+      meta_description: newsData.meta_description || newsData.excerpt || null,
+      meta_keywords: newsData.meta_keywords || null,
+      created_at: now,
+      updated_at: now,
     };
 
     // Use admin client if available (bypasses RLS), otherwise try regular client
@@ -139,19 +190,11 @@ async function createNews(req: NextApiRequest, res: NextApiResponse) {
 async function updateNews(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { id } = req.query;
-    const updateData = req.body;
+    const newsData = req.body;
 
     if (!id) {
       return res.status(400).json({ error: 'News ID is required' });
     }
-
-    if (updateData.title) {
-      updateData.slug = updateData.title.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-    }
-
-    updateData.updated_at = new Date().toISOString();
 
     // Use admin client if available (bypasses RLS), otherwise try regular client
     const dbClient = supabaseAdmin || supabase;
@@ -161,6 +204,49 @@ async function updateNews(req: NextApiRequest, res: NextApiResponse) {
         error: 'Database not configured',
         message: 'Could not update news.'
       });
+    }
+
+    const { data: currentNews, error: currentError } = await (dbClient
+      .from('content') as any)
+      .select('title, slug, story_details')
+      .eq('id', id)
+      .eq('type', 'news')
+      .single();
+
+    if (currentError || !currentNews) {
+      return res.status(404).json({ error: 'News article not found' });
+    }
+
+    const updateData: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (typeof newsData.title === 'string' && newsData.title.trim()) {
+      updateData.title = newsData.title.trim();
+      updateData.slug = slugify(newsData.slug || newsData.title);
+    } else if (typeof newsData.slug === 'string' && newsData.slug.trim()) {
+      updateData.slug = slugify(newsData.slug);
+    }
+    if (typeof newsData.excerpt === 'string') updateData.excerpt = newsData.excerpt.trim();
+    if (typeof newsData.content === 'string') updateData.content = sanitizeRichHtml(newsData.content);
+    if (typeof newsData.status === 'string') updateData.status = newsData.status;
+    if (typeof newsData.featured_image === 'string' || typeof newsData.image === 'string') {
+      updateData.featured_image = newsData.featured_image || newsData.image;
+    }
+    if (newsData.publish_date || newsData.date) updateData.publish_date = newsData.publish_date || newsData.date;
+    if (newsData.meta_description !== undefined) updateData.meta_description = newsData.meta_description;
+    if (newsData.meta_keywords !== undefined) updateData.meta_keywords = newsData.meta_keywords;
+    if (
+      newsData.metadata
+      || newsData.story_details
+      || newsData.news_details
+      || newsData.category
+      || newsData.readTime
+      || newsData.author
+      || newsData.tags
+      || newsData.featured !== undefined
+    ) {
+      updateData.story_details = buildStoryDetails(newsData, currentNews.story_details || {});
     }
 
     const { data, error } = await (dbClient

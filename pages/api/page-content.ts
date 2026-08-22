@@ -663,10 +663,10 @@ function getMockPageContent(slug?: string, section?: string) {
       order_index: 1,
       data: {
         icon: 'Mail',
-        title: 'Email Us',
-        details: 'hello@saintlammyfoundation.org',
-        description: 'Send us an email and we\'ll respond within 24 hours',
-        link: 'mailto:hello@saintlammyfoundation.org'
+        title: 'Email',
+        details: 'info@saintlammyfoundation.org',
+        description: 'For general, donor and programme enquiries.',
+        link: 'mailto:info@saintlammyfoundation.org'
       }
     },
     {
@@ -676,9 +676,9 @@ function getMockPageContent(slug?: string, section?: string) {
       order_index: 2,
       data: {
         icon: 'Phone',
-        title: 'Call Us',
+        title: 'Phone',
         details: '+234 706 307 6704',
-        description: 'Available Monday to Friday, 9AM - 5PM WAT',
+        description: 'Call during the listed office hours.',
         link: 'tel:+2347063076704'
       }
     },
@@ -689,10 +689,10 @@ function getMockPageContent(slug?: string, section?: string) {
       order_index: 3,
       data: {
         icon: 'MapPin',
-        title: 'Visit Us',
+        title: 'Location',
         details: 'Lagos, Nigeria',
-        description: 'Schedule an appointment to visit our office',
-        link: '#'
+        description: 'Visits and meetings are arranged in advance.',
+        link: 'https://maps.google.com/?q=Lagos,Nigeria'
       }
     },
     {
@@ -702,10 +702,10 @@ function getMockPageContent(slug?: string, section?: string) {
       order_index: 4,
       data: {
         icon: 'Globe',
-        title: 'Social Media',
-        details: '@SaintlammyFoundation',
-        description: 'Follow us for updates and impact stories',
-        link: '#'
+        title: 'Social',
+        details: '@saintlammyfoundation',
+        description: 'Follow current outreach and foundation updates.',
+        link: 'https://www.instagram.com/saintlammyfoundation/'
       }
     },
     {
@@ -714,10 +714,10 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'office-hours',
       order_index: 1,
       data: {
-        weekday: 'Monday - Friday: 9:00 AM - 5:00 PM (WAT)',
-        saturday: 'Saturday: 10:00 AM - 2:00 PM (WAT)',
-        sunday: 'Sunday: Closed',
-        note: 'Emergency inquiries will be responded to within 24 hours regardless of office hours.'
+        weekday: '9:00 AM to 5:00 PM (WAT)',
+        saturday: '10:00 AM to 2:00 PM (WAT)',
+        sunday: 'Closed',
+        note: 'Messages sent outside these hours will be reviewed when the team is next available.'
       }
     },
     // Partner Page - Partnership Types
