@@ -1,6 +1,7 @@
 import React from 'react';
 import { ComponentProps } from '@/types';
-import { PieChart, Download, Eye, Shield, Award, CheckCircle } from 'lucide-react';
+import { RiCheckboxCircleLine, RiDownloadLine, RiEyeLine, RiPieChartLine, RiShieldCheckLine } from 'react-icons/ri';
+import { ActionButton, ActionLink, DoubleBezel, SectionHeading } from './home/HomePrimitives';
 
 interface TransparencySectionProps extends ComponentProps {}
 
@@ -57,36 +58,34 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
       name: 'RC: 9015713',
       issuer: 'Corporate Affairs Commission',
       year: '2025',
-      icon: Shield,
+      icon: RiShieldCheckLine,
       verified: true
     },
     {
       name: 'Legal Entity: Saintlammy Community Care Initiative',
       issuer: 'Incorporated November 2025',
       year: '2025',
-      icon: Eye,
+      icon: RiEyeLine,
       verified: true
     }
   ];
 
   return (
-    <section className={`py-24 bg-gray-100 dark:bg-black ${className}`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Transparency & Accountability
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            We believe transparency builds trust. See exactly how your donations create impact and how we maintain the highest standards of accountability.
-          </p>
-        </div>
+    <section className={`home-section home-section-paper home-transparency ${className}`}>
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="Open by design"
+          title={<>Every naira has a <span className="home-ink-accent">visible purpose.</span></>}
+          description="Explore how funds move, what they accomplish and the safeguards that keep the work accountable."
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Fund Allocation */}
-          <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+          <div data-home-reveal className="home-bezel home-transparency-major">
+            <div className="home-bezel-core home-transparency-card">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-accent-500/20 rounded-xl flex items-center justify-center mr-4">
-                <PieChart className="w-6 h-6 text-accent-400" />
+                <RiPieChartLine className="w-6 h-6 text-accent-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
@@ -134,13 +133,15 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
                 </div>
               ))}
             </div>
+            </div>
           </div>
 
           {/* Certifications & Compliance */}
-          <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+          <div data-home-reveal className="home-bezel home-transparency-major">
+            <div className="home-bezel-core home-transparency-card">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mr-4">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+                <RiCheckboxCircleLine className="w-6 h-6 text-green-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
@@ -160,7 +161,7 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
                     <div className="flex items-center space-x-2 mb-1">
                       <h4 className="text-gray-900 dark:text-white font-medium font-sans">{cert.name}</h4>
                       {cert.verified && (
-                        <CheckCircle className="w-4 h-4 text-green-400" />
+                        <RiCheckboxCircleLine className="w-4 h-4 text-green-500" />
                       )}
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">{cert.issuer} • {cert.year}</p>
@@ -177,10 +178,11 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 font-light">
                 Complete breakdown of our finances, impact metrics, and strategic initiatives.
               </p>
-              <button className="flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors">
-                <Download className="w-4 h-4" />
-                <span>Download Report</span>
-              </button>
+              <a href="/transparency" className="home-report-button">
+                <RiDownloadLine className="w-4 h-4" />
+                <span>View annual report</span>
+              </a>
+            </div>
             </div>
           </div>
         </div>
@@ -191,20 +193,20 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
             {
               title: 'Open Financial Records',
               description: 'All financial statements and fund allocations are publicly accessible and regularly audited.',
-              icon: Eye
+              icon: RiEyeLine
             },
             {
               title: 'Regular Impact Reports',
               description: 'Quarterly reports showing measurable outcomes and beneficiary feedback.',
-              icon: PieChart
+              icon: RiPieChartLine
             },
             {
               title: 'Third-party Verification',
               description: 'Independent audits and compliance checks ensure accountability.',
-              icon: Shield
+              icon: RiShieldCheckLine
             }
           ].map((principle, index) => (
-            <div key={index} className="text-center p-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl">
+            <DoubleBezel key={index} className="home-principle-bezel" coreClassName="home-principle-card">
               <div className="w-12 h-12 bg-accent-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <principle.icon className="w-6 h-6 text-accent-400" />
               </div>
@@ -214,13 +216,13 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
               <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed">
                 {principle.description}
               </p>
-            </div>
+            </DoubleBezel>
           ))}
         </div>
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="bg-gray-200 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl p-8">
+          <DoubleBezel coreClassName="home-inline-cta">
             <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
               Questions About Our Finances?
             </h3>
@@ -228,14 +230,10 @@ const TransparencySection: React.FC<TransparencySectionProps> = ({ className = '
               We're committed to transparency. Reach out to our team for detailed financial information or specific questions about fund usage.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3 rounded-full font-medium transition-colors">
-                Request Financial Details
-              </button>
-              <button className="bg-gray-300 dark:bg-white/10 hover:bg-gray-400 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-400 dark:border-white/20 px-8 py-3 rounded-full font-medium transition-colors">
-                View All Reports
-              </button>
+              <ActionLink href="/contact">Request financial details</ActionLink>
+              <ActionLink href="/transparency" tone="secondary">View all reports</ActionLink>
             </div>
-          </div>
+          </DoubleBezel>
         </div>
       </div>
     </section>

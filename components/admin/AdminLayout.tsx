@@ -67,12 +67,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = 'Dashboard'
   // Admin dashboard always uses dark mode - force dark class on <html>
   useEffect(() => {
     document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
     return () => {
-      // Restore system theme preference on unmount (when leaving admin)
-      const savedTheme = localStorage.getItem('saintlammy-theme');
-      if (savedTheme !== 'dark') {
-        document.documentElement.classList.remove('dark');
-      }
+      // Public routes always return to the single light theme.
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
     };
   }, []);
 

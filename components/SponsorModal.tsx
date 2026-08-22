@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { X, Heart, User, MapPin, Calendar, GraduationCap, Home, CheckCircle } from 'lucide-react';
+import { Heart, User, MapPin, GraduationCap, Home, CheckCircle } from 'lucide-react';
 import { ComponentProps } from '@/types';
+import LandingModal from './home/LandingModal';
+import { useDonationModal } from './DonationModalProvider';
 
 interface Beneficiary {
   id: string;
@@ -30,6 +32,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
   onClose,
   beneficiary
 }) => {
+  const { openDonationModal } = useDonationModal();
   const [sponsorshipType, setSponsorshipType] = useState<'monthly' | 'one-time' | 'custom'>('monthly');
   const [customAmount, setCustomAmount] = useState('');
   const [sponsorInfo, setSponsorInfo] = useState({
@@ -39,6 +42,14 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
     message: ''
   });
   const [step, setStep] = useState<'details' | 'sponsor-info' | 'confirmation'>('details');
+
+  const handleClose = () => {
+    setStep('details');
+    setSponsorshipType('monthly');
+    setCustomAmount('');
+    setSponsorInfo({ name: '', email: '', phone: '', message: '' });
+    onClose();
+  };
 
   if (!isOpen || !beneficiary) return null;
 
@@ -52,11 +63,26 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
     e.preventDefault();
     if (step === 'sponsor-info') {
       setStep('confirmation');
-    } else if (step === 'confirmation') {
-      // Process sponsorship (integrate with payment gateway)
-      console.log('Processing sponsorship...', { beneficiary, sponsorshipType, sponsorInfo });
-      onClose();
     }
+  };
+
+  const handleContinueToPayment = () => {
+    const amount = sponsorshipOptions[sponsorshipType];
+    handleClose();
+    openDonationModal({
+      source: 'beneficiary-sponsorship',
+      category: beneficiary.category,
+      amount,
+      donationType: sponsorshipType === 'monthly' ? 'monthly' : 'one-time',
+      title: `Sponsor ${beneficiary.name}`,
+      description: `Complete your ${sponsorshipType === 'monthly' ? 'monthly' : 'one-time'} support for ${beneficiary.name}.`,
+      storyId: beneficiary.id,
+      metadata: {
+        beneficiaryId: beneficiary.id,
+        sponsorName: sponsorInfo.name,
+        sponsorEmail: sponsorInfo.email,
+      },
+    });
   };
 
   const getCategoryIcon = (category: string) => {
@@ -82,42 +108,36 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto ${className}`}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white font-display">
-            {step === 'details' && 'Sponsor a Life'}
-            {step === 'sponsor-info' && 'Your Information'}
-            {step === 'confirmation' && 'Confirm Sponsorship'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          </button>
-        </div>
+    <LandingModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={step === 'details' ? `Sponsor ${beneficiary.name}` : step === 'sponsor-info' ? 'Tell us about you' : 'Confirm your sponsorship'}
+      description={`Create consistent, dignified support for ${beneficiary.name}.`}
+      eyebrow="Personal sponsorship"
+      icon={<Heart className="h-5 w-5" />}
+      size="xl"
+      className={`sponsor-modal-shell ${className}`}
+      bodyClassName="sponsor-modal-body"
+    >
 
         {/* Content */}
-        <div className="p-6">
+        <div className="landing-modal-content">
           {step === 'details' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Beneficiary Details */}
               <div>
-                <div className="relative h-64 rounded-xl overflow-hidden mb-6">
+                <div className="sponsor-modal-photo relative h-64 overflow-hidden mb-4">
                   <Image
                     src={beneficiary.image}
                     alt={`${beneficiary.name} - Beneficiary of Saintlammy Foundation`}
                     fill
-                    className="object-cover"
+                    className="object-cover object-top"
                   />
-                  <div className="absolute top-4 left-4">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getCategoryColor(beneficiary.category)}`}>
-                      {React.createElement(getCategoryIcon(beneficiary.category), { className: 'w-4 h-4 mr-1' })}
-                      {beneficiary.category.charAt(0).toUpperCase() + beneficiary.category.slice(1)} Support
-                    </span>
-                  </div>
+                </div>
+
+                <div className={`sponsor-modal-category ${getCategoryColor(beneficiary.category)}`}>
+                  {React.createElement(getCategoryIcon(beneficiary.category), { className: 'w-4 h-4' })}
+                  <span>{beneficiary.category.charAt(0).toUpperCase() + beneficiary.category.slice(1)} support</span>
                 </div>
 
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-display">
@@ -149,7 +169,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
 
                 <div className="mb-6">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">
-                    {beneficiary.name}'s Story
+                    {beneficiary.name}&apos;s Story
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed font-light">
                     {beneficiary.story}
@@ -162,7 +182,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                       Dreams & Aspirations
                     </h4>
                     <p className="text-accent-600 dark:text-accent-200 leading-relaxed font-light italic">
-                      "{beneficiary.dreamAspiration}"
+                      &ldquo;{beneficiary.dreamAspiration}&rdquo;
                     </p>
                   </div>
                 )}
@@ -191,7 +211,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
 
                   <div className="space-y-4">
                     {/* Monthly Sponsorship */}
-                    <label className="flex items-center p-4 bg-gray-100 dark:bg-gray-800/30 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors">
+                    <label data-selected={sponsorshipType === 'monthly'} className="landing-modal-choice flex cursor-pointer items-center p-4">
                       <input
                         type="radio"
                         name="sponsorship"
@@ -213,7 +233,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                     </label>
 
                     {/* One-time Support */}
-                    <label className="flex items-center p-4 bg-gray-100 dark:bg-gray-800/30 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors">
+                    <label data-selected={sponsorshipType === 'one-time'} className="landing-modal-choice flex cursor-pointer items-center p-4">
                       <input
                         type="radio"
                         name="sponsorship"
@@ -235,7 +255,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                     </label>
 
                     {/* Custom Amount */}
-                    <label className="flex items-center p-4 bg-gray-100 dark:bg-gray-800/30 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-colors">
+                    <label data-selected={sponsorshipType === 'custom'} className="landing-modal-choice flex cursor-pointer items-center p-4">
                       <input
                         type="radio"
                         name="sponsorship"
@@ -255,7 +275,8 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                               value={customAmount}
                               onChange={(e) => setCustomAmount(e.target.value)}
                               placeholder="Enter amount"
-                              className="w-24 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white text-right"
+                              aria-label="Custom sponsorship amount"
+                              className="landing-modal-field w-28 px-2 py-1 text-right"
                               min="1"
                             />
                           </div>
@@ -269,13 +290,13 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                 </div>
 
                 {/* Impact Statement */}
-                <div className="bg-gradient-to-r from-accent-500/10 to-accent-600/10 border border-accent-500/20 rounded-xl p-6">
+                <div className="sponsor-modal-impact p-6">
                   <Heart className="w-8 h-8 text-accent-400 mb-3" />
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">
                     Your Impact
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                    Your sponsorship will provide {beneficiary.name} with consistent access to education, healthcare, nutritious meals, and emotional support. You'll receive regular updates on their progress and can build a meaningful connection that transforms both your lives.
+                    Your sponsorship will provide {beneficiary.name} with consistent access to education, healthcare, nutritious meals, and emotional support. You&apos;ll receive regular updates on their progress and can build a meaningful connection that transforms both your lives.
                   </p>
                 </div>
               </div>
@@ -304,7 +325,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                       required
                       value={sponsorInfo.name}
                       onChange={(e) => setSponsorInfo({ ...sponsorInfo, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="landing-modal-field px-4 py-3"
                       placeholder="Your full name"
                     />
                   </div>
@@ -318,7 +339,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                       required
                       value={sponsorInfo.email}
                       onChange={(e) => setSponsorInfo({ ...sponsorInfo, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      className="landing-modal-field px-4 py-3"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -332,7 +353,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                     type="tel"
                     value={sponsorInfo.phone}
                     onChange={(e) => setSponsorInfo({ ...sponsorInfo, phone: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="landing-modal-field px-4 py-3"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -345,8 +366,8 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                     value={sponsorInfo.message}
                     onChange={(e) => setSponsorInfo({ ...sponsorInfo, message: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-500"
-                    placeholder="Write a encouraging message..."
+                    className="landing-modal-field px-4 py-3"
+                    placeholder="Write an encouraging message"
                   />
                 </div>
 
@@ -354,15 +375,15 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setStep('details')}
-                    className="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg font-medium transition-colors"
+                    className="landing-modal-secondary"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors"
+                    className="landing-modal-primary"
                   >
-                    Continue to Payment
+                    Review sponsorship
                   </button>
                 </div>
               </form>
@@ -376,7 +397,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
               </div>
 
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-display">
-                Sponsorship Confirmed!
+                Review your sponsorship
               </h3>
 
               <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-8">
@@ -406,15 +427,15 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
               </div>
 
               <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Thank you for your generous heart! You'll receive a confirmation email with next steps and information about staying connected with {beneficiary.name}. Your support will make a profound difference in their life.
+                Confirm these details, then continue to the secure donation form to complete your sponsorship.
               </p>
 
               <div className="flex items-center justify-center space-x-4">
                 <button
-                  onClick={onClose}
-                  className="px-8 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors"
+                  onClick={handleContinueToPayment}
+                  className="landing-modal-primary"
                 >
-                  Complete
+                  Continue to payment
                 </button>
               </div>
             </div>
@@ -423,20 +444,19 @@ const SponsorModal: React.FC<SponsorModalProps> = ({
 
         {/* Footer */}
         {step === 'details' && (
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="landing-modal-footer">
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               Your information is secure and will only be used for sponsorship purposes.
             </p>
             <button
               onClick={() => setStep('sponsor-info')}
-              className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors"
+              className="landing-modal-primary"
             >
               Continue to Sponsor
             </button>
           </div>
         )}
-      </div>
-    </div>
+    </LandingModal>
   );
 };
 

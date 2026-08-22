@@ -9,7 +9,7 @@ This directory contains scripts for populating the database with initial example
 Seeds the database with 4 example programs that demonstrate the platform's capabilities.
 
 **Programs included:**
-1. Orphan Adoption Program
+1. Orphan Support Program
 2. Widow Empowerment Initiative
 3. Educational Excellence Program
 4. Healthcare Access Program

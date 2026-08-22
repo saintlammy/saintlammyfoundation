@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { RiCloseLine, RiHeart3Line } from 'react-icons/ri';
 import { ComponentProps } from '@/types';
 
 interface StickyDonationButtonProps extends ComponentProps {
@@ -8,74 +8,61 @@ interface StickyDonationButtonProps extends ComponentProps {
 
 const StickyDonationButton: React.FC<StickyDonationButtonProps> = ({
   className = '',
-  onDonateClick
+  onDonateClick,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(true);
+  const [footerVisible, setFooterVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Show button after scrolling past hero section (approximately 100vh)
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
+    const hero = document.querySelector('.homepage-premium > section:first-of-type');
+    const footer = document.querySelector('footer');
+    if (!hero || !footer || !('IntersectionObserver' in window)) return;
 
-      // Hide when approaching footer (within 400px of bottom)
-      const distanceFromBottom = documentHeight - (scrollPosition + windowHeight);
-      const isNearFooter = distanceFromBottom < 400;
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => setHeroVisible(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { rootMargin: '240px 0px 0px', threshold: 0 }
+    );
 
-      const shouldShow = scrollPosition > windowHeight && !isDismissed && !isNearFooter;
-      setIsVisible(shouldShow);
+    heroObserver.observe(hero);
+    footerObserver.observe(footer);
+    return () => {
+      heroObserver.disconnect();
+      footerObserver.disconnect();
     };
+  }, []);
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial state
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isDismissed]);
-
-  const handleDismiss = () => {
-    setIsDismissed(true);
-    setIsVisible(false);
-  };
-
+  const isVisible = !heroVisible && !footerVisible && !isDismissed;
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
-      <div className="relative">
-        {/* Dismiss button */}
+    <aside className={`home-sticky-donation ${className}`} aria-label="Donation reminder">
+      <div className="home-sticky-shell">
         <button
-          onClick={handleDismiss}
-          className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-full flex items-center justify-center transition-colors duration-200 border border-gray-300 dark:border-gray-600"
+          type="button"
+          onClick={() => setIsDismissed(true)}
+          className="home-sticky-dismiss"
           aria-label="Dismiss donation reminder"
         >
-          <X className="w-3 h-3" />
+          <RiCloseLine />
         </button>
-
-        {/* Main donation button */}
         <button
+          type="button"
           onClick={onDonateClick}
-          className="group relative bg-accent-500 hover:bg-accent-600 text-white px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-3 font-medium text-base"
+          className="home-sticky-action group"
           aria-label="Make a donation to Saintlammy Foundation"
         >
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-            <Heart className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
-          </div>
-          <span className="font-sans">Donate Now</span>
-
-          {/* Pulse animation */}
-          <div className="absolute inset-0 rounded-full bg-accent-400 opacity-30 animate-ping"></div>
+          <span>Donate now</span>
+          <span className="home-sticky-island" aria-hidden="true">
+            <RiHeart3Line />
+          </span>
         </button>
-
-        {/* Tooltip */}
-        <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          <div className="bg-gray-800 dark:bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
-            Help transform lives today
-            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 dark:border-t-gray-900"></div>
-          </div>
-        </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

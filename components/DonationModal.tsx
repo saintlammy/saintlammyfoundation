@@ -366,6 +366,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose, context 
             </div>
             <button
               onClick={onClose}
+              aria-label="Close donation form"
               className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 p-2 rounded-full transition-colors"
             >
               <X className="w-6 h-6" />

@@ -1,9 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import Link from 'next/link';
 import { ComponentProps } from '@/types';
 import { DonationContext } from './DonationModalProvider';
-import { Heart, Menu, X, ChevronDown, Users, FileText, HandHeart, Star, MessageSquare } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
+import {
+  RiArrowDownSLine as ChevronDown,
+  RiFileTextLine as FileText,
+  RiHandHeartLine as HandHeart,
+  RiHeart3Line as Heart,
+  RiMessage3Line as MessageSquare,
+  RiStarLine as Star,
+  RiTeamLine as Users,
+} from 'react-icons/ri';
 
 interface MegaMenuOption {
   href: string;
@@ -116,24 +125,53 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
     };
   }, []);
 
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setIsOpen(false);
+      setOpenMegaMenu(null);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => router.events.off('routeChangeStart', handleRouteChange);
+  }, [router.events]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
   return (
-    <nav className={`fixed top-0 w-full z-50 bg-white/90 dark:bg-black/80 backdrop-blur-xl border-b border-gray-200/20 dark:border-white/10 ${className}`}>
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className={`premium-nav fixed inset-x-0 top-4 z-50 px-4 pointer-events-none ${className}`}>
+      <div className="relative z-20 max-w-7xl mx-auto px-5 bg-white/90 backdrop-blur-2xl rounded-full shadow-[0_18px_70px_rgba(39,24,61,0.14)] ring-1 ring-black/5 pointer-events-auto">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="flex-shrink-0 flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+            <Link href="/" className="flex-shrink-0 flex items-center cursor-pointer hover:opacity-80 transition-opacity">
               <div className="h-8 w-auto rounded-lg overflow-hidden flex items-center mr-3">
-                <img
+                <Image
                   src="/images/logo/logo-icon.svg"
                   alt="Saintlammy Foundation"
+                  width={32}
+                  height={32}
                   className="h-full w-auto object-contain dark:invert"
                 />
               </div>
-              <span className="text-xl font-semibold text-gray-900 dark:text-white font-display tracking-tight">
+              <span className="whitespace-nowrap text-base font-semibold tracking-tight text-gray-900 dark:text-white sm:text-lg lg:text-xl font-display">
                 Saintlammy Foundation
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -240,40 +278,41 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                 );
               })}
               </div>
-              <ThemeToggle variant="navigation" size="sm" />
             </div>
           </div>
 
-          {/* Mobile menu button and theme toggle */}
+          {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
-            <ThemeToggle variant="navigation" size="sm" />
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
               aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={isOpen}
               aria-controls="mobile-navigation-menu"
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 inline-flex items-center justify-center p-2 rounded-md transition-colors"
+              className="premium-nav-toggle relative h-11 w-11 rounded-full bg-gray-900 text-white"
             >
-              {isOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <span className={`premium-nav-line ${isOpen ? 'translate-y-0 rotate-45' : '-translate-y-1.5'}`} />
+              <span className={`premium-nav-line ${isOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'}`} />
+              <span className={`premium-nav-line ${isOpen ? 'translate-y-0 -rotate-45' : 'translate-y-1.5'}`} />
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <div id="mobile-navigation-menu" className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white/95 dark:bg-black/95 backdrop-blur-xl`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200/20 dark:border-white/10">
-          {navLinks.map((link) => {
+      <div
+        id="mobile-navigation-menu"
+        aria-hidden={!isOpen}
+        className={`${isOpen ? 'premium-mobile-menu-open' : 'premium-mobile-menu-closed'} premium-mobile-menu z-10 md:hidden pointer-events-auto bg-white/90 backdrop-blur-3xl`}
+      >
+        <div className="premium-mobile-menu-content px-6 pt-28 pb-8 space-y-2">
+          {navLinks.map((link, navIndex) => {
             const isActive = link.href ? router.pathname === link.href : false;
             const isMegaMenuActive = link.megaMenuOptions?.some(option => router.pathname === option.href);
 
             if (link.type === 'megamenu') {
               return (
-                <div key={link.label} className="space-y-1">
+                <div key={link.label} className="space-y-1 premium-mobile-item" style={{ transitionDelay: `${navIndex * 55}ms` }}>
                   <div className={`relative block px-3 py-2 text-base font-medium ${
                     isMegaMenuActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'
                   }`}>
@@ -319,7 +358,8 @@ const Navigation: React.FC<NavigationProps> = ({ className = '', onDonateClick }
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`relative block px-3 py-2 text-base font-medium transition-colors group ${
+                style={{ transitionDelay: `${navIndex * 55}ms` }}
+                className={`premium-mobile-item relative block px-3 py-3 text-2xl font-medium group ${
                   isActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >

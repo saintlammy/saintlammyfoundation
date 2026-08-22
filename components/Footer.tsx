@@ -1,22 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ComponentProps } from '@/types';
 import { useDonationModal } from './DonationModalProvider';
 import { useCookieConsent } from '@/contexts/CookieConsentContext';
 import {
-  Heart,
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  ArrowRight,
-  Globe,
-  Cookie
-} from 'lucide-react';
+  RiArrowRightUpLine as ArrowRight,
+  RiSettings4Line as Cookie,
+  RiFacebookFill as Facebook,
+  RiGlobalLine as Globe,
+  RiHeart3Line as Heart,
+  RiInstagramLine as Instagram,
+  RiLinkedinFill as Linkedin,
+  RiMailLine as Mail,
+  RiMapPin2Line as MapPin,
+  RiPhoneLine as Phone,
+  RiTwitterXLine as Twitter,
+  RiYoutubeLine as Youtube,
+} from 'react-icons/ri';
 
 interface FooterProps extends ComponentProps {}
 
@@ -35,12 +36,12 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   ];
 
   const programs = [
-    { href: '/programs#orphan-support', label: 'Orphan Support' },
-    { href: '/programs#widow-empowerment', label: 'Widow Empowerment' },
-    { href: '/programs#community-outreach', label: 'Community Outreach' },
-    { href: '/programs#education', label: 'Education Programs' },
-    { href: '/programs#healthcare', label: 'Healthcare Initiatives' },
-    { href: '/programs#emergency-relief', label: 'Emergency Relief' }
+    { href: '/programs#food-household-relief', label: 'Food & Household Relief' },
+    { href: '/programs#orphanage-support', label: 'Orphanage Support' },
+    { href: '/programs#education-support', label: 'Education Support' },
+    { href: '/programs#medical-checkups', label: 'Open Medical Check-ups' },
+    { href: '/outreaches', label: 'Community Outreaches' },
+    { href: '/outreaches#upcoming-outreaches', label: 'Upcoming Outreaches' }
   ];
 
   const legalLinks = [
@@ -85,19 +86,21 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   ];
 
   return (
-    <footer className={`bg-gray-200 dark:bg-black text-gray-900 dark:text-white ${className}`}>
+    <footer className={`premium-footer text-white ${className}`}>
 
       {/* Main Footer Content */}
-      <div className="py-16">
+      <div className="premium-footer-main py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Organization Info - Left Side */}
             <div>
               <div className="flex items-center space-x-2 mb-6">
                 <div className="h-8 w-auto rounded-lg overflow-hidden flex items-center">
-                  <img
+                  <Image
                     src="/images/logo/logo-icon.svg"
                     alt="Saintlammy Community Care Initiative"
+                    width={32}
+                    height={32}
                     className="h-full w-auto object-contain dark:invert"
                   />
                 </div>
@@ -249,11 +252,11 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
                     title: 'Support Our Mission',
                     description: 'Your donation helps us continue our humanitarian work'
                   })}
-                  className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium transition-colors flex items-center space-x-2"
+                  className="premium-footer-action group"
                 >
                   <Heart className="w-4 h-4" />
                   <span>Donate Now</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="premium-footer-action-island"><ArrowRight className="w-4 h-4" /></span>
                 </button>
               </div>
             </div>
@@ -262,7 +265,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="bg-gray-300 dark:bg-gray-900 py-6 border-t border-gray-300 dark:border-gray-800">
+      <div className="premium-footer-bottom py-6">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-700 dark:text-gray-400">

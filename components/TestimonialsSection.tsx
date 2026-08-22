@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Quote } from 'lucide-react';
+import { RiDoubleQuotesR } from 'react-icons/ri';
 import { getTestimonialAvatar, inferGenderFromName, type Gender } from '@/lib/avatarUtils';
+import { ActionLink, DoubleBezel, SectionHeading } from './home/HomePrimitives';
 
 interface Testimonial {
   id: string;
@@ -109,27 +110,25 @@ const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 bg-gray-200 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Stories That Inspire Us
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Voices from the field - hear from donors, partners, and communities who make our mission possible.
-            Every story represents hope in action and lives transformed through love and service.
-          </p>
-        </div>
+    <section className="home-section home-section-soft home-testimonials">
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="Voices from the field"
+          title={<>Trust is built in <span className="home-ink-accent">people&apos;s own words.</span></>}
+          description="Hear from donors, partners and communities who make this mission possible."
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+        <div className="home-testimonial-grid">
+          {testimonials.slice(0, 3).map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className="group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-accent-500 relative"
+              data-home-reveal
+              className={`home-bezel home-testimonial-bezel group ${testimonials.length === 2 ? 'home-testimonial-half' : ''} ${index === 1 ? 'home-testimonial-raised' : ''}`}
             >
+              <article className="home-bezel-core home-testimonial-card">
               {/* Quote Icon */}
               <div className="absolute top-6 right-6 opacity-20 group-hover:opacity-30 transition-opacity">
-                <Quote className="w-8 h-8 text-accent-400" />
+                <RiDoubleQuotesR className="w-8 h-8 text-accent-500" />
               </div>
 
               {/* Profile */}
@@ -164,13 +163,14 @@ const TestimonialsSection: React.FC = () => {
               <div className="inline-flex items-center px-3 py-1 bg-accent-500/20 text-accent-400 rounded-full text-xs font-medium">
                 {testimonial.donation}
               </div>
+              </article>
             </div>
           ))}
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8 md:p-12 border border-gray-300 dark:border-gray-600">
+        <div className="mt-16">
+          <DoubleBezel coreClassName="home-inline-cta">
             <h3 className="text-2xl md:text-3xl font-medium text-gray-900 dark:text-white mb-4 font-display tracking-tight">
               Join Our Community of Change-Makers
             </h3>
@@ -179,14 +179,10 @@ const TestimonialsSection: React.FC = () => {
               Your story could be next.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3 rounded-full font-medium text-base transition-colors font-sans">
-                Start Your Impact Story
-              </button>
-              <button className="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-8 py-3 rounded-full font-medium text-base transition-colors font-sans">
-                Read More Stories
-              </button>
+              <ActionLink href="/donate">Start your impact story</ActionLink>
+              <ActionLink href="/stories" tone="secondary">Read more stories</ActionLink>
             </div>
-          </div>
+          </DoubleBezel>
         </div>
       </div>
     </section>

@@ -1,378 +1,343 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
-import { Quote, Star, Calendar, MapPin, ArrowLeft, Filter, Search } from 'lucide-react';
-import { useDonationModal } from '@/components/DonationModalProvider';
+import {
+  RiCalendarEventLine,
+  RiMapPin2Line,
+  RiSearch2Line,
+  RiShieldLine,
+} from 'react-icons/ri';
 import SEOHead from '@/components/SEOHead';
+import AboutHero from '@/components/about/AboutHero';
+import { ActionButton, ActionLink, DoubleBezel } from '@/components/home/HomePrimitives';
+import StoryDetailModal, { formatSupportedSince, ImpactStoryRecord } from '@/components/stories/StoryDetailModal';
+import { useDonationModal } from '@/components/DonationModalProvider';
 import { pageSEO } from '@/lib/seo';
 import { truncateForCard } from '@/lib/textUtils';
 
-interface Story {
-  id: string;
-  name: string;
-  age?: number;
-  location: string;
-  story: string;
-  quote: string;
-  image: string;
-  category: 'orphan' | 'widow' | 'community';
-  impact: string;
-  dateHelped: string;
+interface StoriesPageProps {
+  initialStories: ImpactStoryRecord[];
 }
 
-interface StoriesPageProps {
-  initialStories: Story[];
-}
+const categories = [
+  { value: 'all', label: 'All stories' },
+  { value: 'orphan', label: 'Orphan support' },
+  { value: 'widow', label: 'Widow empowerment' },
+  { value: 'community', label: 'Community support' },
+];
+
+const cleanDisplayCopy = (value: string) => value
+  .replace(/[—–]/g, '-')
+  .replace(/[1-9]️⃣/g, '')
+  .replace(/[⸻￼]/g, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const getCategoryLabel = (category: ImpactStoryRecord['category']) => (
+  categories.find((item) => item.value === category)?.label || 'Community support'
+);
+
+const fallbackStories: ImpactStoryRecord[] = [
+  {
+    id: 'amara-fallback',
+    name: 'Amara',
+    age: 8,
+    location: 'Lagos, Nigeria',
+    story: 'Amara lost her parents when she was very young. Through our orphan support program, she receives education funding, healthcare, and consistent emotional support.',
+    quote: 'I want to become a doctor and help other children. School makes me feel that my dream is possible.',
+    image: '/images/nigerian-ngo/people/amara.webp',
+    category: 'orphan',
+    impact: 'Regular school attendance, dependable care, and renewed confidence in her future.',
+    dateHelped: 'January 2026',
+  },
+  {
+    id: 'grace-fallback',
+    name: 'Grace',
+    age: 35,
+    location: 'Lagos, Nigeria',
+    story: 'After losing her husband, Grace needed a dependable path to support her children. The widow empowerment program provides practical business support and ongoing guidance.',
+    quote: 'The support gave me a way to keep moving forward for my children and to believe in my own ability again.',
+    image: '/images/nigerian-ngo/people/grace.webp',
+    category: 'widow',
+    impact: 'Practical livelihood support and greater household stability.',
+    dateHelped: 'October 2025',
+  },
+  {
+    id: 'emmanuel-fallback',
+    name: 'Emmanuel',
+    age: 12,
+    location: 'Lagos, Nigeria',
+    story: 'Emmanuel is passionate about technology and learning. Consistent support gives him access to education, care, and the tools he needs to keep building his future.',
+    quote: 'I enjoy learning how things work. I want to use technology to solve problems in my community.',
+    image: '/images/nigerian-ngo/people/emmanuel.webp',
+    category: 'orphan',
+    impact: 'Continued access to education, learning resources, and dependable care.',
+    dateHelped: 'February 2026',
+  },
+];
 
 const StoriesPage: React.FC<StoriesPageProps> = ({ initialStories }) => {
   const { openDonationModal } = useDonationModal();
-  const [stories, setStories] = useState<Story[]>(initialStories);
-  const [filteredStories, setFilteredStories] = useState<Story[]>(initialStories);
-  const [loading, setLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [stories, setStories] = useState<ImpactStoryRecord[]>(initialStories);
+  const [loading, setLoading] = useState(initialStories.length === 0);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<ImpactStoryRecord | null>(null);
 
-  // Fetch fresh data from API on client-side
   useEffect(() => {
     const fetchStories = async () => {
       try {
         setLoading(true);
         const response = await fetch('/api/stories?status=published');
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch stories');
-        }
+        if (!response.ok) throw new Error('Failed to fetch stories');
 
         const data = await response.json();
-
-        // Only update if we got real data from database
-        if (data && data.length > 0) {
+        if (Array.isArray(data) && data.length > 0) {
           setStories(data);
           setFetchError(null);
+        } else if (initialStories.length === 0) {
+          setStories(fallbackStories);
+          setFetchError('New impact stories are being prepared. Here are representative examples of our work.');
         }
-      } catch (err) {
-        console.error('Error fetching stories:', err);
-        setFetchError('Using example stories. Check back later for real impact stories.');
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+        if (initialStories.length === 0) setStories(fallbackStories);
+        setFetchError('Live story updates are temporarily unavailable. Existing stories remain available.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStories();
-  }, []);
+    void fetchStories();
+  }, [initialStories.length]);
 
-  useEffect(() => {
-    // Filter stories based on category and search term
-    let filtered = stories;
+  const filteredStories = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return stories.filter((story) => {
+      const categoryMatches = selectedCategory === 'all' || story.category === selectedCategory;
+      const searchMatches = !query || [story.name, story.location, story.story]
+        .some((value) => value.toLowerCase().includes(query));
+      return categoryMatches && searchMatches;
+    });
+  }, [searchTerm, selectedCategory, stories]);
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(story => story.category === selectedCategory);
-    }
+  const featuredStory = filteredStories[0];
+  const remainingStories = filteredStories.slice(1);
+  const heroImage = stories[0]?.image || '/images/nigerian-ngo/community-relief.webp';
 
-    if (searchTerm) {
-      filtered = filtered.filter(story =>
-        story.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        story.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        story.story.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredStories(filtered);
-  }, [stories, selectedCategory, searchTerm]);
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'orphan':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'widow':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-      case 'community':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
+  const clearFilters = () => {
+    setSelectedCategory('all');
+    setSearchTerm('');
   };
 
-  const categories = [
-    { value: 'all', label: 'All Stories' },
-    { value: 'orphan', label: 'Orphan Support' },
-    { value: 'widow', label: 'Widow Empowerment' },
-    { value: 'community', label: 'Community Support' }
-  ];
+  const supportStory = (story: ImpactStoryRecord) => {
+    setSelectedStory(null);
+    openDonationModal({
+      source: 'stories-page',
+      category: story.category === 'community' ? 'outreach' : story.category,
+      storyId: story.id,
+      title: `Support work like ${story.name}'s`,
+      description: 'Help fund consistent, dignified support for more people and households across Nigeria.',
+    });
+  };
 
   return (
     <>
-      <Head>
-        <title>Impact Stories - Saintlammy Foundation</title>
-        <meta name="description" content="Read inspiring impact stories from beneficiaries of Saintlammy Foundation. Real people, real impact across Nigeria." />
-        <meta name="keywords" content="success stories, testimonials, impact, Nigeria, charity, foundation" />
-      </Head>
+      <SEOHead config={pageSEO.stories} />
 
-      {/* Notification Banner */}
-      {fetchError && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/20 py-3">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <p className="text-yellow-600 dark:text-yellow-400 text-sm text-center">
-              {fetchError}
-            </p>
-          </div>
-        </div>
-      )}
+      <main className="about-family-page stories-page">
+        <AboutHero
+          eyebrow="Impact stories"
+          title="Every outcome has a name."
+          description="Meet the people behind our mission and see what sustained, dignified support makes possible."
+          image={heroImage}
+          imageAlt="A person supported through Saintlammy Foundation's work in Nigeria"
+          variant="impact"
+        >
+          <ActionLink href="#stories">Read the stories</ActionLink>
+          <ActionButton
+            tone="secondary"
+            onClick={() => openDonationModal({
+              source: 'stories-page-hero',
+              category: 'general',
+              title: 'Create the Next Impact Story',
+              description: 'Help extend practical support to more vulnerable people across Nigeria.',
+            })}
+          >
+            Support the work
+          </ActionButton>
+        </AboutHero>
 
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-16 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-black dark:to-gray-900">
-        <div className="absolute inset-0 bg-[url('/images/nigerian-ngo/community-relief.webp')] bg-cover bg-center opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="text-display-lg md:text-display-xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Impact Stories
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-light leading-relaxed">
-            Every donation creates opportunities for transformation. These are the real faces and stories behind our mission to change lives across Nigeria.
-          </p>
-        </div>
-      </section>
+        <section id="stories" className="stories-browser" aria-labelledby="stories-heading">
+          <div className="about-container">
+            <header className="about-section-heading about-section-heading-compact stories-heading">
+              <h2 id="stories-heading">Lives changed through consistent care.</h2>
+              <p>Search by name or location, or focus on the area of support that matters most to you.</p>
+            </header>
 
-      {/* Filters and Search */}
-      <section className="py-8 bg-gray-100 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search stories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-accent-500 focus:outline-none"
-              />
+            <div className="stories-toolbar">
+              <label className="stories-search">
+                <span>Search stories</span>
+                <div>
+                  <RiSearch2Line aria-hidden="true" />
+                  <input
+                    type="search"
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    placeholder="Name, place, or story"
+                  />
+                </div>
+              </label>
+
+              <div className="stories-category-filter">
+                <span>Filter by program</span>
+                <div role="group" aria-label="Filter stories by program">
+                  {categories.map((category) => (
+                    <button
+                      key={category.value}
+                      type="button"
+                      aria-pressed={selectedCategory === category.value}
+                      onClick={() => setSelectedCategory(category.value)}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center gap-2">
-              <Filter className="text-gray-500 dark:text-gray-400 w-5 h-5" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:border-accent-500 focus:outline-none"
-              >
-                {categories.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
+            <div className="stories-results-meta" role="status">
+              <span>{filteredStories.length} {filteredStories.length === 1 ? 'story' : 'stories'}</span>
+              {fetchError && <p>{fetchError}</p>}
             </div>
-          </div>
 
-          {/* Results count */}
-          <div className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
-            Showing {filteredStories.length} of {stories.length} stories
-          </div>
-        </div>
-      </section>
-
-      {/* Stories Grid */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {filteredStories.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="text-gray-500 dark:text-gray-400 text-lg mb-4">No stories found matching your criteria.</div>
-              <button
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setSearchTerm('');
-                }}
-                className="text-accent-400 hover:text-accent-300 font-medium"
-              >
-                Clear filters
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredStories.map((story, index) => (
-                <article
-                  key={story.id}
-                  className="group bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800/70 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-64 overflow-hidden">
+            {loading && stories.length === 0 ? (
+              <div className="stories-loading" aria-label="Loading impact stories">
+                <span />
+                <span />
+                <span />
+              </div>
+            ) : filteredStories.length === 0 ? (
+              <div className="stories-empty">
+                <RiShieldLine aria-hidden="true" />
+                <h3>No stories match those filters.</h3>
+                <p>Try a different name, location, or program category.</p>
+                <button type="button" onClick={clearFilters}>Clear filters</button>
+              </div>
+            ) : (
+              <div className="stories-results">
+                <article className="stories-featured">
+                  <DoubleBezel className="stories-featured-bezel" coreClassName="stories-featured-image">
                     <Image
-                      src={story.image}
-                      alt={`Portrait of ${story.name}, a beneficiary of Saintlammy Foundation's ${story.category} support program from ${story.location}`}
+                      src={featuredStory.image}
+                      alt={`Portrait of ${featuredStory.name} from ${featuredStory.location}`}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading={index > 2 ? 'lazy' : 'eager'}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      unoptimized={featuredStory.image.startsWith('data:')}
+                      sizes="(max-width: 767px) 100vw, 52vw"
+                      className="object-cover object-top"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                  </DoubleBezel>
 
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(story.category)}`}>
-                        {story.category.charAt(0).toUpperCase() + story.category.slice(1)} Support
-                      </span>
-                    </div>
-
-                    {/* Quote Icon */}
-                    <div className="absolute bottom-4 right-4">
-                      <div className="w-10 h-10 bg-accent-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <Quote className="w-5 h-5 text-accent-400" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1 font-display">
-                          {story.name}
-                        </h3>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 gap-4">
-                          {story.age && <span>Age {story.age}</span>}
-                          <div className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {story.location}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                        ))}
-                      </div>
-                    </div>
-
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 font-light">
-                      {truncateForCard(story.story, 3)}
-                    </p>
-
-                    <blockquote className="border-l-4 border-accent-500 pl-4 mb-4">
-                      <p className="text-accent-600 dark:text-accent-100 text-sm italic font-medium leading-relaxed">
-                        "{truncateForCard(story.quote, 2)}"
-                      </p>
-                    </blockquote>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500 dark:text-gray-400">Impact:</span>
-                        <span className="text-green-400 font-medium">Successful</span>
-                      </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                        {truncateForCard(story.impact, 2)}
-                      </p>
-                      <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                          <Calendar className="w-3 h-3" />
-                          Supported since {story.dateHelped}
-                        </div>
-                      </div>
+                  <div className="stories-featured-copy">
+                    <span className="stories-category">{getCategoryLabel(featuredStory.category)}</span>
+                    <h3>{featuredStory.name}{featuredStory.age ? `, ${featuredStory.age}` : ''}</h3>
+                    <p className="stories-location"><RiMapPin2Line aria-hidden="true" />{featuredStory.location}</p>
+                    <p>{cleanDisplayCopy(truncateForCard(featuredStory.story, 3))}</p>
+                    <blockquote>&ldquo;{cleanDisplayCopy(truncateForCard(featuredStory.quote, 2))}&rdquo;</blockquote>
+                    <div className="stories-featured-footer">
+                      <span><RiCalendarEventLine aria-hidden="true" />Supported since {formatSupportedSince(featuredStory.dateHelped)}</span>
+                      <button type="button" onClick={() => setSelectedStory(featuredStory)}>Read full story</button>
                     </div>
                   </div>
                 </article>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-white dark:bg-black">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 font-display">
-            Be Part of the Next Success Story
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 font-light leading-relaxed">
-            Every donation creates opportunities for transformation. Join us in writing more success stories across Nigeria.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => openDonationModal({
-                source: 'stories-page',
-                category: 'general',
-                title: 'Support More Success Stories',
-                description: 'Help create more life-changing success stories like these'
-              })}
-              className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-medium text-lg transition-colors"
-            >
-              Make a Donation
-            </button>
-            <a
-              href="/volunteer"
-              className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 px-8 py-4 rounded-full font-medium text-lg transition-colors"
-            >
-              Volunteer With Us
-            </a>
+                {remainingStories.length > 0 && (
+                  <div className="stories-grid">
+                    {remainingStories.map((story, index) => (
+                      <article key={story.id} className="stories-card">
+                        <div className="stories-card-image">
+                          <Image
+                            src={story.image}
+                            alt={`Portrait of ${story.name} from ${story.location}`}
+                            fill
+                            unoptimized={story.image.startsWith('data:')}
+                            loading={index > 1 ? 'lazy' : 'eager'}
+                            sizes="(max-width: 767px) 100vw, 50vw"
+                            className="object-cover object-top"
+                          />
+                        </div>
+                        <div className="stories-card-copy">
+                          <span className="stories-category">{getCategoryLabel(story.category)}</span>
+                          <h3>{story.name}{story.age ? `, ${story.age}` : ''}</h3>
+                          <p className="stories-location"><RiMapPin2Line aria-hidden="true" />{story.location}</p>
+                          <p>{cleanDisplayCopy(truncateForCard(story.story, 2))}</p>
+                          <button type="button" onClick={() => setSelectedStory(story)}>Read full story</button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section className="about-closing stories-closing">
+          <div className="about-container about-closing-grid">
+            <div>
+              <h2>The next story can begin with you.</h2>
+              <p>A donation can become medicine, school access, food relief, or the first step toward a stable livelihood.</p>
+            </div>
+            <div className="about-closing-actions">
+              <ActionButton
+                tone="light"
+                onClick={() => openDonationModal({
+                  source: 'stories-page-closing',
+                  category: 'general',
+                  title: 'Create the Next Impact Story',
+                  description: 'Help create more stories of stability, dignity, and opportunity across Nigeria.',
+                })}
+              >
+                Donate today
+              </ActionButton>
+              <ActionLink href="/volunteer" tone="secondary">Volunteer with us</ActionLink>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <StoryDetailModal
+        story={selectedStory}
+        onClose={() => setSelectedStory(null)}
+        onSupport={supportStory}
+      />
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<StoriesPageProps> = async () => {
   try {
-    // In a real app, this would fetch from your API
-    // For now, we'll use the same mock data as the component
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/stories`);
-    const stories = await response.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/stories?status=published`);
+    if (!response.ok) throw new Error('Stories request failed');
+    const stories = await response.json() as ImpactStoryRecord[];
+    const initialStories = Array.isArray(stories)
+      ? stories.map((story) => ({
+          ...story,
+          image: story.image?.startsWith('data:')
+            ? '/images/nigerian-ngo/portrait-widow.webp'
+            : story.image,
+        }))
+      : [];
 
     return {
-      props: {
-        initialStories: stories,
-      },
-      revalidate: 3600, // Revalidate every hour
+      props: { initialStories },
+      revalidate: 3600,
     };
   } catch (error) {
-    console.error('Error fetching stories:', error);
-
-    // Fallback mock data
-    const mockStories = [
-      {
-        id: '1',
-        name: 'Amara N.',
-        age: 12,
-        location: 'Lagos, Nigeria',
-        story: 'Amara lost both parents in a car accident when she was 8. Through our orphan support program, she has received consistent education funding, healthcare, and emotional support.',
-        quote: "Before Saintlammy Foundation found me, I thought my dreams of becoming a doctor were impossible. Now I'm excelling in school and know that anything is possible with the right support.",
-        image: '/images/nigerian-ngo/portrait-student.webp',
-        category: 'orphan' as const,
-        impact: 'Maintained 95% attendance rate and top 10% academic performance',
-        dateHelped: 'January 2022'
-      },
-      {
-        id: '2',
-        name: 'Mrs. Folake O.',
-        age: 34,
-        location: 'Ibadan, Nigeria',
-        story: 'After losing her husband, Folake struggled to feed her three children. Our widow empowerment program provided monthly stipends and helped her start a small tailoring business.',
-        quote: "The foundation didn't just give me money - they gave me hope and the tools to build a better future for my children. My tailoring business now supports my family independently.",
-        image: '/images/nigerian-ngo/portrait-student.webp',
-        category: 'widow' as const,
-        impact: 'Achieved financial independence and expanded business to employ 3 others',
-        dateHelped: 'March 2022'
-      },
-      {
-        id: '3',
-        name: 'Emmanuel A.',
-        age: 16,
-        location: 'Abuja, Nigeria',
-        story: 'Emmanuel was living on the streets when our outreach team found him. Through our comprehensive support program, he was enrolled in school and provided with safe housing.',
-        quote: "I never thought I'd see the inside of a classroom again. Now I'm preparing for university and want to become an engineer to help build better communities.",
-        image: '/images/nigerian-ngo/portrait-volunteer.webp',
-        category: 'orphan' as const,
-        impact: 'Completed secondary education with honors and received university scholarship',
-        dateHelped: 'September 2021'
-      }
-    ];
-
+    console.error('Error fetching stories during build:', error);
     return {
-      props: {
-        initialStories: mockStories,
-      },
+      props: { initialStories: fallbackStories },
       revalidate: 3600,
     };
   }

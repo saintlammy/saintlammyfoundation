@@ -6,6 +6,7 @@ export interface DonationContext {
   category?: 'orphan' | 'widow' | 'home' | 'family' | 'outreach' | 'emergency' | 'education' | 'healthcare' | 'empowerment' | 'infrastructure' | 'general';
   amount?: number;
   suggestedAmount?: number;
+  donationType?: 'one-time' | 'monthly' | 'yearly';
   title?: string;
   description?: string;
   preferredMethod?: 'card' | 'crypto' | 'bank';

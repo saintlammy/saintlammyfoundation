@@ -62,10 +62,10 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Sailec', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Ubuntu', 'Cantarell', 'Noto Sans', 'sans-serif', '"Helvetica Neue"', 'Arial', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
-        display: ['"Söhne"', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Ubuntu', 'Cantarell', 'Noto Sans', 'sans-serif'],
-        heading: ['Sailec', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"Söhne Mono"', 'Monaco', '"Cascadia Code"', '"Roboto Mono"', 'Consolas', '"Courier New"', 'monospace'],
+        sans: ['Sailec', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Ubuntu', 'Cantarell', 'Noto Sans', 'sans-serif'],
+        display: ['"Söhne"', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Ubuntu', 'Cantarell', 'Noto Sans', 'sans-serif'],
+        heading: ['Sailec', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Söhne Mono"', 'Monaco', '"Cascadia Code"', 'Consolas', '"Courier New"', 'monospace'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],

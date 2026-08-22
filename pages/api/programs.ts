@@ -59,8 +59,13 @@ async function getPrograms(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json([]);
     }
 
+    // Demo records remain available to administrators, but are never public content.
+    const publishableData = status === 'published'
+      ? (data as any[]).filter((item: any) => !String(item.id || '').startsWith('example-program-'))
+      : data as any[];
+
     // Transform data to match component interface
-    const transformedData = (data as any).map((item: any) => ({
+    const transformedData = publishableData.map((item: any) => ({
       id: item.id,
       title: item.title,
       description: item.excerpt || item.content,

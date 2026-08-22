@@ -54,8 +54,8 @@ console.log('✅ Supabase admin client initialized');
 const examplePrograms = [
   {
     id: 'example-program-1',
-    title: 'Orphan Adoption Program',
-    slug: 'orphan-adoption-program',
+    title: 'Orphan Support Program',
+    slug: 'orphan-support-program',
     content: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support. This program provides holistic care addressing physical, emotional, and educational needs of vulnerable children.',
     excerpt: 'Comprehensive support system for orphaned children including education, healthcare, housing, and emotional support.',
     type: 'program',

@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useDonationModal } from './DonationModalProvider';
-import { Users, GraduationCap, Heart, Home, Building, X, Calendar, MapPin, Target } from 'lucide-react';
+import {
+  RiArrowRightUpLine,
+  RiBuildingLine as Building,
+  RiFocus3Line as Target,
+  RiGraduationCapLine as GraduationCap,
+  RiGroupLine as Users,
+  RiHeart3Line as Heart,
+  RiHome4Line as Home,
+  RiMapPin2Line as MapPin,
+} from 'react-icons/ri';
+import { ActionLink, SectionHeading } from './home/HomePrimitives';
+import LandingModal from './home/LandingModal';
 
 interface ImpactStory {
   id: string;
@@ -54,7 +66,7 @@ const ImpactGallery: React.FC = () => {
             icon: 'Heart',
             category: 'Relief',
             date: 'August 25, 2025',
-            fullStory: 'August 25, 2025 marked our second official outreach, bringing essential food relief to over 30 widows in Lagos. Held at our partner church location, this outreach addressed one of the most pressing needs faced by vulnerable widows—access to nutritious food.\n\nEach widow received carefully packed food supplies including rice, oil, garri, and essential seasoning items. These are staple foods that provide sustenance for entire households, and for many widows, these supplies meant the difference between eating and going hungry.\n\nThe distribution was deeply personal. Many widows shared heartbreaking stories of going days without proper meals before this outreach. Some spoke of feeding their children while going without food themselves. Others described the daily anxiety of not knowing where the next meal would come from.\n\nThe atmosphere was filled with testimonies of renewed hope, physical relief, and deep gratitude. Widows expressed that beyond the food, they felt seen, valued, and remembered. This outreach reinforced our core mission: to bring dignity and stability to every widow we encounter.\n\nImmediate nourishment was provided to 30+ vulnerable homes, but the impact went beyond physical sustenance—it restored hope and demonstrated that these courageous women are not forgotten.',
+            fullStory: 'August 25, 2025 marked our second official outreach, bringing essential food relief to over 30 widows in Lagos. Held at our partner church location, this outreach addressed one of the most pressing needs faced by vulnerable widows: access to nutritious food.\n\nEach widow received carefully packed food supplies including rice, oil, garri, and essential seasoning items. These are staple foods that provide sustenance for entire households, and for many widows, these supplies meant the difference between eating and going hungry.\n\nThe distribution was deeply personal. Many widows shared heartbreaking stories of going days without proper meals before this outreach. Some spoke of feeding their children while going without food themselves. Others described the daily anxiety of not knowing where the next meal would come from.\n\nThe atmosphere was filled with testimonies of renewed hope, physical relief, and deep gratitude. Widows expressed that beyond the food, they felt seen, valued, and remembered. This outreach reinforced our core mission: to bring dignity and stability to every widow we encounter.\n\nImmediate nourishment was provided to 30+ vulnerable homes, but the impact went beyond physical sustenance. It restored hope and demonstrated that these courageous women are not forgotten.',
             location: 'Lagos, Nigeria',
             beneficiaries: 30,
             outcome: 'Immediate nourishment for 30+ homes. Testimonies of renewed hope and dignity.'
@@ -80,7 +92,7 @@ const ImpactGallery: React.FC = () => {
             icon: 'Users',
             category: 'Empowerment',
             date: 'October 14, 2025',
-            fullStory: 'October 14, 2025 marked the beginning of our structured Widow Empowerment Program, representing a shift from one-time relief to sustainable support. This initiative focuses on helping vulnerable widows achieve financial independence through practical business support and ongoing mentorship.\n\nThe first wave of the program saw 10+ carefully selected widows onboarded into our monthly adoption pipeline. Each widow receives business starter items tailored to their skills and interests, along with monthly stipends to help stabilize their households while they build their enterprises.\n\nWhat sets this program apart is the personalized approach. One-on-one support sessions were launched to provide individualized guidance, business mentorship, and emotional support. We recognize that each widow\'s journey is unique, and our support is designed to meet them where they are.\n\nThis is more than charity—it\'s partnership. We walk alongside these courageous women as they rebuild their lives, restore dignity to their families, and create sustainable income streams. The program continues to expand as we identify more widows in need and secure resources for their empowerment.',
+            fullStory: 'October 14, 2025 marked the beginning of our structured Widow Empowerment Program, representing a shift from one-time relief to sustainable support. This initiative focuses on helping vulnerable widows achieve financial independence through practical business support and ongoing mentorship.\n\nThe first wave of the program saw 10+ carefully selected widows onboarded into our monthly adoption pipeline. Each widow receives business starter items tailored to their skills and interests, along with monthly stipends to help stabilize their households while they build their enterprises.\n\nWhat sets this program apart is the personalized approach. One-on-one support sessions were launched to provide individualized guidance, business mentorship, and emotional support. We recognize that each widow\'s journey is unique, and our support is designed to meet them where they are.\n\nThis is more than charity. It is a partnership. We walk alongside these courageous women as they rebuild their lives, restore dignity to their families, and create sustainable income streams. The program continues to expand as we identify more widows in need and secure resources for their empowerment.',
             location: 'Lagos, Nigeria',
             beneficiaries: 10,
             outcome: 'First wave activated. 10+ widows onboarded into monthly adoption pipeline.'
@@ -93,7 +105,7 @@ const ImpactGallery: React.FC = () => {
             icon: 'Home',
             category: 'Relief',
             date: 'Ongoing since August 2025',
-            fullStory: 'Since August 2025, we have been running continuous community support initiatives targeting vulnerable homes throughout Lagos. This ongoing program addresses the daily struggles faced by families living in poor housing conditions, battling inflation, and dealing with health crises.\n\nOur field teams regularly visit identified homes to deliver essential supplies including groceries, sanitary materials, and children\'s necessities. These distributions are done with dignity and respect, recognizing that every family deserves to be treated with honor regardless of their circumstances.\n\nThe economic pressures of inflation have pushed many families to the breaking point. A bag of rice that once cost ₦30,000 now exceeds ₦100,000. Medical expenses continue to rise. Our intervention has helped stabilize several homes that were under severe pressure, preventing situations from deteriorating into crisis.\n\nWhat makes this program special is the relational approach. We don\'t just drop off supplies—we build relationships, understand each family\'s specific needs, and provide tailored support. Some families need help with children\'s school fees. Others need medical support. Some need food security. We meet each need with compassion and practical action.\n\nThis work continues daily, funded by generous donors who understand that consistent, dignified care can make the difference between despair and hope for vulnerable families.',
+            fullStory: 'Since August 2025, we have been running continuous community support initiatives targeting vulnerable homes throughout Lagos. This ongoing program addresses the daily struggles faced by families living in poor housing conditions, battling inflation, and dealing with health crises.\n\nOur field teams regularly visit identified homes to deliver essential supplies including groceries, sanitary materials, and children\'s necessities. These distributions are done with dignity and respect, recognizing that every family deserves to be treated with honor regardless of their circumstances.\n\nThe economic pressures of inflation have pushed many families to the breaking point. A bag of rice that once cost ₦30,000 now exceeds ₦100,000. Medical expenses continue to rise. Our intervention has helped stabilize several homes that were under severe pressure, preventing situations from deteriorating into crisis.\n\nWhat makes this program special is the relational approach. We do not just drop off supplies. We build relationships, understand each family\'s specific needs, and provide tailored support. Some families need help with children\'s school fees. Others need medical support. Some need food security. We meet each need with compassion and practical action.\n\nThis work continues daily, funded by generous donors who understand that consistent, dignified care can make the difference between despair and hope for vulnerable families.',
             location: 'Lagos, Nigeria',
             beneficiaries: 200,
             outcome: 'Stabilized several homes under pressure. Direct care delivered with dignity.'
@@ -156,25 +168,25 @@ const ImpactGallery: React.FC = () => {
     closeModal();
   };
 
-  return (
-    <section className="py-24 bg-gray-200 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Impact in Action
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            See how your donations are creating real, measurable change in communities across Nigeria.
-            Every project is documented with full transparency.
-          </p>
-        </div>
+  // An empty gallery is a valid content state, not an application error.
+  // Hide the section until a published gallery story is available.
+  if (!loading && impactStories.length === 0) return null;
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+  return (
+    <section className="home-section home-section-soft home-impact-gallery">
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="Impact in action"
+          title={<>Documented work. <span className="home-ink-accent">Visible change.</span></>}
+          description="See how donor support becomes measurable progress in Nigerian communities."
+        />
+
+        <div className="home-gallery-grid">
           {loading ? (
             [...Array(4)].map((_, index) => (
               <div
                 key={index}
-                className={`animate-pulse bg-gray-200 dark:bg-gray-800 rounded-2xl ${
+                className={`animate-pulse home-bezel ${
                   index === 0 ? 'md:col-span-2 h-96' : 'h-80'
                 }`}
               >
@@ -187,17 +199,19 @@ const ImpactGallery: React.FC = () => {
               return (
             <div
               key={story.id}
-              className={`group relative overflow-hidden rounded-2xl ${
-                index === 0 ? 'md:col-span-2 h-96' : 'h-80'
+              data-home-reveal
+              className={`home-bezel home-gallery-bezel group ${
+                index === 0 ? 'home-gallery-featured' : ''
               }`}
             >
+              <article className="home-bezel-core home-gallery-card relative overflow-hidden">
               {/* Background Image */}
               <Image
                 src={story.image}
                 alt={story.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                className="object-cover object-center home-image-motion"
               />
 
               {/* Overlay */}
@@ -229,14 +243,15 @@ const ImpactGallery: React.FC = () => {
                 {/* CTA */}
                 <button
                   onClick={() => handleReadStory(story)}
-                  className="mt-4 inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group-hover:translate-x-1 duration-200 font-sans"
+                  className="mt-5 inline-flex items-center text-white font-medium text-sm group/story"
                 >
                   Read Full Story
-                  <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  <span className="ml-2 h-8 w-8 rounded-full bg-white/15 flex items-center justify-center">
+                    <RiArrowRightUpLine className="home-icon-motion" />
+                  </span>
                 </button>
               </div>
+              </article>
             </div>
               );
             })
@@ -264,29 +279,25 @@ const ImpactGallery: React.FC = () => {
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <a
-            href="/gallery"
-            className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans inline-block"
-          >
-            View All Impact Stories
-          </a>
+          <ActionLink href="/gallery">View all impact stories</ActionLink>
         </div>
       </div>
 
       {/* Story Modal */}
       {isModalOpen && selectedStory && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
-            {/* Close Button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 z-10 bg-gray-800/80 hover:bg-gray-700 text-white rounded-full p-2 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
+        <LandingModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={selectedStory.title}
+          description={selectedStory.description}
+          eyebrow={selectedStory.category}
+          icon={React.createElement(getIconComponent(selectedStory.icon), { className: 'h-5 w-5' })}
+          size="xl"
+          className="impact-story-modal-shell"
+          bodyClassName="impact-story-modal-body"
+        >
             {/* Header Image */}
-            <div className="relative h-64 md:h-80">
+            <div className="impact-story-modal-image relative h-64 md:h-80">
               <Image
                 src={selectedStory.image}
                 alt={selectedStory.title}
@@ -294,34 +305,11 @@ const ImpactGallery: React.FC = () => {
                 sizes="(max-width: 768px) 100vw, 896px"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent"></div>
-
-              {/* Header Content */}
-              <div className="absolute bottom-6 left-6 right-16">
-                <div className="flex items-center mb-4">
-                  {(() => {
-                    const IconComponent = getIconComponent(selectedStory.icon);
-                    return (
-                      <div className="bg-accent-500 rounded-full p-2 mr-3">
-                        <IconComponent className="w-5 h-5 text-white" />
-                      </div>
-                    );
-                  })()}
-                  <span className="text-accent-400 text-sm font-medium font-sans tracking-wide uppercase">
-                    {selectedStory.category}
-                  </span>
-                  <span className="text-white/60 text-sm ml-auto font-light">
-                    {selectedStory.date}
-                  </span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white font-display">
-                  {selectedStory.title}
-                </h2>
-              </div>
             </div>
 
             {/* Content */}
-            <div className="p-6 md:p-8 overflow-y-auto max-h-[calc(90vh-20rem)]">
+            <div className="landing-modal-content impact-story-modal-content">
+              <p className="impact-story-modal-date">Published {selectedStory.date}</p>
               {/* Project Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {selectedStory.location && (
@@ -373,21 +361,20 @@ const ImpactGallery: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button
                     onClick={() => handleSupportProject(selectedStory)}
-                    className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    className="landing-modal-primary"
                   >
-                    Support Similar Projects
+                    Support similar projects
                   </button>
-                  <a
+                  <Link
                     href="/gallery"
-                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-medium transition-colors text-center"
+                    className="landing-modal-secondary"
                   >
-                    View More Stories
-                  </a>
+                    View more stories
+                  </Link>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+        </LandingModal>
       )}
     </section>
   );

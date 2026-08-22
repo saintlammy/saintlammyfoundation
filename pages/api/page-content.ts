@@ -175,10 +175,10 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'team',
       order_index: 1,
       data: {
-        name: 'Samuel Lammy',
+        name: 'Olamide Agboola',
         role: 'Founder & Executive Director',
         image: '/images/nigerian-ngo/portrait-volunteer.webp',
-        bio: 'Passionate about empowering vulnerable communities with over 8 years of experience in community development and charity work.',
+        bio: 'Founded Saintlammy Foundation in July 2025 and leads its donor-backed mission to serve widows, orphans, and vulnerable households.',
         linkedin: '#'
       }
     },
@@ -188,10 +188,10 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'team',
       order_index: 2,
       data: {
-        name: 'Grace Adunola',
+        name: 'Peter Adinoyi Onuachi',
         role: 'Program Director',
         image: '/images/nigerian-ngo/portrait-widow.webp',
-        bio: 'Leads our outreach programs with a heart for widows and orphans. Former social worker with 12+ years experience.',
+        bio: 'Coordinates program planning and delivery for outreaches serving widows, orphans, and vulnerable households.',
         linkedin: '#'
       }
     },
@@ -201,10 +201,10 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'team',
       order_index: 3,
       data: {
-        name: 'David Okafor',
-        role: 'Operations Manager',
+        name: 'Victoria Agboola',
+        role: 'Co-founder & Operations Manager',
         image: '/images/nigerian-ngo/portrait-volunteer.webp',
-        bio: 'Ensures efficient operations and transparency in all our programs. Background in nonprofit management and finance.',
+        bio: 'Co-founded Saintlammy Foundation and oversees operations, logistics, and the responsible delivery of its programs.',
         linkedin: '#'
       }
     },
@@ -215,8 +215,8 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'milestones',
       order_index: 1,
       data: {
-        year: '2021',
-        event: 'Foundation established with community outreach programs',
+        year: 'Jul 2025',
+        event: 'Foundation launched from RCCG with support from local and international donors',
         icon: 'Heart'
       }
     },
@@ -226,19 +226,30 @@ function getMockPageContent(slug?: string, section?: string) {
       section: 'milestones',
       order_index: 2,
       data: {
-        year: '2022',
-        event: 'First orphanage adoption program launched',
+        year: 'Aug 2025',
+        event: 'Food relief outreach supported more than 30 widows in Lagos',
         icon: 'Users'
+      }
+    },
+    {
+      id: '5a',
+      page_slug: 'about',
+      section: 'milestones',
+      order_index: 3,
+      data: {
+        year: 'Sep 2025',
+        event: 'Orphans Outreach provided foodstuffs to five orphanage homes and full school-fee support for Divine Destiny Orphanage Home',
+        icon: 'Award'
       }
     },
     {
       id: '6',
       page_slug: 'about',
       section: 'milestones',
-      order_index: 3,
+      order_index: 4,
       data: {
-        year: '2023',
-        event: 'Reached 500+ widows and 300+ orphans supported',
+        year: 'Oct 2025',
+        event: 'Open Medical Check-up Outreach provided accessible health screening and care',
         icon: 'Target'
       }
     },
@@ -246,21 +257,43 @@ function getMockPageContent(slug?: string, section?: string) {
       id: '7',
       page_slug: 'about',
       section: 'milestones',
-      order_index: 4,
+      order_index: 5,
       data: {
-        year: '2024',
-        event: 'Expanded to crypto donations and digital transparency',
+        year: 'Nov 2025',
+        event: 'Incorporated as Saintlammy Community Care Initiative (RC 9015713)',
         icon: 'Globe'
+      }
+    },
+    {
+      id: '7a',
+      page_slug: 'about',
+      section: 'milestones',
+      order_index: 6,
+      data: {
+        year: 'Dec 2025',
+        event: 'Christmas Gift Packs Outreach brought seasonal care and gifts to orphans in orphanage homes',
+        icon: 'Heart'
       }
     },
     {
       id: '8',
       page_slug: 'about',
       section: 'milestones',
-      order_index: 5,
+      order_index: 7,
       data: {
-        year: '2025',
-        event: 'Officially incorporated as Saintlammy Community Care Initiative (CAC: 9015713)',
+        year: 'Mar 2026',
+        event: 'Q1 Vulnerable Homes Outreach delivered direct support to vulnerable households',
+        icon: 'Home'
+      }
+    },
+    {
+      id: '8a',
+      page_slug: 'about',
+      section: 'milestones',
+      order_index: 8,
+      data: {
+        year: 'Q2 2026',
+        event: 'Widows relief outreach expanded direct support for vulnerable families',
         icon: 'Award'
       }
     },
@@ -310,66 +343,14 @@ function getMockPageContent(slug?: string, section?: string) {
       order_index: 1,
       data: {
         title: 'Our Story',
-        subtitle: 'From a vision to a movement - how Saintlammy Foundation began',
+        subtitle: 'From a shared conviction to a donor-backed mission rooted in community',
         paragraphs: [
-          'Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.',
-          'What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We\'ve embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.',
+          'Saintlammy Foundation began in July 2025, founded by Olamide Agboola from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. The Redeemed Christian Church of God (RCCG) served as our launchpad, giving the mission a trusted community base from which its first outreach and support efforts could be organized.',
+          'From the outset, the work was made possible by local and international donors who believed in the mission and provided the resources to act. Their support helped turn a clear vision into coordinated outreach, direct relief, and a growing structure for accountable community care.',
+          'As the work expanded, we strengthened our approach to transparency, accountability, and measurable impact. We also embraced modern giving options, including cryptocurrency, and digital reporting tools so donors can understand how contributions are used and the change they help create.',
           'In November 2025, we achieved a significant milestone: official incorporation as Saintlammy Community Care Initiative with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.',
-          'Today, we stand as a testament to what\'s possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.'
+          'Today, our story reflects what is possible when faith, a committed church community, and generous donors come together around a clear purpose. As we grow, we remain guided by the belief that no vulnerable home should stand alone and that hope truly has a home.'
         ]
-      }
-    },
-    // About Page - Testimonials
-    {
-      id: '13',
-      page_slug: 'about',
-      section: 'testimonials',
-      order_index: 1,
-      data: {
-        name: 'Mrs. Chinelo Okafor',
-        role: 'Widow Empowerment Program Beneficiary',
-        image: '/images/nigerian-ngo/portrait-widow.webp',
-        quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
-        duration: '2 years in program'
-      }
-    },
-    {
-      id: '14',
-      page_slug: 'about',
-      section: 'testimonials',
-      order_index: 2,
-      data: {
-        name: 'Emmanuel Adebayo',
-        role: 'Educational Program Graduate',
-        image: '/images/nigerian-ngo/portrait-volunteer.webp',
-        quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
-        duration: 'Scholarship recipient since 2022'
-      }
-    },
-    {
-      id: '15',
-      page_slug: 'about',
-      section: 'testimonials',
-      order_index: 3,
-      data: {
-        name: 'Dr. Sarah Adunola',
-        role: 'Medical Volunteer',
-        image: '/images/nigerian-ngo/portrait-doctor.webp',
-        quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
-        duration: '3 years volunteering'
-      }
-    },
-    {
-      id: '16',
-      page_slug: 'about',
-      section: 'testimonials',
-      order_index: 4,
-      data: {
-        name: 'Pastor David Okon',
-        role: 'Community Partner',
-        image: '/images/nigerian-ngo/portrait-volunteer.webp',
-        quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
-        duration: 'Partnership since 2021'
       }
     },
     // About Page - Values

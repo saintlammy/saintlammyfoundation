@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 
 export type Theme = 'light' | 'dark';
@@ -23,65 +23,40 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const applyTheme = (newTheme: Theme) => {
+  if (typeof window === 'undefined') return;
+
+  const root = document.documentElement;
+
+  if (newTheme === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('light');
+  } else {
+    root.classList.add('light');
+    root.classList.remove('dark');
+  }
+};
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const router = useRouter();
   const isAdminRoute = router.pathname.startsWith('/admin');
-
-  const [theme, setTheme] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
+  const theme: Theme = isAdminRoute ? 'dark' : 'light';
 
   useEffect(() => {
-    setMounted(true);
-
-    // Admin routes are always dark mode regardless of system/localStorage preference
-    if (isAdminRoute) {
-      setTheme('dark');
-      return;
+    applyTheme(theme);
+    if (!isAdminRoute) {
+      localStorage.setItem('saintlammy-theme', 'light');
     }
-
-    // Get theme from localStorage or system preference for public routes
-    const savedTheme = localStorage.getItem('saintlammy-theme') as Theme;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const initialTheme = savedTheme || systemTheme;
-
-    setTheme(initialTheme);
-  }, [isAdminRoute]);
-
-  useEffect(() => {
-    if (mounted) {
-      applyTheme(theme);
-      // Only persist theme for non-admin routes
-      if (!isAdminRoute) {
-        localStorage.setItem('saintlammy-theme', theme);
-      }
-    }
-  }, [theme, mounted, isAdminRoute]);
-
-  const applyTheme = (newTheme: Theme) => {
-    if (typeof window === 'undefined') return;
-
-    const root = document.documentElement;
-
-    if (newTheme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-  };
+  }, [theme, isAdminRoute]);
 
   const toggleTheme = () => {
-    // Admin routes always stay dark
-    if (isAdminRoute) return;
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
+    // Public routes are intentionally light-only and admin routes stay dark.
+    return;
   };
 
-  const handleSetTheme = (newTheme: Theme) => {
-    // Admin routes always stay dark
-    if (isAdminRoute) return;
-    setTheme(newTheme);
+  const handleSetTheme = (_newTheme: Theme) => {
+    // Theme changes are not exposed on either route family.
+    return;
   };
 
   // Always provide context, even during SSR/hydration

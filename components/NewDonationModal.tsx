@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import {
   Heart, Shield, TrendingUp, Copy, CheckCircle, CreditCard, Bitcoin,
-  X, Clock, AlertCircle, ExternalLink, Loader2, RefreshCw
+  Clock, AlertCircle, ExternalLink, Loader2, RefreshCw
 } from 'lucide-react';
 import { SiBitcoin, SiEthereum, SiPaypal, SiTether, SiRipple, SiBinance } from 'react-icons/si';
+import { RiBankLine } from 'react-icons/ri';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import Image from 'next/image';
 import { DonationContext } from './DonationModalProvider';
 import { paymentService, DonationData, PaymentResult, CryptoPaymentResult } from '@/lib/paymentService';
+import LandingModal from './home/LandingModal';
 
 interface NewDonationModalProps {
   isOpen: boolean;
@@ -59,10 +61,14 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
       setCryptoPaymentData(null);
       setTransactionHash('');
       setCopiedAddress(false);
+      setAmount(context?.amount?.toString() || context?.suggestedAmount?.toString() || '');
+      setDonationType(context?.donationType || 'one-time');
+      setCurrency('USD');
+      setPaymentMethod('paypal');
+      setSelectedNetwork('');
 
       // Then apply context values if provided
       if (context) {
-        if (context.amount) setAmount(context.amount.toString());
         if (context.preferredMethod === 'crypto') {
           setPaymentMethod('crypto');
         } else if (context.preferredMethod === 'card') {
@@ -72,26 +78,18 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
     }
   }, [context, isOpen]);
 
-  // Reset payment method when currency changes (skip initial mount)
-  const [isInitialMount, setIsInitialMount] = useState(true);
+  // Reset incompatible payment methods and amounts when the donor changes currency.
+  const previousCurrencyRef = useRef(currency);
 
   useEffect(() => {
-    if (isInitialMount) {
-      setIsInitialMount(false);
-      return;
-    }
+    if (previousCurrencyRef.current === currency) return;
+    previousCurrencyRef.current = currency;
 
-    if (currency === 'USD') {
-      // For USD, default to PayPal, but allow crypto
-      if (paymentMethod === 'card' || paymentMethod === 'bank') {
-        setPaymentMethod('paypal');
-      }
-    } else if (currency === 'NGN') {
-      // For NGN, default to PayPal, but allow card and bank
-      if (paymentMethod === 'crypto') {
-        setPaymentMethod('paypal');
-      }
-    }
+    setPaymentMethod((currentMethod) => {
+      if (currency === 'USD' && (currentMethod === 'card' || currentMethod === 'bank')) return 'paypal';
+      if (currency === 'NGN' && currentMethod === 'crypto') return 'paypal';
+      return currentMethod;
+    });
     // Clear amount when currency changes to avoid confusion
     setAmount('');
   }, [currency]);
@@ -256,32 +254,40 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 dark:bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700 animate-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-accent-500 rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Make a Donation</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {context?.title || 'Support our mission'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          </button>
+    <LandingModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={context?.title || 'Make a donation'}
+      description={context?.description || 'Choose an amount and a secure payment method to support our work across Nigeria.'}
+      eyebrow="Direct support"
+      icon={<Heart className="h-5 w-5" />}
+      size="lg"
+      className="donation-modal-shell"
+      bodyClassName="donation-modal-body"
+    >
+        <div className="donation-modal-progress" aria-label="Donation progress">
+          {[
+            { id: 'details', label: 'Gift details' },
+            { id: 'payment', label: 'Payment' },
+            { id: 'success', label: 'Receipt' },
+          ].map((item, index) => {
+            const progressOrder = ['details', 'payment', 'processing', 'success'];
+            const activeIndex = progressOrder.indexOf(currentStep);
+            const itemIndex = progressOrder.indexOf(item.id);
+            const isCurrent = currentStep === item.id || (item.id === 'payment' && currentStep === 'processing');
+            const isComplete = activeIndex > itemIndex;
+            return (
+              <div key={item.id} className="donation-modal-progress-item" data-active={isCurrent} data-complete={isComplete}>
+                <span>{index + 1}</span>
+                <strong>{item.label}</strong>
+              </div>
+            );
+          })}
         </div>
 
         {/* Step 1: Donation Details */}
         {currentStep === 'details' && (
-          <div className="p-6 space-y-6">
+          <div className="landing-modal-content donation-modal-content space-y-6">
             {/* Currency Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -290,7 +296,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <button
                   onClick={() => setCurrency('USD')}
-                  className={`p-3 rounded-lg border text-center font-medium transition-all ${
+                  data-selected={currency === 'USD'}
+                  className={`landing-modal-choice p-3 text-center font-medium ${
                     currency === 'USD'
                       ? 'border-accent-500 bg-accent-500/20 text-accent-400'
                       : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700'
@@ -300,7 +307,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 </button>
                 <button
                   onClick={() => setCurrency('NGN')}
-                  className={`p-3 rounded-lg border text-center font-medium transition-all ${
+                  data-selected={currency === 'NGN'}
+                  className={`landing-modal-choice p-3 text-center font-medium ${
                     currency === 'NGN'
                       ? 'border-accent-500 bg-accent-500/20 text-accent-400'
                       : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700'
@@ -321,7 +329,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                   <button
                     key={preset}
                     onClick={() => handleAmountSelect(preset)}
-                    className={`p-3 rounded-lg border text-center font-medium transition-all ${
+                    data-selected={amount === preset.toString()}
+                    className={`landing-modal-choice p-3 text-center font-medium ${
                       amount === preset.toString()
                         ? 'border-accent-500 bg-accent-500/20 text-accent-400'
                         : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700'
@@ -336,7 +345,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 placeholder={`Enter custom amount in ${currency}`}
                 value={amount}
                 onChange={handleCustomAmount}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                aria-label={`Custom donation amount in ${currency}`}
+                className="landing-modal-field p-3"
               />
             </div>
 
@@ -354,7 +364,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                   <button
                     key={option.value}
                     onClick={() => setDonationType(option.value as any)}
-                    className={`p-3 rounded-lg border text-left transition-all ${
+                    data-selected={donationType === option.value}
+                    className={`landing-modal-choice p-3 text-left ${
                       donationType === option.value
                         ? 'border-accent-500 bg-accent-500/20'
                         : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 bg-gray-50 dark:bg-gray-700'
@@ -376,7 +387,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 {/* PayPal - Available for both USD and NGN */}
                 <button
                   onClick={() => setPaymentMethod('paypal')}
-                  className={`w-full p-4 rounded-lg border text-left transition-all ${
+                  data-selected={paymentMethod === 'paypal'}
+                  className={`landing-modal-choice w-full p-4 text-left ${
                     paymentMethod === 'paypal'
                       ? 'border-accent-500 bg-accent-500/20'
                       : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 bg-gray-50 dark:bg-gray-700'
@@ -402,7 +414,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 {currency === 'NGN' && (
                   <button
                     onClick={() => setPaymentMethod('card')}
-                    className={`w-full p-4 rounded-lg border text-left transition-all ${
+                    data-selected={paymentMethod === 'card'}
+                    className={`landing-modal-choice w-full p-4 text-left ${
                       paymentMethod === 'card'
                         ? 'border-accent-500 bg-accent-500/20'
                         : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 bg-gray-50 dark:bg-gray-700'
@@ -429,7 +442,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 {currency === 'NGN' && (
                   <button
                     onClick={() => setPaymentMethod('bank')}
-                    className={`w-full p-4 rounded-lg border text-left transition-all ${
+                    data-selected={paymentMethod === 'bank'}
+                    className={`landing-modal-choice w-full p-4 text-left ${
                       paymentMethod === 'bank'
                         ? 'border-accent-500 bg-accent-500/20'
                         : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 bg-gray-50 dark:bg-gray-700'
@@ -437,9 +451,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center">
-                          <span className="text-white font-bold text-xs">🏦</span>
-                        </div>
+                        <RiBankLine className="h-6 w-6 text-accent-600" />
                         <div>
                           <div className="font-medium text-gray-900 dark:text-white">Bank Transfer</div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">Direct bank transfer in Nigerian Naira</div>
@@ -456,7 +468,8 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 {currency === 'USD' && (
                   <button
                     onClick={() => setPaymentMethod('crypto')}
-                    className={`w-full p-4 rounded-lg border text-left transition-all ${
+                    data-selected={paymentMethod === 'crypto'}
+                    className={`landing-modal-choice w-full p-4 text-left ${
                       paymentMethod === 'crypto'
                         ? 'border-accent-500 bg-accent-500/20'
                         : 'border-gray-300 dark:border-gray-600 hover:border-accent-400 bg-gray-50 dark:bg-gray-700'
@@ -671,32 +684,40 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
             )}
 
             {/* Donor Information */}
-            <div className="space-y-4">
+            <div className="landing-modal-section space-y-4">
               <h3 className="font-medium text-gray-900 dark:text-white">Your Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Full Name (Optional)"
-                  value={donorName}
-                  onChange={(e) => setDonorName(e.target.value)}
-                  className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address *"
-                  value={donorEmail}
-                  onChange={(e) => setDonorEmail(e.target.value)}
-                  className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-                  required
-                />
+                <label className="space-y-2 text-sm font-medium text-gray-800">
+                  <span>Full name <span className="font-normal text-gray-500">(optional)</span></span>
+                  <input
+                    type="text"
+                    placeholder="Your full name"
+                    value={donorName}
+                    onChange={(e) => setDonorName(e.target.value)}
+                    className="landing-modal-field p-3"
+                  />
+                </label>
+                <label className="space-y-2 text-sm font-medium text-gray-800">
+                  <span>Email address <span className="font-normal text-gray-500">(optional)</span></span>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={donorEmail}
+                    onChange={(e) => setDonorEmail(e.target.value)}
+                    className="landing-modal-field p-3"
+                  />
+                </label>
               </div>
-              <textarea
-                placeholder="Message or dedication (Optional)"
-                value={donorMessage}
-                onChange={(e) => setDonorMessage(e.target.value)}
-                rows={3}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
+              <label className="block space-y-2 text-sm font-medium text-gray-800">
+                <span>Message or dedication <span className="font-normal text-gray-500">(optional)</span></span>
+                <textarea
+                  placeholder="Add a short note"
+                  value={donorMessage}
+                  onChange={(e) => setDonorMessage(e.target.value)}
+                  rows={3}
+                  className="landing-modal-field p-3"
+                />
+              </label>
             </div>
 
             {error && (
@@ -710,7 +731,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
             <button
               onClick={handleProceedToPayment}
-              className="w-full bg-accent-500 hover:bg-accent-600 text-white py-4 rounded-lg font-medium transition-colors"
+              className="landing-modal-primary w-full"
             >
               Proceed to Payment
             </button>
@@ -719,7 +740,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
         {/* Step 2: Payment */}
         {currentStep === 'payment' && (
-          <div className="p-6 space-y-6">
+          <div className="landing-modal-content space-y-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Complete Your Donation</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -730,13 +751,13 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
             {paymentMethod === 'paypal' && (
               <div className="space-y-4">
                 <div className="text-center">
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">You'll be redirected to PayPal to complete your donation</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">You&apos;ll be redirected to PayPal to complete your donation</p>
                 </div>
 
                 <button
                   onClick={handlePayPalPayment}
                   disabled={isProcessing}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="landing-modal-primary w-full"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -759,7 +780,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 <button
                   onClick={handleCryptoPayment}
                   disabled={isProcessing}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="landing-modal-primary w-full"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -785,7 +806,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                     setError('Credit card payment coming soon! Please use PayPal for now.');
                   }}
                   disabled={isProcessing}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="landing-modal-primary w-full"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -811,13 +832,13 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                     setError('Bank transfer details coming soon! Please use PayPal for now.');
                   }}
                   disabled={isProcessing}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+                  className="landing-modal-primary w-full"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <span className="text-lg">🏦</span>
+                      <RiBankLine className="h-5 w-5" />
                       <span>Get Bank Details (NGN)</span>
                     </>
                   )}
@@ -827,7 +848,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
             <button
               onClick={() => setCurrentStep('details')}
-              className="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="landing-modal-secondary w-full"
             >
               Back to Details
             </button>
@@ -836,7 +857,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
         {/* Step 3: Processing (Crypto Payment) */}
         {currentStep === 'processing' && cryptoPaymentData && (
-          <div className="p-6 space-y-6">
+          <div className="landing-modal-content space-y-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Send Your {cryptoCurrency} Payment</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -979,7 +1000,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
                 placeholder="Enter transaction hash from your wallet"
                 value={transactionHash}
                 onChange={(e) => setTransactionHash(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent font-mono text-sm"
+                className="landing-modal-field p-3 font-mono text-sm"
               />
             </div>
 
@@ -996,7 +1017,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
               <button
                 onClick={handleSubmitTransaction}
                 disabled={!transactionHash || isProcessing}
-                className="w-full bg-accent-500 hover:bg-accent-600 text-white py-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="landing-modal-primary w-full disabled:cursor-not-allowed"
               >
                 {isProcessing ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -1010,7 +1031,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
               <button
                 onClick={() => setCurrentStep('payment')}
-                className="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="landing-modal-secondary w-full"
               >
                 Back to Payment Methods
               </button>
@@ -1020,7 +1041,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
         {/* Step 4: Success */}
         {currentStep === 'success' && (
-          <div className="p-6 text-center space-y-6">
+          <div className="landing-modal-content text-center space-y-6">
             <div className="flex justify-center">
               <div className="w-16 h-16 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center">
                 <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -1037,7 +1058,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-left">
               <h4 className="font-medium text-gray-900 dark:text-white mb-2">What happens next?</h4>
               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <li>• You'll receive an email confirmation</li>
+                <li>• You&apos;ll receive an email confirmation</li>
                 <li>• {paymentMethod === 'crypto' ? 'Transaction verification (1-6 confirmations)' : 'Payment processing'}</li>
                 <li>• Tax receipt will be emailed within 24 hours</li>
                 <li>• Updates on how your donation helps our mission</li>
@@ -1046,7 +1067,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
             <button
               onClick={onClose}
-              className="w-full bg-accent-500 hover:bg-accent-600 text-white py-4 rounded-lg font-medium transition-colors"
+              className="landing-modal-primary w-full"
             >
               Close
             </button>
@@ -1055,7 +1076,7 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
 
         {/* Step 5: Error */}
         {currentStep === 'error' && (
-          <div className="p-6 text-center space-y-6">
+          <div className="landing-modal-content text-center space-y-6">
             <div className="flex justify-center">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center">
                 <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
@@ -1070,22 +1091,21 @@ const NewDonationModal: React.FC<NewDonationModalProps> = ({ isOpen, onClose, co
             <div className="space-y-3">
               <button
                 onClick={() => setCurrentStep('payment')}
-                className="w-full bg-accent-500 hover:bg-accent-600 text-white py-4 rounded-lg font-medium transition-colors"
+                className="landing-modal-primary w-full"
               >
                 Try Again
               </button>
 
               <button
                 onClick={onClose}
-                className="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="landing-modal-secondary w-full"
               >
                 Close
               </button>
             </div>
           </div>
         )}
-      </div>
-    </div>
+    </LandingModal>
   );
 };
 

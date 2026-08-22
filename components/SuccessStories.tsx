@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ComponentProps } from '@/types';
-import { Quote, Star } from 'lucide-react';
+import { RiDoubleQuotesL, RiStarFill } from 'react-icons/ri';
 import { useDonationModal } from './DonationModalProvider';
 import { truncateForCard } from '@/lib/textUtils';
+import { ActionButton, ActionLink, DoubleBezel, SectionHeading } from './home/HomePrimitives';
 
 interface SuccessStory {
   id: string;
@@ -57,22 +58,20 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
   };
 
   return (
-    <section className={`py-24 bg-gray-100 dark:bg-gray-900 ${className}`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Lives Transformed
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Real people, real impact. These are the faces and stories behind our mission to transform lives across Nigeria.
-          </p>
-        </div>
+    <section className={`home-section home-section-paper home-success-stories ${className}`}>
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="Proof of possibility"
+          title={<>Lives changed. <span className="home-ink-accent">Futures reopened.</span></>}
+          description="Real people and real outcomes—the human stories behind our work across Nigeria."
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="home-story-grid">
           {loading ? (
             // Loading skeleton
             [...Array(3)].map((_, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden animate-pulse">
+              <div key={index} className="home-bezel home-story-bezel animate-pulse">
+                <div className="home-bezel-core overflow-hidden">
                 <div className="h-64 bg-gray-200 dark:bg-gray-700"></div>
                 <div className="p-6">
                   <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -80,23 +79,26 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
                   <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4 w-3/4"></div>
                   <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
                 </div>
+                </div>
               </div>
             ))
           ) : (
             stories.map((story, index) => (
             <div
               key={story.id}
-              className="group bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:bg-gray-50 dark:hover:bg-gray-800/70 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300"
+              data-home-reveal
+              className="home-bezel home-story-bezel group"
             >
+              <article className="home-bezel-core home-story-card">
               {/* Image */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="home-story-photo relative h-64 overflow-hidden">
                 <Image
                   src={story.image}
                   alt={`Portrait of ${story.name}, a beneficiary of Saintlammy Foundation's ${story.category} support program from ${story.location}`}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover home-image-motion"
                   loading={index > 0 ? 'lazy' : 'eager'}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 
@@ -109,8 +111,8 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
 
                 {/* Quote Icon */}
                 <div className="absolute bottom-4 right-4">
-                  <div className="w-10 h-10 bg-accent-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <Quote className="w-5 h-5 text-accent-400" />
+                  <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center">
+                    <RiDoubleQuotesL className="w-5 h-5 text-accent-600" />
                   </div>
                 </div>
               </div>
@@ -128,7 +130,7 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
                   </div>
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                      <RiStarFill key={i} className="w-4 h-4 text-amber-400" />
                     ))}
                   </div>
                 </div>
@@ -137,9 +139,9 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
                   {truncateForCard(story.story, 3)}
                 </p>
 
-                <blockquote className="border-l-4 border-accent-500 pl-4 mb-4">
+                <blockquote className="mb-4">
                   <p className="text-accent-600 dark:text-accent-100 text-sm italic font-medium leading-relaxed">
-                    "{truncateForCard(story.quote, 2)}"
+                    &ldquo;{truncateForCard(story.quote, 2)}&rdquo;
                   </p>
                 </blockquote>
 
@@ -157,14 +159,15 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
                   </div>
                 </div>
               </div>
+              </article>
             </div>
             ))
           )}
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-accent-500/10 to-accent-600/10 border border-accent-500/20 rounded-2xl p-8">
+        <div className="mt-16">
+          <DoubleBezel coreClassName="home-inline-cta">
             <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
               Be Part of the Next Success Story
             </h3>
@@ -172,25 +175,19 @@ const SuccessStories: React.FC<SuccessStoriesProps> = ({ className = '' }) => {
               Every donation creates opportunities for transformation. Join us in writing more success stories across Nigeria.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
+              <ActionButton
                 onClick={() => openDonationModal({
                   source: 'success-stories',
                   category: 'orphan',
                   title: 'Support Success Stories',
                   description: 'Help create more life-changing success stories like these'
                 })}
-                className="bg-accent-500 hover:bg-accent-600 text-white px-8 py-3 rounded-full font-medium transition-colors text-center"
               >
                 Sponsor a Child
-              </button>
-              <a
-                href="/beneficiaries"
-                className="bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/20 px-8 py-3 rounded-full font-medium transition-colors text-center"
-              >
-                View All Beneficiaries
-              </a>
+              </ActionButton>
+              <ActionLink href="/beneficiaries" tone="secondary">View all beneficiaries</ActionLink>
             </div>
-          </div>
+          </DoubleBezel>
         </div>
       </div>
     </section>

@@ -3,15 +3,15 @@ import { supabase, isSupabaseAvailable } from '@/lib/supabase';
 
 // Fallback stats when database is not available or has no data
 const FALLBACK_STATS = {
-  totalDonations: 8420,
+  totalDonations: 9077,
   totalDonors: 45,
-  totalBeneficiaries: 312,
+  totalBeneficiaries: 120,
   totalPrograms: 6,
-  totalVolunteers: 45,
-  totalPartnerships: 7,
+  totalVolunteers: 15,
+  totalPartnerships: 20,
   monthlyRevenue: 1200,
   monthlyExpenses: 950,
-  activeAdoptions: 312,
+  activeAdoptions: 120,
   pendingGrants: 3,
 };
 

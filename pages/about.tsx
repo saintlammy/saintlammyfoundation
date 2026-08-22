@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import SEOHead from '@/components/SEOHead';
-import { pageSEO, generateStructuredData } from '@/lib/seo';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Heart, Users, Target, Award, MapPin, Calendar, Clock, Globe, Mail, Phone } from 'lucide-react';
+import {
+  RiAwardLine,
+  RiFocus3Line,
+  RiGlobalLine,
+  RiGroupLine,
+  RiHeart3Line,
+  RiLinkedinLine,
+  RiShieldCheckLine,
+} from 'react-icons/ri';
+import SEOHead from '@/components/SEOHead';
+import AboutHero from '@/components/about/AboutHero';
+import { ActionButton, ActionLink, DoubleBezel } from '@/components/home/HomePrimitives';
 import { useDonationModal } from '@/components/DonationModalProvider';
+import { pageSEO } from '@/lib/seo';
+import { truncateForCard } from '@/lib/textUtils';
 
 interface TeamMember {
   name: string;
@@ -31,14 +42,7 @@ interface HeroSection {
   background_image: string;
 }
 
-interface MissionSection {
-  title: string;
-  content: string;
-  tagline: string;
-  icon: string;
-}
-
-interface VisionSection {
+interface StatementSection {
   title: string;
   content: string;
   tagline: string;
@@ -57,24 +61,96 @@ interface AboutTestimonial {
   image: string;
   quote: string;
   duration: string;
+  verified?: boolean;
 }
 
-// Helper function to map icon names to components
-const getIconComponent = (iconName: string) => {
-  const iconMap: { [key: string]: any } = {
-    Heart,
-    Users,
-    Target,
-    Award,
-    Globe,
-    MapPin,
-    Calendar,
-    Clock,
-    Mail,
-    Phone
-  };
-  return iconMap[iconName] || Heart; // Fallback to Heart icon
+type ContentState = 'loading' | 'ready' | 'error';
+
+const fallbackHero: HeroSection = {
+  title: 'About Our Mission',
+  subtitle: 'Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria.',
+  background_image: '/images/nigerian-ngo/hero-widows-outreach-2026.webp',
 };
+
+const fallbackMission: StatementSection = {
+  title: 'Our Mission',
+  content: 'To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency.',
+  tagline: 'Every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances.',
+  icon: 'Target',
+};
+
+const fallbackVision: StatementSection = {
+  title: 'Our Vision',
+  content: 'A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all.',
+  tagline: 'Through faith-driven action and sustainable solutions, we are building a future of hope and transformation.',
+  icon: 'Heart',
+};
+
+const fallbackStory: StorySection = {
+  title: 'Our Story',
+  subtitle: 'From a shared conviction to a donor-backed mission rooted in community',
+  paragraphs: [
+    'Saintlammy Foundation began in July 2025, founded by Olamide Agboola from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. The Redeemed Christian Church of God (RCCG) served as our launchpad, giving the mission a trusted community base from which its first outreach and support efforts could be organized.',
+    'From the outset, the work was made possible by local and international donors who believed in the mission and provided the resources to act. Their support helped turn a clear vision into coordinated outreach, direct relief, and a growing structure for accountable community care.',
+    'As the work expanded, we strengthened our approach to transparency, accountability, and measurable impact. We also embraced modern giving options, including cryptocurrency, and digital reporting tools so donors can understand how contributions are used and the change they help create.',
+    'In November 2025, we achieved a significant milestone: official incorporation as Saintlammy Community Care Initiative with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and supports the long-term sustainability of our programs.',
+    'Today, our story reflects what is possible when faith, a committed church community, and generous donors come together around a clear purpose. As we grow, we remain guided by the belief that no vulnerable home should stand alone and that hope truly has a home.',
+  ],
+};
+
+const fallbackMilestones: Milestone[] = [
+  { year: 'Jul 2025', event: 'Foundation launched from RCCG with support from local and international donors', icon: 'Heart' },
+  { year: 'Aug 2025', event: 'Food relief outreach supported more than 30 widows in Lagos', icon: 'Users' },
+  { year: 'Sep 2025', event: 'Orphans Outreach provided foodstuffs to five orphanage homes and full school-fee support for Divine Destiny Orphanage Home', icon: 'Award' },
+  { year: 'Oct 2025', event: 'Open Medical Check-up Outreach provided accessible health screening and care', icon: 'Target' },
+  { year: 'Nov 2025', event: 'Incorporated as Saintlammy Community Care Initiative (RC 9015713)', icon: 'Award' },
+  { year: 'Dec 2025', event: 'Christmas Gift Packs Outreach brought seasonal care and gifts to orphans in orphanage homes', icon: 'Heart' },
+  { year: 'Mar 2026', event: 'Q1 Vulnerable Homes Outreach delivered direct support to vulnerable households', icon: 'Home' },
+  { year: 'Q2 2026', event: 'Widows relief outreach expanded direct support for vulnerable families', icon: 'Globe' },
+];
+
+const fallbackValues: Value[] = [
+  { title: 'Transparency', description: 'Every donation is tracked and documented. We believe in complete financial transparency.', icon: 'Target' },
+  { title: 'Faith-Driven', description: 'Rooted in Christian values, guided by compassion and service to those in need.', icon: 'Heart' },
+  { title: 'Community Impact', description: 'We focus on sustainable, long-term change that empowers communities.', icon: 'Users' },
+  { title: 'Accountability', description: 'Regular reporting shows how donations create practical, measurable impact.', icon: 'Award' },
+];
+
+const fallbackTestimonials: AboutTestimonial[] = [];
+
+const fallbackTeam: TeamMember[] = [
+  {
+    name: 'Olamide Agboola',
+    role: 'Founder & Executive Director',
+    image: '',
+    bio: 'Founded Saintlammy Foundation in July 2025 and leads its donor-backed mission to serve widows, orphans, and vulnerable households.',
+    linkedin: '#',
+  },
+  {
+    name: 'Peter Adinoyi Onuachi',
+    role: 'Program Director',
+    image: '',
+    bio: 'Coordinates program planning and delivery for outreaches serving widows, orphans, and vulnerable households.',
+    linkedin: '#',
+  },
+  {
+    name: 'Victoria Agboola',
+    role: 'Co-founder & Operations Manager',
+    image: '',
+    bio: 'Co-founded Saintlammy Foundation and oversees operations, logistics, and the responsible delivery of its programs.',
+    linkedin: '#',
+  },
+];
+
+const iconMap = {
+  Heart: RiHeart3Line,
+  Users: RiGroupLine,
+  Target: RiFocus3Line,
+  Award: RiAwardLine,
+  Globe: RiGlobalLine,
+};
+
+const cleanDisplayCopy = (value: string) => value.replace(/[—–]/g, '-');
 
 const About: React.FC = () => {
   const { openDonationModal } = useDonationModal();
@@ -82,386 +158,312 @@ const About: React.FC = () => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [values, setValues] = useState<Value[]>([]);
   const [hero, setHero] = useState<HeroSection | null>(null);
-  const [mission, setMission] = useState<MissionSection | null>(null);
-  const [vision, setVision] = useState<VisionSection | null>(null);
+  const [mission, setMission] = useState<StatementSection | null>(null);
+  const [vision, setVision] = useState<StatementSection | null>(null);
   const [story, setStory] = useState<StorySection | null>(null);
   const [testimonials, setTestimonials] = useState<AboutTestimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [contentState, setContentState] = useState<ContentState>('loading');
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const [teamRes, milestonesRes, valuesRes, heroRes, missionRes, visionRes, storyRes, testimonialsRes] = await Promise.all([
-          fetch('/api/page-content?slug=about&section=team'),
-          fetch('/api/page-content?slug=about&section=milestones'),
-          fetch('/api/page-content?slug=about&section=values'),
-          fetch('/api/page-content?slug=about&section=hero'),
-          fetch('/api/page-content?slug=about&section=mission'),
-          fetch('/api/page-content?slug=about&section=vision'),
-          fetch('/api/page-content?slug=about&section=story'),
-          fetch('/api/page-content?slug=about&section=testimonials')
-        ]);
+        const sections = ['team', 'milestones', 'values', 'hero', 'mission', 'vision', 'story', 'testimonials'];
+        const responses = await Promise.all(
+          sections.map((section) => fetch(`/api/page-content?slug=about&section=${section}`))
+        );
 
-        const teamData = await teamRes.json();
-        const milestonesData = await milestonesRes.json();
-        const valuesData = await valuesRes.json();
-        const heroData = await heroRes.json();
-        const missionData = await missionRes.json();
-        const visionData = await visionRes.json();
-        const storyData = await storyRes.json();
-        const testimonialsData = await testimonialsRes.json();
-
-        if (teamData && teamData.length > 0) {
-          setTeamMembers(teamData.map((item: any) => item.data));
+        if (responses.some((response) => !response.ok)) {
+          throw new Error('One or more About page sections could not be loaded');
         }
 
-        if (milestonesData && milestonesData.length > 0) {
-          setMilestones(milestonesData.map((item: any) => item.data));
-        }
+        const [teamData, milestonesData, valuesData, heroData, missionData, visionData, storyData, testimonialsData] = await Promise.all(
+          responses.map((response) => response.json())
+        );
 
-        if (valuesData && valuesData.length > 0) {
-          setValues(valuesData.map((item: any) => item.data));
-        }
-
-        if (heroData && heroData.length > 0) {
-          setHero(heroData[0].data);
-        }
-
-        if (missionData && missionData.length > 0) {
-          setMission(missionData[0].data);
-        }
-
-        if (visionData && visionData.length > 0) {
-          setVision(visionData[0].data);
-        }
-
-        if (storyData && storyData.length > 0) {
-          setStory(storyData[0].data);
-        }
-
-        if (testimonialsData && testimonialsData.length > 0) {
-          setTestimonials(testimonialsData.map((item: any) => item.data));
-        }
+        if (teamData.length) setTeamMembers(teamData.map((item: { data: TeamMember }) => item.data));
+        if (milestonesData.length) setMilestones(milestonesData.map((item: { data: Milestone }) => item.data));
+        if (valuesData.length) setValues(valuesData.map((item: { data: Value }) => item.data));
+        if (heroData.length) setHero(heroData[0].data);
+        if (missionData.length) setMission(missionData[0].data);
+        if (visionData.length) setVision(visionData[0].data);
+        if (storyData.length) setStory(storyData[0].data);
+        if (testimonialsData.length) setTestimonials(testimonialsData.map((item: { data: AboutTestimonial }) => item.data));
+        setContentState('ready');
       } catch (error) {
-        console.error('Error fetching page content:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching About page content:', error);
+        setContentState('error');
       }
     };
 
-    fetchContent();
+    void fetchContent();
   }, []);
+
+  const displayHero = hero || fallbackHero;
+  const displayMission = mission || fallbackMission;
+  const displayVision = vision || fallbackVision;
+  const displayStory = story || fallbackStory;
+  const displayMilestones = milestones.length ? milestones : fallbackMilestones;
+  const displayValues = values.length ? values : fallbackValues;
+  const displayTestimonials = (testimonials.length ? testimonials : fallbackTestimonials)
+    .filter((testimonial) => testimonial.verified === true);
+  const displayTeam = teamMembers.length ? teamMembers : fallbackTeam;
 
   return (
     <>
       <SEOHead config={pageSEO.about} />
 
-      <main>
-        {/* Hero Section */}
-        <section className="relative py-16 sm:py-24 md:py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="absolute inset-0">
-            <Image
-              src={hero?.background_image || "/images/nigerian-ngo/community-relief.webp"}
-              alt="Community gathering"
-              fill
-              className="object-cover object-center opacity-30"
-            />
-            <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
-          </div>
+      <main className="about-family-page">
+        <AboutHero
+          eyebrow="Our foundation"
+          title={cleanDisplayCopy(displayHero.title)}
+          description={cleanDisplayCopy(displayHero.subtitle)}
+          image={displayHero.background_image || fallbackHero.background_image}
+          imageAlt="Saintlammy Foundation supporting women and families during a community outreach in Nigeria"
+        >
+          <ActionLink href="#story">Explore our story</ActionLink>
+          <ActionLink href="/stories" tone="secondary">See our impact</ActionLink>
+        </AboutHero>
 
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
-              {hero?.title || "About Our Mission"}
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
-              {hero?.subtitle || "Bringing hope, structure, and transformation to widows, orphans, and vulnerable communities across Nigeria."}
-            </p>
+        {contentState === 'error' && (
+          <div className="about-container about-content-note" role="status">
+            Live profile updates are temporarily unavailable. Core foundation information remains available below.
+          </div>
+        )}
+
+        <section className="about-section about-beliefs" aria-labelledby="beliefs-heading">
+          <div className="about-container">
+            <header className="about-section-heading">
+              <p className="about-eyebrow">Why we exist</p>
+              <h2 id="beliefs-heading">Care with direction.</h2>
+              <p>Immediate relief matters. So does building the stability that helps a household move forward.</p>
+            </header>
+
+            <div className="about-beliefs-grid">
+              <article className="about-belief about-belief-primary">
+                <RiFocus3Line aria-hidden="true" />
+                <h3>{cleanDisplayCopy(displayMission.title)}</h3>
+                <p>{cleanDisplayCopy(displayMission.content)}</p>
+                <strong>{cleanDisplayCopy(displayMission.tagline)}</strong>
+              </article>
+
+              <article className="about-belief about-belief-secondary">
+                <RiHeart3Line aria-hidden="true" />
+                <h3>{cleanDisplayCopy(displayVision.title)}</h3>
+                <p>{cleanDisplayCopy(displayVision.content)}</p>
+                <strong>{cleanDisplayCopy(displayVision.tagline)}</strong>
+              </article>
+            </div>
           </div>
         </section>
 
-        {/* Mission & Vision */}
-        <section className="py-12 sm:py-16 md:py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-                <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
-                  {mission?.icon ? React.createElement(getIconComponent(mission.icon), { className: "w-8 h-8 text-accent-400" }) : <Target className="w-8 h-8 text-accent-400" />}
+        <section id="story" className="about-section about-story-section" aria-labelledby="story-heading">
+          <div className="about-container about-story-grid">
+            <div className="about-story-intro">
+              <p className="about-eyebrow">How it began</p>
+              <h2 id="story-heading">{cleanDisplayCopy(displayStory.title)}</h2>
+              <p>{cleanDisplayCopy(displayStory.subtitle)}</p>
+              <DoubleBezel className="about-story-image-bezel" coreClassName="about-story-image">
+                <Image
+                  src="/images/nigerian-ngo/volunteer-team.webp"
+                  alt="Nigerian volunteers preparing relief supplies for a Saintlammy Foundation outreach"
+                  fill
+                  sizes="(max-width: 767px) 100vw, 42vw"
+                  className="object-cover"
+                />
+              </DoubleBezel>
+            </div>
+
+            <div className="about-story-prose">
+              {displayStory.paragraphs.map((paragraph, index) => (
+                <p key={index}>{cleanDisplayCopy(paragraph)}</p>
+              ))}
+
+              <aside className="about-registration">
+                <RiShieldCheckLine aria-hidden="true" />
+                <div>
+                  <strong>Registered Nigerian nonprofit</strong>
+                  <span>Saintlammy Community Care Initiative, RC 9015713</span>
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">{mission?.title || "Our Mission"}</h2>
-                <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
-                  {mission?.content || "To provide comprehensive support to widows, orphans, and vulnerable individuals across Nigeria through sustainable programs that address immediate needs while building long-term capacity for self-sufficiency."}
-                </p>
-                <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                  {mission?.tagline || "We believe that every person deserves dignity, hope, and the opportunity to thrive regardless of their circumstances."}
-                </p>
-              </div>
+              </aside>
+            </div>
+          </div>
+        </section>
 
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-                <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mb-6">
-                  {vision?.icon ? React.createElement(getIconComponent(vision.icon), { className: "w-8 h-8 text-accent-400" }) : <Heart className="w-8 h-8 text-accent-400" />}
+        <section className="about-section about-journey" aria-labelledby="journey-heading">
+          <div className="about-container">
+            <header className="about-section-heading about-section-heading-compact">
+              <h2 id="journey-heading">A mission taking shape.</h2>
+              <p>Each milestone marks a stronger structure for serving people with consistency and care.</p>
+            </header>
+
+            {contentState === 'loading' ? (
+              <div className="about-journey-skeleton" aria-label="Loading foundation milestones">
+                {[0, 1, 2, 3, 4].map((item) => <span key={item} />)}
+              </div>
+            ) : (
+              <ol className="about-journey-track">
+                {displayMilestones.map((milestone, index) => {
+                  const Icon = iconMap[milestone.icon as keyof typeof iconMap] || RiHeart3Line;
+                  return (
+                    <li key={`${milestone.year}-${index}`}>
+                      <Icon aria-hidden="true" />
+                      <strong>{milestone.year}</strong>
+                      <p>{cleanDisplayCopy(milestone.event)}</p>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+          </div>
+        </section>
+
+        <section className="about-section about-values" aria-labelledby="values-heading">
+          <div className="about-container">
+            <header className="about-section-heading about-section-heading-compact">
+              <h2 id="values-heading">What holds the work together.</h2>
+              <p>Our values guide how support is delivered, documented, and sustained.</p>
+            </header>
+
+            {contentState === 'loading' ? (
+              <div className="about-values-skeleton" aria-label="Loading foundation values">
+                {[0, 1, 2, 3].map((item) => <span key={item} />)}
+              </div>
+            ) : (
+              <div className="about-values-grid">
+                {displayValues.map((value, index) => {
+                  const Icon = iconMap[value.icon as keyof typeof iconMap] || RiHeart3Line;
+                  return (
+                    <article key={value.title} className={`about-value about-value-${index + 1}`}>
+                      {index === 2 && (
+                        <Image
+                          src="/images/nigerian-ngo/about-adire-textile.webp"
+                          alt="Purple and green Nigerian adire-inspired textile"
+                          fill
+                          sizes="(max-width: 767px) 100vw, 48vw"
+                          className="about-value-textile"
+                        />
+                      )}
+                      <div className="about-value-content">
+                        <Icon aria-hidden="true" />
+                        <h3>{cleanDisplayCopy(value.title)}</h3>
+                        <p>{cleanDisplayCopy(value.description)}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section id="testimonials" className="about-section about-testimonials" aria-labelledby="testimonials-heading">
+          <div className="about-container">
+            <header className="about-section-heading about-section-heading-compact">
+              <h2 id="testimonials-heading">Trust starts with the truth.</h2>
+              <p>We publish first-person accounts only after the support described has been verified and the contributor has given consent.</p>
+            </header>
+
+            {displayTestimonials.length > 0 ? (
+              <div className="about-testimonial-layout">
+                <blockquote className="about-testimonial-featured">
+                  <span className="about-testimonial-mark" aria-hidden="true">&ldquo;</span>
+                  <p>{cleanDisplayCopy(truncateForCard(displayTestimonials[0].quote, 3))}</p>
+                  <footer>
+                    <strong>{displayTestimonials[0].name}</strong>
+                    <span>{displayTestimonials[0].role}</span>
+                    <small>{displayTestimonials[0].duration}</small>
+                  </footer>
+                </blockquote>
+
+                {displayTestimonials.length > 1 && (
+                <div className="about-testimonial-supporting">
+                  {displayTestimonials.slice(1).map((testimonial) => (
+                    <blockquote key={`${testimonial.name}-${testimonial.role}`} className="about-testimonial-compact">
+                      <p>&ldquo;{cleanDisplayCopy(truncateForCard(testimonial.quote, 3))}&rdquo;</p>
+                      <footer>
+                        <strong>{testimonial.name}</strong>
+                        <span>{testimonial.role}</span>
+                        <small>{testimonial.duration}</small>
+                      </footer>
+                    </blockquote>
+                  ))}
                 </div>
-                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6 font-display">{vision?.title || "Our Vision"}</h2>
-                <p className="text-gray-600 dark:text-gray-300 text-lg font-light leading-relaxed mb-6">
-                  {vision?.content || "A Nigeria where no widow is forgotten, no orphan is left behind, and no vulnerable home stands alone. We envision thriving communities where love, support, and opportunity are accessible to all."}
-                </p>
-                <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                  {vision?.tagline || "Through faith-driven action and sustainable solutions, we're building a future of hope and transformation."}
-                </p>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="about-verified-record">
+                <div className="about-verified-copy">
+                  <h3>Documented support, clearly stated.</h3>
+                  <p>Verified first-person accounts will be added after the person or organisation involved approves the words attributed to them.</p>
+                </div>
+                <aside>
+                  <span>September 2025 Orphans Outreach</span>
+                  <strong>Divine Destiny Orphanage Home</strong>
+                  <p>Received full school-fee support during an outreach that also provided foodstuffs to five orphanage homes.</p>
+                  <ActionLink href="/stories" tone="secondary">Read verified stories</ActionLink>
+                </aside>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Our Story */}
-        <section className="py-12 sm:py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-12 sm:mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-gray-900 dark:text-white mb-4 sm:mb-6 font-display tracking-tight break-words">
-                {story?.title || "Our Story"}
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed break-words">
-                {story?.subtitle || "From a vision to a movement - how Saintlammy Foundation began"}
-              </p>
-            </div>
+        <section className="about-section about-team" aria-labelledby="team-heading">
+          <div className="about-container about-team-grid">
+            <DoubleBezel className="about-team-photo-bezel" coreClassName="about-team-photo">
+              <Image
+                src="/images/nigerian-ngo/hero-widows-outreach-2026.webp"
+                alt="Saintlammy Foundation volunteers and widows gathered after a relief outreach in Lagos"
+                fill
+                sizes="(max-width: 767px) 100vw, 46vw"
+                className="object-cover"
+              />
+            </DoubleBezel>
 
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-              {story?.paragraphs ? (
-                story.paragraphs.map((paragraph, index) => (
-                  <p key={index} className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                    {paragraph.includes('Saintlammy Community Care Initiative') ? (
-                      <>
-                        {paragraph.split('Saintlammy Community Care Initiative')[0]}
-                        <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span>
-                        {paragraph.split('Saintlammy Community Care Initiative')[1]}
-                      </>
-                    ) : (
-                      paragraph
-                    )}
-                  </p>
-                ))
-              ) : (
-                <>
-                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                    Saintlammy Foundation was born from a deep conviction that every vulnerable person deserves dignity, support, and the opportunity to thrive. Founded in 2021 by Samuel Lammy, our organization emerged from years of grassroots community work and a growing recognition of the urgent needs facing widows and orphans across Nigeria.
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                    What started as individual acts of kindness evolved into a structured organization committed to transparency, accountability, and measurable impact. We've embraced modern technology, including cryptocurrency donations and digital transparency tools, to ensure every contribution creates maximum positive change.
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-6 break-words">
-                    In November 2025, we achieved a significant milestone: official incorporation as <span className="font-medium text-gray-900 dark:text-white">Saintlammy Community Care Initiative</span> with the Corporate Affairs Commission of Nigeria (Registration No. 9015713, Tax ID: 33715150-0001). This formalization strengthens our capacity to serve and ensures long-term sustainability of our programs.
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-light leading-relaxed break-words">
-                    Today, we stand as a testament to what's possible when faith meets action, and when communities come together to lift up the most vulnerable among us. Our journey continues, guided by the belief that hope truly has a home.
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-        </section>
+            <div className="about-team-roster">
+              <header className="about-section-heading about-section-heading-compact">
+                <h2 id="team-heading">People behind the promise.</h2>
+                <p>A Nigerian-led team coordinating programs, partnerships, and responsible delivery.</p>
+              </header>
 
-        {/* Timeline */}
-        <section className="py-12 sm:py-16 md:py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Our Journey
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-                Key milestones in our mission to transform lives
-              </p>
-            </div>
-
-            <div className="space-y-8">
-              {milestones.map((milestone, index) => {
-                const IconComponent = getIconComponent(milestone.icon);
-                return (
-                  <div key={index} className="flex items-start gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center">
-                        <IconComponent className="w-8 h-8 text-accent-400" />
-                      </div>
-                    </div>
-                    <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center gap-4 mb-3">
-                        <span className="text-accent-400 font-semibold text-lg">{milestone.year}</span>
-                        <div className="h-px bg-gray-600 flex-1"></div>
-                      </div>
-                      <p className="text-gray-900 dark:text-white text-lg font-medium">{milestone.event}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Values */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Our Values
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                The principles that guide our work and define our character
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {values.map((value, index) => {
-                const IconComponent = getIconComponent(value.icon);
-                return (
-                  <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
-                    <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-6">
-                      <IconComponent className="w-6 h-6 text-accent-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{value.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed">{value.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials Section */}
-        <section id="testimonials" className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                What People Say
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Hear from those whose lives have been transformed through our work
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-              {(testimonials.length > 0 ? testimonials : [
-                {
-                  name: 'Mrs. Chinelo Okafor',
-                  role: 'Widow Empowerment Program Beneficiary',
-                  image: '/images/nigerian-ngo/portrait-widow.webp',
-                  quote: 'After my husband passed, I thought my life was over. Through Saintlammy Foundation\'s tailoring program, I now run my own business and can support my three children. They gave me hope when I had none.',
-                  duration: '2 years in program'
-                },
-                {
-                  name: 'Emmanuel Adebayo',
-                  role: 'Educational Program Graduate',
-                  image: '/images/nigerian-ngo/portrait-volunteer.webp',
-                  quote: 'I was an orphan with no hope of attending university. Thanks to Saintlammy Foundation\'s scholarship program, I\'m now studying engineering. They believed in me when no one else would.',
-                  duration: 'Scholarship recipient since 2022'
-                },
-                {
-                  name: 'Dr. Sarah Adunola',
-                  role: 'Medical Volunteer',
-                  image: '/images/nigerian-ngo/portrait-doctor.webp',
-                  quote: 'Volunteering with Saintlammy Foundation has been the most rewarding experience of my medical career. The impact we make together in underserved communities is truly life-changing.',
-                  duration: '3 years volunteering'
-                },
-                {
-                  name: 'Pastor David Okon',
-                  role: 'Community Partner',
-                  image: '/images/nigerian-ngo/portrait-volunteer.webp',
-                  quote: 'Saintlammy Foundation\'s transparency and genuine commitment to helping others is exceptional. They are truly making a difference in our communities, one life at a time.',
-                  duration: 'Partnership since 2021'
-                }
-              ]).map((testimonial, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors">
-                  <div className="flex items-center mb-6">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        fill
-                        className="object-cover object-center"
-                      />
-                    </div>
+              <div className="about-team-list">
+                {displayTeam.map((member) => (
+                  <article key={member.name}>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white font-display">{testimonial.name}</h3>
-                      <p className="text-sm text-accent-400 font-medium">{testimonial.role}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.duration}</p>
+                      <h3>{member.name}</h3>
+                      <span>{member.role}</span>
                     </div>
-                  </div>
-
-                  <blockquote className="text-gray-600 dark:text-gray-300 font-light leading-relaxed italic">
-                    "{testimonial.quote}"
-                  </blockquote>
-                </div>
-              ))}
+                    <p>{cleanDisplayCopy(member.bio)}</p>
+                    {member.linkedin && member.linkedin !== '#' && (
+                      <a href={member.linkedin} aria-label={`Connect with ${member.name} on LinkedIn`}>
+                        <RiLinkedinLine aria-hidden="true" />
+                        LinkedIn
+                      </a>
+                    )}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Team */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Meet Our Team
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Dedicated individuals working tirelessly to create positive change
-              </p>
+        <section className="about-closing">
+          <div className="about-container about-closing-grid">
+            <div>
+              <h2>Help the next household move forward.</h2>
+              <p>Your support funds practical care, education, healthcare, and livelihood opportunities across Nigeria.</p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <div key={index} className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors group">
-                  <div className="relative h-64">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 font-display">{member.name}</h3>
-                    <p className="text-accent-400 font-medium text-sm mb-4">{member.role}</p>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">{member.bio}</p>
-                    <a
-                      href={member.linkedin}
-                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors"
-                    >
-                      Connect on LinkedIn
-                      <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-              Join Our Mission
-            </h2>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Be part of the transformation. Every action, every donation, every prayer makes a difference in the lives we serve.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button
+            <div className="about-closing-actions">
+              <ActionButton
+                tone="light"
                 onClick={() => openDonationModal({
                   source: 'about-page',
                   title: 'Support Our Mission',
-                  description: 'Help us continue transforming lives through education, healthcare, and empowerment programs.'
+                  description: 'Help us continue transforming lives through education, healthcare, and empowerment programs.',
                 })}
-                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans"
               >
-                Start Donating
-              </button>
-              <a
-                href="/volunteer"
-                className="bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
-              >
-                Become a Volunteer
-              </a>
+                Donate today
+              </ActionButton>
+              <ActionLink href="/volunteer" tone="secondary">Become a volunteer</ActionLink>
             </div>
           </div>
         </section>
@@ -470,12 +472,8 @@ const About: React.FC = () => {
   );
 };
 
-// Enable ISR for better performance
 export async function getStaticProps() {
-  return {
-    props: {},
-    revalidate: 3600 // Revalidate every hour
-  };
+  return { props: {}, revalidate: 3600 };
 }
 
 export default About;

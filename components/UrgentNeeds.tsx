@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useRouter } from 'next/router';
-import { Clock, Target, Heart, AlertCircle, Share2, Facebook, Twitter, Linkedin, Copy, CheckCircle, QrCode, Mail, MessageSquare, X, ExternalLink } from 'lucide-react';
+import {
+  RiAlarmWarningLine as AlertCircle,
+  RiCheckboxCircleLine as CheckCircle,
+  RiCloseLine as X,
+  RiExternalLinkLine as ExternalLink,
+  RiFacebookFill as Facebook,
+  RiFileCopyLine as Copy,
+  RiFocus3Line as Target,
+  RiHeart3Line as Heart,
+  RiLinkedinFill as Linkedin,
+  RiMailLine as Mail,
+  RiMessage2Line as MessageSquare,
+  RiQrCodeLine as QrCode,
+  RiShareLine as Share2,
+  RiTimeLine as Clock,
+  RiTwitterXLine as Twitter,
+} from 'react-icons/ri';
 import { useDonationModal } from './DonationModalProvider';
 import CampaignQRModal from './CampaignQRModal';
 import CampaignMetaTags from './CampaignMetaTags';
 import { trackCampaignShare } from '@/lib/trackCampaignShare';
+import { ActionButton, ActionLink, SectionHeading } from './home/HomePrimitives';
 
 interface Campaign {
   id: string;
@@ -66,26 +83,6 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
     };
   }, [showShareMenu]);
 
-  // Update button position when menu opens and on scroll
-  useEffect(() => {
-    const updatePosition = () => {
-      if (shareButtonRef.current) {
-        setShareButtonRect(shareButtonRef.current.getBoundingClientRect());
-      }
-    };
-
-    if (showShareMenu) {
-      updatePosition();
-      window.addEventListener('scroll', updatePosition, true);
-      window.addEventListener('resize', updatePosition);
-    }
-
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [showShareMenu]);
-
   const fetchFeaturedCampaign = async () => {
     try {
       const response = await fetch('/api/campaigns?status=active&featured=true');
@@ -125,8 +122,8 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
 
   if (loading) {
     return (
-      <section className="py-24 bg-gray-100 dark:bg-black">
-        <div className="max-w-7xl mx-auto px-6 text-center">
+      <section className="home-section home-section-soft">
+        <div className="home-container text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500 mx-auto"></div>
           <p className="text-gray-600 dark:text-gray-400 mt-4">Loading urgent campaigns...</p>
         </div>
@@ -251,23 +248,17 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
       {/* Dynamic Meta Tags for Featured Campaign */}
       {featuredCampaign && <CampaignMetaTags campaign={featuredCampaign} />}
 
-      <section id="urgent-campaign" className="py-24 bg-gray-100 dark:bg-black scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-red-500/20 text-red-400 text-sm font-medium mb-6">
-            <AlertCircle className="w-4 h-4 mr-2" />
-            URGENT NEEDS
-          </div>
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Help Right Now
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Every day without your support means another hungry child or struggling mother. Be the reason someone breathes again.
-          </p>
-        </div>
+      <section id="urgent-campaign" className="home-section home-section-paper home-urgent-section scroll-mt-20">
+        <div className="home-container">
+        <SectionHeading
+          eyebrow="Urgent campaign"
+          title={<>Some needs cannot <span className="home-urgent-accent">wait.</span></>}
+          description="Immediate support can become a meal, medicine or a safe next step for a family today."
+        />
 
         {/* Main Campaign */}
-        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-200 dark:border-gray-700">
+        <div data-home-reveal className="home-bezel home-urgent-bezel">
+          <div className="home-bezel-core home-urgent-card">
           <div className="md:flex">
             <div className="md:w-1/2 p-8 md:p-12">
               <div className="flex items-center mb-4">
@@ -335,19 +326,21 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button
+                <ActionButton
                   onClick={handleDonateToCampaign}
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans"
+                  tone="urgent"
                 >
                   Give Now
-                </button>
-                <button
-                  onClick={() => router.push(`/campaign/${featuredCampaign.id}`)}
-                  className="bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans flex items-center justify-center"
+                </ActionButton>
+                <ActionLink href={`/campaign/${featuredCampaign.id}`} tone="secondary">Learn more</ActionLink>
+                <ActionButton
+                  onClick={() => setShowQRModal(true)}
+                  tone="secondary"
+                  showArrow={false}
+                  aria-label={`Share ${featuredCampaign.title} with a QR code`}
                 >
-                  <ExternalLink className="w-5 h-5 mr-2" />
-                  Learn More
-                </button>
+                  Share campaign
+                </ActionButton>
               </div>
             </div>
 
@@ -363,38 +356,22 @@ const UrgentNeeds: React.FC<UrgentNeedsProps> = ({ onDonateClick }) => {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Call to Action */}
         <div className="text-center">
           <p className="text-gray-600 dark:text-gray-300 mb-6 font-light text-lg">
-            "You can't change the whole world. But you can change someone's world."
+            &ldquo;You can&apos;t change the whole world. But you can change someone&apos;s world.&rdquo;
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button
-              onClick={onDonateClick}
-              className="bg-accent-500 hover:bg-accent-600 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans flex items-center"
-            >
-              <Heart className="w-4 h-4 mr-2" /> Adopt a Widow
-            </button>
-            <button
-              onClick={onDonateClick}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans flex items-center"
-            >
-              <Heart className="w-4 h-4 mr-2" /> Feed a Family
-            </button>
-            <button
-              onClick={onDonateClick}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans flex items-center"
-            >
-              <Heart className="w-4 h-4 mr-2" /> Sponsor an Outreach
-            </button>
-            <button
-              onClick={onDonateClick}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans flex items-center"
-            >
-              <Heart className="w-4 h-4 mr-2" /> Donate in Crypto
-            </button>
+          <div className="home-urgent-options">
+            {['Adopt a widow', 'Feed a family', 'Sponsor an outreach', 'Donate in crypto'].map(label => (
+              <button key={label} onClick={handleDonateToCampaign} className="home-urgent-option group">
+                <Heart className="w-4 h-4" />
+                <span>{label}</span>
+                <ExternalLink className="w-4 h-4 home-icon-motion" />
+              </button>
+            ))}
           </div>
         </div>
       </div>

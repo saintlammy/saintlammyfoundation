@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Send, CheckCircle } from 'lucide-react';
+import { RiCheckboxCircleLine, RiMailLine, RiSendPlaneLine } from 'react-icons/ri';
+import { DoubleBezel } from './home/HomePrimitives';
 
 const NewsletterSignup: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -44,17 +45,18 @@ const NewsletterSignup: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-200 dark:border-gray-700">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-8 h-8 text-accent-400" />
+    <section className="home-section home-section-soft home-newsletter">
+      <div className="home-container home-container-narrow">
+        <DoubleBezel coreClassName="home-newsletter-core">
+          <div data-home-reveal className="home-newsletter-copy">
+            <div className="home-card-icon mb-6">
+              <RiMailLine className="w-7 h-7" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-4 font-display tracking-tight">
-              Stay In the Loop
+            <span className="home-eyebrow">Hope, delivered monthly</span>
+            <h2 className="font-display tracking-tight">
+              Stay close to the work.
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+            <p className="text-lg text-gray-600 font-light leading-relaxed">
               Subscribe to our <strong>Hope Dispatch</strong> newsletter and get monthly updates,
               prayer requests, and photos from the field delivered to your inbox.
             </p>
@@ -62,7 +64,7 @@ const NewsletterSignup: React.FC = () => {
 
           {isSubscribed ? (
             <div className="text-center py-8">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <RiCheckboxCircleLine className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h3 className="text-2xl font-semibold text-green-400 mb-2 font-display">
                 Thank You!
               </h3>
@@ -71,7 +73,7 @@ const NewsletterSignup: React.FC = () => {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+            <form onSubmit={handleSubmit} className="home-newsletter-form">
               {error && (
                 <div className="mb-6 p-4 bg-red-100 dark:bg-red-500/20 border border-red-300 dark:border-red-500/30 rounded-xl">
                   <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
@@ -88,7 +90,7 @@ const NewsletterSignup: React.FC = () => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="home-input"
                     placeholder="Enter your full name"
                     required
                     disabled={isLoading}
@@ -104,7 +106,7 @@ const NewsletterSignup: React.FC = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-colors font-sans"
+                    className="home-input"
                     placeholder="Enter your email address"
                     required
                     disabled={isLoading}
@@ -115,23 +117,23 @@ const NewsletterSignup: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-accent-500 hover:bg-accent-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl flex items-center justify-center font-sans"
+                className="home-action home-action-primary group w-full justify-between disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <Send className="w-5 h-5 mr-2" />
-                {isLoading ? 'Subscribing...' : 'Subscribe to Hope Dispatch'}
+                <span>{isLoading ? 'Subscribing...' : 'Subscribe to Hope Dispatch'}</span>
+                <span className="home-action-island"><RiSendPlaneLine /></span>
               </button>
             </form>
           )}
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 font-light">
-              <Mail className="w-4 h-4 inline mr-2" /> Get monthly updates, prayer requests, and photos from the field.
+              <RiMailLine className="w-4 h-4 inline mr-2" /> Get monthly updates, prayer requests, and photos from the field.
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
               We respect your privacy. Unsubscribe at any time.
             </p>
           </div>
-        </div>
+        </DoubleBezel>
       </div>
     </section>
   );

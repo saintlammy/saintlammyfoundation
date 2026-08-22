@@ -1,430 +1,336 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Calendar, Users, Heart, Target, Clock, ChevronRight } from 'lucide-react';
+import {
+  RiBookOpenLine,
+  RiCalendarEventLine,
+  RiHandHeartLine,
+  RiHeartPulseLine,
+  RiHomeHeartLine,
+  RiMapPin2Line,
+  RiRefreshLine,
+  RiTeamLine,
+} from 'react-icons/ri';
+import AboutHero from '@/components/about/AboutHero';
+import { ActionButton, ActionLink, DoubleBezel } from '@/components/home/HomePrimitives';
+import { useDonationModal } from '@/components/DonationModalProvider';
+import SEOHead from '@/components/SEOHead';
+import { pageSEO } from '@/lib/seo';
 import { truncateForCard } from '@/lib/textUtils';
 
 interface Outreach {
   id: string;
   title: string;
-  date: string;
+  date?: string;
   time?: string;
-  location: string;
-  description: string;
+  location?: string;
+  description?: string;
   image?: string;
   targetBeneficiaries?: number;
   beneficiaries?: number;
   volunteersNeeded?: number;
   status: string;
-  impact?: string[];
 }
 
+const outreachFocus = [
+  {
+    title: 'Food relief',
+    description: 'Foodstuffs and household essentials organized around verified community needs.',
+    icon: RiHandHeartLine,
+    image: '/images/outreaches/q2-widows-2026/programme-relief-intake.webp',
+  },
+  {
+    title: 'Orphanage support',
+    description: 'Needs-led support for children and the homes responsible for their care.',
+    icon: RiHomeHeartLine,
+    image: '/images/nigerian-ngo/orphan-care.webp',
+  },
+  {
+    title: 'Open medical check-ups',
+    description: 'Community access to health checks, basic screening, and informed next steps.',
+    icon: RiHeartPulseLine,
+    image: '/images/nigerian-ngo/health-outreach.webp',
+  },
+  {
+    title: 'Vulnerable homes',
+    description: 'Practical intervention for households experiencing immediate hardship.',
+    icon: RiBookOpenLine,
+    image: '/images/outreaches/q2-widows-2026/beneficiary-listening.webp',
+  },
+];
+
+const parseOutreachDate = (value?: string) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const formatOutreachDate = (value?: string) => {
+  const date = parseOutreachDate(value);
+  if (!date) return value || 'Date to be confirmed';
+  return new Intl.DateTimeFormat('en-NG', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+};
+
+const cleanOutreachText = (value?: string) =>
+  (value || '').replace(/\s*[—–]\s*/g, ': ').replace(/\s+/g, ' ').trim();
+
+const outreachRecordImage = (outreach: Outreach) => {
+  if (outreach.id === 'new-1786742411946') {
+    return '/images/outreaches/q2-widows-2026/community-celebration.webp';
+  }
+  return outreach.image || '/images/nigerian-ngo/community-relief.webp';
+};
+
+const sortByDateDesc = (left: Outreach, right: Outreach) => {
+  const leftDate = parseOutreachDate(left.date)?.getTime() || 0;
+  const rightDate = parseOutreachDate(right.date)?.getTime() || 0;
+  return rightDate - leftDate;
+};
+
 const Outreaches: React.FC = () => {
-  const [upcomingOutreaches, setUpcomingOutreaches] = useState<Outreach[]>([]);
-  const [pastOutreaches, setPastOutreaches] = useState<Outreach[]>([]);
+  const { openDonationModal } = useDonationModal();
+  const [outreaches, setOutreaches] = useState<Outreach[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    const loadOutreaches = async () => {
+      try {
+        setLoading(true);
+        setLoadError(false);
+        const responses = await Promise.all(
+          ['upcoming', 'ongoing', 'completed'].map((status) =>
+            fetch(`/api/outreaches?status=${status}`, { signal: controller.signal }),
+          ),
+        );
+
+        if (responses.some((response) => !response.ok)) {
+          throw new Error('One or more outreach feeds could not be loaded');
+        }
+
+        const collections = (await Promise.all(responses.map((response) => response.json()))) as Outreach[][];
+        const records = new Map<string, Outreach>();
+        collections.flat().forEach((outreach) => {
+          if (outreach?.id) records.set(outreach.id, outreach);
+        });
+        setOutreaches(Array.from(records.values()));
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Error loading outreaches:', error);
+          setLoadError(true);
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
     loadOutreaches();
+    return () => controller.abort();
   }, []);
 
-  const loadOutreaches = async () => {
-    try {
-      setLoading(true);
-      setLoadError(null);
+  const { upcomingOutreaches, previousOutreaches } = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const upcoming: Outreach[] = [];
+    const previous: Outreach[] = [];
 
-      const [upcomingResponse, ongoingResponse, completedResponse] = await Promise.all([
-        fetch('/api/outreaches?status=upcoming'),
-        fetch('/api/outreaches?status=ongoing'),
-        fetch('/api/outreaches?status=completed'),
-      ]);
+    outreaches.forEach((outreach) => {
+      const status = outreach.status?.toLowerCase() || '';
+      const date = parseOutreachDate(outreach.date);
+      const isOngoing = status === 'ongoing';
+      const isFuture = date ? date.getTime() >= today.getTime() : status === 'upcoming';
+      if (isOngoing || isFuture) upcoming.push(outreach);
+      else previous.push(outreach);
+    });
 
-      const responses = [upcomingResponse, ongoingResponse, completedResponse];
-      if (responses.some((response) => !response.ok)) {
-        throw new Error('One or more outreach feeds could not be loaded');
-      }
+    return {
+      upcomingOutreaches: upcoming.sort((left, right) => {
+        const leftDate = parseOutreachDate(left.date)?.getTime() || Number.MAX_SAFE_INTEGER;
+        const rightDate = parseOutreachDate(right.date)?.getTime() || Number.MAX_SAFE_INTEGER;
+        return leftDate - rightDate;
+      }),
+      previousOutreaches: previous.sort(sortByDateDesc),
+    };
+  }, [outreaches]);
 
-      const [upcoming, ongoing, completed] = await Promise.all(
-        responses.map((response) => response.json() as Promise<Outreach[]>)
-      );
-
-      setUpcomingOutreaches([...upcoming, ...ongoing]);
-      setPastOutreaches(completed);
-    } catch (error) {
-      console.error('Error loading outreaches:', error);
-      setLoadError('We could not load outreach information right now. Please try again shortly.');
-    } finally {
-      setLoading(false);
-    }
+  const openOutreachDonation = () => {
+    openDonationModal({
+      source: 'outreaches-page',
+      category: 'outreach',
+      title: 'Support the next outreach',
+      description: 'Help fund verified community support, logistics, and essential supplies.',
+    });
   };
-
-  // Fallback data for when no outreaches in database
-  const fallbackUpcoming: Outreach[] = [
-    {
-      id: '1',
-      title: 'Christmas Feeding Program',
-      date: 'December 22, 2024',
-      time: '10:00 AM - 4:00 PM',
-      location: 'Mushin Community Center, Lagos',
-      description: 'Annual Christmas feeding program for 500+ families in Mushin area. Hot meals, gift packages, and medical check-ups.',
-      image: '/images/nigerian-ngo/community-relief.webp',
-      targetBeneficiaries: 500,
-      volunteersNeeded: 25,
-      status: 'Registration Open'
-    },
-    {
-      id: '2',
-      title: 'Educational Materials Distribution',
-      date: 'January 15, 2025',
-      time: '9:00 AM - 2:00 PM',
-      location: 'Hope Children Home, Abuja',
-      description: 'Distribution of school bags, books, uniforms, and educational materials to 200 children across 5 orphanages.',
-      image: '/images/nigerian-ngo/education-classroom.webp',
-      targetBeneficiaries: 200,
-      volunteersNeeded: 15,
-      status: 'Planning Phase'
-    },
-    {
-      id: '3',
-      title: 'Widow Empowerment Workshop',
-      date: 'February 8, 2025',
-      time: '11:00 AM - 5:00 PM',
-      location: 'Community Hall, Port Harcourt',
-      description: 'Skills training workshop for widows including tailoring, soap making, and small business management.',
-      image: '/images/nigerian-ngo/widow-empowerment.webp',
-      targetBeneficiaries: 75,
-      volunteersNeeded: 12,
-      status: 'Registration Soon'
-    }
-  ];
-
-  const fallbackPast: Outreach[] = [
-    {
-      id: '4',
-      title: 'Independence Day Medical Outreach',
-      date: 'October 1, 2024',
-      location: 'Ikeja, Lagos',
-      beneficiaries: 450,
-      description: 'Free medical check-ups, medications, and health education for underserved communities.',
-      image: '/images/nigerian-ngo/community-relief.webp',
-      status: 'completed',
-      impact: ['450 people received medical care', '200 medications distributed', '50 referrals to specialists']
-    },
-    {
-      id: '5',
-      title: 'Back-to-School Support',
-      date: 'September 12, 2024',
-      location: 'Multiple Locations',
-      beneficiaries: 320,
-      description: 'School supplies and uniforms distribution for children from vulnerable families.',
-      image: '/images/nigerian-ngo/education-classroom.webp',
-      status: 'completed',
-      impact: ['320 children received school supplies', '150 uniforms distributed', '8 schools supported']
-    },
-    {
-      id: '6',
-      title: 'Clean Water Initiative',
-      date: 'August 20, 2024',
-      location: 'Rural Kogi State',
-      beneficiaries: 600,
-      description: 'Installation of water pumps and distribution of water purification tablets.',
-      image: '/images/nigerian-ngo/community-relief.webp',
-      status: 'completed',
-      impact: ['3 water pumps installed', '600 people gained access to clean water', '1200 purification tablets distributed']
-    }
-  ];
-
-  // Use only API data - no automatic fallback to mock data
-  const displayUpcoming = upcomingOutreaches;
-  const displayPast = pastOutreaches;
-
-  const outreachCategories = [
-    {
-      title: 'Medical Outreaches',
-      description: 'Free healthcare services, medical check-ups, and health education',
-      icon: Heart,
-      count: 12
-    },
-    {
-      title: 'Educational Support',
-      description: 'School supplies, uniforms, and educational materials distribution',
-      icon: Target,
-      count: 8
-    },
-    {
-      title: 'Feeding Programs',
-      description: 'Hot meals, food packages, and nutrition support for vulnerable families',
-      icon: Users,
-      count: 15
-    },
-    {
-      title: 'Skills Training',
-      description: 'Empowerment workshops and vocational training for widows and youth',
-      icon: Clock,
-      count: 6
-    }
-  ];
 
   return (
     <>
-      <Head>
-        <title>Outreaches - Saintlammy Foundation</title>
-        <meta name="description" content="Join Saintlammy Foundation's community outreaches. Medical care, educational support, feeding programs, and skills training across Nigeria." />
-      </Head>
-        {/* Hero Section */}
-        <section className="relative py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="absolute inset-0">
-            <Image
-              src="/images/nigerian-ngo/community-relief.webp"
-              alt="Community outreach program"
-              fill
-              className="object-cover object-center opacity-30"
-            />
-            <div className="absolute inset-0 bg-white/60 dark:bg-black/60"></div>
-          </div>
+      <SEOHead config={pageSEO.outreaches} />
+      <main className="about-family-page work-page outreach-page">
+        <AboutHero
+          eyebrow="Community outreaches"
+          title="Care that reaches communities."
+          description="We bring practical care into Nigerian communities through organized, needs-led outreach."
+          image="/images/nigerian-ngo/hero-widows-outreach-2026.webp"
+          imageAlt="Widows and Saintlammy Foundation volunteers gathered during a Nigerian community relief outreach"
+          variant="impact"
+        >
+          <ActionLink href="#upcoming-outreaches">See what is next</ActionLink>
+          <ActionLink href="/volunteer" tone="secondary">Join as a volunteer</ActionLink>
+        </AboutHero>
 
-          <div className="relative max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-              Community Outreaches
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-              Bringing hope, healing, and support directly to communities across Nigeria through targeted outreach programs.
-            </p>
-          </div>
-        </section>
+        <section className="about-section outreach-focus-section">
+          <div className="about-container">
+            <header className="about-section-heading work-heading-offset">
+              <p className="about-eyebrow">Where we show up</p>
+              <h2>Different needs. One standard of care.</h2>
+              <p>Each outreach is shaped by its community, while dignity, preparation, and transparent reporting remain constant.</p>
+            </header>
 
-        {/* Outreach Categories */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Our Outreach Focus Areas
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Comprehensive programs addressing the most critical needs in our communities
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {outreachCategories.map((category, index) => (
-                <div key={index} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none text-center group">
-                  <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <category.icon className="w-8 h-8 text-accent-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-display">{category.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-light mb-4">{category.description}</p>
-                  <div className="inline-flex items-center px-3 py-1 bg-accent-500/20 text-accent-400 rounded-full text-xs font-medium">
-                    {category.count} Programs
-                  </div>
-                </div>
-              ))}
+            <div className="outreach-focus-grid">
+              {outreachFocus.map((area, index) => {
+                const Icon = area.icon;
+                return (
+                  <article key={area.title} className={`outreach-focus-card outreach-focus-card-${index + 1}`}>
+                    <Image src={area.image} alt="" fill sizes="(max-width: 767px) 100vw, 42vw" className="object-cover" />
+                    <div className="outreach-focus-scrim" />
+                    <span className="work-icon" aria-hidden="true"><Icon /></span>
+                    <div className="outreach-focus-copy"><h3>{area.title}</h3><p>{area.description}</p></div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* Upcoming Outreaches */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Upcoming Outreaches
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                Join us in making a difference. Register to volunteer or stay updated on our upcoming programs.
-              </p>
+        <section id="upcoming-outreaches" className="about-section outreach-schedule-section">
+          <div className="about-container">
+            <div className="work-section-intro">
+              <header className="about-section-heading about-section-heading-compact">
+                <p className="about-eyebrow">Upcoming</p>
+                <h2>Plan to take part.</h2>
+              </header>
+              <p>Only future-dated or actively ongoing outreaches appear here, even when an older dashboard status has not yet been updated.</p>
             </div>
 
-            <div className="space-y-8">
-              {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400">Loading outreaches...</p>
+            {loading ? (
+              <div className="work-loading-grid work-loading-feature" aria-label="Loading upcoming outreaches" aria-live="polite"><span /><span /></div>
+            ) : loadError ? (
+              <div className="work-state" role="alert">
+                <span className="work-state-icon" aria-hidden="true"><RiRefreshLine /></span>
+                <h3>Upcoming outreach information is temporarily unavailable.</h3>
+                <p>You can still register your interest and our team will follow up with current opportunities.</p>
+                <ActionLink href="/volunteer" tone="secondary">Volunteer with us</ActionLink>
+              </div>
+            ) : upcomingOutreaches.length === 0 ? (
+              <div className="work-state work-state-split">
+                <div>
+                  <span className="work-state-icon" aria-hidden="true"><RiCalendarEventLine /></span>
+                  <h3>No upcoming outreach is published yet.</h3>
+                  <p>Join the volunteer list or follow our updates to hear when the next date is confirmed.</p>
                 </div>
-              ) : loadError ? (
-                <div className="text-center py-12" role="alert">
-                  <p className="text-red-600 dark:text-red-400">{loadError}</p>
+                <div className="work-state-actions">
+                  <ActionLink href="/volunteer">Register your interest</ActionLink>
+                  <ActionLink href="/news" tone="secondary">Read updates</ActionLink>
                 </div>
-              ) : displayUpcoming.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400">No upcoming outreaches at this time.</p>
-                </div>
-              ) : (
-                displayUpcoming.map((outreach, index) => (
-                <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none">
-                  <div className="md:flex">
-                    <div className="md:w-1/3 relative h-64 md:h-auto">
+              </div>
+            ) : (
+              <div className="outreach-upcoming-list">
+                {upcomingOutreaches.map((outreach) => (
+                  <article key={outreach.id} className="outreach-upcoming-card">
+                    <DoubleBezel className="outreach-upcoming-bezel" coreClassName="outreach-upcoming-image" reveal={false}>
                       <Image
-                        src={outreach.image || '/images/placeholder-outreach.jpg'}
-                        alt={outreach.title}
+                        src={outreachRecordImage(outreach)}
+                        alt={cleanOutreachText(outreach.title)}
                         fill
-                        className="object-cover object-center"
+                        unoptimized={outreachRecordImage(outreach).startsWith('data:')}
+                        sizes="(max-width: 767px) 100vw, 48vw"
+                        className="object-cover"
                       />
-                      <div className="absolute top-4 left-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium text-gray-900 dark:text-white ${
-                          outreach.status === 'Registration Open' ? 'bg-green-500' :
-                          outreach.status === 'Planning Phase' ? 'bg-yellow-500' :
-                          'bg-accent-500'
-                        }`}>
-                          {outreach.status}
-                        </span>
+                    </DoubleBezel>
+                    <div className="outreach-upcoming-copy">
+                      <p className="work-card-kicker">{outreach.status === 'ongoing' ? 'In progress' : 'Upcoming outreach'}</p>
+                      <h3>{cleanOutreachText(outreach.title)}</h3>
+                      <p>{truncateForCard(cleanOutreachText(outreach.description), 3)}</p>
+                      <div className="outreach-meta">
+                        <span><RiCalendarEventLine />{formatOutreachDate(outreach.date)}</span>
+                        {outreach.location && <span><RiMapPin2Line />{cleanOutreachText(outreach.location)}</span>}
+                        {outreach.time && <span><RiTeamLine />{outreach.time}</span>}
+                      </div>
+                      <div className="work-card-actions">
+                        <ActionLink href="/volunteer">Volunteer</ActionLink>
+                        <ActionLink href={`/outreach/${outreach.id}`} tone="secondary">View details</ActionLink>
                       </div>
                     </div>
-
-                    <div className="md:w-2/3 p-8">
-                      <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 font-display">{outreach.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-6">{truncateForCard(outreach.description, 3)}</p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                          <Calendar className="w-4 h-4 mr-2 text-accent-400" />
-                          {outreach.date}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                          <Clock className="w-4 h-4 mr-2 text-accent-400" />
-                          {outreach.time}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                          <MapPin className="w-4 h-4 mr-2 text-accent-400" />
-                          {outreach.location}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                          <Users className="w-4 h-4 mr-2 text-accent-400" />
-                          {outreach.targetBeneficiaries} Beneficiaries
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <a
-                          href="/volunteer"
-                          className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
-                        >
-                          Register to Volunteer
-                        </a>
-                        <Link
-                          href={`/outreach/${outreach.id}`}
-                          className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-6 py-3 rounded-full font-medium text-sm transition-colors font-sans text-center inline-block"
-                        >
-                          Learn More
-                        </Link>
-                      </div>
-
-                      {outreach.volunteersNeeded && (
-                        <p className="text-xs text-accent-400 mt-3">
-                          {outreach.volunteersNeeded} volunteers needed
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )))}
-            </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Past Outreaches */}
-        <section className="py-24 bg-white dark:bg-black">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-                Past Outreaches & Impact
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                See the real impact of our community outreach programs and the lives we've touched together.
-              </p>
+        <section className="about-section outreach-archive-section" aria-labelledby="outreach-records-title">
+          <div className="about-container">
+            <div className="work-section-intro">
+              <header className="about-section-heading about-section-heading-compact">
+                <p className="about-eyebrow">Previous records</p>
+                <h2 id="outreach-records-title">See the work already delivered.</h2>
+              </header>
+              <p>Previous records are grouped by event date, so completed and older published outreaches remain easy to find.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {loading ? (
-                <div className="col-span-3 text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400">Loading past outreaches...</p>
-                </div>
-              ) : loadError ? (
-                <div className="text-center py-12" role="alert">
-                  <p className="text-red-600 dark:text-red-400">{loadError}</p>
-                </div>
-              ) : displayPast.length === 0 ? (
-                <div className="col-span-3 text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400">No past outreaches to display.</p>
-                </div>
-              ) : (
-                displayPast.map((outreach) => (
-                <div key={outreach.id} className="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500 transition-colors shadow-lg dark:shadow-none group">
-                  <div className="relative h-48">
-                    <Image
-                      src={outreach.image || '/images/placeholder-outreach.jpg'}
-                      alt={outreach.title}
-                      fill
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <div className="flex items-center gap-4 mb-3">
-                      <span className="text-accent-400 text-sm font-medium">{outreach.date}</span>
-                      <div className="h-1 w-1 bg-gray-400 dark:bg-gray-600 rounded-full"></div>
-                      <span className="text-gray-500 dark:text-gray-400 text-sm">{outreach.location}</span>
+            {loading ? (
+              <div className="work-loading-grid" aria-label="Loading previous outreach records" aria-live="polite"><span /><span /><span /></div>
+            ) : loadError ? (
+              <div className="work-state" role="alert"><h3>Previous records could not be loaded.</h3><p>Please return shortly while we reconnect to the outreach archive.</p></div>
+            ) : previousOutreaches.length === 0 ? (
+              <div className="work-state"><h3>No previous outreach records are published.</h3><p>Verified reports will appear here as they are added through the foundation dashboard.</p></div>
+            ) : (
+              <div className="outreach-archive-grid">
+                {previousOutreaches.map((outreach, index) => (
+                  <article key={outreach.id} className={index === 0 ? 'outreach-record outreach-record-featured' : 'outreach-record'}>
+                    <div className="outreach-record-image">
+                      <Image
+                        src={outreachRecordImage(outreach)}
+                        alt={cleanOutreachText(outreach.title)}
+                        fill
+                        unoptimized={outreachRecordImage(outreach).startsWith('data:')}
+                        sizes={index === 0 ? '(max-width: 767px) 100vw, 62vw' : '(max-width: 767px) 100vw, 34vw'}
+                        className="object-cover"
+                      />
                     </div>
-
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 font-display">{outreach.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm font-light leading-relaxed mb-4">{truncateForCard(outreach.description, 3)}</p>
-
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">People Reached</span>
-                        <span className="text-accent-400 font-semibold">{outreach.beneficiaries}</span>
+                    <div className="outreach-record-copy">
+                      <p className="work-card-kicker">{formatOutreachDate(outreach.date)}</p>
+                      <h3>{cleanOutreachText(outreach.title)}</h3>
+                      <p>{truncateForCard(cleanOutreachText(outreach.description), index === 0 ? 4 : 3)}</p>
+                      <div className="outreach-meta">
+                        {outreach.location && <span><RiMapPin2Line />{cleanOutreachText(outreach.location)}</span>}
+                        {outreach.status && <span><RiCalendarEventLine />Published record</span>}
                       </div>
+                      <Link className="work-text-link" href={`/outreach/${outreach.id}`}>Read the outreach record</Link>
                     </div>
-
-                    <div className="space-y-1 mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white">Impact Highlights:</h4>
-                      {outreach.impact?.map((item, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <div className="w-1 h-1 bg-accent-400 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-xs text-gray-600 dark:text-gray-300">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Link
-                      href={`/outreach/${outreach.id}`}
-                      className="inline-flex items-center text-accent-400 hover:text-accent-300 font-medium text-sm transition-colors group"
-                    >
-                      View Full Report
-                      <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
-                </div>
-              )))}
-            </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-              Join Our Next Outreach
-            </h2>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Be part of the change. Volunteer with us and help bring hope and healing to communities across Nigeria.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <a
-                href="/volunteer"
-                className="bg-accent-500 hover:bg-accent-600 text-gray-900 dark:text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-glow hover:shadow-glow-lg font-sans text-center inline-block"
-              >
-                Volunteer With Us
-              </a>
-              <a
-                href="/news"
-                className="bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-transparent px-8 py-4 rounded-full font-medium text-base transition-colors font-sans text-center inline-block"
-              >
-                Subscribe to Updates
-              </a>
+        <section className="about-closing">
+          <div className="about-container about-closing-grid">
+            <div><h2>Make the next outreach possible.</h2><p>Bring your time, skills, or financial support to work that reaches vulnerable Nigerians directly.</p></div>
+            <div className="about-closing-actions">
+              <ActionButton tone="light" onClick={openOutreachDonation}>Support an outreach</ActionButton>
+              <ActionLink href="/volunteer" tone="secondary">Volunteer with us</ActionLink>
             </div>
           </div>
         </section>
+      </main>
     </>
   );
 };

@@ -1,60 +1,59 @@
 import React from 'react';
-import { Shield, FileText, Eye, Users, Award, DollarSign } from 'lucide-react';
+import { RiAwardLine, RiEyeLine, RiFileChartLine, RiMoneyDollarCircleLine, RiShieldCheckLine, RiTeamLine } from 'react-icons/ri';
+import { DoubleBezel, SectionHeading } from './home/HomePrimitives';
 
 const TrustIndicators: React.FC = () => {
   return (
-    <section className="py-24 bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Why You Can Trust Us
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Transparency, accountability, and faith-driven leadership guide everything we do.
-          </p>
-        </div>
+    <section className="home-section home-section-ink home-trust-section">
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="Trust, made visible"
+          title={<>Good intentions need <span className="home-emerald-accent">accountable systems.</span></>}
+          description="Registration, transparent reporting and disciplined stewardship guide every decision we make."
+          inverse
+        />
 
         {/* Trust Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {[
             {
-              icon: Shield,
+              icon: RiShieldCheckLine,
               title: 'Registered',
               description: 'RC: 9015713',
               detail: 'Saintlammy Community Care Initiative - Officially registered November 2025'
             },
             {
-              icon: Eye,
+              icon: RiEyeLine,
               title: 'Transparent Operations',
               description: 'Reports, receipts, and donor records are accessible',
               detail: 'Full visibility into how your donations are used'
             },
             {
-              icon: FileText,
+              icon: RiFileChartLine,
               title: 'Donor Reports',
               description: 'All crypto and Naira donations are logged for tax purposes',
               detail: 'Complete documentation for your records'
             },
             {
-              icon: Users,
+              icon: RiTeamLine,
               title: 'Governance',
               description: 'Oversight from leadership board and financial committee',
               detail: 'Structured accountability and decision-making'
             },
             {
-              icon: Award,
+              icon: RiAwardLine,
               title: '6 Months Service',
               description: 'Consistent delivery and community trust since July 2025',
               detail: 'Building a proven track record of impact and reliability'
             },
             {
-              icon: DollarSign,
+              icon: RiMoneyDollarCircleLine,
               title: 'Efficient Use',
               description: '70% direct aid, 20% logistics, 10% operations',
               detail: 'Your money goes where it matters most'
             }
           ].map((item, index) => (
-            <div key={index} className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700 hover:border-accent-500">
+            <DoubleBezel key={index} className={`home-trust-bezel ${index === 0 || index === 5 ? 'home-trust-wide' : ''}`} coreClassName="home-trust-card">
               <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-4">
                 <item.icon className="w-6 h-6 text-accent-400" />
               </div>
@@ -67,12 +66,12 @@ const TrustIndicators: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-300 text-sm font-light">
                 {item.detail}
               </p>
-            </div>
+            </DoubleBezel>
           ))}
         </div>
 
         {/* Donation Breakdown */}
-        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 md:p-12 shadow-lg border border-gray-200 dark:border-gray-700">
+        <DoubleBezel coreClassName="home-donation-breakdown">
           <div className="text-center mb-8">
             <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4 font-display">
               Breakdown of Donation Use
@@ -120,7 +119,7 @@ const TrustIndicators: React.FC = () => {
               We believe your trust deserves complete openness.
             </p>
           </div>
-        </div>
+        </DoubleBezel>
       </div>
     </section>
   );

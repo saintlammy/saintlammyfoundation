@@ -53,10 +53,10 @@ export const pageSEO = {
   }),
 
   programs: generateSEO({
-    title: "Our Programs - Orphan Care, Widow Empowerment & Community Development",
-    description: "Explore Saintlammy Foundation's comprehensive programs: Orphan Care & Education, Widow Empowerment, Community Development, and Partnership initiatives across Nigeria.",
+    title: "Our Programmes - Practical Care for Vulnerable Nigerians",
+    description: "Explore Saintlammy Foundation's verified programme areas, including food relief, orphanage-home support, education support, and open medical check-ups in Nigeria.",
     url: "https://saintlammyfoundation.org/programs",
-    keywords: "orphan care programs, widow empowerment Nigeria, community development, education programs, partnership initiatives"
+    keywords: "Nigeria NGO programmes, orphanage support Nigeria, vulnerable family relief, education support, community medical check-ups"
   }),
 
   donate: generateSEO({
@@ -102,10 +102,10 @@ export const pageSEO = {
   }),
 
   outreaches: generateSEO({
-    title: "Outreach Programs - Community Impact Initiatives",
-    description: "Discover Saintlammy Foundation's outreach programs bringing hope, education, healthcare, and support to communities across Nigeria.",
+    title: "Community Outreaches - Practical Support Across Nigeria",
+    description: "See Saintlammy Foundation's upcoming and previous Nigerian community outreaches, including food relief, orphanage support, medical check-ups, and vulnerable-home support.",
     url: "https://saintlammyfoundation.org/outreaches",
-    keywords: "outreach programs, community outreach, Nigeria charity programs, humanitarian aid, community support"
+    keywords: "Nigeria community outreach, food relief Nigeria, orphanage outreach, medical outreach Nigeria, vulnerable homes support"
   }),
 
   governance: generateSEO({
@@ -176,10 +176,10 @@ export const pageSEO = {
 
   // Individual Program Pages
   orphanAdoption: generateSEO({
-    title: "Orphan Care & Adoption Support - Providing Family & Hope",
-    description: "Supporting orphans with education, healthcare, family placement, and long-term care. Building futures for vulnerable children across Nigeria.",
+    title: "Orphan Support Program - Practical Care for Vulnerable Children",
+    description: "Learn about Saintlammy Foundation's support for orphanage homes and vulnerable children through food, education, healthcare, and practical care in Nigeria.",
     url: "https://saintlammyfoundation.org/programs/orphan-adoption",
-    keywords: "orphan care, adoption support, child welfare, orphanages, foster care, family placement Nigeria"
+    keywords: "orphan support Nigeria, orphanage support, child welfare, education support, vulnerable children Nigeria"
   }),
 
   widowEmpowerment: generateSEO({

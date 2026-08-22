@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import SponsorModal from './SponsorModal';
-import { Heart, MapPin, Loader2 } from 'lucide-react';
+import { RiHeart3Line, RiLoader4Line, RiMapPin2Line } from 'react-icons/ri';
 import { truncateToLines } from '@/lib/textUtils';
+import { ActionButton, ActionLink, SectionHeading } from './home/HomePrimitives';
 
 interface Beneficiary {
   id: string;
@@ -63,42 +64,39 @@ const BeneficiaryShowcase: React.FC = () => {
   if (!loading && beneficiaries.length === 0) return null;
 
   return (
-    <section className="py-24 bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-display-md md:text-display-lg font-medium text-gray-900 dark:text-white mb-6 font-display tracking-tight">
-            Meet the Lives You&apos;re Transforming
-          </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-            Every donation has a face, a story, and a dream. Here are some of the amazing people
-            your support is helping to thrive.
-          </p>
-        </div>
+    <section className="home-section home-section-soft home-beneficiaries">
+      <div className="home-container">
+        <SectionHeading
+          eyebrow="People, not statistics"
+          title={<>Meet the lives you&apos;re <span className="home-ink-accent">transforming.</span></>}
+          description="Every donation has a face, a story and a dream. Meet some of the people your support is helping to thrive."
+        />
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="w-8 h-8 text-accent-500 animate-spin" />
+            <RiLoader4Line className="w-8 h-8 text-accent-500 animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {beneficiaries.map((beneficiary) => (
+          <div className="home-beneficiary-grid">
+            {beneficiaries.map((beneficiary, index) => (
               <div
                 key={beneficiary.id}
-                className="group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-accent-500"
+                data-home-reveal
+                className={`home-bezel home-beneficiary-bezel group ${index === 0 ? 'home-beneficiary-featured' : ''}`}
               >
-                {/* Photo */}
-                <div className="relative h-64 overflow-hidden bg-gray-200 dark:bg-gray-700">
+                <article className="home-bezel-core home-beneficiary-card">
+                <div className="relative home-beneficiary-photo overflow-hidden bg-stone-100">
                   {beneficiary.image ? (
                     <Image
                       src={beneficiary.image}
                       alt={`${beneficiary.name}${beneficiary.age ? `, ${beneficiary.age} years old` : ''}`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover object-center home-image-motion"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Heart className="w-12 h-12 text-gray-400" />
+                      <RiHeart3Line className="w-12 h-12 text-stone-400" />
                     </div>
                   )}
                   <div className="absolute top-4 left-4">
@@ -110,20 +108,20 @@ const BeneficiaryShowcase: React.FC = () => {
                     </span>
                   </div>
                   <div className="absolute top-4 right-4">
-                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
-                      <Heart className="w-4 h-4 text-red-500" />
+                    <div className="bg-white/95 rounded-full p-2 shadow-[0_8px_30px_rgba(29,20,55,0.10)]">
+                      <RiHeart3Line className="w-4 h-4 text-rose-500" />
                     </div>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="home-beneficiary-content">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white font-display">
                       {beneficiary.name}{beneficiary.age ? `, ${beneficiary.age}` : ''}
                     </h3>
                     <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <MapPin className="w-4 h-4 mr-1" />
+                      <RiMapPin2Line className="w-4 h-4 mr-1" />
                       {beneficiary.location.split(',')[0]}
                     </div>
                   </div>
@@ -148,7 +146,7 @@ const BeneficiaryShowcase: React.FC = () => {
 
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div
-                            className="bg-accent-500 h-2 rounded-full transition-all duration-500"
+                            className="bg-accent-500 h-2 rounded-full home-progress-motion"
                             style={{ width: `${Math.min(((beneficiary.days_supported ?? 0) / 365) * 100, 100)}%` }}
                           />
                         </div>
@@ -161,26 +159,22 @@ const BeneficiaryShowcase: React.FC = () => {
                     )}
                   </div>
 
-                  <button
+                  <ActionButton
                     onClick={() => handleSponsorClick(beneficiary)}
-                    className="w-full mt-6 bg-accent-500 hover:bg-accent-600 text-white font-medium py-3 px-4 rounded-full transition-colors duration-200 font-sans"
+                    className="w-full mt-6 justify-between"
                   >
                     Sponsor {beneficiary.name}
-                  </button>
+                  </ActionButton>
                 </div>
+                </article>
               </div>
             ))}
           </div>
         )}
 
         {!loading && beneficiaries.length > 0 && (
-          <div className="text-center mt-16">
-            <Link
-              href="/beneficiaries"
-              className="inline-block bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-medium text-base transition-colors shadow-lg hover:shadow-xl font-sans"
-            >
-              View All Beneficiaries
-            </Link>
+          <div data-home-reveal className="mt-12 flex justify-start">
+            <ActionLink href="/beneficiaries">View all beneficiaries</ActionLink>
           </div>
         )}
       </div>
