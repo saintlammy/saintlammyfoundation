@@ -103,7 +103,7 @@ const HeroDocumentarySplit: React.FC<HeroProps> = ({
             <div className="hero-orb-drift pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-purple-500/30 blur-3xl" />
             <div className="hero-orb-drift hero-orb-drift-delayed pointer-events-none absolute -bottom-20 left-1/4 h-64 w-64 rounded-full bg-accent-400/25 blur-3xl" />
 
-            <div className="absolute inset-x-3 bottom-3 grid grid-cols-2 gap-2 sm:inset-x-5 sm:bottom-5 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="absolute inset-x-5 bottom-5 hidden gap-2 sm:grid sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
               {featurePills.map(({ icon: Icon, label }, index) => (
                 <div
                   key={label}
